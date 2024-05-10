@@ -1,16 +1,21 @@
 import React from 'react';
-import { URDFProvider } from './components/URDFContext/URDFContext';
-import URDFViewer from './components/URDFviewer/URDFViewer';
+import DownloadRobotPackage from './components/DownloadRobotPackage/DownloadRobotPackage';
+import ThreeScene from './components/URDFviewer/ThreeScene';
+import URDFHistoryProvider from './components/URDFContext/URDFHistoryContext';
+import URDFGUIProvider from './components/URDFContext/URDFGUIContext';
+import URDFCodeProvider from './components/URDFContext/URDFCodeContext';
 
-function App() {
+const App = () => {
   return (
-    <URDFProvider>
-      <div style={{ display: 'flex', flexDirection: 'row', height: '100vh', width: '100vw' }}>
-        <URDFViewer />
-        {/* You can add more components here if necessary */}
-      </div>
-    </URDFProvider>
+    <URDFHistoryProvider>
+      <URDFGUIProvider>
+        <ThreeScene />
+      </URDFGUIProvider>
+      <URDFCodeProvider>
+        <DownloadRobotPackage />
+      </URDFCodeProvider>
+    </URDFHistoryProvider>
   );
-}
+};
 
 export default App;

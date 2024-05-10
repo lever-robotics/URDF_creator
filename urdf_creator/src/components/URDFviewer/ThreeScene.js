@@ -1,7 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
+import { Link } from './LinkClass';
 
 function ThreeScene() {
     const mountRef = useRef(null);
@@ -57,32 +59,6 @@ function ThreeScene() {
         gridHelper.userData.selectable = false;
         obj.scene.add(gridHelper);
 
-        // Event listener for mouse down to select objects
-        function onMouseDown(event) {
-            event.preventDefault();
-            obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
-            obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
-            obj.raycaster.setFromCamera(obj.mouse, obj.camera);
-            const intersects = obj.raycaster.intersectObjects(obj.scene.children);
-
-            if (intersects.length > 0) {
-                const firstIntersectedObject = intersects[0].object;
-                if (firstIntersectedObject.userData.selectable !== false) {
-                    setSelectedObject(firstIntersectedObject);
-                    obj.transformControls.attach(firstIntersectedObject);
-                    setObjectPosition(firstIntersectedObject.position);
-                } else {
-                    setSelectedObject(null);
-                    obj.transformControls.detach();
-                }
-            } else {
-                setSelectedObject(null);
-                obj.transformControls.detach();
-            }
-        }
-
-        mountRef.current.addEventListener('pointerdown', onMouseDown);
-
         obj.initialized = true;
 
         const animate = () => {
@@ -105,7 +81,48 @@ function ThreeScene() {
             }
             obj.initialized = false;
         };
-    }, []); // Empty dependency array to ensure this effect runs only once
+    }, []);
+
+    const onMouseDown = useCallback((event) => {
+        const { current: obj } = threeObjects;
+        event.preventDefault();
+        obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
+        obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
+        obj.raycaster.setFromCamera(obj.mouse, obj.camera);
+        const intersects = obj.raycaster.intersectObjects(obj.scene.children);
+
+        if (intersects.length > 0) {
+            const firstIntersectedObject = intersects[0].object;
+            if (firstIntersectedObject.userData.selectable !== false) {
+                setSelectedObject(firstIntersectedObject);
+                obj.transformControls.attach(firstIntersectedObject);
+                setObjectPosition({ ...firstIntersectedObject.position });
+            } else {
+                setSelectedObject(null);
+                obj.transformControls.detach();
+            }
+        } else {
+            setSelectedObject(null);
+            obj.transformControls.detach();
+        }
+    }, []);
+
+    useEffect(() => {
+        const { current: obj } = threeObjects;
+        if (obj.transformControls) {
+            const updatePosition = () => {
+                if (selectedObject) {
+                    setObjectPosition({ ...selectedObject.position });
+                }
+            };
+
+            obj.transformControls.addEventListener('objectChange', updatePosition);
+
+            return () => {
+                obj.transformControls.removeEventListener('objectChange', updatePosition);
+            };
+        }
+    }, [selectedObject]);
 
     const addObject = shape => {
         const { current: obj } = threeObjects;
@@ -134,15 +151,21 @@ function ThreeScene() {
         obj.scene.add(mesh);
     };
 
-    // Update the position of the selected object based on user input
     const handlePositionChange = (axis, value) => {
         const { current: obj } = threeObjects;
         if (selectedObject && obj.transformControls) {
             selectedObject.position[axis] = Number(value);
             setObjectPosition({ ...objectPosition, [axis]: Number(value) });
-            obj.transformControls.update();
         }
     };
+
+    useEffect(() => {
+        mountRef.current.addEventListener('pointerdown', onMouseDown);
+
+        return () => {
+            mountRef.current.removeEventListener('pointerdown', onMouseDown);
+        };
+    }, [onMouseDown]);
 
     return (
         <div>
