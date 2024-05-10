@@ -26,6 +26,8 @@ function ThreeScene() {
         initialized: false
     });
 
+    const { currentURDFTree, updateURDFTree, saveURDFTree } = useContext(URDFGUIContext);
+
     useEffect(() => {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
