@@ -37,7 +37,6 @@ const URDFCodeDisplayer = () => {
                     outline: 'none',
                     padding: '10px',
                     overflowY: 'auto',
-                    backgroundColor: '#f5f5f5',
                     borderRadius: '4px',
                     whiteSpace: 'pre-wrap',
                     position: 'relative',

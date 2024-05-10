@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
-import { Link } from '../URDFContext/LinkClass';
 import { LinkTree } from './LinkTree';
 
 function ThreeScene() {
