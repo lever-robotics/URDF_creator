@@ -1,31 +1,36 @@
-// URDFCodeProvider.js
 import React, { createContext, useContext, useState, useImperativeHandle } from 'react';
-import { Link } from './LinkClass';
 import { URDFHistoryContext } from './URDFHistoryContext';
+import { isValidURDF } from '../../utils/URDFValidator';
 
 export const URDFCodeContext = createContext();
 
 export const URDFCodeProvider = ({ children }) => {
-    const [currentURDFTree, setCurrentURDFTree] = useState(new Link('root', { isBaseLink: true }));
+    const [currentURDFCode, setCurrentURDFCode] = useState('');
+    const [isCodeValid, setIsCodeValid] = useState(true);
     const historyContext = useContext(URDFHistoryContext);
 
-    // Updates the current state of the URDF tree in the Code context only
-    const updateURDFTree = (newTree) => {
-        setCurrentURDFTree(newTree);
+    // Updates the current state of the URDF code in the Code context only
+    const updateURDFCode = (newCode) => {
+        setIsCodeValid(isValidURDF(newCode));
+        setCurrentURDFCode(newCode);
     };
 
-    // Saves the current URDF tree state to the history and updates the GUI provider
-    const saveURDFTree = (newTree) => {
-        setCurrentURDFTree(newTree);
-        historyContext.updateFromCode(newTree);
+    // Save the current URDF code and update the history and GUI context
+    const saveURDFCode = () => {
+        if (isCodeValid) {
+            historyContext.updateFromCode(currentURDFCode);
+        }
     };
 
+    // Initialize or synchronize with the URDF from history context
     useImperativeHandle(historyContext.codeRef, () => ({
-        updateURDFTree
+        updateURDFCode: (newCode) => {
+            updateURDFCode(newCode);
+        }
     }));
 
     return (
-        <URDFCodeContext.Provider value={{ currentURDFTree, updateURDFTree, saveURDFTree }}>
+        <URDFCodeContext.Provider value={{ currentURDFCode, updateURDFCode, saveURDFCode, isCodeValid }}>
             {children}
         </URDFCodeContext.Provider>
     );

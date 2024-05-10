@@ -1,6 +1,4 @@
-// URDFHistoryProvider.js
 import React, { createContext, useState, useRef } from 'react';
-import { Link } from './LinkClass';
 
 export const URDFHistoryContext = createContext();
 
@@ -11,41 +9,46 @@ export const URDFHistoryProvider = ({ children }) => {
     const guiRef = useRef();
     const codeRef = useRef();
 
-    const addHistory = (urdfTree) => {
+    // Add a URDF string to version control so all versions of the project are saved
+    const addHistory = (urdfString) => {
         const newHistory = history.slice(0, currentIndex + 1);
-        newHistory.push(urdfTree);
+        newHistory.push(urdfString);
         setHistory(newHistory);
         setCurrentIndex(newHistory.length - 1);
     };
 
+    // Make the current URDF of the gui and code Context set to the last URDF string
     const undo = () => {
         if (currentIndex > 0) {
             const previousState = history[currentIndex - 1];
             setCurrentIndex(currentIndex - 1);
-            guiRef.current.updateURDFTree(previousState, false);
-            codeRef.current.updateURDFTree(previousState, false);
+            guiRef.current.updateURDFCode(previousState);
+            codeRef.current.updateURDFCode(previousState);
         }
     };
 
+    // Make the current URDF of the gui and code Context set to the next URDF string
     const redo = () => {
         if (currentIndex < history.length - 1) {
             const nextState = history[currentIndex + 1];
             setCurrentIndex(currentIndex + 1);
-            guiRef.current.updateURDFTree(nextState, false);
-            codeRef.current.updateURDFTree(nextState, false);
+            guiRef.current.updateURDFCode(nextState);
+            codeRef.current.updateURDFCode(nextState);
         }
     };
 
-    const updateFromGUI = (newTree) => {
-        guiRef.current.updateURDFTree(newTree, false);
-        codeRef.current.updateURDFTree(newTree, false);
-        addHistory(newTree);
+    // Update the Gui Context, this will be used every time Code Editor is the first to edit the code and Save
+    const updateFromGUI = (newURDF) => {
+        guiRef.current.updateURDFCode(newURDF);
+        codeRef.current.updateURDFCode(newURDF);
+        addHistory(newURDF);
     };
 
-    const updateFromCode = (newTree) => {
-        guiRef.current.updateURDFTree(newTree, false);
-        codeRef.current.updateURDFTree(newTree, false);
-        addHistory(newTree);
+    // Update the Code Context, this will be used every time Gui is the first to edit the URDF and save
+    const updateFromCode = (newURDF) => {
+        guiRef.current.updateURDFCode(newURDF);
+        codeRef.current.updateURDFCode(newURDF);
+        addHistory(newURDF);
     };
 
     return (

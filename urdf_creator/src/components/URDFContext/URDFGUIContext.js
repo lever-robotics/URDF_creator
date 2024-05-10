@@ -1,31 +1,35 @@
-// URDFGUIProvider.js
 import React, { createContext, useContext, useState, useImperativeHandle } from 'react';
-import { Link } from './LinkClass';
 import { URDFHistoryContext } from './URDFHistoryContext';
+import { XMLtoScene, ScenetoXML } from '../../utils/SceneTransformUtils'
 
 export const URDFGUIContext = createContext();
 
 export const URDFGUIProvider = ({ children }) => {
-    const [currentURDFTree, setCurrentURDFTree] = useState(new Link('root', { isBaseLink: true }));
+    const [currentScene, setCurrentScene] = useState(null); // Initially, there's no scene
     const historyContext = useContext(URDFHistoryContext);
 
-    // Updates the current state of the URDF tree in the GUI context only
-    const updateURDFTree = (newTree) => {
-        setCurrentURDFTree(newTree);
+    // Updates the current state of the Scene in the GUI context only
+    const updateURDFScene = (urdfXmlText) => {
+        const newScene = XMLtoScene(urdfXmlText);
+        setCurrentScene(newScene);
     };
 
-    // Saves the current URDF tree state to the history and updates the code provider
-    const saveURDFTree = (newTree) => {
-        setCurrentURDFTree(newTree);
-        historyContext.updateFromGUI(newTree);
+    // Saves the current Scene state to the history and updates the code provider
+    const saveURDFScene = () => {
+        if (currentScene) {
+            const urdfXmlText = ScenetoXML(currentScene);
+            historyContext.updateFromGUI(urdfXmlText);
+        }
     };
 
     useImperativeHandle(historyContext.guiRef, () => ({
-        updateURDFTree
+        updateURDFCode: (urdfXmlText) => {
+            updateURDFScene(urdfXmlText);
+        }
     }));
 
     return (
-        <URDFGUIContext.Provider value={{ currentURDFTree, updateURDFTree, saveURDFTree }}>
+        <URDFGUIContext.Provider value={{ currentScene, updateURDFScene, saveURDFScene }}>
             {children}
         </URDFGUIContext.Provider>
     );
