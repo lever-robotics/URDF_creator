@@ -5,6 +5,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 
 function ThreeScene() {
     const mountRef = useRef(null);
+    const mouseData = useRef({previousUpTime: null, currentDownTime: null, startPos: null});
 
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
@@ -57,16 +58,14 @@ function ThreeScene() {
         gridHelper.userData.selectable = false;
         obj.scene.add(gridHelper);
 
-        // Event listener for mouse down to select objects
-        function onMouseDown(event) {
-            event.preventDefault();
+        function selectObject(event) {
             obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
             obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
             obj.raycaster.setFromCamera(obj.mouse, obj.camera);
-            const intersects = obj.raycaster.intersectObjects(obj.scene.children);
-
-            if (intersects.length > 0) {
-                const firstIntersectedObject = intersects[0].object;
+            const intersects = obj.raycaster.intersectObjects(obj.scene.children, false);
+            const meshes = intersects.filter((collision) => collision.object instanceof THREE.Mesh)
+            if (meshes.length > 0) {
+                const firstIntersectedObject = meshes[0].object;
                 if (firstIntersectedObject.userData.selectable !== false) {
                     setSelectedObject(firstIntersectedObject);
                     obj.transformControls.attach(firstIntersectedObject);
@@ -81,7 +80,50 @@ function ThreeScene() {
             }
         }
 
+        function onDoubleClick(event) {
+
+        }
+
+        function onClick(event) {
+            selectObject(event)
+            console.log("click")
+        }
+
+        function onMouseUp(event) {
+            event.preventDefault();
+            // ms between clicks for a click to be registered
+            const clickTime = 300;
+            const dragThreshold = 5;
+            const endPos = [event.clientX, event.clientY];
+            console.log(Date.now())
+
+            // if the mouse is dragged, do nothing
+            if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {
+                console.log("dragging")
+            }
+            // if the mouse is double clicked, call double click
+            else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
+                onDoubleClick(event)
+                console.log("double click")
+            }
+            // if the mouse is single clicked, call click
+            else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
+                onClick(event)
+
+            }
+            mouseData.current.previousUpTime = Date.now()
+        }
+
+        // Event listener for mouse down to select objects
+        function onMouseDown(event) {
+            event.preventDefault();
+            mouseData.current.currentDownTime = Date.now()
+            mouseData.current.startPos = [event.clientX, event.clientY]
+        }
+
+        console.log("adding listener")
         mountRef.current.addEventListener('pointerdown', onMouseDown);
+        mountRef.current.addEventListener('pointerup', onMouseUp);
 
         obj.initialized = true;
 
@@ -93,8 +135,11 @@ function ThreeScene() {
         animate();
 
         return () => {
+            console.log("calling callback")
             if (mountRef.current) {
+                console.log("removing listeners")
                 mountRef.current.removeEventListener('pointerdown', onMouseDown);
+                mountRef.current.removeEventListener('pointerup', onMouseUp);
             }
             obj.orbitControls.dispose();
             obj.transformControls.dispose();
@@ -144,6 +189,13 @@ function ThreeScene() {
         }
     };
 
+    const setTransformMode = (mode) => {
+        const { current: obj } = threeObjects;
+        if (obj.transformControls) {
+            obj.transformControls.setMode(mode);
+        }
+    }
+
     return (
         <div>
             <div ref={mountRef} style={{ width: '800px', height: '600px' }} />
@@ -151,6 +203,11 @@ function ThreeScene() {
                 <button onClick={() => addObject("cube")}>Add Cube</button>
                 <button onClick={() => addObject("sphere")}>Add Sphere</button>
                 <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
+            </div>
+            <div style={{ marginTop: '10px' }}>
+                <button onClick={() => setTransformMode("translate")}>Translate</button>
+                <button onClick={() => setTransformMode("rotate")}>Rotate</button>
+                <button onClick={() => setTransformMode("scale")}>Scale</button>
             </div>
             {selectedObject && (
                 <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd' }}>
