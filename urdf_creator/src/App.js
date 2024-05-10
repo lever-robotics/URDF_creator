@@ -1,9 +1,9 @@
 import React from 'react';
 import DownloadRobotPackage from './components/DownloadRobotPackage/DownloadRobotPackage';
-import ThreeScene from './components/URDFviewer/ThreeScene';
-import URDFHistoryProvider from './components/URDFContext/URDFHistoryContext';
-import URDFGUIProvider from './components/URDFContext/URDFGUIContext';
-import URDFCodeProvider from './components/URDFContext/URDFCodeContext';
+import ThreeScene from './components/ThreeScene/ThreeScene';
+import { URDFHistoryProvider } from './components/URDFContext/URDFHistoryContext';
+import { URDFGUIProvider } from './components/URDFContext/URDFGUIContext';
+import { URDFCodeProvider } from './components/URDFContext/URDFCodeContext';
 
 const App = () => {
   return (

@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useContext } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
-import { Link } from './LinkClass';
+import { Link } from '../URDFContext/LinkClass';
 
 function ThreeScene() {
     const mountRef = useRef(null);

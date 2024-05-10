@@ -1,7 +1,7 @@
 // URDFCodeProvider.js
 import React, { createContext, useContext, useState, useImperativeHandle } from 'react';
-import { Link } from './Link';
-import { URDFHistoryContext } from './URDFHistoryProvider';
+import { Link } from './LinkClass';
+import { URDFHistoryContext } from './URDFHistoryContext';
 
 export const URDFCodeContext = createContext();
 
