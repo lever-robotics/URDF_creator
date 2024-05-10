@@ -4,14 +4,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
 import { Link } from '../URDFContext/LinkClass';
+import { LinkTree } from './LinkTree';
 
 function ThreeScene() {
     const mountRef = useRef(null);
     const mouseData = useRef({ previousUpTime: null, currentDownTime: null, startPos: null });
+    
 
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [objectPosition, setObjectPosition] = useState({ x: 0, y: 0, z: 0 });
+    const [treeJSON, setTreeJson] = useState({});
 
     // This ref will hold the Three.js essentials
     const threeObjects = useRef({
@@ -90,7 +93,6 @@ function ThreeScene() {
 
         function onClick(event) {
             selectObject(event)
-            console.log("click")
         }
 
         function onMouseUp(event) {
@@ -99,16 +101,12 @@ function ThreeScene() {
             const clickTime = 300;
             const dragThreshold = 5;
             const endPos = [event.clientX, event.clientY];
-            console.log(Date.now())
 
             // if the mouse is dragged, do nothing
-            if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {
-                console.log("dragging")
-            }
+            if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {}
             // if the mouse is double clicked, call double click
             else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
                 onDoubleClick(event)
-                console.log("double click")
             }
             // if the mouse is single clicked, call click
             else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
@@ -125,7 +123,6 @@ function ThreeScene() {
             mouseData.current.startPos = [event.clientX, event.clientY]
         }
 
-        console.log("adding listener")
         mountRef.current.addEventListener('pointerdown', onMouseDown);
         mountRef.current.addEventListener('pointerup', onMouseUp);
 
@@ -139,9 +136,7 @@ function ThreeScene() {
         animate();
 
         return () => {
-            console.log("calling callback")
             if (mountRef.current) {
-                console.log("removing listeners")
                 mountRef.current.removeEventListener('pointerdown', onMouseDown);
                 mountRef.current.removeEventListener('pointerup', onMouseUp);
             }
@@ -156,29 +151,7 @@ function ThreeScene() {
         };
     }, []);
 
-    const onMouseDown = useCallback((event) => {
-        const { current: obj } = threeObjects;
-        event.preventDefault();
-        obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
-        obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
-        obj.raycaster.setFromCamera(obj.mouse, obj.camera);
-        const intersects = obj.raycaster.intersectObjects(obj.scene.children);
 
-        if (intersects.length > 0) {
-            const firstIntersectedObject = intersects[0].object;
-            if (firstIntersectedObject.userData.selectable !== false) {
-                setSelectedObject(firstIntersectedObject);
-                obj.transformControls.attach(firstIntersectedObject);
-                setObjectPosition({ ...firstIntersectedObject.position });
-            } else {
-                setSelectedObject(null);
-                obj.transformControls.detach();
-            }
-        } else {
-            setSelectedObject(null);
-            obj.transformControls.detach();
-        }
-    }, []);
 
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -221,7 +194,9 @@ function ThreeScene() {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set((Math.random() - 0.5) * 10, 0.5, (Math.random() - 0.5) * 10);
         mesh.userData.selectable = true;
+        mesh.userData.shape = shape;
         obj.scene.add(mesh);
+        setTreeJson(obj.scene.toJSON())
     };
 
     const handlePositionChange = (axis, value) => {
@@ -240,9 +215,16 @@ function ThreeScene() {
         }
     }
 
+
     return (
         <div>
-            <div ref={mountRef} style={{ width: '800px', height: '600px' }} />
+            <div className='row-no-space'>
+                {/* The main threejs display */}
+                <div ref={mountRef} style={{ width: '800px', height: '600px' }} />
+                {/* Tree structure menu */}
+                <LinkTree tree={treeJSON}></LinkTree>
+            </div>
+            
             <div style={{ marginTop: '10px' }}>
                 <button onClick={() => addObject("cube")}>Add Cube</button>
                 <button onClick={() => addObject("sphere")}>Add Sphere</button>
