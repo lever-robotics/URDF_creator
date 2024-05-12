@@ -28,7 +28,7 @@ function ThreeScene() {
         initialized: false
     });
 
-    const { currentURDFTree, updateURDFTree, saveURDFTree } = useContext(URDFGUIContext);
+    const { currentURDFTree, updateURDFTree, saveURDFTree, setCurrentScene } = useContext(URDFGUIContext);
 
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -85,6 +85,8 @@ function ThreeScene() {
                 obj.transformControls.detach();
             }
         }
+
+
 
         function onDoubleClick(event) {
 
@@ -150,6 +152,16 @@ function ThreeScene() {
         };
     }, []);
 
+    const handleSave = useCallback(() => {
+        console.log('Setting current Scene');
+
+        // Update the current scene in the context
+        setCurrentScene(threeObjects.current.scene);
+
+        console.log('Doing a Save');
+        // Now call the saveURDFTree to handle the saving logic
+        saveURDFTree();
+    }, [setCurrentScene, saveURDFTree]);
 
 
     useEffect(() => {
@@ -263,6 +275,10 @@ function ThreeScene() {
                     </div>
                 </div>
             )}
+            {/* Add the Save Button */}
+            <div style={{ marginTop: '10px' }}>
+                <button onClick={handleSave}>Save</button>
+            </div>
         </div>
     );
 }

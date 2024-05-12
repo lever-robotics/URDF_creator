@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useImperativeHandle } from 'react';
 import { URDFHistoryContext } from './URDFHistoryContext';
-import { XMLtoScene, ScenetoXML } from '../../utils/SceneTransformUtils'
+import { ScenetoXML } from '../../utils/ScenetoXML'
+import { XMLtoScene } from '../../utils/XMLtoScene'
 
 export const URDFGUIContext = createContext();
 
@@ -16,8 +17,12 @@ export const URDFGUIProvider = ({ children }) => {
 
     // Saves the current Scene state to the history and updates the code provider
     const saveURDFScene = () => {
+        console.log("Testing for scene");
         if (currentScene) {
+            console.log("Convert Scene to XML");
             const urdfXmlText = ScenetoXML(currentScene);
+            console.log("XML is: ", urdfXmlText);
+            console.log("Updating history and Code Contexts");
             historyContext.updateFromGUI(urdfXmlText);
         }
     };
@@ -29,7 +34,7 @@ export const URDFGUIProvider = ({ children }) => {
     }));
 
     return (
-        <URDFGUIContext.Provider value={{ currentScene, updateURDFScene, saveURDFScene }}>
+        <URDFGUIContext.Provider value={{ currentScene, updateURDFScene, saveURDFScene, setCurrentScene }}>
             {children}
         </URDFGUIContext.Provider>
     );

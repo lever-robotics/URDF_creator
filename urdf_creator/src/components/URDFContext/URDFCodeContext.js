@@ -11,6 +11,7 @@ export const URDFCodeProvider = ({ children }) => {
 
     // Updates the current state of the URDF code in the Code context only
     const updateURDFCode = (newCode) => {
+        console.log("Updating URDF code");
         setIsCodeValid(isValidURDF(newCode));
         setCurrentURDFCode(newCode);
     };

@@ -39,8 +39,11 @@ export const URDFHistoryProvider = ({ children }) => {
 
     // Update the Gui Context, this will be used every time Code Editor is the first to edit the code and Save
     const updateFromGUI = (newURDF) => {
+        console.log("History: updating gui from URDF");
         guiRef.current.updateURDFCode(newURDF);
+        console.log("Updating code from GUI");
         codeRef.current.updateURDFCode(newURDF);
+        console.log("Adding to history");
         addHistory(newURDF);
     };
 
