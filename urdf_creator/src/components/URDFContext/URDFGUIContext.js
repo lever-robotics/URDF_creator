@@ -26,7 +26,7 @@ export const URDFGUIProvider = forwardRef(({ children }, ref) => {
         }
     };
 
-    useImperativeHandle(ref, () => ({
+    useImperativeHandle(historyContext.guiRef, () => ({
         updateURDFScene: (urdfXmlText) => {
             updateURDFScene(urdfXmlText);
         }

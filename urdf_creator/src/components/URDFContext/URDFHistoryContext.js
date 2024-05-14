@@ -14,6 +14,8 @@ export const URDFHistoryProvider = ({ children }) => {
         newHistory.push(urdfString);
         setHistory(newHistory);
         setCurrentIndex(newHistory.length - 1);
+        console.log("History: ", history);
+        console.log("Current Index: ", currentIndex);
     };
 
     const undo = () => {
@@ -36,11 +38,12 @@ export const URDFHistoryProvider = ({ children }) => {
 
     const updateFromGUI = (newURDF) => {
         console.log("History: updating gui from URDF");
-        if (guiRef.current) {
-            guiRef.current.updateURDFScene(newURDF);
-        } else {
-            console.error('guiRef.current is undefined');
-        }
+        // Dont necessarly need to update the gui itself
+        // if (guiRef.current) {
+        //     guiRef.current.updateURDFScene(newURDF);
+        // } else {
+        //     console.error('guiRef.current is undefined');
+        // }
         if (codeRef.current) {
             codeRef.current.updateURDFCode(newURDF);
         } else {
@@ -51,12 +54,11 @@ export const URDFHistoryProvider = ({ children }) => {
 
     const updateFromCode = (newURDF) => {
         guiRef.current.updateURDFScene(newURDF);
-        codeRef.current.updateURDFCode(newURDF);
         addHistory(newURDF);
     };
 
     return (
-        <URDFHistoryContext.Provider value={{ addHistory, undo, redo, updateFromGUI, updateFromCode, guiRef, codeRef }}>
+        <URDFHistoryContext.Provider value={{ history, currentIndex, addHistory, undo, redo, updateFromGUI, updateFromCode, guiRef, codeRef }}>
             {children}
         </URDFHistoryContext.Provider>
     );
