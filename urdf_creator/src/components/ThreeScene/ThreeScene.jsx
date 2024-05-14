@@ -71,10 +71,15 @@ function ThreeScene() {
             obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
             obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
             obj.raycaster.setFromCamera(obj.mouse, obj.camera);
-            const intersects = obj.raycaster.intersectObjects(obj.scene.children, false);
-            const meshes = intersects.filter((collision) => collision.object instanceof THREE.Mesh)
-            if (meshes.length > 0) {
-                const object = meshes[0].object;
+            const intersects = obj.raycaster.intersectObjects(obj.scene.children);
+            console.log("intersects")
+            console.log(intersects)
+            const shapes = intersects.filter((collision) => collision.object.userData.shape)
+            const meshes = intersects.filter((collision) => collision.object.type === "Mesh")
+            console.log("shapes")
+            console.log(shapes)
+            if (shapes.length > 0) {
+                const object = shapes[0].object;
                 if (object.userData.selectable !== false) {
                     setSelectedObject(object);
                     obj.transformControls.attach(object);
@@ -83,7 +88,7 @@ function ThreeScene() {
                     setSelectedObject(null);
                     obj.transformControls.detach();
                 }
-            } else {
+            } else if (meshes.length === 0) {
                 setSelectedObject(null);
                 obj.transformControls.detach();
             }
@@ -159,7 +164,6 @@ function ThreeScene() {
             obj.transformControls.dispose();
             obj.renderer.dispose();
             obj.scene.clear();
-            console.log("clearing")
             if (mountRef.current) {
                 mountRef.current.removeChild(obj.renderer.domElement);
             }
@@ -168,12 +172,9 @@ function ThreeScene() {
     }, []);
 
     const handleSave = useCallback(() => {
-        console.log('Setting the current Scene to be local variable');
-        console.log('Current Scene is: ', threeObjects.current.scene);
         // Update the current scene in the context
         setCurrentScene(threeObjects.current.scene);
 
-        console.log('Doing a save to global state');
         // Now call the saveURDFTree to handle the saving logic
         saveURDFScene(threeObjects.current.scene);
     }, [setCurrentScene, saveURDFScene]);
@@ -229,8 +230,6 @@ function ThreeScene() {
             setBaseLink(mesh);
             obj.scene.add(mesh);
         }
-        console.log("this is the scene:")
-        console.log(obj.scene)
         setTreeState({...obj.scene});
     };
 
