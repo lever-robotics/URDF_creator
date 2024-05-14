@@ -13,7 +13,9 @@ function ThreeScene() {
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [objectPosition, setObjectPosition] = useState({ x: 0, y: 0, z: 0 });
-    const [treeJSON, setTreeJson] = useState({});
+    const [treeState, setTreeState] = useState({});
+    const [selectObjectFunc, setSelectObjectFunc] = useState(null);
+
 
     // This ref will hold the Three.js essentials
     const threeObjects = useRef({
@@ -64,22 +66,36 @@ function ThreeScene() {
         gridHelper.userData.selectable = false;
         obj.scene.add(gridHelper);
 
-        function selectObject(event) {
+        function clickObject(event) {
             obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
             obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
             obj.raycaster.setFromCamera(obj.mouse, obj.camera);
             const intersects = obj.raycaster.intersectObjects(obj.scene.children, false);
             const meshes = intersects.filter((collision) => collision.object instanceof THREE.Mesh)
             if (meshes.length > 0) {
-                const firstIntersectedObject = meshes[0].object;
-                if (firstIntersectedObject.userData.selectable !== false) {
-                    setSelectedObject(firstIntersectedObject);
-                    obj.transformControls.attach(firstIntersectedObject);
-                    setObjectPosition(firstIntersectedObject.position);
+                const object = meshes[0].object;
+                if (object.userData.selectable !== false) {
+                    setSelectedObject(object);
+                    obj.transformControls.attach(object);
+                    setObjectPosition(object.position);
                 } else {
                     setSelectedObject(null);
                     obj.transformControls.detach();
                 }
+            } else {
+                setSelectedObject(null);
+                obj.transformControls.detach();
+            }
+        }
+
+        setSelectObjectFunc(() => selectObject);
+
+        const selectObject = (object) => {
+            console.log("selecting")
+            if (object.userData.selectable !== false) {
+                setSelectedObject(object);
+                obj.transformControls.attach(object);
+                setObjectPosition(object.position);
             } else {
                 setSelectedObject(null);
                 obj.transformControls.detach();
@@ -91,7 +107,7 @@ function ThreeScene() {
         }
 
         function onClick(event) {
-            selectObject(event)
+            clickObject(event)
         }
 
         function onMouseUp(event) {
@@ -195,7 +211,7 @@ function ThreeScene() {
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
         obj.scene.add(mesh);
-        setTreeJson(obj.scene.toJSON())
+        setTreeState(obj.scene)
     };
 
     const handlePositionChange = (axis, value) => {
@@ -221,7 +237,7 @@ function ThreeScene() {
                 {/* The main threejs display */}
                 <div ref={mountRef} style={{ width: '800px', height: '600px' }} />
                 {/* Tree structure menu */}
-                <LinkTree tree={treeJSON}></LinkTree>
+                <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
             </div>
 
             <div style={{ marginTop: '10px' }}>
