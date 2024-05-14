@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import DownloadRobotPackage from './components/DownloadRobotPackage/DownloadRobotPackage';
 import ThreeScene from './components/ThreeScene/ThreeScene';
 import { URDFHistoryProvider } from './components/URDFContext/URDFHistoryContext';
@@ -7,12 +7,15 @@ import { URDFCodeProvider } from './components/URDFContext/URDFCodeContext';
 import URDFCodeDisplayer from './components/CodeDisplayer/URDFCodeDisplayer';
 
 const App = () => {
+  const guiRef = useRef();
+  const codeRef = useRef();
+
   return (
     <URDFHistoryProvider>
-      <URDFGUIProvider>
+      <URDFGUIProvider ref={guiRef}>
         <ThreeScene />
       </URDFGUIProvider>
-      <URDFCodeProvider>
+      <URDFCodeProvider ref={codeRef}>
         <DownloadRobotPackage />
         <URDFCodeDisplayer />
       </URDFCodeProvider>

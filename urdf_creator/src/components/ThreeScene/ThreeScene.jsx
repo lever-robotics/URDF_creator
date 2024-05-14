@@ -31,7 +31,7 @@ function ThreeScene() {
         initialized: false
     });
 
-    const { currentURDFTree, updateURDFTree, saveURDFTree } = useContext(URDFGUIContext);
+    const { currentScene, updateURDFScene, saveURDFScene, setCurrentScene } = useContext(URDFGUIContext);
 
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -167,6 +167,16 @@ function ThreeScene() {
         };
     }, []);
 
+    const handleSave = useCallback(() => {
+        console.log('Setting the current Scene to be local variable');
+        console.log('Current Scene is: ', threeObjects.current.scene);
+        // Update the current scene in the context
+        setCurrentScene(threeObjects.current.scene);
+
+        console.log('Doing a save to global state');
+        // Now call the saveURDFTree to handle the saving logic
+        saveURDFScene(threeObjects.current.scene);
+    }, [setCurrentScene, saveURDFScene]);
 
 
     useEffect(() => {
@@ -289,6 +299,10 @@ function ThreeScene() {
                     </div>
                 </div>
             )}
+            {/* Add the Save Button */}
+            <div style={{ marginTop: '10px' }}>
+                <button onClick={handleSave}>Save</button>
+            </div>
         </div>
     );
 }
