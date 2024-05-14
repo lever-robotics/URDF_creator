@@ -26,11 +26,21 @@ export const LinkTree = ({ tree, select }) => {
         );
     };
 
+    let node = null;
+    if (tree) {
+        if (tree.children) {
+            const children = tree.children.filter((child) => child.type === "Mesh")
+            if (children.length > 0) {
+                node = children[0]
+            }
+        }
+    }
+
     return (
         <div>
         <div className='filled-box'>
             <h3>Tree View</h3>
-            { tree && renderNode(tree) }
+            { node && renderNode(node) }
         </div>
         </div>
     );

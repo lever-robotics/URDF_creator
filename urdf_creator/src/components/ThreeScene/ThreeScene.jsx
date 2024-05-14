@@ -12,6 +12,7 @@ function ThreeScene() {
 
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
+    const [baseLink, setBaseLink] = useState(null);
     const [objectPosition, setObjectPosition] = useState({ x: 0, y: 0, z: 0 });
     const [treeState, setTreeState] = useState({});
     const [selectObjectFunc, setSelectObjectFunc] = useState(null);
@@ -91,7 +92,6 @@ function ThreeScene() {
         setSelectObjectFunc(() => selectObject);
 
         const selectObject = (object) => {
-            console.log("selecting")
             if (object.userData.selectable !== false) {
                 setSelectedObject(object);
                 obj.transformControls.attach(object);
@@ -159,6 +159,7 @@ function ThreeScene() {
             obj.transformControls.dispose();
             obj.renderer.dispose();
             obj.scene.clear();
+            console.log("clearing")
             if (mountRef.current) {
                 mountRef.current.removeChild(obj.renderer.domElement);
             }
@@ -210,8 +211,17 @@ function ThreeScene() {
         mesh.position.set((Math.random() - 0.5) * 10, 0.5, (Math.random() - 0.5) * 10);
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
-        obj.scene.add(mesh);
-        setTreeState(obj.scene)
+        if (selectedObject !== null) {
+            selectedObject.add(mesh);
+        } else if (baseLink !== null){
+            baseLink.add(mesh);
+        } else {
+            setBaseLink(mesh);
+            obj.scene.add(mesh);
+        }
+        console.log("this is the scene:")
+        console.log(obj.scene)
+        setTreeState({...obj.scene});
     };
 
     const handlePositionChange = (axis, value) => {
