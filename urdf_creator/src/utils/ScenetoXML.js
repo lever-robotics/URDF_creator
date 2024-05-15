@@ -37,23 +37,19 @@ export const ScenetoXML = (scene) => {
 
             // Geometry
             const geometryType = node.geometry.type;
+            let geometryXML = "";
             if (geometryType === 'BoxGeometry') {
                 const size = formatVector(new THREE.Vector3().setFromMatrixScale(node.matrixWorld));
-                xml += `      <geometry>\n`;
-                xml += `        <box size="${size}" />\n`;
-                xml += `      </geometry>\n`;
+                geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === 'SphereGeometry') {
                 const radius = node.geometry.parameters.radius;
-                xml += `      <geometry>\n`;
-                xml += `        <sphere radius="${radius}" />\n`;
-                xml += `      </geometry>\n`;
+                geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === 'CylinderGeometry') {
                 const radius = node.geometry.parameters.radiusTop;  // Assume top and bottom are the same
                 const height = node.geometry.parameters.height;
-                xml += `      <geometry>\n`;
-                xml += `        <cylinder radius="${radius}" length="${height}" />\n`;
-                xml += `      </geometry>\n`;
+                geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
+            xml += geometryXML;
 
             // Material
             if (node.material && node.material.color) {
@@ -63,8 +59,23 @@ export const ScenetoXML = (scene) => {
                 xml += `      </material>\n`;
             }
 
-            // End visual and link
+            // End visual
             xml += `    </visual>\n`;
+
+            // Add collision element with the same geometry
+            xml += `    <collision>\n`;
+            xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
+            xml += geometryXML;
+            xml += `    </collision>\n`;
+
+            // Add inertial element
+            xml += `    <inertial>\n`;
+            xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
+            xml += `      <mass value="1.0" />\n`;  // Assuming a default mass of 1 kg
+            xml += `      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />\n`;  // Simplified inertia
+            xml += `    </inertial>\n`;
+
+            // End link
             xml += `  </link>\n`;
 
             // Add joint if there's a parent link
