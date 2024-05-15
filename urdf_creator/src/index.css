@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
 }
 
 code {
@@ -19,12 +20,13 @@ code {
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #14252e;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 a {
@@ -48,7 +50,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #1D2A31;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -75,4 +77,77 @@ button:focus-visible {
 
 .row-no-space {
   display: flex;
+  flex-grow: 1;
+}
+
+.filled-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #24343F;
+  border-radius: 5px;
+  flex-grow: 1;
+}
+
+.tree-item {
+  margin: 3px;
+  border-radius: 10px;
+  min-width: 90%;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 10px;
+  width: 20vw;
+}
+
+.column-box {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  background-color: #24343F;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.display {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 10px;
+  padding-bottom: 20px;
+  padding-left: 0;
+}
+
+.screen {
+  display: flex;
+  height: 100vh;
+}
+
+.row-spaced {
+  display: flex;
+  gap: 10px;
+}
+
+.object-tree {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  background-color: #24343F;
+  padding: 10px;
+  border-radius: 5px;
+  flex-grow: 1;
+  overflow: scroll;
+}
+
+.scroll-box {
+  overflow: scroll;
+}
+
+.row-space-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

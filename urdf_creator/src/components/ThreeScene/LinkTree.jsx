@@ -13,7 +13,7 @@ export const LinkTree = ({ tree, select }) => {
         // Display the current node's data and recursively render its children
         return (
         <div style={{ marginLeft: '20px' }}>
-            {node.userData && (<button onClick={() => {
+            {node.userData && (<button className='tree-item' onClick={() => {
                 select(node);
                 console.log("clicked")
             }}>Name: {node.userData.shape}</button>)}
@@ -37,11 +37,12 @@ export const LinkTree = ({ tree, select }) => {
     }
 
     return (
-        <div>
-        <div className='filled-box'>
-            <h3>Tree View</h3>
-            { node && renderNode(node) }
-        </div>
+        <div className='object-tree'>
+            Object Tree
+            <div className='scroll-box'>
+                { node && renderNode(node) }
+            </div>
+            
         </div>
     );
 };

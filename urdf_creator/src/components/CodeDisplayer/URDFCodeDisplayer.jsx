@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { URDFCodeContext } from '../URDFContext/URDFCodeContext';
+import DownloadRobotPackage from '../DownloadRobotPackage/DownloadRobotPackage';
 
 const URDFCodeDisplayer = () => {
     const { currentURDFCode, updateURDFCode } = useContext(URDFCodeContext);
@@ -18,13 +19,13 @@ const URDFCodeDisplayer = () => {
     };
 
     return (
-        <div style={{ margin: '10px' }}>
+        <div style={{ margin: '10px', display: 'flex', flexDirection: 'column'}}>
             <textarea
                 value={editCode}
                 onChange={handleCodeChange}
                 style={{
+                    flexGrow: 1,
                     width: '100%',
-                    minHeight: '400px',
                     fontFamily: 'monospace',
                     fontSize: '14px',
                     border: '1px solid #ccc',
@@ -32,9 +33,14 @@ const URDFCodeDisplayer = () => {
                     padding: '10px',
                     overflowY: 'auto',
                     borderRadius: '4px',
+                    boxSizing: 'border-box'
                 }}
             />
-            <button onClick={handleSave} style={{ padding: '6px 12px', marginTop: '10px' }}>Save</button>
+            <div className='row-spaced' style={{ padding: '6px 12px', marginTop: '10px' }}>
+                <button onClick={handleSave} >Save</button>
+                <DownloadRobotPackage />
+            </div>
+            
         </div>
     );
 };
