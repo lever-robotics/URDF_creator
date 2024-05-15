@@ -11,12 +11,13 @@ const DownloadRobotPackage = () => {
 
         // List of static files and their paths in the ZIP
         const filesToAdd = [
-            { path: 'robot_package/config/example_config.yaml', zipPath: 'robot_package/config/example_config.yaml' },
-            { path: 'robot_package/launch/example.launch', zipPath: 'robot_package/launch/example.launch' },
-            { path: 'robot_package/worlds/example.world', zipPath: 'robot_package/worlds/example.world' },
-            { path: 'robot_package/CMakeLists.txt', zipPath: 'robot_package/CMakeLists.txt' },
-            { path: 'robot_package/package.xml', zipPath: 'robot_package/package.xml' },
-            { path: 'robot_package/README.md', zipPath: 'robot_package/README.md' }
+            { path: 'robot_package/config/example_config.yaml', zipPath: 'my_robot_description/config/example_config.yaml' },
+            { path: 'robot_package/launch/example.launch.py', zipPath: 'my_robot_description/launch/example.launch.py' },
+            { path: 'robot_package/rviz/my_robot.rviz', zipPath: 'my_robot_description/rviz/my_robot.rviz' },
+            { path: 'robot_package/worlds/example.world', zipPath: 'my_robot_description/worlds/example.world' },
+            { path: 'robot_package/CMakeLists.txt', zipPath: 'my_robot_description/CMakeLists.txt' },
+            { path: 'robot_package/package.xml', zipPath: 'my_robot_description/package.xml' },
+            { path: 'robot_package/README.md', zipPath: 'my_robot_description/README.md' }
         ];
 
         // Function to fetch and add files to the zip
@@ -35,7 +36,7 @@ const DownloadRobotPackage = () => {
         console.log('History: ', history);
         if (currentIndex >= 0 && history[currentIndex]) {
             const urdfContent = history[currentIndex];
-            zip.file('robot_package/urdf/example_robot.urdf', urdfContent);
+            zip.file('my_robot_description/urdf/example_robot.urdf', urdfContent);
         } else {
             console.error('No URDF file found in history.');
         }

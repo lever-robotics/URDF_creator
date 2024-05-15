@@ -1,20 +1,23 @@
 <?xml version="1.0"?>
-<package format="2">
-  <name>my_robot</name>
+<package format="3">
+  <name>my_robot_description</name>
   <version>0.0.0</version>
-  <description>The my_robot package</description>
+  <description>The my_robot_description package</description>
 
-  <maintainer email="you@example.com">Your Name</maintainer>
-  <license>BSD</license>
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>Apache-2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>rviz2</build_depend>
 
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
