@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState, useCallback, useContext } from 'rea
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
 import { LinkTree } from './LinkTree';
 
@@ -9,14 +11,12 @@ function ThreeScene() {
     const mountRef = useRef(null);
     const mouseData = useRef({ previousUpTime: null, currentDownTime: null, startPos: null });
 
-
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [baseLink, setBaseLink] = useState(null);
     const [objectPosition, setObjectPosition] = useState({ x: 0, y: 0, z: 0 });
     const [treeState, setTreeState] = useState({});
     const [selectObjectFunc, setSelectObjectFunc] = useState(null);
-
 
     // This ref will hold the Three.js essentials
     const threeObjects = useRef({
@@ -26,9 +26,14 @@ function ThreeScene() {
         orbitControls: null,
         transformControls: null,
         ambientLight: null,
+        directionalLight1: null,
+        directionalLight2: null,
+        pointLight: null,
         raycaster: new THREE.Raycaster(),
         mouse: new THREE.Vector2(),
-        initialized: false
+        initialized: false,
+        composer: null,
+        outlinePass: null,
     });
 
     const { currentScene, updateURDFScene, saveURDFScene, setCurrentScene } = useContext(URDFGUIContext);
@@ -62,26 +67,48 @@ function ThreeScene() {
         obj.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         obj.scene.add(obj.ambientLight);
 
+        // Add directional lights to the scene
+        obj.directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
+        obj.directionalLight1.position.set(5, 10, 7.5);
+        obj.scene.add(obj.directionalLight1);
+
+        obj.directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
+        obj.directionalLight2.position.set(-5, -10, -7.5);
+        obj.scene.add(obj.directionalLight2);
+
+        // Add a point light to the scene
+        obj.pointLight = new THREE.PointLight(0xffffff, 0.5);
+        obj.pointLight.position.set(0, 5, 0);
+        obj.scene.add(obj.pointLight);
+
         // Add a grid helper to the scene
         const gridHelper = new THREE.GridHelper(10, 10);
         gridHelper.userData.selectable = false;
         obj.scene.add(gridHelper);
 
+        // Setup Effect Composer for post-processing
+        obj.composer = new EffectComposer(obj.renderer);
+        const renderPass = new RenderPass(obj.scene, obj.camera);
+        obj.composer.addPass(renderPass);
+
+        // Load and apply background gradient
+        const background = new THREE.TextureLoader().load( "../../textures/blue.png" );
+        obj.scene.background = background;
+
         function clickObject(event) {
             const rect = mountRef.current.getBoundingClientRect();
-            const x = event.clientX - rect.left; // x position within the element.
-            const y = event.clientY - rect.top; // y position within the element.
-        
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
             obj.mouse.x = (x / rect.width) * 2 - 1;
             obj.mouse.y = -(y / rect.height) * 2 + 1;
+
             obj.raycaster.setFromCamera(obj.mouse, obj.camera);
             const intersects = obj.raycaster.intersectObjects(obj.scene.children);
-            console.log("intersects")
-            console.log(intersects)
-            const shapes = intersects.filter((collision) => collision.object.userData.shape)
-            const meshes = intersects.filter((collision) => collision.object.type === "Mesh")
-            console.log("shapes")
-            console.log(shapes)
+
+            const shapes = intersects.filter((collision) => collision.object.userData.shape);
+            const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
+
             if (shapes.length > 0) {
                 const object = shapes[0].object;
                 if (object.userData.selectable !== false) {
@@ -112,7 +139,7 @@ function ThreeScene() {
         }
 
         function onDoubleClick(event) {
-
+            // Handle double click event if needed
         }
 
         function onClick(event) {
@@ -121,30 +148,24 @@ function ThreeScene() {
 
         function onMouseUp(event) {
             event.preventDefault();
-            // ms between clicks for a click to be registered
             const clickTime = 300;
             const dragThreshold = 20;
             const endPos = [event.clientX, event.clientY];
 
-            // if the mouse is dragged, do nothing
-            if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) { }
-            // if the mouse is double clicked, call double click
-            else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
-                onDoubleClick(event)
+            if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {
+                // Do nothing if dragged
+            } else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
+                onDoubleClick(event);
+            } else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
+                onClick(event);
             }
-            // if the mouse is single clicked, call click
-            else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
-                onClick(event)
-
-            }
-            mouseData.current.previousUpTime = Date.now()
+            mouseData.current.previousUpTime = Date.now();
         }
 
-        // Event listener for mouse down to select objects
         function onMouseDown(event) {
             event.preventDefault();
-            mouseData.current.currentDownTime = Date.now()
-            mouseData.current.startPos = [event.clientX, event.clientY]
+            mouseData.current.currentDownTime = Date.now();
+            mouseData.current.startPos = [event.clientX, event.clientY];
         }
 
         mountRef.current.addEventListener('pointerdown', onMouseDown);
@@ -154,7 +175,7 @@ function ThreeScene() {
 
         const animate = () => {
             requestAnimationFrame(animate);
-            obj.renderer.render(obj.scene, obj.camera);
+            obj.composer.render();
             obj.orbitControls.update();
         };
         animate();
@@ -176,13 +197,9 @@ function ThreeScene() {
     }, []);
 
     const handleSave = useCallback(() => {
-        // Update the current scene in the context
         setCurrentScene(threeObjects.current.scene);
-
-        // Now call the saveURDFTree to handle the saving logic
         saveURDFScene(threeObjects.current.scene);
     }, [setCurrentScene, saveURDFScene]);
-
 
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -228,13 +245,13 @@ function ThreeScene() {
         mesh.userData.shape = shape;
         if (selectedObject !== null) {
             selectedObject.add(mesh);
-        } else if (baseLink !== null){
+        } else if (baseLink !== null) {
             baseLink.add(mesh);
         } else {
             setBaseLink(mesh);
             obj.scene.add(mesh);
         }
-        setTreeState({...obj.scene});
+        setTreeState({ ...obj.scene });
     };
 
     const handlePositionChange = (axis, value) => {
@@ -253,75 +270,33 @@ function ThreeScene() {
         }
     }
 
-
     return (
-            <div className='row-no-space'>
+        <div className='row-no-space'>
+            <div className='left-panel'>
+                {/* Tree structure menu */}
+                <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
 
-                <div className='left-panel'>
-                    {/* Tree structure menu */}
-                    <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
-
-                    <div style={{ marginTop: '10px' }} className='column-box'>
-                        Add Objects
-                        <button onClick={() => addObject("cube")}>Add Cube</button>
-                        <button onClick={() => addObject("sphere")}>Add Sphere</button>
-                        <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
-                    </div>
+                <div style={{ marginTop: '10px' }} className='column-box'>
+                    Add Objects
+                    <button onClick={() => addObject("cube")}>Add Cube</button>
+                    <button onClick={() => addObject("sphere")}>Add Sphere</button>
+                    <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
                 </div>
-                
-                {/* The main threejs display */}
-                <div className='display'>
-                    <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
-                    <div style={{ marginTop: '10px' }} className='row-space-between'>
-                        <div className='row-spaced'>
-                            <button onClick={() => setTransformMode("translate")}>Translate</button>
-                            <button onClick={() => setTransformMode("rotate")}>Rotate</button>
-                            <button onClick={() => setTransformMode("scale")}>Scale</button>
-                        </div>
-                        <button onClick={handleSave} style={{backgroundColor: '#7A8F9A'}}>Generate URDF</button>
-                    </div>
-                </div>
-                
-
-                
-                
-            
-
-                
-                
-                {/* {selectedObject && (
-                    <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd' }}>
-                        <h3>Object Info</h3>
-                        <div>
-                            <label>X: </label>
-                            <input
-                                type="number"
-                                value={objectPosition.x.toFixed(2)}
-                                onChange={(e) => handlePositionChange('x', e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label>Y: </label>
-                            <input
-                                type="number"
-                                value={objectPosition.y.toFixed(2)}
-                                onChange={(e) => handlePositionChange('y', e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label>Z: </label>
-                            <input
-                                type="number"
-                                value={objectPosition.z.toFixed(2)}
-                                onChange={(e) => handlePositionChange('z', e.target.value)}
-                            />
-                        </div>
-                    </div>
-                )} */}
-
-                {/* Add the Save Button */}
-                    
             </div>
+            
+            {/* The main threejs display */}
+            <div className='display'>
+                <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
+                <div style={{ marginTop: '10px' }} className='row-space-between'>
+                    <div className='row-spaced'>
+                        <button onClick={() => setTransformMode("translate")}>Translate</button>
+                        <button onClick={() => setTransformMode("rotate")}>Rotate</button>
+                        <button onClick={() => setTransformMode("scale")}>Scale</button>
+                    </div>
+                    <button onClick={handleSave} style={{ backgroundColor: '#7A8F9A' }}>Generate URDF</button>
+                </div>
+            </div>
+        </div>
     );
 }
 
