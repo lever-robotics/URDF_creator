@@ -1,10 +1,10 @@
-// ScenetoXML
-
-//Convert the scene established by three into a XML file
 import * as THREE from 'three';
 
-// Helper function to conver ScenetoXML
+// Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
+    console.log("Converting Scene to XML");
+    console.log(scene);
+
     let xml = `<robot name="GeneratedRobot">\n`;
 
     // Helper to format vector as a string
@@ -16,42 +16,43 @@ export const ScenetoXML = (scene) => {
         euler.setFromQuaternion(quaternion, 'XYZ');
         return `${euler.x} ${euler.y} ${euler.z}`;
     };
-    // Traverse the scene
-    scene.traverse((object) => {
-        if (object instanceof THREE.Mesh) {
-            const geometryType = object.geometry.type;
-            const position = formatVector(object.position);
-            const rotation = quaternionToEuler(object.quaternion);
-            const scale = formatVector(object.scale);
+
+    // Function to process a single node
+    const processNode = (node) => {
+        if (node instanceof THREE.Mesh) {
+            const geometryType = node.geometry.type;
+            const position = formatVector(node.position);
+            const rotation = quaternionToEuler(node.quaternion);
+            const scale = formatVector(node.scale);
 
             // Start link
-            xml += `  <link name="${object.name || 'link'}">\n`;
+            xml += `  <link name="${node.name || 'link'}">\n`;
             xml += `    <visual>\n`;
             xml += `      <origin xyz="${position}" rpy="${rotation}" />\n`;
 
             // Geometry
             if (geometryType === 'BoxGeometry') {
-                const size = formatVector(new THREE.Vector3().setFromMatrixScale(object.matrixWorld));
+                const size = formatVector(new THREE.Vector3().setFromMatrixScale(node.matrixWorld));
                 xml += `      <geometry>\n`;
                 xml += `        <box size="${size.x} ${size.y} ${size.z}" />\n`;
                 xml += `      </geometry>\n`;
             } else if (geometryType === 'SphereGeometry') {
-                const radius = object.geometry.parameters.radius;
+                const radius = node.geometry.parameters.radius;
                 xml += `      <geometry>\n`;
                 xml += `        <sphere radius="${radius}" />\n`;
                 xml += `      </geometry>\n`;
             } else if (geometryType === 'CylinderGeometry') {
-                const radius = object.geometry.parameters.radiusTop;  // Assume top and bottom are the same
-                const height = object.geometry.parameters.height;
+                const radius = node.geometry.parameters.radiusTop;  // Assume top and bottom are the same
+                const height = node.geometry.parameters.height;
                 xml += `      <geometry>\n`;
                 xml += `        <cylinder radius="${radius}" length="${height}" />\n`;
                 xml += `      </geometry>\n`;
             }
 
             // Material
-            if (object.material && object.material.color) {
-                const color = object.material.color;
-                xml += `      <material name="${object.material.name || 'material'}">\n`;
+            if (node.material && node.material.color) {
+                const color = node.material.color;
+                xml += `      <material name="${node.material.name || 'material'}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -60,7 +61,16 @@ export const ScenetoXML = (scene) => {
             xml += `    </visual>\n`;
             xml += `  </link>\n`;
         }
-    });
+
+        // Recursively process children
+        node.children.forEach(child => processNode(child));
+    };
+
+    // Find the base node and start processing
+    const baseNode = scene.children.find(child => child.type === 'Mesh');
+    if (baseNode) {
+        processNode(baseNode);
+    }
 
     // Close robot tag
     xml += `</robot>`;
