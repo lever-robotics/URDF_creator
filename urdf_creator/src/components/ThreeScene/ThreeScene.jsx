@@ -68,8 +68,12 @@ function ThreeScene() {
         obj.scene.add(gridHelper);
 
         function clickObject(event) {
-            obj.mouse.x = (event.clientX / mountRef.current.clientWidth) * 2 - 1;
-            obj.mouse.y = -(event.clientY / mountRef.current.clientHeight) * 2 + 1;
+            const rect = mountRef.current.getBoundingClientRect();
+            const x = event.clientX - rect.left; // x position within the element.
+            const y = event.clientY - rect.top; // y position within the element.
+        
+            obj.mouse.x = (x / rect.width) * 2 - 1;
+            obj.mouse.y = -(y / rect.height) * 2 + 1;
             obj.raycaster.setFromCamera(obj.mouse, obj.camera);
             const intersects = obj.raycaster.intersectObjects(obj.scene.children);
             console.log("intersects")
@@ -119,7 +123,7 @@ function ThreeScene() {
             event.preventDefault();
             // ms between clicks for a click to be registered
             const clickTime = 300;
-            const dragThreshold = 5;
+            const dragThreshold = 20;
             const endPos = [event.clientX, event.clientY];
 
             // if the mouse is dragged, do nothing
@@ -251,58 +255,73 @@ function ThreeScene() {
 
 
     return (
-        <div>
             <div className='row-no-space'>
-                {/* The main threejs display */}
-                <div ref={mountRef} style={{ width: '800px', height: '600px' }} />
-                {/* Tree structure menu */}
-                <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
-            </div>
 
-            <div style={{ marginTop: '10px' }}>
-                <button onClick={() => addObject("cube")}>Add Cube</button>
-                <button onClick={() => addObject("sphere")}>Add Sphere</button>
-                <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
-            </div>
-            <div style={{ marginTop: '10px' }}>
-                <button onClick={() => setTransformMode("translate")}>Translate</button>
-                <button onClick={() => setTransformMode("rotate")}>Rotate</button>
-                <button onClick={() => setTransformMode("scale")}>Scale</button>
-            </div>
-            {selectedObject && (
-                <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd' }}>
-                    <h3>Object Info</h3>
-                    <div>
-                        <label>X: </label>
-                        <input
-                            type="number"
-                            value={objectPosition.x.toFixed(2)}
-                            onChange={(e) => handlePositionChange('x', e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label>Y: </label>
-                        <input
-                            type="number"
-                            value={objectPosition.y.toFixed(2)}
-                            onChange={(e) => handlePositionChange('y', e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label>Z: </label>
-                        <input
-                            type="number"
-                            value={objectPosition.z.toFixed(2)}
-                            onChange={(e) => handlePositionChange('z', e.target.value)}
-                        />
+                <div className='left-panel'>
+                    {/* Tree structure menu */}
+                    <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
+
+                    <div style={{ marginTop: '10px' }} className='column-box'>
+                        Add Objects
+                        <button onClick={() => addObject("cube")}>Add Cube</button>
+                        <button onClick={() => addObject("sphere")}>Add Sphere</button>
+                        <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
                     </div>
                 </div>
-            )}
-            {/* Add the Save Button */}
-            <div style={{ marginTop: '10px' }}>
-                <button onClick={handleSave}>Save</button>
+                
+                {/* The main threejs display */}
+                <div className='display'>
+                    <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
+                    <div style={{ marginTop: '10px' }} className='row-space-between'>
+                        <div className='row-spaced'>
+                            <button onClick={() => setTransformMode("translate")}>Translate</button>
+                            <button onClick={() => setTransformMode("rotate")}>Rotate</button>
+                            <button onClick={() => setTransformMode("scale")}>Scale</button>
+                        </div>
+                        <button onClick={handleSave} style={{backgroundColor: '#7A8F9A'}}>Generate URDF</button>
+                    </div>
+                </div>
+                
+
+                
+                
+            
+
+                
+                
+                {/* {selectedObject && (
+                    <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ddd' }}>
+                        <h3>Object Info</h3>
+                        <div>
+                            <label>X: </label>
+                            <input
+                                type="number"
+                                value={objectPosition.x.toFixed(2)}
+                                onChange={(e) => handlePositionChange('x', e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label>Y: </label>
+                            <input
+                                type="number"
+                                value={objectPosition.y.toFixed(2)}
+                                onChange={(e) => handlePositionChange('y', e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label>Z: </label>
+                            <input
+                                type="number"
+                                value={objectPosition.z.toFixed(2)}
+                                onChange={(e) => handlePositionChange('z', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                )} */}
+
+                {/* Add the Save Button */}
+                    
             </div>
-        </div>
     );
 }
 
