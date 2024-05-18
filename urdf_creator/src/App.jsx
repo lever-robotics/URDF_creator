@@ -1,26 +1,16 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import ThreeScene from './components/ThreeScene/ThreeScene';
-import { URDFHistoryProvider } from './components/URDFContext/URDFHistoryContext';
-import { URDFGUIProvider } from './components/URDFContext/URDFGUIContext';
-import { URDFCodeProvider } from './components/URDFContext/URDFCodeContext';
 import URDFCodeDisplayer from './components/CodeDisplayer/URDFCodeDisplayer';
+import { StateProvider } from './components/URDFContext/StateContext';
 
 const App = () => {
-  const guiRef = useRef();
-  const codeRef = useRef();
-
   return (
-    <URDFHistoryProvider>
+    <StateProvider>
       <div className='screen'>
-        <URDFGUIProvider ref={guiRef}>
-          <ThreeScene />
-        </URDFGUIProvider>
-
-        <URDFCodeProvider ref={codeRef}>
-            <URDFCodeDisplayer />
-        </URDFCodeProvider>
+        <ThreeScene />
+        <URDFCodeDisplayer />
       </div>
-    </URDFHistoryProvider>
+    </StateProvider>
   );
 };
 

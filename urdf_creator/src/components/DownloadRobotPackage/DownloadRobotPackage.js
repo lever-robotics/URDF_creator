@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { URDFHistoryContext } from '../URDFContext/URDFHistoryContext';
+import { useStateContext } from '../URDFContext/StateContext';
 
 const DownloadRobotPackage = () => {
-    const { history, currentIndex } = useContext(URDFHistoryContext);
+    const { state } = useStateContext(); // Use state from the context
+    const urdfContent = state.URDFCode;
 
     const generateZip = async () => {
         const zip = new JSZip();
@@ -32,13 +33,11 @@ const DownloadRobotPackage = () => {
         await Promise.all(filePromises);
 
         // Add the latest URDF file to the ZIP
-        console.log('Current Index: ', currentIndex);
-        console.log('History: ', history);
-        if (currentIndex >= 0 && history[currentIndex]) {
-            const urdfContent = history[currentIndex];
+        if (urdfContent) {
+            console.log(state.URDFCode);
             zip.file('my_robot_description/urdf/example_robot.urdf', urdfContent);
         } else {
-            console.error('No URDF file found in history.');
+            console.error('No URDF file found in the state.');
         }
 
         // Generate the ZIP file and trigger the download
