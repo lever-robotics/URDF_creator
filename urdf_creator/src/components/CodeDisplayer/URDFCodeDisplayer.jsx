@@ -19,11 +19,7 @@ const URDFCodeDisplayer = () => {
     };
 
     return (
-<<<<<<< HEAD
-        <div style={{ margin: '10px', display: 'flex', flexDirection: 'column'}}>
-=======
         <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
->>>>>>> main
             <textarea
                 value={editCode}
                 onChange={handleCodeChange}
@@ -41,17 +37,10 @@ const URDFCodeDisplayer = () => {
                 }}
             />
             <div className='row-spaced' style={{ padding: '6px 12px', marginTop: '10px' }}>
-<<<<<<< HEAD
-                <button onClick={handleSave} >Save</button>
-                <DownloadRobotPackage />
-            </div>
-            
-=======
                 {/* <button onClick={handleSave} >Save</button> */}
                 <DownloadRobotPackage />
             </div>
 
->>>>>>> main
         </div>
     );
 };
