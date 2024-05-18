@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
 import { useStateContext } from "../URDFContext/StateContext.js";
 import { LinkTree } from "./LinkTree";
 import initScene from "./InitScene.jsx";
@@ -141,6 +143,61 @@ function ThreeScene() {
         }
     };
 
+    const loadSTL = (file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const geometry = new STLLoader().parse(event.target.result);
+            const material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+            const mesh = new THREE.Mesh(geometry, material);
+            addObjectToScene(mesh);
+        };
+        reader.readAsArrayBuffer(file);
+    };
+
+    const loadDAE = (file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const loader = new ColladaLoader();
+            loader.parse(event.target.result, (collada) => {
+                const model = collada.scene;
+                addObjectToScene(model);
+            });
+        };
+        reader.readAsText(file);
+    };
+
+    const addObjectToScene = (object) => {
+        const { current: obj } = threeObjects;
+        object.position.set((Math.random() - 0.5) * 10, 0.5, (Math.random() - 0.5) * 10);
+        object.userData.selectable = true;
+        if (selectedObject !== null) {
+            selectedObject.attach(object);
+        } else if (baseLink !== null) {
+            baseLink.attach(object);
+        } else {
+            setBaseLink(object);
+            obj.scene.add(object);
+        }
+        setTreeState({ ...obj.scene });
+        dispatch({ type: 'SET_SCENE', payload: obj.scene });
+    };
+
+    const handleFileUpload = (event, loaderFunction) => {
+        const file = event.target.files[0];
+        if (file) {
+            loaderFunction(file);
+        }
+    };
+
+    const fileInputRefSTL = useRef(null);
+    const fileInputRefDAE = useRef(null);
+
+    const handleFileButtonClick = (ref) => {
+        if (ref.current) {
+            ref.current.click();
+        }
+    };
+
     return (
         <div className="row-no-space">
             <div className="left-panel">
@@ -156,6 +213,22 @@ function ThreeScene() {
                     <button onClick={() => addObject("cylinder")}>
                         Add Cylinder
                     </button>
+                    <button onClick={() => handleFileButtonClick(fileInputRefSTL)}>Upload STL</button>
+                    <button onClick={() => handleFileButtonClick(fileInputRefDAE)}>Upload DAE</button>
+                    <input
+                        type="file"
+                        accept=".stl"
+                        ref={fileInputRefSTL}
+                        onChange={(event) => handleFileUpload(event, loadSTL)}
+                        style={{ display: 'none' }}
+                    />
+                    <input
+                        type="file"
+                        accept=".dae"
+                        ref={fileInputRefDAE}
+                        onChange={(event) => handleFileUpload(event, loadDAE)}
+                        style={{ display: 'none' }}
+                    />
                 </div>
             </div>
 
