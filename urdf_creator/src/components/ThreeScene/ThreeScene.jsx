@@ -244,12 +244,12 @@ function ThreeScene() {
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
         if (selectedObject !== null) {
-            selectedObject.add(mesh);
+            selectedObject.attach(mesh);
         } else if (baseLink !== null) {
-            baseLink.add(mesh);
+            baseLink.attach(mesh);
         } else {
             setBaseLink(mesh);
-            obj.scene.add(mesh);
+            obj.scene.attach(mesh);
         }
         setTreeState({ ...obj.scene });
     };
