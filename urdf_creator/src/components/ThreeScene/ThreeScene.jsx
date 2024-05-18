@@ -1,11 +1,13 @@
-import React, { useRef, useEffect, useState, useCallback, useContext } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { URDFGUIContext } from '../URDFContext/URDFGUIContext';
+import { useStateContext } from '../URDFContext/StateContext.js';
 import { LinkTree } from './LinkTree';
 import initScene from './InitScene.jsx';
 import setUpMouse from './SetUpMouse.jsx';
 
 function ThreeScene() {
+    const { state, dispatch } = useStateContext();
+
     const mountRef = useRef(null);
     const mouseData = useRef({ previousUpTime: null, currentDownTime: null, startPos: null });
 
@@ -34,9 +36,6 @@ function ThreeScene() {
         outlinePass: null,
     });
 
-    const { saveURDFScene, setCurrentScene } = useContext(URDFGUIContext);
-
-    
 
     useEffect(() => {
 
@@ -55,19 +54,15 @@ function ThreeScene() {
         };
 
         animate();
-        
+        dispatch({ type: 'SET_SCENE', payload: obj.scene });
+
 
         return () => {
             sceneCallback();
             setUpMouseCallback();
         }
 
-    }, []);
-
-    const handleSave = useCallback(() => {
-        setCurrentScene(threeObjects.current.scene);
-        saveURDFScene(threeObjects.current.scene);
-    }, [setCurrentScene, saveURDFScene]);
+    }, [dispatch]);
 
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -120,15 +115,7 @@ function ThreeScene() {
             obj.scene.attach(mesh);
         }
         setTreeState({ ...obj.scene });
-    };
-
-    const handlePositionChange = (axis, value) => {
-        const { current: obj } = threeObjects;
-        if (selectedObject && obj.transformControls) {
-            selectedObject.position[axis] = Number(value);
-            setObjectPosition({ ...objectPosition, [axis]: Number(value) });
-            obj.transformControls.update();
-        }
+        dispatch({ type: 'SET_SCENE', payload: obj.scene });
     };
 
     const setTransformMode = (mode) => {
@@ -151,7 +138,7 @@ function ThreeScene() {
                     <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
                 </div>
             </div>
-            
+
             {/* The main threejs display */}
             <div className='display'>
                 <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
@@ -161,7 +148,6 @@ function ThreeScene() {
                         <button onClick={() => setTransformMode("rotate")}>Rotate</button>
                         <button onClick={() => setTransformMode("scale")}>Scale</button>
                     </div>
-                    <button onClick={handleSave} style={{ backgroundColor: '#7A8F9A' }}>Generate URDF</button>
                 </div>
             </div>
         </div>
