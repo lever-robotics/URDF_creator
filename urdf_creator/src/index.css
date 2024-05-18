@@ -144,19 +144,11 @@ button:focus-visible {
   padding: 10px;
   border-radius: 5px;
   flex-grow: 1;
-<<<<<<< HEAD
-  overflow: scroll;
-}
-
-.scroll-box {
-  overflow: scroll;
-=======
   overflow: auto;
 }
 
 .scroll-box {
   overflow: auto;
->>>>>>> main
 }
 
 .row-space-between {
