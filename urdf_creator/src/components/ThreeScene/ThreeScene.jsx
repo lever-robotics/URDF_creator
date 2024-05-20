@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
-import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
 import { useStateContext } from "../URDFContext/StateContext.js";
 import { LinkTree } from "./LinkTree";
 import initScene from "./InitScene.jsx";
 import setUpMouse from "./SetUpMouse.jsx";
+import InsertTool from "./InsertTool";
+import ObjectParameters from "./ObjectParameters";
 
 function ThreeScene() {
     // the main state of the project
@@ -18,7 +18,6 @@ function ThreeScene() {
     const [treeState, setTreeState] = useState({});
     const [selectObjectFunc, setSelectObjectFunc] = useState(null);
 
-    // This ref will hold the Three.js essentials
     const threeObjects = useRef({
         scene: null,
         camera: null,
@@ -46,7 +45,6 @@ function ThreeScene() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        // perform necessary set up for the threejs scene-- initScene must be called last
         const setUpMouseCallback = setUpMouse(
             threeObjects,
             mountRef,
@@ -57,7 +55,6 @@ function ThreeScene() {
         );
         const sceneCallback = initScene(threeObjects, mountRef);
 
-        // main animation loop
         const animate = () => {
             requestAnimationFrame(animate);
             obj.composer.render();
@@ -79,6 +76,7 @@ function ThreeScene() {
             const updatePosition = () => {
                 if (selectedObject) {
                     setObjectPosition({ ...selectedObject.position });
+                    dispatch({ type: "SET_SCENE", payload: obj.scene });
                 }
             };
 
@@ -122,6 +120,7 @@ function ThreeScene() {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
+        mesh.userData.name = shape;
         mesh.position.set(2.5, 0.5, 2.5);
         if (selectedObject !== null) {
             selectedObject.attach(mesh);
@@ -134,36 +133,6 @@ function ThreeScene() {
         }
         setTreeState({ ...obj.scene });
         dispatch({ type: "SET_SCENE", payload: obj.scene });
-    };
-
-    const setTransformMode = (mode) => {
-        const { current: obj } = threeObjects;
-        if (obj.transformControls) {
-            obj.transformControls.setMode(mode);
-        }
-    };
-
-    const loadSTL = (file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const geometry = new STLLoader().parse(event.target.result);
-            const material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
-            const mesh = new THREE.Mesh(geometry, material);
-            addObjectToScene(mesh);
-        };
-        reader.readAsArrayBuffer(file);
-    };
-
-    const loadDAE = (file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const loader = new ColladaLoader();
-            loader.parse(event.target.result, (collada) => {
-                const model = collada.scene;
-                addObjectToScene(model);
-            });
-        };
-        reader.readAsText(file);
     };
 
     const addObjectToScene = (object) => {
@@ -179,76 +148,39 @@ function ThreeScene() {
             obj.scene.add(object);
         }
         setTreeState({ ...obj.scene });
-        dispatch({ type: 'SET_SCENE', payload: obj.scene });
+        dispatch({ type: "SET_SCENE", payload: obj.scene });
     };
 
-    const handleFileUpload = (event, loaderFunction) => {
-        const file = event.target.files[0];
-        if (file) {
-            loaderFunction(file);
+    const setTransformMode = (mode) => {
+        const { current: obj } = threeObjects;
+        if (obj.transformControls) {
+            obj.transformControls.setMode(mode);
         }
     };
 
-    const fileInputRefSTL = useRef(null);
-    const fileInputRefDAE = useRef(null);
-
-    const handleFileButtonClick = (ref) => {
-        if (ref.current) {
-            ref.current.click();
-        }
+    const handleUpdateObject = (updatedObject) => {
+        setSelectedObject(updatedObject);
+        setTreeState({ ...threeObjects.current.scene });
+        dispatch({ type: 'SET_SCENE', payload: threeObjects.current.scene });
     };
+
 
     return (
         <div className="row-no-space">
             <div className="left-panel">
-                {/* Tree structure menu */}
                 <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
-
-                <div style={{ marginTop: "10px" }} className="column-box">
-                    Add Objects
-                    <button onClick={() => addObject("cube")}>Add Cube</button>
-                    <button onClick={() => addObject("sphere")}>
-                        Add Sphere
-                    </button>
-                    <button onClick={() => addObject("cylinder")}>
-                        Add Cylinder
-                    </button>
-                    <button onClick={() => handleFileButtonClick(fileInputRefSTL)}>Upload STL</button>
-                    <button onClick={() => handleFileButtonClick(fileInputRefDAE)}>Upload DAE</button>
-                    <input
-                        type="file"
-                        accept=".stl"
-                        ref={fileInputRefSTL}
-                        onChange={(event) => handleFileUpload(event, loadSTL)}
-                        style={{ display: 'none' }}
-                    />
-                    <input
-                        type="file"
-                        accept=".dae"
-                        ref={fileInputRefDAE}
-                        onChange={(event) => handleFileUpload(event, loadDAE)}
-                        style={{ display: 'none' }}
-                    />
-                </div>
+                <InsertTool addObject={addObject} addObjectToScene={addObjectToScene} />
             </div>
 
-            {/* The main threejs display */}
+            <ObjectParameters selectedObject={selectedObject} onUpdate={handleUpdateObject} />
+
             <div className="display">
                 <div ref={mountRef} style={{ width: "100%", height: "100%" }} />
-                <div
-                    style={{ marginTop: "10px" }}
-                    className="row-space-between"
-                >
+                <div style={{ marginTop: "10px" }} className="row-space-between">
                     <div className="row-spaced">
-                        <button onClick={() => setTransformMode("translate")}>
-                            Translate
-                        </button>
-                        <button onClick={() => setTransformMode("rotate")}>
-                            Rotate
-                        </button>
-                        <button onClick={() => setTransformMode("scale")}>
-                            Scale
-                        </button>
+                        <button onClick={() => setTransformMode("translate")}>Translate</button>
+                        <button onClick={() => setTransformMode("rotate")}>Rotate</button>
+                        <button onClick={() => setTransformMode("scale")}>Scale</button>
                     </div>
                 </div>
             </div>
