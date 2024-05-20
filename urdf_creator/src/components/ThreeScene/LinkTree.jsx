@@ -16,7 +16,6 @@ export const LinkTree = ({ tree, select }) => {
                         className="tree-item"
                         onClick={() => {
                             select(node);
-                            console.log("clicked");
                         }}
                     >
                         {node.userData.name}

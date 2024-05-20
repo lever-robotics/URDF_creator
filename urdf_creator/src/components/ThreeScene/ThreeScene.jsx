@@ -86,15 +86,32 @@ function ThreeScene() {
         if (!obj.scene) return;
 
         let geometry;
+        let onBeforeRender = (renderer, scene, camera, geometry, material, group) => {};
         switch (shape) {
             case "cube":
                 geometry = new THREE.BoxGeometry(1, 1, 1);
                 break;
             case "sphere":
                 geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
+                    const worldScale = new THREE.Vector3();
+                    this.getWorldScale(worldScale);
+                    const uniformScale = (worldScale.x + worldScale.y + worldScale.z) / 3;
+
+                    const localScale = this.scale;
+                    this.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
+                };
                 break;
             case "cylinder":
                 geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
+                    const worldScale = new THREE.Vector3();
+                    this.getWorldScale(worldScale);
+                    const uniformScale = (worldScale.x + worldScale.z) / 2;
+
+                    const localScale = this.scale;
+                    this.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
+                };
                 break;
             default:
                 return;
@@ -105,6 +122,7 @@ function ThreeScene() {
         });
 
         const mesh = new THREE.Mesh(geometry, material);
+        mesh.onBeforeRender = onBeforeRender;
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
         mesh.userData.name = shape;
