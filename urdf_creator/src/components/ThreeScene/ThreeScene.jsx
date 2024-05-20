@@ -93,6 +93,7 @@ function ThreeScene() {
                 break;
             case "sphere":
                 geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                // ensure spheres scale uniformly in all directions
                 onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
                     const worldScale = new THREE.Vector3();
                     this.getWorldScale(worldScale);
@@ -104,6 +105,7 @@ function ThreeScene() {
                 break;
             case "cylinder":
                 geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                // ensure cylinders scale uniformly in two directions
                 onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
                     const worldScale = new THREE.Vector3();
                     this.getWorldScale(worldScale);
