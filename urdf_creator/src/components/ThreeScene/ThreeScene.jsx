@@ -45,14 +45,7 @@ function ThreeScene() {
         if (!mountRef.current || obj.initialized) return;
 
         // perform necessary set up for the threejs scene-- initScene must be called last
-        const setUpMouseCallback = setUpMouse(
-            threeObjects,
-            mountRef,
-            mouseData,
-            setSelectedObject,
-            setObjectPosition,
-            setSelectObjectFunc
-        );
+        const setUpMouseCallback = setUpMouse(threeObjects, mountRef, mouseData, setSelectedObject, setObjectPosition, setSelectObjectFunc);
         const sceneCallback = initScene(threeObjects, mountRef);
 
         // main animation loop
@@ -80,16 +73,10 @@ function ThreeScene() {
                 }
             };
 
-            obj.transformControls.addEventListener(
-                "objectChange",
-                updatePosition
-            );
+            obj.transformControls.addEventListener("objectChange", updatePosition);
 
             return () => {
-                obj.transformControls.removeEventListener(
-                    "objectChange",
-                    updatePosition
-                );
+                obj.transformControls.removeEventListener("objectChange", updatePosition);
             };
         }
     }, [selectedObject]);
@@ -150,32 +137,19 @@ function ThreeScene() {
                 <div style={{ marginTop: "10px" }} className="column-box">
                     Add Objects
                     <button onClick={() => addObject("cube")}>Add Cube</button>
-                    <button onClick={() => addObject("sphere")}>
-                        Add Sphere
-                    </button>
-                    <button onClick={() => addObject("cylinder")}>
-                        Add Cylinder
-                    </button>
+                    <button onClick={() => addObject("sphere")}>Add Sphere</button>
+                    <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
                 </div>
             </div>
 
             {/* The main threejs display */}
             <div className="display">
                 <div ref={mountRef} style={{ width: "100%", height: "100%" }} />
-                <div
-                    style={{ marginTop: "10px" }}
-                    className="row-space-between"
-                >
+                <div style={{ marginTop: "10px" }} className="row-space-between">
                     <div className="row-spaced">
-                        <button onClick={() => setTransformMode("translate")}>
-                            Translate
-                        </button>
-                        <button onClick={() => setTransformMode("rotate")}>
-                            Rotate
-                        </button>
-                        <button onClick={() => setTransformMode("scale")}>
-                            Scale
-                        </button>
+                        <button onClick={() => setTransformMode("translate")}>Translate</button>
+                        <button onClick={() => setTransformMode("rotate")}>Rotate</button>
+                        <button onClick={() => setTransformMode("scale")}>Scale</button>
                     </div>
                 </div>
             </div>

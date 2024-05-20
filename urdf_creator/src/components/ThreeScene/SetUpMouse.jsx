@@ -1,5 +1,11 @@
-export default function setUpMouse(threeObjects, mountRef, mouseData, setSelectedObject, setObjectPosition, setSelectObjectFunc) {
-
+export default function setUpMouse(
+    threeObjects,
+    mountRef,
+    mouseData,
+    setSelectedObject,
+    setObjectPosition,
+    setSelectObjectFunc
+) {
     const { current: obj } = threeObjects;
     if (!mountRef.current || obj.initialized) return;
 
@@ -14,8 +20,12 @@ export default function setUpMouse(threeObjects, mountRef, mouseData, setSelecte
         obj.raycaster.setFromCamera(obj.mouse, obj.camera);
         const intersects = obj.raycaster.intersectObjects(obj.scene.children);
 
-        const shapes = intersects.filter((collision) => collision.object.userData.shape);
-        const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
+        const shapes = intersects.filter(
+            (collision) => collision.object.userData.shape
+        );
+        const meshes = intersects.filter(
+            (collision) => collision.object.type === "Mesh"
+        );
 
         if (shapes.length > 0) {
             const object = shapes[0].object;
@@ -44,14 +54,14 @@ export default function setUpMouse(threeObjects, mountRef, mouseData, setSelecte
             setSelectedObject(null);
             obj.transformControls.detach();
         }
-    }
+    };
 
     function onDoubleClick(event) {
         // Handle double click event if needed
     }
 
     function onClick(event) {
-        clickObject(event)
+        clickObject(event);
     }
 
     function onMouseUp(event) {
@@ -60,9 +70,19 @@ export default function setUpMouse(threeObjects, mountRef, mouseData, setSelecte
         const dragThreshold = 20;
         const endPos = [event.clientX, event.clientY];
 
-        if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {
+        if (
+            Math.sqrt(
+                (endPos[0] - mouseData.current.startPos[0]) ** 2 +
+                    (endPos[1] - mouseData.current.startPos[1]) ** 2
+            ) > dragThreshold
+        ) {
             // Do nothing if dragged
-        } else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
+        } else if (
+            mouseData.current.currentDownTime -
+                mouseData.current.previousUpTime <
+                clickTime &&
+            Date.now() - mouseData.current.currentDownTime < clickTime
+        ) {
             onDoubleClick(event);
         } else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
             onClick(event);
@@ -76,18 +96,15 @@ export default function setUpMouse(threeObjects, mountRef, mouseData, setSelecte
         mouseData.current.startPos = [event.clientX, event.clientY];
     }
 
-    mountRef.current.addEventListener('pointerdown', onMouseDown);
-    mountRef.current.addEventListener('pointerup', onMouseUp);
+    mountRef.current.addEventListener("pointerdown", onMouseDown);
+    mountRef.current.addEventListener("pointerup", onMouseUp);
 
     const callback = () => {
         if (mountRef.current) {
-            mountRef.current.removeEventListener('pointerdown', onMouseDown);
-            mountRef.current.removeEventListener('pointerup', onMouseUp);
+            mountRef.current.removeEventListener("pointerdown", onMouseDown);
+            mountRef.current.removeEventListener("pointerup", onMouseUp);
         }
     };
-
-    console.log("file callback");
-    console.log(callback)
 
     return callback;
 }

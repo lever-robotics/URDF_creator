@@ -1,10 +1,10 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 
-export default function initScene (threeObjects, mountRef) {
+export default function initScene(threeObjects, mountRef) {
     const { current: obj } = threeObjects;
     if (!mountRef.current || obj.initialized) return;
 
@@ -25,8 +25,34 @@ export default function initScene (threeObjects, mountRef) {
     obj.scene.add(obj.transformControls);
 
     // Disable orbit controls when transforming objects
-    obj.transformControls.addEventListener('dragging-changed', event => {
+    obj.transformControls.addEventListener("dragging-changed", (event) => {
         obj.orbitControls.enabled = !event.value;
+    });
+
+    obj.transformControls.addEventListener("objectChange", () => {
+        if (!obj.transformControls.object) return;
+
+        if (obj.transformControls.object.userData.shape === "sphere") {
+            const worldScale = new THREE.Vector3();
+            obj.transformControls.object.getWorldScale(worldScale);
+            const worldPosition = new THREE.Vector3();
+            obj.transformControls.object.getWorldPosition(worldPosition);
+            const worldQuaternion = new THREE.Quaternion();
+            obj.transformControls.object.getWorldQuaternion(worldQuaternion);
+
+            const { x, y, z } = worldScale;
+            const uniformScale = (x + y + z) / 3;
+            const globalMatrix = new THREE.Matrix4();
+            globalMatrix.compose(worldPosition, worldQuaternion, new THREE.Vector3(uniformScale, uniformScale, uniformScale));
+            obj.transformControls.object.matrixWorld = globalMatrix;
+            obj.transformControls.object.updateMatrixWorld(true);
+        }
+
+        if (obj.transformControls.object.userData.shape === "cylinder") {
+            const { x, y, z } = obj.transformControls.object.scale;
+            const uniformRadius = (x + z) / 2;
+            obj.transformControls.object.scale.set(uniformRadius, y, uniformRadius);
+        }
     });
 
     // Add an ambient light to the scene
@@ -54,13 +80,11 @@ export default function initScene (threeObjects, mountRef) {
 
     // Setup Effect Composer for post-processing
     obj.composer = new EffectComposer(obj.renderer);
-    console.log("composer:")
-    console.log(obj.composer)
     const renderPass = new RenderPass(obj.scene, obj.camera);
     obj.composer.addPass(renderPass);
 
     // Load and apply background gradient
-    const background = new THREE.TextureLoader().load( "../../textures/blue.png" );
+    const background = new THREE.TextureLoader().load("../../textures/blue.png");
     obj.scene.background = background;
 
     obj.initialized = true;
@@ -74,7 +98,7 @@ export default function initScene (threeObjects, mountRef) {
             mountRef.current.removeChild(obj.renderer.domElement);
         }
         obj.initialized = false;
-    }
+    };
 
     return callback;
 }
