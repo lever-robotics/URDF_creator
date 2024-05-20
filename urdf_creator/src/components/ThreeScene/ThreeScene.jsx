@@ -4,6 +4,8 @@ import { useStateContext } from "../URDFContext/StateContext.js";
 import { LinkTree } from "./LinkTree";
 import initScene from "./InitScene.jsx";
 import setUpMouse from "./SetUpMouse.jsx";
+import InsertTool from "./InsertTool";
+import ObjectParameters from "./ObjectParameters";
 
 function ThreeScene() {
     // the main state of the project
@@ -16,7 +18,6 @@ function ThreeScene() {
     const [treeState, setTreeState] = useState({});
     const [selectObjectFunc, setSelectObjectFunc] = useState(null);
 
-    // This ref will hold the Three.js essentials
     const threeObjects = useRef({
         scene: null,
         camera: null,
@@ -44,11 +45,9 @@ function ThreeScene() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        // perform necessary set up for the threejs scene-- initScene must be called last
         const setUpMouseCallback = setUpMouse(threeObjects, mountRef, mouseData, setSelectedObject, setObjectPosition, setSelectObjectFunc);
         const sceneCallback = initScene(threeObjects, mountRef);
 
-        // main animation loop
         const animate = () => {
             requestAnimationFrame(animate);
             obj.composer.render();
@@ -70,6 +69,7 @@ function ThreeScene() {
             const updatePosition = () => {
                 if (selectedObject) {
                     setObjectPosition({ ...selectedObject.position });
+                    dispatch({ type: "SET_SCENE", payload: obj.scene });
                 }
             };
 
@@ -107,6 +107,7 @@ function ThreeScene() {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.userData.selectable = true;
         mesh.userData.shape = shape;
+        mesh.userData.name = shape;
         mesh.position.set(2.5, 0.5, 2.5);
         if (selectedObject !== null) {
             selectedObject.attach(mesh);
@@ -121,6 +122,22 @@ function ThreeScene() {
         dispatch({ type: "SET_SCENE", payload: obj.scene });
     };
 
+    const addObjectToScene = (object) => {
+        const { current: obj } = threeObjects;
+        object.position.set((Math.random() - 0.5) * 10, 0.5, (Math.random() - 0.5) * 10);
+        object.userData.selectable = true;
+        if (selectedObject !== null) {
+            selectedObject.attach(object);
+        } else if (baseLink !== null) {
+            baseLink.attach(object);
+        } else {
+            setBaseLink(object);
+            obj.scene.add(object);
+        }
+        setTreeState({ ...obj.scene });
+        dispatch({ type: "SET_SCENE", payload: obj.scene });
+    };
+
     const setTransformMode = (mode) => {
         const { current: obj } = threeObjects;
         if (obj.transformControls) {
@@ -128,21 +145,21 @@ function ThreeScene() {
         }
     };
 
+    const handleUpdateObject = (updatedObject) => {
+        setSelectedObject(updatedObject);
+        setTreeState({ ...threeObjects.current.scene });
+        dispatch({ type: "SET_SCENE", payload: threeObjects.current.scene });
+    };
+
     return (
         <div className="row-no-space">
             <div className="left-panel">
-                {/* Tree structure menu */}
                 <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
-
-                <div style={{ marginTop: "10px" }} className="column-box">
-                    Add Objects
-                    <button onClick={() => addObject("cube")}>Add Cube</button>
-                    <button onClick={() => addObject("sphere")}>Add Sphere</button>
-                    <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
-                </div>
+                <InsertTool addObject={addObject} addObjectToScene={addObjectToScene} />
             </div>
 
-            {/* The main threejs display */}
+            <ObjectParameters selectedObject={selectedObject} onUpdate={handleUpdateObject} />
+
             <div className="display">
                 <div ref={mountRef} style={{ width: "100%", height: "100%" }} />
                 <div style={{ marginTop: "10px" }} className="row-space-between">

@@ -16,18 +16,13 @@ export const LinkTree = ({ tree, select }) => {
                         className="tree-item"
                         onClick={() => {
                             select(node);
+                            console.log("clicked");
                         }}
                     >
-                        Name: {node.userData.shape}
+                        {node.userData.name}
                     </button>
                 )}
-                {node.children && node.children.length > 0 && (
-                    <div>
-                        {node.children
-                            .filter((child) => child.type === "Mesh")
-                            .map((child) => renderNode(child))}
-                    </div>
-                )}
+                {node.children && node.children.length > 0 && <div>{node.children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>}
             </div>
         );
     };
@@ -35,9 +30,7 @@ export const LinkTree = ({ tree, select }) => {
     let node = null;
     if (tree) {
         if (tree.children) {
-            const children = tree.children.filter(
-                (child) => child.type === "Mesh"
-            );
+            const children = tree.children.filter((child) => child.type === "Mesh");
             if (children.length > 0) {
                 node = children[0];
             }

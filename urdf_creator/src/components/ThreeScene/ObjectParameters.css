@@ -1,0 +1,51 @@
+.object-parameters {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.object-parameters h3 {
+    margin-top: 0;
+}
+
+.object-parameters div,
+.object-parameters ul {
+    margin-bottom: 10px;
+}
+
+.object-parameters ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.object-parameters li {
+    margin-bottom: 5px;
+}
+
+.object-parameters input[type="text"],
+.object-parameters input[type="number"],
+.object-parameters input[type="color"] {
+    width: 80px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+.object-parameters input[type="number"]::-webkit-inner-spin-button,
+.object-parameters input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.object-parameters input[type="number"]::-moz-inner-spin-button,
+.object-parameters input[type="number"]::-moz-outer-spin-button {
+    -moz-appearance: textfield;
+}
+
+.object-parameters input[type="number"] {
+    -moz-appearance: textfield;
+}
