@@ -115,6 +115,8 @@ function ThreeScene() {
             baseLink.attach(mesh);
         } else {
             mesh.position.set(0, 0.5, 0);
+            mesh.userData.isBaseLink = true;
+            mesh.userData.name = "base_link";
             setBaseLink(mesh);
             obj.scene.attach(mesh);
         }
