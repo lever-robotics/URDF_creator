@@ -29,31 +29,22 @@ export default function initScene(threeObjects, mountRef) {
         obj.orbitControls.enabled = !event.value;
     });
 
-    obj.transformControls.addEventListener("objectChange", () => {
-        if (!obj.transformControls.object) return;
+    // obj.transformControls.addEventListener("objectChange", () => {
+    //     if (!obj.transformControls.object) return;
 
-        if (obj.transformControls.object.userData.shape === "sphere") {
-            const worldScale = new THREE.Vector3();
-            obj.transformControls.object.getWorldScale(worldScale);
-            const worldPosition = new THREE.Vector3();
-            obj.transformControls.object.getWorldPosition(worldPosition);
-            const worldQuaternion = new THREE.Quaternion();
-            obj.transformControls.object.getWorldQuaternion(worldQuaternion);
+    //     if (obj.transformControls.object.userData.shape === "sphere") {
 
-            const { x, y, z } = worldScale;
-            const uniformScale = (x + y + z) / 3;
-            const globalMatrix = new THREE.Matrix4();
-            globalMatrix.compose(worldPosition, worldQuaternion, new THREE.Vector3(uniformScale, uniformScale, uniformScale));
-            obj.transformControls.object.matrixWorld = globalMatrix;
-            obj.transformControls.object.updateMatrixWorld(true);
-        }
+    //     }
 
-        if (obj.transformControls.object.userData.shape === "cylinder") {
-            const { x, y, z } = obj.transformControls.object.scale;
-            const uniformRadius = (x + z) / 2;
-            obj.transformControls.object.scale.set(uniformRadius, y, uniformRadius);
-        }
-    });
+    //     if (obj.transformControls.object.userData.shape === "cylinder") {
+    //         const worldScale = new THREE.Vector3();
+    //         obj.transformControls.object.getWorldScale(worldScale);
+    //         const uniformScale = (worldScale.x + worldScale.z) / 2;
+
+    //         const localScale = obj.transformControls.object.scale;
+    //         obj.transformControls.object.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
+    //     }
+    // });
 
     // Add an ambient light to the scene
     obj.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
