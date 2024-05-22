@@ -4,6 +4,9 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    /* Make box scrollable */
+    overflow: auto;
+    /* position: absolute; */
 }
 
 .object-parameters h3 {
@@ -32,7 +35,7 @@
     font-size: 14px;
     border-radius: 4px;
     box-sizing: border-box;
-    text-align: right;
+    text-align: left;
 }
 
 .object-parameters input[type="number"]::-webkit-inner-spin-button,
@@ -48,4 +51,38 @@
 
 .object-parameters input[type="number"] {
     -moz-appearance: textfield;
+}
+
+.object-parameters label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.object-parameters select {
+    display: block;
+    margin-top: 4px;
+}
+
+.toggle-section {
+    margin-bottom: 10px;
+}
+
+.toggle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.toggle-header h4 {
+    margin: 0;
+}
+
+.toggle-content {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
 }
