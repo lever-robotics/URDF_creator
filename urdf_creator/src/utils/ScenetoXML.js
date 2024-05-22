@@ -19,8 +19,7 @@ export const ScenetoXML = (scene) => {
 
     // Variables to keep track of link naming
     let linkIndex = 0;
-    const generateLinkName = () =>
-        linkIndex === 0 ? "base_link" : `link${linkIndex}`;
+    const generateLinkName = () => (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
 
     // Function to process a single node
     const processNode = (node, parentName = null) => {
@@ -40,9 +39,7 @@ export const ScenetoXML = (scene) => {
             const geometryType = node.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = formatVector(
-                    new THREE.Vector3().setFromMatrixScale(node.matrixWorld)
-                );
+                const size = formatVector(new THREE.Vector3().setFromMatrixScale(node.matrixWorld));
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
                 const radius = node.geometry.parameters.radius;
@@ -57,9 +54,7 @@ export const ScenetoXML = (scene) => {
             // Material
             if (node.material && node.material.color) {
                 const color = node.material.color;
-                xml += `      <material name="${
-                    node.material.name || "material"
-                }">\n`;
+                xml += `      <material name="${node.material.name || "material"}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -93,7 +88,7 @@ export const ScenetoXML = (scene) => {
             }
 
             // Recursively process children with the correct parent name
-            node.children.forEach((child) => processNode(child, linkName));
+            node.userData.scaler.children.forEach((child) => processNode(child, linkName));
         }
     };
 
