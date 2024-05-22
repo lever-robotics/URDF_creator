@@ -86,7 +86,9 @@ function ThreeScene() {
         if (!obj.scene) return;
 
         let geometry;
-        let onBeforeRender = (renderer, scene, camera, geometry, material, group) => {};
+        let onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
+            this.userData.scaler.doScale();
+        };
         switch (shape) {
             case "cube":
                 geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -101,6 +103,7 @@ function ThreeScene() {
 
                     const localScale = this.scale;
                     this.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
+                    this.userData.scaler.doScale();
                 };
                 break;
             case "cylinder":
@@ -113,6 +116,7 @@ function ThreeScene() {
 
                     const localScale = this.scale;
                     this.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
+                    this.userData.scaler.doScale();
                 };
                 break;
             default:
@@ -129,10 +133,16 @@ function ThreeScene() {
         mesh.userData.shape = shape;
         mesh.userData.name = shape;
         mesh.position.set(2.5, 0.5, 2.5);
+
+        //uniform scaler stuff so everything doesn't break when you scale and rotate :)
+        const scaler = new UniformScaler();
+        mesh.userData.scaler = scaler;
+        mesh.add(scaler);
+
         if (selectedObject !== null) {
-            selectedObject.attach(mesh);
+            selectedObject.userData.scaler.attach(mesh);
         } else if (baseLink !== null) {
-            baseLink.attach(mesh);
+            baseLink.userData.scaler.attach(mesh);
         } else {
             mesh.position.set(0, 0.5, 0);
             setBaseLink(mesh);
@@ -157,6 +167,21 @@ function ThreeScene() {
         setTreeState({ ...obj.scene });
         dispatch({ type: "SET_SCENE", payload: obj.scene });
     };
+
+    class UniformScaler extends THREE.Object3D {
+        constructor() {
+            super();
+            this.userData.selectable = false;
+            this.userData.scaler = true;
+            this.doScale = (renderer, scene, camera, geometry, material, group) => {
+                const worldScale = new THREE.Vector3();
+                this.getWorldScale(worldScale);
+                const uniformScale = 1;
+                const localScale = this.scale;
+                this.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
+            };
+        }
+    }
 
     const setTransformMode = (mode) => {
         const { current: obj } = threeObjects;

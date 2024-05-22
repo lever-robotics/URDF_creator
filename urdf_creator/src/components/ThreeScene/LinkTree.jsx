@@ -7,7 +7,6 @@ export const LinkTree = ({ tree, select }) => {
         if (!node) {
             return null;
         }
-
         // Display the current node's data and recursively render its children
         return (
             <div style={{ marginLeft: "20px" }}>
@@ -21,7 +20,9 @@ export const LinkTree = ({ tree, select }) => {
                         {node.userData.name}
                     </button>
                 )}
-                {node.children && node.children.length > 0 && <div>{node.children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>}
+                {node.userData.scaler.children && node.userData.scaler.children.length > 0 && (
+                    <div>{node.userData.scaler.children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>
+                )}
             </div>
         );
     };
