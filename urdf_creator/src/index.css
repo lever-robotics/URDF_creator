@@ -156,3 +156,23 @@ button:focus-visible {
   flex-direction: row;
   justify-content: space-between;
 }
+
+.object-context-menu {
+  position: absolute;
+  background-color: #17242e;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+.duplicate-button {
+  background-color: rgb(0, 216, 0);
+  padding: 10px;
+}
+
+.delete-button {
+  background-color: rgb(216, 54, 0);
+  padding: 10px;
+}

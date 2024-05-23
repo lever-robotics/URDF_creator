@@ -30,12 +30,9 @@ const URDFCodeDisplayer = () => {
 
     const debouncedValidateAndDispatch = useCallback(
         debounce((code) => {
-            //console.log("Validating URDF code...");
             const isValid = isValidURDF(code);
-            //console.log("URDF code is valid:", isValid);
             if (isValid) {
                 dispatch({ type: "SET_URDF_CODE", payload: code });
-                //console.log(state.URDFCode);
             }
         }, 300),
         []
