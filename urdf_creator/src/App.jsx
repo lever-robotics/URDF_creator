@@ -9,7 +9,7 @@ const App = () => {
       <div className='screen'>
         <ThreeScene />
         <URDFCodeDisplayer />
-      </div>,
+      </div>
     </StateProvider>
   );
 };
