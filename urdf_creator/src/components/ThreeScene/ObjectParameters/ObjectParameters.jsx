@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import ToggleSection from './ToggleSection';
 import BasicParameters from './BasicParameters';
 import PositionParameters from './PositionParameters';

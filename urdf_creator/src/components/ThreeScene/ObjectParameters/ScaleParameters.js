@@ -11,7 +11,7 @@ function ScaleParameters({ selectedObject, onUpdate }) {
             setScaleY(selectedObject.scale.y.toFixed(2));
             setScaleZ(selectedObject.scale.z.toFixed(2));
         }
-    }, [selectedObject]);
+    }, [JSON.stringify(selectedObject.scale)]);
 
     const handleChange = (prop, axis, value) => {
         const newValue = parseFloat(value);
