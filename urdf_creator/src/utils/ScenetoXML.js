@@ -2,8 +2,6 @@ import * as THREE from "three";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
-    //console.log("Converting Scene to XML");
-    //console.log(scene);
 
     let xml = `<robot name="GeneratedRobot">\n`;
 
@@ -87,8 +85,9 @@ export const ScenetoXML = (scene) => {
                 xml += `  </joint>\n`;
             }
 
+
             // Recursively process children with the correct parent name
-            node.userData.scaler.children.forEach((child) => processNode(child, linkName));
+            node.children[0].children.forEach((child) => processNode(child, linkName));
         }
     };
 

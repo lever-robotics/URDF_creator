@@ -29,23 +29,6 @@ export default function initScene(threeObjects, mountRef) {
         obj.orbitControls.enabled = !event.value;
     });
 
-    // obj.transformControls.addEventListener("objectChange", () => {
-    //     if (!obj.transformControls.object) return;
-
-    //     if (obj.transformControls.object.userData.shape === "sphere") {
-
-    //     }
-
-    //     if (obj.transformControls.object.userData.shape === "cylinder") {
-    //         const worldScale = new THREE.Vector3();
-    //         obj.transformControls.object.getWorldScale(worldScale);
-    //         const uniformScale = (worldScale.x + worldScale.z) / 2;
-
-    //         const localScale = obj.transformControls.object.scale;
-    //         obj.transformControls.object.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
-    //     }
-    // });
-
     // Add an ambient light to the scene
     obj.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     obj.scene.add(obj.ambientLight);

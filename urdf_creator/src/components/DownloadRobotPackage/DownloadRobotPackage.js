@@ -59,7 +59,6 @@ const DownloadRobotPackage = () => {
 
         // Add the latest URDF file to the ZIP
         if (urdfContent) {
-            //console.log(state.URDFCode);
             zip.file(
                 "my_robot_description/urdf/example_robot.urdf",
                 urdfContent

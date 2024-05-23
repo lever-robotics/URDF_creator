@@ -166,9 +166,14 @@ function ThreeScene() {
             setBaseLink(object);
             obj.scene.add(object);
         }
-        setTreeState({ ...obj.scene });
+        updateTree()
         dispatch({ type: "SET_SCENE", payload: obj.scene });
     };
+
+    const updateTree = () => {
+        const { current: obj } = threeObjects;
+        setTreeState({ ...obj.scene });
+    }
 
     class UniformScaler extends THREE.Object3D {
         constructor() {
@@ -201,7 +206,7 @@ function ThreeScene() {
     return (
         <div className="row-no-space">
             <div className="left-panel">
-                <LinkTree tree={treeState} select={selectObjectFunc}></LinkTree>
+                <LinkTree tree={treeState} select={selectObjectFunc} updateTree={updateTree} selectedObject={selectedObject} setSelectedObject={setSelectedObject} transformControls={threeObjects.current.transformControls}></LinkTree>
                 <InsertTool addObject={addObject} addObjectToScene={addObjectToScene} />
             </div>
 

@@ -75,6 +75,8 @@ function ObjectParameters({ selectedObject, onUpdate }) {
         onUpdate(updatedObject);
     };
 
+
+
     return (
         <div className="object-parameters">
             <h3>Object Parameters</h3>

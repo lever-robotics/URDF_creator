@@ -1,7 +1,18 @@
-import React from "react";
+import { ObjectContextMenu } from '../../utils/ObjectContextMenu';
+import React, { useRef, useState } from "react";
 
 // RecursiveTreeView Component
-export const LinkTree = ({ tree, select }) => {
+export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelectedObject, transformControls }) => {
+
+    const objectContextMenu = useRef(null);
+    const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 })
+    const [lastButtonObjectSelected, setLastButtonObjectSelected] = useState(null);
+
+    // this keeps the context menu from coming back on when a previously right clicked object that was unselected is selected again
+    if (lastButtonObjectSelected !== selectedObject && lastButtonObjectSelected) {
+        setLastButtonObjectSelected(null)
+    }
+
     // Function to render each node and its children
     const renderNode = (node) => {
         if (!node) {
@@ -15,6 +26,17 @@ export const LinkTree = ({ tree, select }) => {
                         className="tree-item"
                         onClick={() => {
                             select(node);
+                        }}
+                        onContextMenu={(e) => {
+                            e.preventDefault();
+                            if (node.userData.isBaseLink) {
+                                setLastButtonObjectSelected(null)
+                                return
+                            };
+                            select(node)
+                            setSelectedObject(node)
+                            setLastButtonObjectSelected(node)
+                            setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY })
                         }}
                     >
                         {node.userData.name}
@@ -37,10 +59,13 @@ export const LinkTree = ({ tree, select }) => {
         }
     }
 
+    const hideContextMenu = () => { setLastButtonObjectSelected(null) }
+
     return (
-        <div className="object-tree">
+        <div className="object-tree" onClick={hideContextMenu} onMouseLeave={hideContextMenu}>
             Object Tree
             <div className="scroll-box">{node && renderNode(node)}</div>
+            {(lastButtonObjectSelected === selectedObject) && selectedObject && <ObjectContextMenu objectContextMenu={objectContextMenu} objectContextMenuPosition={objectContextMenuPosition} selectedObject={selectedObject} updateTree={updateTree} setSelectedObject={setSelectedObject} transformControls={transformControls} />}
         </div>
     );
 };
