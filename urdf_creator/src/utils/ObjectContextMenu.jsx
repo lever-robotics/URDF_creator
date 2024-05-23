@@ -18,7 +18,7 @@ export function ObjectContextMenu({ objectContextMenu, objectContextMenuPosition
 	const duplicateObject = () => {
 		const clone = selectedObject.clone(true);
 
-		//This copies the onBeforeRender callback into the clones
+		//This copies the onBeforeRender callback into the clone
 		copyOnBeforeRender(selectedObject, clone)
 
 		selectedObject.parent.add(clone);

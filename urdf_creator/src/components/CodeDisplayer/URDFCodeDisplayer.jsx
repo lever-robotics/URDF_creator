@@ -44,7 +44,7 @@ const URDFCodeDisplayer = () => {
 
     return (
         <div
-            style={{ margin: "10px", display: "flex", flexDirection: "column" }}
+            style={{ margin: "10px", display: "flex", flexDirection: "column", overflowX: "scroll" }}
         >
             {isEditing ? (
                 <textarea
