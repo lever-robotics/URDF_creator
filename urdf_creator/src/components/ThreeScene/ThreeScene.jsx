@@ -5,7 +5,7 @@ import { LinkTree } from "./LinkTree";
 import initScene from "./InitScene.jsx";
 import setUpMouse from "./SetUpMouse.jsx";
 import InsertTool from "./InsertTool";
-import ObjectParameters from "./ObjectParameters";
+import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
 
 function ThreeScene() {
     // the main state of the project
@@ -74,7 +74,6 @@ function ThreeScene() {
             };
 
             obj.transformControls.addEventListener("objectChange", updatePosition);
-
             return () => {
                 obj.transformControls.removeEventListener("objectChange", updatePosition);
             };
