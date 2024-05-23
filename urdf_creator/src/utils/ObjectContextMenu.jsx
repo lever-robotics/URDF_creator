@@ -8,6 +8,7 @@ export function ObjectContextMenu({ objectContextMenu, objectContextMenuPosition
 	const copyOnBeforeRender = (object, clone) => {
 		if (!object || !clone) return;
 
+		// make the clone onBeforeRender be the same as the original
 		clone.onBeforeRender = object.onBeforeRender
 		for (let i = 0; i < object.children.length; i++) {
 			copyOnBeforeRender(object.children[i], clone.children[i])
