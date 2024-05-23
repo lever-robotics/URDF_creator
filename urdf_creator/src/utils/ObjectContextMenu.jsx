@@ -4,8 +4,22 @@ export function ObjectContextMenu({ objectContextMenu, objectContextMenuPosition
 
 	const { left, top } = objectContextMenuPosition;
 
+
+	const copyOnBeforeRender = (object, clone) => {
+		if (!object || !clone) return;
+
+		clone.onBeforeRender = object.onBeforeRender
+		for (let i = 0; i < object.children.length; i++) {
+			copyOnBeforeRender(object.children[i], clone.children[i])
+		}
+	}
+
 	const duplicateObject = () => {
 		const clone = selectedObject.clone(true);
+
+		//This copies the onBeforeRender callback into the clones
+		copyOnBeforeRender(selectedObject, clone)
+
 		selectedObject.parent.add(clone);
 		updateTree()
 		setSelectedObject(null)
@@ -23,3 +37,4 @@ export function ObjectContextMenu({ objectContextMenu, objectContextMenuPosition
 		<button onClick={deleteObject} className="delete-button">Delete</button>
 	</div>);
 }
+

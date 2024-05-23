@@ -86,7 +86,7 @@ function ThreeScene() {
 
         let geometry;
         let onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
-            this.userData.scaler.doScale();
+            this.children[0].doScale();
         };
         switch (shape) {
             case "cube":
@@ -102,7 +102,7 @@ function ThreeScene() {
 
                     const localScale = this.scale;
                     this.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
-                    this.userData.scaler.doScale();
+                    this.children[0].doScale();
                 };
                 break;
             case "cylinder":
@@ -115,7 +115,7 @@ function ThreeScene() {
 
                     const localScale = this.scale;
                     this.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
-                    this.userData.scaler.doScale();
+                    this.children[0].doScale();
                 };
                 break;
             default:
