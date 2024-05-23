@@ -2,7 +2,6 @@ import * as THREE from "three";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
-
     let xml = `<robot name="GeneratedRobot">\n`;
 
     // Helper to format vector as a string and flip y and z coordinates
@@ -17,12 +16,15 @@ export const ScenetoXML = (scene) => {
 
     // Variables to keep track of link naming
     let linkIndex = 0;
-    const generateLinkName = () => (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+    const generateLinkName = (node) => {
+        return node.userData.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+    };
 
     // Function to process a single node
     const processNode = (node, parentName = null) => {
         if (node instanceof THREE.Mesh) {
-            const linkName = generateLinkName();
+            console.log(node.userData);
+            const linkName = generateLinkName(node);
             linkIndex += 1;
 
             const position = formatVector(node.position);
@@ -37,14 +39,14 @@ export const ScenetoXML = (scene) => {
             const geometryType = node.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = formatVector(new THREE.Vector3().setFromMatrixScale(node.matrixWorld));
+                const size = `${node.scale.x} ${node.scale.y} ${node.scale.z}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.geometry.parameters.radius;
+                const radius = node.scale.x;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
-                const radius = node.geometry.parameters.radiusTop; // Assume top and bottom are the same
-                const height = node.geometry.parameters.height;
+                const radius = node.scale.x; // Assume uniform scaling for the radius
+                const height = node.scale.y;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
@@ -67,10 +69,12 @@ export const ScenetoXML = (scene) => {
             xml += `    </collision>\n`;
 
             // Add inertial element
+            const mass = node.userData.mass || 0;
+            const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
             xml += `    <inertial>\n`;
             xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
-            xml += `      <mass value="1.0" />\n`; // Assuming a default mass of 1 kg
-            xml += `      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />\n`; // Simplified inertia
+            xml += `      <mass value="${mass}" />\n`;
+            xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
             xml += `    </inertial>\n`;
 
             // End link
@@ -84,7 +88,6 @@ export const ScenetoXML = (scene) => {
                 xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
                 xml += `  </joint>\n`;
             }
-
 
             // Recursively process children with the correct parent name
             node.children[0].children.forEach((child) => processNode(child, linkName));

@@ -22,6 +22,7 @@ function InertiaParameters({ selectedObject, onUpdate }) {
     const handleInertiaChange = (prop, value) => {
         const updatedObject = { ...selectedObject };
         updatedObject.userData[prop] = parseFloat(value) || 0;
+        updatedObject.userData.customInertia = true;
         onUpdate(updatedObject);
     };
 
