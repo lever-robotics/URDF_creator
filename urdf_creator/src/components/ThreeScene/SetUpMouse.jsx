@@ -30,6 +30,8 @@ export default function setUpMouse(
         if (shapes.length > 0) {
             const object = shapes[0].object;
             if (object.userData.selectable !== false) {
+                console.log("object")
+                console.log(object)
                 setSelectedObject(object);
                 obj.transformControls.attach(object);
                 setObjectPosition(object.position);
@@ -73,14 +75,14 @@ export default function setUpMouse(
         if (
             Math.sqrt(
                 (endPos[0] - mouseData.current.startPos[0]) ** 2 +
-                    (endPos[1] - mouseData.current.startPos[1]) ** 2
+                (endPos[1] - mouseData.current.startPos[1]) ** 2
             ) > dragThreshold
         ) {
             // Do nothing if dragged
         } else if (
             mouseData.current.currentDownTime -
-                mouseData.current.previousUpTime <
-                clickTime &&
+            mouseData.current.previousUpTime <
+            clickTime &&
             Date.now() - mouseData.current.currentDownTime < clickTime
         ) {
             onDoubleClick(event);

@@ -42,8 +42,8 @@ export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelected
                         {node.userData.name}
                     </button>
                 )}
-                {node.userData.scaler.children && node.userData.scaler.children.length > 0 && (
-                    <div>{node.userData.scaler.children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>
+                {node.children[0].children && node.children[0].children.length > 0 && (
+                    <div>{node.children[0].children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>
                 )}
             </div>
         );
