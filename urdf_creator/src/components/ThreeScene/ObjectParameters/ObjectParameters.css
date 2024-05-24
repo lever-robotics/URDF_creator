@@ -2,7 +2,7 @@
     font-family: Arial, sans-serif;
     margin: 10px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #000000;
     border-radius: 4px;
     /* Make box scrollable */
     overflow: auto;
@@ -69,20 +69,46 @@
 
 .toggle-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px;
     border-radius: 4px;
+    background-color: #333842;
+    /* Slight variation of #282c34 */
+    transition: background-color 0.3s ease;
 }
 
 .toggle-header h4 {
     margin: 0;
+    margin-left: 10px;
+    color: #ffffff;
+    order: 2;
+    /* Ensure the label is after the arrow */
+}
+
+.toggle-header:hover {
+    background-color: #3a3f4a;
+    /* Slightly lighter background color on hover */
+}
+
+.toggle-header .toggle-icon {
+    font-size: 0.9em;
+    /* Make the arrow slightly smaller */
+    transition: transform 0.3s ease;
+    color: #ffffff;
+    order: 1;
+    /* Ensure the arrow is before the label */
 }
 
 .toggle-content {
     padding: 10px;
-    border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
+    background-color: #282c34;
+    /* Background color to match the theme */
+    color: #ffffff;
+}
+
+.toggle-header.open {
+    background-color: #3a3f4a;
+    /* Slightly lighter variation for open state */
 }

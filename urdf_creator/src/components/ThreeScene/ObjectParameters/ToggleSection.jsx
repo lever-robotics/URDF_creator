@@ -5,9 +5,9 @@ const ToggleSection = ({ title, children }) => {
 
     return (
         <div className="toggle-section">
-            <div className="toggle-header" onClick={() => setIsOpen(!isOpen)}>
+            <div className={`toggle-header ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+                <span className="toggle-icon">{isOpen ? '▼' : '▶'}</span>
                 <h4>{title}</h4>
-                <button>{isOpen ? "-" : "+"}</button>
             </div>
             {isOpen && <div className="toggle-content">{children}</div>}
         </div>

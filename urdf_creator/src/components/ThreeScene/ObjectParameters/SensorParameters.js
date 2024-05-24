@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import IMUParameters from './Sensors/IMUParameters';
+import CameraParameters from './Sensors/CameraParameters';
+// Import other sensor parameter components here
 
 function SensorsParameters({ selectedObject, onUpdate }) {
     const [isSensor, setIsSensor] = useState(false);
@@ -6,8 +9,8 @@ function SensorsParameters({ selectedObject, onUpdate }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setIsSensor(selectedObject.userData?.isSensor || false);
-            setSensorType(selectedObject.userData?.sensorType || '');
+            setIsSensor(selectedObject.userData?.isSensor);
+            setSensorType(selectedObject.userData.sensorType);
         }
     }, [JSON.stringify(selectedObject.userData)]);
 
@@ -23,6 +26,23 @@ function SensorsParameters({ selectedObject, onUpdate }) {
         const updatedObject = { ...selectedObject };
         updatedObject.userData.sensorType = e.target.value;
         onUpdate(updatedObject);
+    };
+
+    const handleSensorParamsChange = (newUserData) => {
+        const updatedObject = { ...selectedObject, userData: newUserData };
+        onUpdate(updatedObject);
+    };
+
+    const renderSensorParameters = () => {
+        switch (sensorType) {
+            case 'imu':
+                return <IMUParameters userData={selectedObject.userData} onChange={handleSensorParamsChange} />;
+            case 'camera':
+                return <CameraParameters userData={selectedObject.userData} onChange={handleSensorParamsChange} />;
+            // Add cases for other sensor types here
+            default:
+                return null;
+        }
     };
 
     return (
@@ -45,6 +65,7 @@ function SensorsParameters({ selectedObject, onUpdate }) {
                         <option value="imu">IMU</option>
                         <option value="gps">GPS</option>
                     </select>
+                    {renderSensorParameters()}
                 </div>
             )}
         </div>
