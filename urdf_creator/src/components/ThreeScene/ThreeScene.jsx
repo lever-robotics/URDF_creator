@@ -177,6 +177,8 @@ function ThreeScene() {
             near: 0.1,
             far: 100
             // Add additional sensor parameters here
+
+            //stl parameter: file_name.stl
         };
 
         mesh.position.set(2.5, 0.5, 2.5);

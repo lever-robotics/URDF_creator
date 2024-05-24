@@ -1,6 +1,4 @@
 // generateSensorXML.js
-import * as THREE from 'three';
-
 export const generateSensorXML = (selectedObject) => {
 
     const sensorType = selectedObject.userData.sensorType;
@@ -20,18 +18,18 @@ export const generateSensorXML = (selectedObject) => {
 
     return sensorXML;
 };
-
 const generateIMUXML = (selectedObject) => {
-    // Generate IMU-specific XML here
+    const { name, alwaysOn, updateRate, mean, stddev } = selectedObject.userData;
+
     return `
-        <sensor type="imu" name="${selectedObject.userData.name}">
-            <always_on>${selectedObject.userData.alwaysOn}</always_on>
-            <update_rate>${selectedObject.userData.updateRate}</update_rate>
+        <sensor type="imu" name="${name}">
+            <always_on>${alwaysOn}</always_on>
+            <update_rate>${updateRate}</update_rate>
             <imu>
                 <noise>
                     <type>gaussian</type>
-                    <mean>${selectedObject.userData.mean}</mean>
-                    <stddev>${selectedObject.userData.stddev}</stddev>
+                    <mean>${mean}</mean>
+                    <stddev>${stddev}</stddev>
                 </noise>
             </imu>
         </sensor>
@@ -39,23 +37,22 @@ const generateIMUXML = (selectedObject) => {
 };
 
 const generateCameraXML = (selectedObject) => {
-    // Generate Camera-specific XML here
+    const { name, horizontal_fov, width, height, format, near, far } = selectedObject.userData;
+
     return `
-        <sensor type="camera" name="${selectedObject.userData.name}">
+        <sensor type="camera" name="${name}">
             <camera>
-                <horizontal_fov>${selectedObject.userData.horizontal_fov}</horizontal_fov>
+                <horizontal_fov>${horizontal_fov}</horizontal_fov>
                 <image>
-                    <width>${selectedObject.userData.width}</width>
-                    <height>${selectedObject.userData.height}</height>
-                    <format>${selectedObject.userData.format}</format>
+                    <width>${width}</width>
+                    <height>${height}</height>
+                    <format>${format}</format>
                 </image>
                 <clip>
-                    <near>${selectedObject.userData.near}</near>
-                    <far>${selectedObject.userData.far}</far>
+                    <near>${near}</near>
+                    <far>${far}</far>
                 </clip>
             </camera>
         </sensor>
     `;
 };
-
-// Add similar functions for other sensors as needed

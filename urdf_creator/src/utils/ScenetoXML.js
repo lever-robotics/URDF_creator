@@ -40,13 +40,13 @@ export const ScenetoXML = (scene) => {
             const geometryType = node.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${node.scale.x} ${node.scale.y} ${node.scale.z}`;
+                const size = `${node.scale.x} ${node.scale.z} ${node.scale.y}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.scale.x;
+                const radius = node.scale.x / 3;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
-                const radius = node.scale.x; // Assume uniform scaling for the radius
+                const radius = node.scale.x / 2; // Assume uniform scaling for the radius
                 const height = node.scale.y;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
