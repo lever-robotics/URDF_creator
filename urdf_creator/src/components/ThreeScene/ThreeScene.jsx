@@ -162,6 +162,10 @@ function ThreeScene() {
             gaussianNoise: 0.01,
             xyzOffsets: '0 0 0',
             rpyOffsets: '0 0 0',
+            alwaysOn: true,
+            updateRate: 100,
+            mean: 0,
+            stddev: 0,
             // Camera Parameters
             cameraName: 'camera',
             imageTopicName: '/camera/image_raw',
