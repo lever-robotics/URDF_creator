@@ -158,6 +158,21 @@ function ThreeScene() {
             selectable: true,
             sensorType: "",
             shape: shape,
+            // IMU Parameters
+            gaussianNoise: 0.01,
+            xyzOffsets: '0 0 0',
+            rpyOffsets: '0 0 0',
+            // Camera Parameters
+            cameraName: 'camera',
+            imageTopicName: '/camera/image_raw',
+            cameraInfoTopicName: '/camera/camera_info',
+            horizontal_fov: 1.3962634,
+            width: 800,
+            height: 600,
+            format: 'R8G8B8',
+            near: 0.1,
+            far: 100
+            // Add additional sensor parameters here
         };
 
         mesh.position.set(2.5, 0.5, 2.5);

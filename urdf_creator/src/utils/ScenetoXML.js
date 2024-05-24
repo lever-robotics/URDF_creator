@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { generateSensorXML } from "./generateSensorXML";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
@@ -76,6 +77,12 @@ export const ScenetoXML = (scene) => {
             xml += `      <mass value="${mass}" />\n`;
             xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
             xml += `    </inertial>\n`;
+
+            // Check for sensors and add Gazebo plugin if applicable
+            if (node.userData.isSensor && node.userData.sensorType) {
+                const sensorXML = generateSensorXML(node);
+                xml += sensorXML;
+            }
 
             // End link
             xml += `  </link>\n`;
