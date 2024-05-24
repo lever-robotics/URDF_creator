@@ -6,6 +6,7 @@ import initScene from "./InitScene.jsx";
 import setUpMouse from "./SetUpMouse.jsx";
 import InsertTool from "./InsertTool";
 import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
+import calculateMomentOfInertia from '../../utils/calculateMomentOfInertia'; // Adjust the path as needed
 
 function ThreeScene() {
     // the main state of the project
@@ -68,7 +69,20 @@ function ThreeScene() {
         if (obj.transformControls) {
             const updatePosition = () => {
                 if (selectedObject) {
+
                     setObjectPosition({ ...selectedObject.position });
+
+                    // Calculate the moment of inertia and update userData
+                    if (!selectedObject.userData.customInertia) {
+                        const inertia = calculateMomentOfInertia(selectedObject);
+                        selectedObject.userData.Ixx = inertia.Ixx;
+                        selectedObject.userData.Ixy = inertia.Ixy;
+                        selectedObject.userData.Ixz = inertia.Ixz;
+                        selectedObject.userData.Iyy = inertia.Iyy;
+                        selectedObject.userData.Iyz = inertia.Iyz;
+                        selectedObject.userData.Izz = inertia.Izz;
+                    }
+
                     dispatch({ type: "SET_SCENE", payload: obj.scene });
                 }
             };
@@ -128,9 +142,24 @@ function ThreeScene() {
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.onBeforeRender = onBeforeRender;
-        mesh.userData.selectable = true;
-        mesh.userData.shape = shape;
-        mesh.userData.name = shape;
+        mesh.userData = {
+            customInertia: false,
+            Ixx: 0,
+            Ixy: 0,
+            Ixz: 0,
+            Iyy: 0,
+            Iyz: 0,
+            Izz: 0,
+            isBaseLink: false,
+            isSensor: false,
+            mass: 1,
+            name: shape,
+            scaler: new THREE.Object3D(),
+            selectable: true,
+            sensorType: "",
+            shape: shape,
+        };
+
         mesh.position.set(2.5, 0.5, 2.5);
 
         //uniform scaler stuff so everything doesn't break when you scale and rotate :)
