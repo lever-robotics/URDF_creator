@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import initScene from "./InitScene.jsx";
-import setUpSceneMouse from "./SetUpMouse.jsx";
+import initScene from "./ThreeDisplay/InitScene.jsx";
+import setUpSceneMouse from "./ThreeDisplay/SetUpMouse.jsx";
 import UserData from "../Models/UserData.jsx";
 import ThreeDisplay from "./ThreeDisplay/ThreeDisplay.jsx";
 import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
@@ -14,7 +14,7 @@ export default function SceneState() {
 
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
-    const [scene, setScene] = useState({});
+    const [scene, setScene] = useState();
     const [numShapes, setNumShapes] = useState({
         cube: 0,
         sphere: 0,
@@ -46,6 +46,8 @@ export default function SceneState() {
         startPos: null,
     });
 
+    console.log("SceneState.jsx")
+
     // Set up the scene (initialization)
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -53,6 +55,9 @@ export default function SceneState() {
 
         const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
         const sceneCallback = initScene(threeObjects, mountRef);
+        console.log("set up scene")
+        console.log(obj.scene)
+        setScene({ ...obj.scene });
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -216,17 +221,15 @@ export default function SceneState() {
         forceSceneUpdate();
     }
 
-
-
     return (
-        <div>
+        <>
             <ThreeDisplay mountRef={mountRef} />
             <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setUserData={setUserData} />
             <Toolbar setTransformMode={setTransformMode} />
             <InsertTool addObject={addObject} />
             <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
             <CodeDisplay scene={scene} />
-        </div>
+        </>
     );
 }
 

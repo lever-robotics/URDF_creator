@@ -4,6 +4,7 @@ import { generateSensorXML } from "./generateSensorXML";
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
     let xml = `<robot name="GeneratedRobot">\n`;
+    if (scene === undefined) return xml;
 
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
