@@ -1,10 +1,8 @@
-export default function setUpMouse(
+export default function setUpSceneMouse(
     threeObjects,
     mountRef,
     mouseData,
-    setSelectedObject,
-    setObjectPosition,
-    setSelectObjectFunc
+    selectObject,
 ) {
     const { current: obj } = threeObjects;
     if (!mountRef.current || obj.initialized) return;
@@ -29,34 +27,14 @@ export default function setUpMouse(
 
         if (shapes.length > 0) {
             const object = shapes[0].object;
-            if (object.userData.selectable !== false) {
-                console.log("object")
-                console.log(object)
-                setSelectedObject(object);
-                obj.transformControls.attach(object);
-                setObjectPosition(object.position);
-            } else {
-                setSelectedObject(null);
-                obj.transformControls.detach();
-            }
+            selectObject(object);
         } else if (meshes.length === 0) {
-            setSelectedObject(null);
-            obj.transformControls.detach();
+            selectObject(null);
         }
     }
 
-    setSelectObjectFunc(() => selectObject);
 
-    const selectObject = (object) => {
-        if (object.userData.selectable !== false) {
-            setSelectedObject(object);
-            obj.transformControls.attach(object);
-            setObjectPosition(object.position);
-        } else {
-            setSelectedObject(null);
-            obj.transformControls.detach();
-        }
-    };
+
 
     function onDoubleClick(event) {
         // Handle double click event if needed

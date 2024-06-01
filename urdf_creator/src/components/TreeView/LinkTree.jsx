@@ -1,8 +1,8 @@
-import { ObjectContextMenu } from '../../utils/ObjectContextMenu';
+import { ObjectContextMenu } from './ObjectContextMenu';
 import React, { useRef, useState } from "react";
 
 // RecursiveTreeView Component
-export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelectedObject, transformControls }) => {
+export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, duplicateObject }) => {
 
     const objectContextMenu = useRef(null);
     const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 })
@@ -25,7 +25,7 @@ export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelected
                     <button
                         className="tree-item"
                         onClick={() => {
-                            select(node);
+                            selectObject(node);
                         }}
                         onContextMenu={(e) => {
                             e.preventDefault();
@@ -33,8 +33,7 @@ export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelected
                                 setLastButtonObjectSelected(null)
                                 return
                             };
-                            select(node)
-                            setSelectedObject(node)
+                            selectObject(node)
                             setLastButtonObjectSelected(node)
                             setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY })
                         }}
@@ -50,9 +49,9 @@ export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelected
     };
 
     let node = null;
-    if (tree) {
-        if (tree.children) {
-            const children = tree.children.filter((child) => child.type === "Mesh");
+    if (scene) {
+        if (scene.children) {
+            const children = scene.children.filter((child) => child.type === "Mesh");
             if (children.length > 0) {
                 node = children[0];
             }
@@ -65,7 +64,7 @@ export const LinkTree = ({ tree, select, updateTree, selectedObject, setSelected
         <div className="object-tree" onClick={hideContextMenu} onMouseLeave={hideContextMenu}>
             Object Tree
             <div className="scroll-box">{node && renderNode(node)}</div>
-            {(lastButtonObjectSelected === selectedObject) && selectedObject && <ObjectContextMenu objectContextMenu={objectContextMenu} objectContextMenuPosition={objectContextMenuPosition} selectedObject={selectedObject} updateTree={updateTree} setSelectedObject={setSelectedObject} transformControls={transformControls} />}
+            {(lastButtonObjectSelected === selectedObject) && selectedObject && <ObjectContextMenu objectContextMenu={objectContextMenu} objectContextMenuPosition={objectContextMenuPosition} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} />}
         </div>
     );
 };

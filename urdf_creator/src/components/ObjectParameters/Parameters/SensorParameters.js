@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import IMUParameters from './Sensors/IMUParameters';
-import CameraParameters from './Sensors/CameraParameters';
+import IMUParameters from '../Sensors/IMUParameters';
+import CameraParameters from '../Sensors/CameraParameters';
 // Import other sensor parameter components here
 
 function SensorsParameters({ selectedObject, onUpdate }) {
