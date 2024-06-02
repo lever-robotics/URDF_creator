@@ -257,7 +257,7 @@ export default function SceneState() {
                     </Column>
                     <Toolbar setTransformMode={setTransformMode} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setUserData={setUserData} />
+                        <ObjectParameters selectedObject={selectObject} transformObject={transformObject} setLinkName={setLinkName} setUserColor={setUserColor} setMass={setMass} setJoint={setJoint} setInertia={setInertia} setSensor={setSensor} />
                         <CodeDisplay scene={scene} />
                     </Column>
                 </Row>

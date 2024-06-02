@@ -9,7 +9,7 @@ import SensorsParameters from "./Parameters/SensorParameters";
 import "./ObjectParameters.css";
 
 function ObjectParameters({ selectedObject, transformObject, setLinkName, setUserColor, setMass, setJoint, setInertia, setSensor }) {
-    if (!selectedObject) {
+    if (!selectedObject || !selectedObject.userData) {
         return (
             <div className="object-parameters">
                 <h3>Object Parameters</h3>
