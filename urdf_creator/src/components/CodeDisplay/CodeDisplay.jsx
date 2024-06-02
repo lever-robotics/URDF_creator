@@ -4,18 +4,11 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ScenetoXML } from "../../utils/ScenetoXML";
 
 export default function CodeDisplay({ scene }) {
-
     return (
-        <div
-            style={{ margin: "10px", display: "flex", flexDirection: "column", overflowX: "scroll" }}
-        >
-            <SyntaxHighlighter
-                language="xml"
-                style={atomDark}
-                customStyle={{ fontSize: "12px" }} // Inline style for font size
-            >
+        <div style={{ display: "flex", flexDirection: "column", maxHeight: "100%", flexGrow: 1, flexBasis: 0 }}>
+            <SyntaxHighlighter language="xml" style={atomDark} customStyle={{ fontSize: "12px", overflow: "auto", maxHeight: "50%", flexGrow: 1 }}>
                 {ScenetoXML(scene)}
             </SyntaxHighlighter>
         </div>
     );
-};
+}

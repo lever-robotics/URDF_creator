@@ -1,12 +1,13 @@
 .object-parameters {
     font-family: Arial, sans-serif;
-    margin: 10px;
     padding: 10px;
-    border: 1px solid #000000;
     border-radius: 4px;
     /* Make box scrollable */
     overflow: auto;
-    /* position: absolute; */
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 40vh;
+    background-color: #24343f;
 }
 
 .object-parameters h3 {
