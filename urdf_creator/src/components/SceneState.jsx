@@ -9,9 +9,11 @@ import Toolbar from "./Toolbar/ToolBar.jsx";
 import InsertTool from "./Insert/InsertTool.jsx";
 import { LinkTree } from "./TreeView/LinkTree.jsx";
 import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
+import Column from "../utils/ScreenTools/Column.jsx";
+import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
+import Row from "../utils/ScreenTools/Row.jsx";
 
 export default function SceneState() {
-
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [scene, setScene] = useState();
@@ -46,7 +48,7 @@ export default function SceneState() {
         startPos: null,
     });
 
-    console.log("SceneState.jsx")
+    console.log("SceneState.jsx");
 
     // Set up the scene (initialization)
     useEffect(() => {
@@ -55,8 +57,8 @@ export default function SceneState() {
 
         const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
         const sceneCallback = initScene(threeObjects, mountRef);
-        console.log("set up scene")
-        console.log(obj.scene)
+        console.log("set up scene");
+        console.log(obj.scene);
         setScene({ ...obj.scene });
 
         const animate = () => {
@@ -72,7 +74,6 @@ export default function SceneState() {
             setUpMouseCallback();
         };
     }, []);
-
 
     const addObject = (shape) => {
         const { current: obj } = threeObjects;
@@ -145,13 +146,10 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-
     const forceSceneUpdate = () => {
         const { current: obj } = threeObjects;
         setScene({ ...obj.scene });
-    }
-
-
+    };
 
     const setTransformMode = (mode) => {
         const { current: obj } = threeObjects;
@@ -174,7 +172,7 @@ export default function SceneState() {
     const setUserData = (object, data) => {
         object.userData = [...object.userData, data];
         forceSceneUpdate();
-    }
+    };
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
@@ -191,45 +189,52 @@ export default function SceneState() {
                 return;
         }
         forceSceneUpdate();
-    }
+    };
 
     const copyAttributes = (object, clone) => {
         if (!object || !clone) return;
 
         // make the clone onBeforeRender be the same as the original
-        clone.onBeforeRender = object.onBeforeRender
+        clone.onBeforeRender = object.onBeforeRender;
         clone.userData = object.userData.duplicate();
         for (let i = 0; i < object.children.length; i++) {
-            copyAttributes(object.children[i], clone.children[i])
+            copyAttributes(object.children[i], clone.children[i]);
         }
-    }
+    };
 
     const duplicateObject = (object) => {
         const clone = object.clone(true);
 
         //This copies the onBeforeRender callback into the clone
-        copyAttributes(object, clone)
+        copyAttributes(object, clone);
 
         object.parent.add(clone);
         setSelectedObject(null);
         forceSceneUpdate();
-    }
+    };
 
     const deleteObject = (object) => {
         setSelectedObject(null);
         object.removeFromParent();
         forceSceneUpdate();
-    }
+    };
 
     return (
-        <>
+        <div className="screen">
             <ThreeDisplay mountRef={mountRef} />
-            <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setUserData={setUserData} />
-            <Toolbar setTransformMode={setTransformMode} />
-            <InsertTool addObject={addObject} />
-            <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
-            <CodeDisplay scene={scene} />
-        </>
+            <AbsolutePosition>
+                <Row width="100%" height="100%">
+                    <Column height="100%" width="20%" pointerEvents="auto">
+                        <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
+                        <InsertTool addObject={addObject} />
+                    </Column>
+                    <Toolbar setTransformMode={setTransformMode} />
+                    <Column height="100%" width="25%" pointerEvents="auto">
+                        <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setUserData={setUserData} />
+                        <CodeDisplay scene={scene} />
+                    </Column>
+                </Row>
+            </AbsolutePosition>
+        </div>
     );
 }
-

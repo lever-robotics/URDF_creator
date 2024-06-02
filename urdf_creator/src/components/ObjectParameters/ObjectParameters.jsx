@@ -1,17 +1,21 @@
-import ToggleSection from './ToggleSection';
-import BasicParameters from './Parameters/BasicParameters';
-import PositionParameters from './Parameters/PositionParameters';
-import RotationParameters from './Parameters/RotationParameters';
-import ScaleParameters from './Parameters/ScaleParameters';
-import InertiaParameters from './Parameters/InertiaParameters';
-import JointParameters from './Parameters/JointParameters';
-import SensorsParameters from './Parameters/SensorParameters';
-import './ObjectParameters.css'
+import ToggleSection from "./ToggleSection";
+import BasicParameters from "./Parameters/BasicParameters";
+import PositionParameters from "./Parameters/PositionParameters";
+import RotationParameters from "./Parameters/RotationParameters";
+import ScaleParameters from "./Parameters/ScaleParameters";
+import InertiaParameters from "./Parameters/InertiaParameters";
+import JointParameters from "./Parameters/JointParameters";
+import SensorsParameters from "./Parameters/SensorParameters";
+import "./ObjectParameters.css";
 
 function ObjectParameters({ selectedObject, transformObject, setUserData }) {
-
     if (!selectedObject) {
-        return <div></div>;
+        return (
+            <div className="object-parameters">
+                <h3>Object Parameters</h3>
+                No object selected
+            </div>
+        );
     }
 
     return (
