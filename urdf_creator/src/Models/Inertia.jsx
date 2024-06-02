@@ -15,7 +15,7 @@ export default class Inertia {
         if (this.customInertia) return;
 
         const shape = threeObject.userData.shape;
-        if (shape === 'box') {
+        if (shape === 'cube') {
             const width = threeObject.scale.x;
             const height = threeObject.scale.y;
             const depth = threeObject.scale.z;
@@ -48,10 +48,10 @@ export default class Inertia {
         this.iyz = iyz;
     }
 
-    updateMass(newMass) {
+    updateMass(newMass, object) {
         this.mass = newMass;
         if (!this.customInertia) {
-            this.updateInertia(this.shape);
+            this.updateInertia(object);
         }
     }
 

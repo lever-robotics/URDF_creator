@@ -1,9 +1,10 @@
 import React from 'react';
+import { Camera } from '../../../Models/SensorsClass';
 
-function CameraParameters({ userData, onChange }) {
+function CameraParameters({ selectedObject, sensorData, setSensor }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
-        onChange({ ...userData, [name]: value });
+        setSensor(selectedObject, new Camera({ ...sensorData, [name]: value }));
     };
 
     return (
@@ -13,7 +14,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="cameraName"
-                    value={userData.cameraName || 'camera'}
+                    value={sensorData.cameraName || 'camera'}
                     onChange={handleChange}
                 />
             </label>
@@ -22,7 +23,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="imageTopicName"
-                    value={userData.imageTopicName || '/camera/image_raw'}
+                    value={sensorData.imageTopicName || '/camera/image_raw'}
                     onChange={handleChange}
                 />
             </label>
@@ -31,7 +32,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="cameraInfoTopicName"
-                    value={userData.cameraInfoTopicName || '/camera/camera_info'}
+                    value={sensorData.cameraInfoTopicName || '/camera/camera_info'}
                     onChange={handleChange}
                 />
             </label>
@@ -40,7 +41,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="horizontal_fov"
-                    value={userData.horizontal_fov || 1.3962634}
+                    value={sensorData.horizontal_fov || 1.3962634}
                     onChange={handleChange}
                 />
             </label>
@@ -49,7 +50,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="width"
-                    value={userData.width || 800}
+                    value={sensorData.width || 800}
                     onChange={handleChange}
                 />
             </label>
@@ -58,7 +59,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="height"
-                    value={userData.height || 600}
+                    value={sensorData.height || 600}
                     onChange={handleChange}
                 />
             </label>
@@ -67,7 +68,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="format"
-                    value={userData.format || 'R8G8B8'}
+                    value={sensorData.format || 'R8G8B8'}
                     onChange={handleChange}
                 />
             </label>
@@ -76,7 +77,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="near"
-                    value={userData.near || 0.1}
+                    value={sensorData.near || 0.1}
                     onChange={handleChange}
                 />
             </label>
@@ -85,7 +86,7 @@ function CameraParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="far"
-                    value={userData.far || 100}
+                    value={sensorData.far || 100}
                     onChange={handleChange}
                 />
             </label>

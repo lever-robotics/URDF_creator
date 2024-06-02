@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Joint from '../../../Models/Joint';
 
-function JointParameters({ selectedObject, onUpdate }) {
+function JointParameters({ selectedObject, setJoint }) {
     const [jointType, setJointType] = useState('');
 
     useEffect(() => {
@@ -11,9 +12,7 @@ function JointParameters({ selectedObject, onUpdate }) {
 
     const handleJointTypeChange = (e) => {
         setJointType(e.target.value);
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData.jointType = e.target.value;
-        onUpdate(updatedObject);
+        setJoint(new Joint(jointType));
     };
 
     return (

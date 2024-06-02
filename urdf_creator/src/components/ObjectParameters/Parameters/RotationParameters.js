@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function RotationParameters({ selectedObject, onUpdate }) {
+function RotationParameters({ selectedObject, transformObject }) {
     const [rotationX, setRotationX] = useState('');
     const [rotationY, setRotationY] = useState('');
     const [rotationZ, setRotationZ] = useState('');
@@ -19,9 +19,7 @@ function RotationParameters({ selectedObject, onUpdate }) {
     const handleChange = (prop, axis, value) => {
         const newValue = parseFloat(value);
         if (isNaN(newValue)) return;
-        const updatedObject = { ...selectedObject };
-        updatedObject[prop][axis] = degToRad(newValue);
-        onUpdate(updatedObject);
+        transformObject(selectedObject, 'rotation', degToRad(rotationX), degToRad(rotationY), degToRad(rotationZ));
     };
 
     const handleBlur = (prop, axis, value) => {

@@ -8,7 +8,7 @@ import JointParameters from './Parameters/JointParameters';
 import SensorsParameters from './Parameters/SensorParameters';
 import './ObjectParameters.css'
 
-function ObjectParameters({ selectedObject, transformObject, setUserData }) {
+function ObjectParameters({ selectedObject, transformObject, setLinkName, setUserColor, setMass, setJoint, setInertia, setSensor }) {
 
     if (!selectedObject) {
         return <div></div>;
@@ -18,7 +18,7 @@ function ObjectParameters({ selectedObject, transformObject, setUserData }) {
         <div className="object-parameters">
             <h3>Object Parameters</h3>
             <ToggleSection title="Basic Parameters">
-                <BasicParameters selectedObject={selectedObject} setUserData={setUserData} />
+                <BasicParameters selectedObject={selectedObject} setLinkName={setLinkName} setUserColor={setUserColor} setMass={setMass} />
             </ToggleSection>
             <ToggleSection title="Position">
                 <PositionParameters selectedObject={selectedObject} transformObject={transformObject} />
@@ -30,15 +30,15 @@ function ObjectParameters({ selectedObject, transformObject, setUserData }) {
                 <ScaleParameters selectedObject={selectedObject} transformObject={transformObject} />
             </ToggleSection>
             <ToggleSection title="Inertia Parameters">
-                <InertiaParameters selectedObject={selectedObject} setUserData={setUserData} />
+                <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} />
             </ToggleSection>
             {!selectedObject.userData.isBaseLink && (
                 <ToggleSection title="Joint Parameters">
-                    <JointParameters selectedObject={selectedObject} setUserData={setUserData} />
+                    <JointParameters selectedObject={selectedObject} setJoint={setJoint} />
                 </ToggleSection>
             )}
             <ToggleSection title="Sensor Parameters">
-                <SensorsParameters selectedObject={selectedObject} setUserData={setUserData} />
+                <SensorsParameters selectedObject={selectedObject} setSensor={setSensor} />
             </ToggleSection>
         </div>
     );

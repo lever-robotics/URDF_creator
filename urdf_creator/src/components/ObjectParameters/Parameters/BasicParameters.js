@@ -1,38 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import * as THREE from 'three';
 
-function BasicParameters({ selectedObject, onUpdate }) {
+export default function BasicParameters({ selectedObject, setLinkName, setUserColor, setMass }) {
     const [name, setName] = useState('');
-    const [mass, setMass] = useState('');
+    const [mass, setMassTemp] = useState('');
     const [color, setColor] = useState('#ffffff');
 
     useEffect(() => {
         if (selectedObject) {
             setName(selectedObject.userData.name || '');
-            setMass(selectedObject.userData.mass || '');
+            setMassTemp(selectedObject.userData.inertia.mass || '');
             setColor(new THREE.Color(selectedObject.material.color).getStyle());
         }
     }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.material)]);
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData.name = e.target.value;
-        onUpdate(updatedObject);
+        setLinkName(selectedObject, e.target.value);
     };
 
     const handleMassChange = (e) => {
-        setMass(e.target.value);
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData.mass = parseFloat(e.target.value) || 0;
-        onUpdate(updatedObject);
+        setMassTemp(e.target.value);
+        setMass(selectedObject, parseInt(e.target.value, 10));
     };
 
     const handleColorChange = (e) => {
         setColor(e.target.value);
-        const updatedObject = { ...selectedObject };
-        updatedObject.material.color = new THREE.Color(e.target.value);
-        onUpdate(updatedObject);
+        setUserColor(selectedObject, e.target.value);
     };
 
     return (
@@ -46,5 +40,3 @@ function BasicParameters({ selectedObject, onUpdate }) {
         </div>
     );
 }
-
-export default BasicParameters;

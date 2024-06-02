@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function ScaleParameters({ selectedObject, onUpdate }) {
+function ScaleParameters({ selectedObject, transformObject }) {
     const [scaleX, setScaleX] = useState('');
     const [scaleY, setScaleY] = useState('');
     const [scaleZ, setScaleZ] = useState('');
@@ -17,24 +17,22 @@ function ScaleParameters({ selectedObject, onUpdate }) {
     const handleChange = (axis, value) => {
         const newValue = parseFloat(value);
         if (isNaN(newValue)) return;
-        const updatedObject = { ...selectedObject };
+        const x = parseFloat(scaleX);
+        const y = parseFloat(scaleY);
+        const z = parseFloat(scaleZ);
+
 
         if (selectedObject.userData.shape === 'sphere') {
-            updatedObject.scale.x = newValue;
-            updatedObject.scale.y = newValue;
-            updatedObject.scale.z = newValue;
+            transformObject(selectedObject, 'scale', x, x, x);
         } else if (selectedObject.userData.shape === 'cylinder') {
             if (axis === 'x' || axis === 'z') {
-                updatedObject.scale.x = newValue;
-                updatedObject.scale.z = newValue;
+                transformObject(selectedObject, 'scale', x, y, x);
             } else {
-                updatedObject.scale.y = newValue;
+                transformObject(selectedObject, 'scale', x, y, z);
             }
         } else {
-            updatedObject.scale[axis] = newValue;
+            transformObject(selectedObject, 'scale', x, y, z);
         }
-
-        onUpdate(updatedObject);
     };
 
     const handleBlur = (axis, value) => {

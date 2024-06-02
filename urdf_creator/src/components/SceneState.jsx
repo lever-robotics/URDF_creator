@@ -162,6 +162,11 @@ export default function SceneState() {
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
+        if (!object) {
+            setSelectedObject(null);
+            obj.transformControls.detach();
+            return;
+        }
         if (object.userData.selectable) {
             setSelectedObject(object);
             obj.transformControls.attach(object);
@@ -171,8 +176,33 @@ export default function SceneState() {
         }
     };
 
-    const setUserData = (object, data) => {
-        object.userData = [...object.userData, data];
+    const setLinkName = (object, name) => {
+        object.userData.name = name;
+        forceSceneUpdate();
+    }
+
+    const setUserColor = (object, color) => {
+        object.material.color.set(color);
+        forceSceneUpdate();
+    }
+
+    const setMass = (object, mass) => {
+        object.userData.inertia.updateMass(mass, object);
+        forceSceneUpdate();
+    }
+
+    const setInertia = (object, inertia) => {
+        object.userData.inertia = inertia;
+        forceSceneUpdate();
+    }
+
+    const setSensor = (object, sensorObj) => {
+        object.userData.sensor = sensorObj;
+        forceSceneUpdate();
+    }
+
+    const setJoint = (object, jointObj) => {
+        object.userData.joint = jointObj;
         forceSceneUpdate();
     }
 
@@ -224,7 +254,7 @@ export default function SceneState() {
     return (
         <>
             <ThreeDisplay mountRef={mountRef} />
-            <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setUserData={setUserData} />
+            <ObjectParameters selectedObject={selectedObject} transformObject={transformObject} setLinkName={setLinkName} setUserColor={setUserColor} setMass={setMass} setSensor={setSensor} setJoint={setJoint} setInertia={setInertia} />
             <Toolbar setTransformMode={setTransformMode} />
             <InsertTool addObject={addObject} />
             <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />

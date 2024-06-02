@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function PositionParameters({ selectedObject, onUpdate }) {
+function PositionParameters({ selectedObject, transformObject }) {
     const [positionX, setPositionX] = useState('');
     const [positionY, setPositionY] = useState('');
     const [positionZ, setPositionZ] = useState('');
@@ -16,9 +16,7 @@ function PositionParameters({ selectedObject, onUpdate }) {
     const handleChange = (prop, axis, value) => {
         const newValue = parseFloat(value);
         if (isNaN(newValue)) return;
-        const updatedObject = { ...selectedObject };
-        updatedObject[prop][axis] = newValue;
-        onUpdate(updatedObject);
+        transformObject(selectedObject, "position", parseFloat(positionX), parseFloat(positionY), parseFloat(positionZ));
     };
 
     const handleBlur = (prop, axis, value) => {

@@ -1,5 +1,6 @@
 import Inertia from './Inertia';
 import UniformScaler from './UniformScaler';
+import Joint from './Joint';
 
 export default class UserData {
     constructor(shape, name) {
@@ -11,6 +12,7 @@ export default class UserData {
         this.selectable = true;
         this.sensor = null; // Sensor object
         this.stlfile = null;
+        this.joint = new Joint();
     }
 
 

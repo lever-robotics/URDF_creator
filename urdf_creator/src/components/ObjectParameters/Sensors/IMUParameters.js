@@ -1,9 +1,10 @@
 import React from 'react';
+import { IMU } from '../../../Models/SensorsClass';
 
-function IMUParameters({ userData, onChange }) {
+function IMUParameters({ selectedObject, sensorData, setSensor }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
-        onChange({ ...userData, [name]: value });
+        setSensor(selectedObject, new IMU({ ...sensorData, [name]: value }));
     };
 
     return (
@@ -13,7 +14,7 @@ function IMUParameters({ userData, onChange }) {
                 <input
                     type="number"
                     name="gaussianNoise"
-                    value={userData.gaussianNoise || 0}
+                    value={sensorData.gaussianNoise || 0}
                     onChange={handleChange}
                 />
             </label>
@@ -22,7 +23,7 @@ function IMUParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="xyzOffsets"
-                    value={userData.xyzOffsets || '0 0 0'}
+                    value={sensorData.xyzOffsets || '0 0 0'}
                     onChange={handleChange}
                 />
             </label>
@@ -31,7 +32,7 @@ function IMUParameters({ userData, onChange }) {
                 <input
                     type="text"
                     name="rpyOffsets"
-                    value={userData.rpyOffsets || '0 0 0'}
+                    value={sensorData.rpyOffsets || '0 0 0'}
                     onChange={handleChange}
                 />
             </label>

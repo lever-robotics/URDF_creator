@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Inertia from '../../../Models/Inertia';
 
-function InertiaParameters({ selectedObject, onUpdate }) {
+function InertiaParameters({ selectedObject, setInertia }) {
     const [Ixx, setIxx] = useState('');
     const [Ixy, setIxy] = useState('');
     const [Ixz, setIxz] = useState('');
@@ -10,20 +11,21 @@ function InertiaParameters({ selectedObject, onUpdate }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setIxx(selectedObject.userData.Ixx || '');
-            setIxy(selectedObject.userData.Ixy || '');
-            setIxz(selectedObject.userData.Ixz || '');
-            setIyy(selectedObject.userData.Iyy || '');
-            setIyz(selectedObject.userData.Iyz || '');
-            setIzz(selectedObject.userData.Izz || '');
+            setIxx(selectedObject.userData.inertia.ixx || '');
+            setIxy(selectedObject.userData.inertia.ixy || '');
+            setIxz(selectedObject.userData.inertia.ixz || '');
+            setIyy(selectedObject.userData.inertia.iyy || '');
+            setIyz(selectedObject.userData.inertia.iyz || '');
+            setIzz(selectedObject.userData.inertia.izz || '');
         }
-    }, [JSON.stringify(selectedObject.userData)]);
+    }, [JSON.stringify(selectedObject.userData.inertia)]);
 
     const handleInertiaChange = (prop, value) => {
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData[prop] = parseFloat(value) || 0;
-        updatedObject.userData.customInertia = true;
-        onUpdate(updatedObject);
+        const newValue = parseFloat(value);
+        if (isNaN(newValue)) return;
+        const inertia = new Inertia(selectedObject.userData.inertia.mass, parseFloat(Ixx), parseFloat(Iyy), parseFloat(Izz), parseFloat(Ixy), parseFloat(Ixz), parseFloat(Iyz));
+        inertia.customInertia = true;
+        setInertia(selectedObject, inertia);
     };
 
     return (

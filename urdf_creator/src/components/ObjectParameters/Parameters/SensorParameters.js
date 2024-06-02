@@ -1,75 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import IMUParameters from '../Sensors/IMUParameters';
 import CameraParameters from '../Sensors/CameraParameters';
+import { IMU, Camera } from '../../../Models/SensorsClass';
 // Import other sensor parameter components here
 
-function SensorsParameters({ selectedObject, onUpdate }) {
-    const [isSensor, setIsSensor] = useState(false);
-    const [sensorType, setSensorType] = useState('');
+function SensorsParameters({ selectedObject, setSensor }) {
+    const [localSensorType, setSensorType] = useState('');
 
     useEffect(() => {
         if (selectedObject) {
-            setIsSensor(selectedObject.userData?.isSensor);
-            setSensorType(selectedObject.userData.sensorType);
+            if (selectedObject.userData.sensor) {
+                setSensorType(selectedObject.userData.sensor.sensorType || '');
+            } else {
+                setSensorType('');
+            }
         }
-    }, [JSON.stringify(selectedObject.userData)]);
-
-    const handleSensorChange = () => {
-        setIsSensor(!isSensor);
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData.isSensor = !isSensor;
-        onUpdate(updatedObject);
-    };
+    }, [JSON.stringify(selectedObject.userData.sensor)]);
 
     const handleSensorTypeChange = (e) => {
-        setSensorType(e.target.value);
-        const updatedObject = { ...selectedObject };
-        updatedObject.userData.sensorType = e.target.value;
-        onUpdate(updatedObject);
-    };
-
-    const handleSensorParamsChange = (newUserData) => {
-        const updatedObject = { ...selectedObject, userData: newUserData };
-        onUpdate(updatedObject);
+        switch (e.target.value) {
+            case 'imu':
+                const imu = new IMU();
+                setSensor(selectedObject, imu);
+                break;
+            case 'camera':
+                setSensor(selectedObject, new Camera());
+                break;
+            // Add cases for other sensor types here
+            default:
+                setSensor(selectedObject, null);
+        }
     };
 
     const renderSensorParameters = () => {
-        switch (sensorType) {
+        switch (localSensorType) {
             case 'imu':
-                return <IMUParameters userData={selectedObject.userData} onChange={handleSensorParamsChange} />;
+                return <IMUParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
             case 'camera':
-                return <CameraParameters userData={selectedObject.userData} onChange={handleSensorParamsChange} />;
+                return <CameraParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
             // Add cases for other sensor types here
             default:
-                return null;
+                return <div>Not a Sensor Type</div>;
         }
     };
 
     return (
         <div>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={isSensor}
-                    onChange={handleSensorChange}
-                />
-                Is Sensor
-            </label>
-            {isSensor && (
-                <div>
-                    <strong>Sensor Type:</strong>
-                    <select value={sensorType} onChange={handleSensorTypeChange}>
-                        <option value="">Select a sensor</option>
-                        <option value="lidar">Lidar</option>
-                        <option value="camera">Camera</option>
-                        <option value="imu">IMU</option>
-                        <option value="gps">GPS</option>
-                    </select>
-                    {renderSensorParameters()}
-                </div>
-            )}
+            <strong>Sensor Type:</strong>
+            <select value={localSensorType} onChange={handleSensorTypeChange}>
+                <option value="">Not a Sensor</option>
+                <option value="lidar">Lidar</option>
+                <option value="camera">Camera</option>
+                <option value="imu">IMU</option>
+                <option value="gps">GPS</option>
+            </select>
+            {renderSensorParameters()}
         </div>
     );
 }
+
 
 export default SensorsParameters;
