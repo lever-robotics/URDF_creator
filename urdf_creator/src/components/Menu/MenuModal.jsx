@@ -45,6 +45,10 @@ export default function MenuModal() {
     background:'rgba(0, 0, 0, 0.6)',
   }));
 
+  function changeProjectTitle(e){
+    setProjectTitle(e.target.value);
+  }
+
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => (
@@ -53,7 +57,7 @@ export default function MenuModal() {
             <Button variant="contained" {...bindTrigger(popupState)} class="material-symbols-outlined">
               menu
             </Button>
-            <div Id='projectTitle'>{projectTitle}</div>
+            <input type='text' value={projectTitle}Id='projectTitleInput' onChange={changeProjectTitle}/>
           </div>
           <StyledMenu {...bindMenu(popupState)}>
             <StyledMenuItem onClick={popupState.close}>Profile</StyledMenuItem>
