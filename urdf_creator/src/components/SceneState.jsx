@@ -12,6 +12,7 @@ import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
+import MenuModal from "./Menu/MenuModal.jsx"
 
 export default function SceneState() {
     // State to manage the currently selected object and its position
@@ -252,6 +253,7 @@ export default function SceneState() {
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
+                        <MenuModal></MenuModal>
                         <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
                         <InsertTool addObject={addObject} />
                     </Column>

@@ -1,0 +1,30 @@
+.menu{
+    display: flex;
+    justify-content: space-between;
+}
+
+#projectTitle{
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+button{
+    padding: 0.4em .4em;
+    margin-left: .2em;
+}
+
+MenuItem.Mui-active{
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24;
+}
