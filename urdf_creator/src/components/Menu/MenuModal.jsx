@@ -4,15 +4,18 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import './MenuModal.css'
 
-export default function MenuModal() {
+export default function MenuModal({ openProjectManager }) {
   const [projectTitle, setProjectTitle] = useState('untitled');
 
   const StyledMenuItem = styled(props => (
-    <MenuItem {...props} disableRipple/>
+    <MenuItem {...props} disableRipple>
+    </MenuItem>
   ))(({ theme }) => ({
+    minWidth: 0,
     fontSize: "3em",
     fontWeight: 200,
     fontFamily: "inherit",
@@ -49,6 +52,7 @@ export default function MenuModal() {
     setProjectTitle(e.target.value);
   }
 
+
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => (
@@ -57,13 +61,17 @@ export default function MenuModal() {
             <Button variant="contained" {...bindTrigger(popupState)} class="material-symbols-outlined">
               menu
             </Button>
-            <input type='text' value={projectTitle}Id='projectTitleInput' onChange={changeProjectTitle}/>
+            <input type='text' value={projectTitle}id='projectTitleInput' onChange={changeProjectTitle}/>
           </div>
           <StyledMenu {...bindMenu(popupState)}>
             <StyledMenuItem onClick={popupState.close}>Profile</StyledMenuItem>
             <StyledMenuItem onClick={popupState.close}>My account</StyledMenuItem>
             <StyledMenuItem onClick={popupState.close}>Logout</StyledMenuItem>
-            <StyledMenuItem onClick={popupState.close}>Another Button</StyledMenuItem>
+            <StyledMenuItem onClick={() => {
+              openProjectManager();
+              popupState.close();
+              }
+            }>Project Manager</StyledMenuItem>
           </StyledMenu>
         </React.Fragment>
       )}
