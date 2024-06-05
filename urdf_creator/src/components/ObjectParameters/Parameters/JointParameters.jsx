@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Axis from "../../../Models/Axis";
 import Slider from "@mui/material/Slider";
+import MuiInput from "@mui/material/Input";
 
 export default function JointParameters({ selectedObject, setJoint, startMoveJoint, startRotateJoint }) {
     const [jointType, setJointType] = useState(selectedObject.jointAxis.type);
 
     const handleJointTypeChange = (e) => {
         setJointType(e.target.value);
-        const axis = new Axis({ type: e.target.value });
-        setJoint(selectedObject, axis);
+        setJoint(selectedObject, e.target.value);
     };
 
     useEffect(() => {
@@ -33,17 +32,29 @@ export default function JointParameters({ selectedObject, setJoint, startMoveJoi
                     <option value="floating">Floating</option> */}
                 </select>
             </div>
-            {}
+            {jointType === "revolute" && <RevoluteOptions startMoveJoint={startMoveJoint} startRotateJoint={startRotateJoint} selectedObject={selectedObject} />}
         </div>
     );
 }
 
 const RevoluteOptions = ({ startMoveJoint, startRotateJoint, selectedObject }) => {
+    // min value
+    const [min, setMin] = useState(-90);
+    // max value
+    const [max, setMax] = useState(90);
+    // current value
+    const [current, setCurrent] = useState(0);
+
+    const handleSlider = (e) => {
+        setCurrent(parseInt(e.target.value));
+    };
+
     return (
         <>
             <button
                 onClick={() => {
-                    console.log("clicked");
+                    console.log("selected");
+                    console.log(selectedObject);
                     startRotateJoint(selectedObject);
                 }}
             >
@@ -56,7 +67,40 @@ const RevoluteOptions = ({ startMoveJoint, startRotateJoint, selectedObject }) =
             >
                 Change Axis Origin
             </button>
-            <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
+            <div>
+                <span>
+                    min:
+                    <MuiInput
+                        value={min}
+                        size="small"
+                        onChange={(e) => setMin(e.target.value)}
+                        inputProps={{
+                            step: 10,
+                            min: -360,
+                            max: max,
+                            type: "number",
+                            "aria-labelledby": "input-slider",
+                        }}
+                    />
+                </span>
+                <span>
+                    max:
+                    <MuiInput
+                        value={max}
+                        size="small"
+                        onChange={(e) => setMax(e.target.value)}
+                        inputProps={{
+                            step: 10,
+                            min: "{min}",
+                            max: 360,
+                            type: "number",
+                            "aria-labelledby": "input-slider",
+                        }}
+                    />
+                </span>
+            </div>
+
+            <Slider value={current} min={min} max={max} aria-label="Default" valueLabelDisplay="auto" onChange={handleSlider} />
         </>
     );
 };

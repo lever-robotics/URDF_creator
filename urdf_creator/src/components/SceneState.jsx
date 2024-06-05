@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import initScene from "./ThreeDisplay/InitScene.jsx";
 import setUpSceneMouse from "./ThreeDisplay/SetUpMouse.jsx";
-import UserData from "../Models/UserData.jsx";
 import ThreeDisplay from "./ThreeDisplay/ThreeDisplay.jsx";
 import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
 import Toolbar from "./Toolbar/ToolBar.jsx";
@@ -149,6 +148,8 @@ export default function SceneState() {
 
     const startRotateJoint = (object) => {
         const { current: obj } = threeObjects;
+        console.log("this is the object");
+        console.log(object);
         obj.transformControls.setMode("rotate");
         obj.transformControls.attach(object.jointAxis);
     };
@@ -200,9 +201,9 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const setJoint = (object, axis) => {
+    const setJoint = (object, type) => {
         console.log("setting joint");
-        object.jointAxis = axis;
+        object.jointAxis.type = type;
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
