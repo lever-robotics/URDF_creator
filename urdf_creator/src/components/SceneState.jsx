@@ -207,10 +207,13 @@ export default function SceneState() {
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
-        // threeObjects.current.scene.add(scene);// This Line NEEEEEEDS to be scene.add?? Not sure why
-        threeObjects.current.scene = scene;
+        // threeObjects.current.scene = scene;
+        // forceSceneUpdate();
+        const group = scene.scene.children.pop();
+        threeObjects.current.scene.add(group);// This Line NEEEEEEDS to be scene.add?? Not sure why
         console.log(threeObjects.current.scene);
-        forceSceneUpdate();
+        // threeObjects.current.baseLink.removeFromParent();
+        
     };
     const getScene = () => {
         return threeObjects.current.scene;

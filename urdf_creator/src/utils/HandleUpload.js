@@ -16,7 +16,8 @@ export function handleUpload(file){
             }else if (type === 'gltf'){
                 const loader = new GLTFLoader();
                 loader.parse(e.target.result,'', (gltf) => {
-                    resolve(gltf.scene);
+                    console.log(gltf);
+                    resolve(gltf);
                 });
                 // console.log(e.target.result);
                 // const scene = JSONtoScene(e.target.result);
@@ -28,3 +29,4 @@ export function handleUpload(file){
         reader.readAsText(file);
     })
   } 
+  
