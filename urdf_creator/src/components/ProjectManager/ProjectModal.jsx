@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './ProjectModal.css';
+import ProjectDisplayer from './ProjectDisplayer';
+import './Project.css';
 
 const ProjectModal = ({ isOpen, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -55,8 +56,8 @@ const ProjectModal = ({ isOpen, onClose }) => {
           &times;
         </button>
         <div className="modal-body">
-          <h2>Project Manager</h2>
-          <p>This is the project manager</p>
+          <h1>Project Manager</h1>
+          <ProjectDisplayer/>
         </div>
       </div>
     </div>
