@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,9 +7,12 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { handleDownload } from '../../utils/HandleDownload';
+import { handleUpload } from '../../utils/HandleUpload';
 import './MenuModal.css'
 
 export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, scene }) {
+  const inputFile = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const StyledMenuItem = styled(props => (
     <MenuItem {...props} disableRipple>
@@ -50,6 +53,13 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
 
   const downloadURDF = (scene, projectTitle) => handleDownload(scene, 'urdf', projectTitle);
 
+
+  /* Annoying File Upload Logic
+  1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
+  2. The input element has an onChange listener that uploads the file using the handleFileChange() function which calls handleUpload() */
+  const onFileUpload = () => inputFile.current.click();
+  const handleFileChange = (e) => handleUpload(e.target.files[0]);
+
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => (
@@ -65,19 +75,20 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
               onClick={() => {
                 openProjectManager();
                 popupState.close();
-              }}>
-              Project Manager
-            </StyledMenuItem>
+              }}>Project Manager</StyledMenuItem>
             <StyledMenuItem 
               onClick={() => {
                 downloadURDF(scene, projectTitle);
                 popupState.close();
-              }}>
-              Export URDF
-            </StyledMenuItem>
-            <StyledMenuItem onClick={popupState.close}>My account</StyledMenuItem>
+              }}>Export URDF</StyledMenuItem>
+            <StyledMenuItem 
+              onClick={() => {
+                onFileUpload();
+                popupState.close();
+              }}>Upload File</StyledMenuItem>
             <StyledMenuItem onClick={popupState.close}>Logout</StyledMenuItem>
           </StyledMenu>
+          <input type='file' ref={inputFile} style={{display: 'none'}} onChange={handleFileChange}/>
         </React.Fragment>
       )}
     </PopupState>
