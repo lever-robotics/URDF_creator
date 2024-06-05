@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { generateSensorXML } from "./generateSensorXML";
 import SceneObject from "./../Models/SceneObject";
+import findBaseLink from "./findBaseLink";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
@@ -103,16 +104,8 @@ export const ScenetoXML = (scene) => {
     };
 
     // Find the base node and start processing
-    if (scene) {
-        if (scene.children) {
-            const children = scene.children.filter((child) => {
-                return child.sceneObject;
-            });
-            if (children.length > 0) {
-                processNode(children[0]);
-            }
-        }
-    }
+    const baseLink = findBaseLink(scene);
+    if (baseLink) processNode(baseLink);
 
     // Close robot tag
     xml += `</robot>`;

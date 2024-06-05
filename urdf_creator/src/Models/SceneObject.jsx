@@ -5,14 +5,14 @@ import Axis from "./Axis";
 import Mesh from "./Mesh";
 
 export default class SceneObject extends THREE.Object3D {
-    constructor(shape, name) {
+    constructor(shape, name, position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1], jointPosition = [0, 0, 0], jointAxis = [1, 0, 0], jointType = "fixed", jointName = "") {
         super();
         this.sceneObject = true;
 
         this.originOfRotation = new THREE.Object3D();
         this.mesh = new Mesh(shape);
         this.uniformScaler = new UniformScaler();
-        this.jointAxis = new Axis();
+        this.jointAxis = new Axis({ origin: jointPosition, axis: jointAxis, type: jointType, name: jointName });
 
         this.add(this.originOfRotation);
         this.add(this.jointAxis);
@@ -25,6 +25,10 @@ export default class SceneObject extends THREE.Object3D {
 
         this.add = (object) => this.uniformScaler.add(object);
         this.attach = (object) => this.uniformScaler.attach(object);
+
+        this.position.set(...position);
+        this.originOfRotation.rotation.set(...rotation);
+        this.mesh.scale.set(...scale);
     }
     // --Joint
     //       |--Origin of Rotation

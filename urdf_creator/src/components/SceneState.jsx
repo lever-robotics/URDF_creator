@@ -12,15 +12,15 @@ import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
-import ProjectModal from "./ProjectManager/ProjectModal.jsx"
-import MenuModal from "./Menu/MenuModal.jsx"
+import ProjectModal from "./ProjectManager/ProjectModal.jsx";
+import MenuModal from "./Menu/MenuModal.jsx";
 import SceneObject from "../Models/SceneObject.jsx";
 
 export default function SceneState() {
     // State for the ProjectManager
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     // Project Title
-    const [projectTitle, setProjectTitle] = useState('untitled');
+    const [projectTitle, setProjectTitle] = useState("untitled");
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [scene, setScene] = useState();
@@ -98,7 +98,13 @@ export default function SceneState() {
             obj.baseLink = newSceneObject;
             obj.scene.attach(newSceneObject);
         }
+        console.log(obj.scene);
         forceSceneUpdate();
+    };
+
+    const createNewSceneObject = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
+        const object = new SceneObject(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
+        parent.add(object);
     };
 
     const forceSceneUpdate = () => {
@@ -193,7 +199,7 @@ export default function SceneState() {
         object.userData.sensor = sensorObj;
         forceSceneUpdate();
     };
- 
+
     const setJoint = (object, axis) => {
         console.log("setting joint");
         object.jointAxis = axis;
@@ -207,7 +213,7 @@ export default function SceneState() {
     };
     const getScene = () => {
         return threeObjects.current.scene;
-    } 
+    };
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
@@ -261,12 +267,12 @@ export default function SceneState() {
 
     return (
         <div className="screen">
-            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager}/>
+            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} />
             <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} getScene={getScene} loadScene={loadScene}/>
+                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} getScene={getScene} loadScene={loadScene} />
                         <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
                         <InsertTool addObject={addObject} />
                     </Column>

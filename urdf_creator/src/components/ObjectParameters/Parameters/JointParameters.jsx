@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Axis from "../../../Models/Axis";
+import Slider from "@mui/material/Slider";
 
 export default function JointParameters({ selectedObject, setJoint, startMoveJoint, startRotateJoint }) {
     const [jointType, setJointType] = useState(selectedObject.jointAxis.type);
@@ -32,6 +33,7 @@ export default function JointParameters({ selectedObject, setJoint, startMoveJoi
                     <option value="floating">Floating</option> */}
                 </select>
             </div>
+            {}
         </div>
     );
 }
@@ -54,6 +56,7 @@ const RevoluteOptions = ({ startMoveJoint, startRotateJoint, selectedObject }) =
             >
                 Change Axis Origin
             </button>
+            <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" />
         </>
     );
 };
