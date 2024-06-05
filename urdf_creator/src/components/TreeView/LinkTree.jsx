@@ -1,16 +1,16 @@
-import { ObjectContextMenu } from './ObjectContextMenu';
+import SceneObject from "../../Models/SceneObject";
+import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useRef, useState } from "react";
 
 // RecursiveTreeView Component
 export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, duplicateObject }) => {
-
     const objectContextMenu = useRef(null);
-    const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 })
+    const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 });
     const [lastButtonObjectSelected, setLastButtonObjectSelected] = useState(null);
 
     // this keeps the context menu from coming back on when a previously right clicked object that was unselected is selected again
     if (lastButtonObjectSelected !== selectedObject && lastButtonObjectSelected) {
-        setLastButtonObjectSelected(null)
+        setLastButtonObjectSelected(null);
     }
 
     // Function to render each node and its children
@@ -30,19 +30,24 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
                         onContextMenu={(e) => {
                             e.preventDefault();
                             if (node.userData.isBaseLink) {
-                                setLastButtonObjectSelected(null)
-                                return
-                            };
-                            selectObject(node)
-                            setLastButtonObjectSelected(node)
-                            setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY })
+                                setLastButtonObjectSelected(null);
+                                return;
+                            }
+                            selectObject(node);
+                            setLastButtonObjectSelected(node);
+                            setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY });
                         }}
                     >
                         {node.userData.name}
                     </button>
                 )}
-                {node.children[0].children && node.children[0].children.length > 0 && (
-                    <div>{node.children[0].children.filter((child) => child.type === "Mesh").map((child) => renderNode(child))}</div>
+                {node.getChildren() && node.getChildren().length > 0 && (
+                    <div>
+                        {node
+                            .getChildren()
+                            .filter((child) => child.sceneObject)
+                            .map((child) => renderNode(child))}
+                    </div>
                 )}
             </div>
         );
@@ -51,20 +56,32 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
     let node = null;
     if (scene) {
         if (scene.children) {
-            const children = scene.children.filter((child) => child.type === "Mesh");
+            const children = scene.children.filter((child) => {
+                return child.sceneObject;
+            });
             if (children.length > 0) {
                 node = children[0];
             }
         }
     }
 
-    const hideContextMenu = () => { setLastButtonObjectSelected(null) }
+    const hideContextMenu = () => {
+        setLastButtonObjectSelected(null);
+    };
 
     return (
         <div className="object-tree" onClick={hideContextMenu} onMouseLeave={hideContextMenu}>
             Object Tree
             <div className="scroll-box">{node && renderNode(node)}</div>
-            {(lastButtonObjectSelected === selectedObject) && selectedObject && <ObjectContextMenu objectContextMenu={objectContextMenu} objectContextMenuPosition={objectContextMenuPosition} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} />}
+            {lastButtonObjectSelected === selectedObject && selectedObject && (
+                <ObjectContextMenu
+                    objectContextMenu={objectContextMenu}
+                    objectContextMenuPosition={objectContextMenuPosition}
+                    deleteObject={deleteObject}
+                    duplicateObject={duplicateObject}
+                    selectedObject={selectedObject}
+                />
+            )}
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { generateSensorXML } from "./generateSensorXML";
+import SceneObject from "./../Models/SceneObject";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
@@ -24,8 +25,7 @@ export const ScenetoXML = (scene) => {
 
     // Function to process a single node
     const processNode = (node, parentName = null) => {
-        if (node instanceof THREE.Mesh) {
-            console.log(node.userData);
+        if (node instanceof SceneObject) {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
@@ -38,7 +38,7 @@ export const ScenetoXML = (scene) => {
             xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
 
             // Geometry
-            const geometryType = node.geometry.type;
+            const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
                 const size = `${node.scale.x} ${node.scale.z} ${node.scale.y}`;
@@ -54,9 +54,9 @@ export const ScenetoXML = (scene) => {
             xml += geometryXML;
 
             // Material
-            if (node.material && node.material.color) {
-                const color = node.material.color;
-                xml += `      <material name="${node.material.name || "material"}">\n`;
+            if (node.mesh.material && node.mesh.material.color) {
+                const color = node.mesh.material.color;
+                xml += `      <material name="${node.mesh.material.name || "material"}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -90,7 +90,7 @@ export const ScenetoXML = (scene) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="fixed">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.jointAxis.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
                 xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
@@ -98,14 +98,20 @@ export const ScenetoXML = (scene) => {
             }
 
             // Recursively process children with the correct parent name
-            node.children[0].children.forEach((child) => processNode(child, linkName));
+            node.getChildren().forEach((child) => processNode(child, linkName));
         }
     };
 
     // Find the base node and start processing
-    const baseNode = scene.children.find((child) => child.type === "Mesh");
-    if (baseNode) {
-        processNode(baseNode); // Initialize the recursion with the base node
+    if (scene) {
+        if (scene.children) {
+            const children = scene.children.filter((child) => {
+                return child.sceneObject;
+            });
+            if (children.length > 0) {
+                processNode(children[0]);
+            }
+        }
     }
 
     // Close robot tag

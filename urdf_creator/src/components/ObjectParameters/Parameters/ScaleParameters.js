@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 function ScaleParameters({ selectedObject, transformObject }) {
-    const [scaleX, setScaleX] = useState('');
-    const [scaleY, setScaleY] = useState('');
-    const [scaleZ, setScaleZ] = useState('');
+    const [scaleX, setScaleX] = useState("");
+    const [scaleY, setScaleY] = useState("");
+    const [scaleZ, setScaleZ] = useState("");
 
     useEffect(() => {
-        console.log(selectedObject);
         if (selectedObject) {
             setScaleX(selectedObject.scale.x.toFixed(2));
             setScaleY(selectedObject.scale.y.toFixed(2));
@@ -21,17 +20,16 @@ function ScaleParameters({ selectedObject, transformObject }) {
         const y = parseFloat(scaleY);
         const z = parseFloat(scaleZ);
 
-
-        if (selectedObject.userData.shape === 'sphere') {
-            transformObject(selectedObject, 'scale', x, x, x);
-        } else if (selectedObject.userData.shape === 'cylinder') {
-            if (axis === 'x' || axis === 'z') {
-                transformObject(selectedObject, 'scale', x, y, x);
+        if (selectedObject.userData.shape === "sphere") {
+            transformObject(selectedObject, "scale", x, x, x);
+        } else if (selectedObject.userData.shape === "cylinder") {
+            if (axis === "x" || axis === "z") {
+                transformObject(selectedObject, "scale", x, y, x);
             } else {
-                transformObject(selectedObject, 'scale', x, y, z);
+                transformObject(selectedObject, "scale", x, y, z);
             }
         } else {
-            transformObject(selectedObject, 'scale', x, y, z);
+            transformObject(selectedObject, "scale", x, y, z);
         }
     };
 
@@ -40,49 +38,31 @@ function ScaleParameters({ selectedObject, transformObject }) {
     };
 
     const handleKeyDown = (e, axis, value) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             handleBlur(axis, value);
         }
     };
 
     let scaleInputs;
     switch (selectedObject.userData.shape) {
-        case 'sphere':
+        case "sphere":
             scaleInputs = (
                 <li>
                     Radius:
-                    <input
-                        type="number"
-                        value={scaleX}
-                        onChange={(e) => setScaleX(e.target.value)}
-                        onBlur={() => handleBlur('x', scaleX)}
-                        onKeyDown={(e) => handleKeyDown(e, 'x', scaleX)}
-                    />
+                    <input type="number" value={scaleX} onChange={(e) => setScaleX(e.target.value)} onBlur={() => handleBlur("x", scaleX)} onKeyDown={(e) => handleKeyDown(e, "x", scaleX)} />
                 </li>
             );
             break;
-        case 'cylinder':
+        case "cylinder":
             scaleInputs = (
                 <>
                     <li>
                         Radius:
-                        <input
-                            type="number"
-                            value={scaleX}
-                            onChange={(e) => setScaleX(e.target.value)}
-                            onBlur={() => handleBlur('x', scaleX)}
-                            onKeyDown={(e) => handleKeyDown(e, 'x', scaleX)}
-                        />
+                        <input type="number" value={scaleX} onChange={(e) => setScaleX(e.target.value)} onBlur={() => handleBlur("x", scaleX)} onKeyDown={(e) => handleKeyDown(e, "x", scaleX)} />
                     </li>
                     <li>
                         Height:
-                        <input
-                            type="number"
-                            value={scaleY}
-                            onChange={(e) => setScaleY(e.target.value)}
-                            onBlur={() => handleBlur('y', scaleY)}
-                            onKeyDown={(e) => handleKeyDown(e, 'y', scaleY)}
-                        />
+                        <input type="number" value={scaleY} onChange={(e) => setScaleY(e.target.value)} onBlur={() => handleBlur("y", scaleY)} onKeyDown={(e) => handleKeyDown(e, "y", scaleY)} />
                     </li>
                 </>
             );
@@ -92,44 +72,22 @@ function ScaleParameters({ selectedObject, transformObject }) {
                 <>
                     <li>
                         X:
-                        <input
-                            type="number"
-                            value={scaleX}
-                            onChange={(e) => setScaleX(e.target.value)}
-                            onBlur={() => handleBlur('x', scaleX)}
-                            onKeyDown={(e) => handleKeyDown(e, 'x', scaleX)}
-                        />
+                        <input type="number" value={scaleX} onChange={(e) => setScaleX(e.target.value)} onBlur={() => handleBlur("x", scaleX)} onKeyDown={(e) => handleKeyDown(e, "x", scaleX)} />
                     </li>
                     <li>
                         Y:
-                        <input
-                            type="number"
-                            value={scaleY}
-                            onChange={(e) => setScaleY(e.target.value)}
-                            onBlur={() => handleBlur('y', scaleY)}
-                            onKeyDown={(e) => handleKeyDown(e, 'y', scaleY)}
-                        />
+                        <input type="number" value={scaleY} onChange={(e) => setScaleY(e.target.value)} onBlur={() => handleBlur("y", scaleY)} onKeyDown={(e) => handleKeyDown(e, "y", scaleY)} />
                     </li>
                     <li>
                         Z:
-                        <input
-                            type="number"
-                            value={scaleZ}
-                            onChange={(e) => setScaleZ(e.target.value)}
-                            onBlur={() => handleBlur('z', scaleZ)}
-                            onKeyDown={(e) => handleKeyDown(e, 'z', scaleZ)}
-                        />
+                        <input type="number" value={scaleZ} onChange={(e) => setScaleZ(e.target.value)} onBlur={() => handleBlur("z", scaleZ)} onKeyDown={(e) => handleKeyDown(e, "z", scaleZ)} />
                     </li>
                 </>
             );
             break;
     }
 
-    return (
-        <ul>
-            {scaleInputs}
-        </ul>
-    );
+    return <ul>{scaleInputs}</ul>;
 }
 
 export default ScaleParameters;
