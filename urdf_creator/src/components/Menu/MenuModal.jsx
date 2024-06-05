@@ -1,16 +1,16 @@
 import * as React from 'react';
+import * as THREE from "three";
 import { useState, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { handleDownload } from '../../utils/HandleDownload';
-import { handleUpload } from '../../utils/HandleUpload';
+import { JSONtoScene } from '../../utils/ScenetoJSON';
 import './MenuModal.css'
 
-export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, scene }) {
+export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, getScene, loadScene }) {
   const inputFile = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -53,12 +53,47 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
 
   const downloadURDF = (scene, projectTitle) => handleDownload(scene, 'urdf', projectTitle);
 
+  const downloadJSON = (scene, projectTitle) => {
+    console.log(scene);
+    handleDownload(scene, 'json', projectTitle);
+  }
+  
+  function JSONtoScene(jsonstring){
+    const json = JSON.parse(jsonstring);
+    console.log(json);
+    const loader = new THREE.ObjectLoader();
+    loader.parse(json, (obj) => {
+        loadScene(obj);
+    });
+  };
+
 
   /* Annoying File Upload Logic
   1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
   2. The input element has an onChange listener that uploads the file using the handleFileChange() function which calls handleUpload() */
   const onFileUpload = () => inputFile.current.click();
-  const handleFileChange = (e) => handleUpload(e.target.files[0]);
+  const handleFileChange = (e) => {
+    handleUpload(e.target.files[0]);
+  }
+  function handleUpload(file){
+    const type = file.name.split('.').pop();
+    const reader = new FileReader();
+    console.log(type);
+    reader.onload = (e) => {
+        if(type === 'xml'){
+          //Unsupported
+        }else if(type === 'urdf'){
+          //Unsupported
+            // return XMLtoScene(e.target.result);
+        }else if (type === 'json'){
+          console.log(e.target.result);
+            const scene = JSONtoScene(e.target.result);
+            console.log(scene);
+            // loadScene(scene);
+        }
+    }
+    reader.readAsText(file);
+  } 
 
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
@@ -78,15 +113,19 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
               }}>Project Manager</StyledMenuItem>
             <StyledMenuItem 
               onClick={() => {
-                downloadURDF(scene, projectTitle);
+                downloadURDF(getScene(), projectTitle);
                 popupState.close();
               }}>Export URDF</StyledMenuItem>
+            <StyledMenuItem 
+              onClick={() => {
+                downloadJSON(getScene(), projectTitle);
+                popupState.close();
+              }}>Export JSON</StyledMenuItem>
             <StyledMenuItem 
               onClick={() => {
                 onFileUpload();
                 popupState.close();
               }}>Upload File</StyledMenuItem>
-            <StyledMenuItem onClick={popupState.close}>Logout</StyledMenuItem>
           </StyledMenu>
           <input type='file' ref={inputFile} style={{display: 'none'}} onChange={handleFileChange}/>
         </React.Fragment>

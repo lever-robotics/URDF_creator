@@ -1,4 +1,5 @@
 // Handle misc download types
+import * as THREE from "three";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
@@ -8,7 +9,9 @@ export async function handleDownload(scene, type, title){
         const urdf = ScenetoXML(scene);
         await generateZip(urdf, title);
     }else if(type === 'json'){
-        otherFileDownload(scene, type, title);
+        const json = scene.toJSON();
+        console.log(json);
+        otherFileDownload(JSON.stringify(json), type, title);
     }else{
         console.log("file type not supported");
         // Probably should implement an error box
@@ -18,7 +21,7 @@ export async function handleDownload(scene, type, title){
 
 export function otherFileDownload(data, type, title){
     // Create Blob
-    const blob = new Blob([data], {type: `text/${type}`});
+    const blob = new Blob([data], {type: `application/${type}`});
 
     // Create a link element and set href to blob
     const link = document.createElement('a');

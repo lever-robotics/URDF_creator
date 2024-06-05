@@ -206,6 +206,13 @@ export default function SceneState() {
         object.userData.joint = jointObj;
         forceSceneUpdate();
     };
+    const loadScene = (scene) => {
+        threeObjects.current.scene = scene;
+        forceSceneUpdate();
+    };
+    const getScene = () => {
+        return threeObjects.current.scene;
+    }
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
@@ -264,7 +271,7 @@ export default function SceneState() {
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} scene={scene}/>
+                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} getScene={getScene} loadScene={loadScene}/>
                         <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
                         <InsertTool addObject={addObject} />
                     </Column>
