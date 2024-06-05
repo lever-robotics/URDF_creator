@@ -64,6 +64,7 @@ export default function MenuModal({
     console.log(json);
     const loader = new THREE.ObjectLoader();
     loader.parse(json, (obj) => {
+      console.log(obj);
       loadScene(obj);
     });
   }
@@ -77,6 +78,30 @@ export default function MenuModal({
       loadScene(scene);
     });
   };
+  // const handleFileChange = (e) => {
+  //   handleUpload(e.target.files[0]);
+  // }
+  // function handleUpload(file){
+  //   const type = file.name.split('.').pop();
+  //   const reader = new FileReader();
+  //   console.log(type);
+  //   reader.onload = (e) => {
+  //       if(type === 'xml'){
+  //         //Unsupported
+  //       }else if(type === 'urdf'){
+  //         //Unsupported
+  //           // return XMLtoScene(e.target.result);
+  //       }else if (type === 'json'){
+  //         console.log(e.target.result);
+  //           const scene = JSONtoScene(e.target.result);
+  //           // console.log(scene);
+  //           // loadScene(scene);
+  //       }
+  //   }
+  //   reader.readAsText(file);
+  // } 
+
+
 
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
