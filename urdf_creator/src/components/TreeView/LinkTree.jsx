@@ -1,4 +1,4 @@
-import SceneObject from "../../Models/SceneObject";
+import findBaseLink from "../../utils/findBaseLink";
 import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useRef, useState } from "react";
 
@@ -53,17 +53,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
         );
     };
 
-    let node = null;
-    if (scene) {
-        if (scene.children) {
-            const children = scene.children.filter((child) => {
-                return child.sceneObject;
-            });
-            if (children.length > 0) {
-                node = children[0];
-            }
-        }
-    }
+    let node = findBaseLink(scene);
 
     const hideContextMenu = () => {
         setLastButtonObjectSelected(null);

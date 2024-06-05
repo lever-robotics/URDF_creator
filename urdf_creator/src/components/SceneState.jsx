@@ -1,26 +1,25 @@
-import React, { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
-import initScene from './ThreeDisplay/InitScene.jsx';
-import setUpSceneMouse from './ThreeDisplay/SetUpMouse.jsx';
-import UserData from '../Models/UserData.jsx';
-import ThreeDisplay from './ThreeDisplay/ThreeDisplay.jsx';
-import ObjectParameters from './ObjectParameters/ObjectParameters.jsx';
-import Toolbar from './Toolbar/ToolBar.jsx';
-import InsertTool from './Insert/InsertTool.jsx';
-import { LinkTree } from './TreeView/LinkTree.jsx';
-import CodeDisplay from './CodeDisplay/CodeDisplay.jsx';
-import Column from '../utils/ScreenTools/Column.jsx';
-import AbsolutePosition from '../utils/ScreenTools/AbsolutePosition.jsx';
-import Row from '../utils/ScreenTools/Row.jsx';
-import ProjectModal from './ProjectManager/ProjectModal.jsx';
-import MenuModal from './Menu/MenuModal.jsx';
-import SceneObject from '../Models/SceneObject.jsx';
+import React, { useRef, useEffect, useState } from "react";
+import * as THREE from "three";
+import initScene from "./ThreeDisplay/InitScene.jsx";
+import setUpSceneMouse from "./ThreeDisplay/SetUpMouse.jsx";
+import ThreeDisplay from "./ThreeDisplay/ThreeDisplay.jsx";
+import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
+import Toolbar from "./Toolbar/ToolBar.jsx";
+import InsertTool from "./Insert/InsertTool.jsx";
+import { LinkTree } from "./TreeView/LinkTree.jsx";
+import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
+import Column from "../utils/ScreenTools/Column.jsx";
+import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
+import Row from "../utils/ScreenTools/Row.jsx";
+import ProjectModal from "./ProjectManager/ProjectModal.jsx";
+import MenuModal from "./Menu/MenuModal.jsx";
+import SceneObject from "../Models/SceneObject.jsx";
 
 export default function SceneState() {
     // State for the ProjectManager
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     // Project Title
-    const [projectTitle, setProjectTitle] = useState('untitled');
+    const [projectTitle, setProjectTitle] = useState("untitled");
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [scene, setScene] = useState();
@@ -106,7 +105,13 @@ export default function SceneState() {
             obj.baseLink = newSceneObject;
             obj.scene.attach(newSceneObject);
         }
+        console.log(obj.scene);
         forceSceneUpdate();
+    };
+
+    const createNewSceneObject = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
+        const object = new SceneObject(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
+        parent.add(object);
     };
 
     const forceSceneUpdate = () => {
@@ -204,9 +209,9 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const setJoint = (object, axis) => {
-        console.log('setting joint');
-        object.jointAxis = axis;
+    const setJoint = (object, type) => {
+        console.log("setting joint");
+        object.jointAxis.type = type;
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
