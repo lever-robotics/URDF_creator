@@ -1,6 +1,4 @@
-import Inertia from './Inertia';
-import UniformScaler from './UniformScaler';
-import Joint from './Joint';
+import Inertia from "./Inertia";
 
 export default class UserData {
     constructor(shape, name) {
@@ -8,19 +6,15 @@ export default class UserData {
         this.shape = shape;
         this.inertia = new Inertia();
         this.isBaseLink = false;
-        this.scaler = new UniformScaler();
         this.selectable = true;
         this.sensor = null; // Sensor object
         this.stlfile = null;
-        this.joint = new Joint();
     }
-
-
 
     duplicate() {
         const duplicated = new UserData(this.shape);
         duplicated.stlfile = this.stlfile;
-        duplicated.name = this.name + ' copy';
+        duplicated.name = this.name + " copy";
         duplicated.inertia = this.inertia.duplicate();
         duplicated.isBaseLink = false;
         if (this.sensor) {

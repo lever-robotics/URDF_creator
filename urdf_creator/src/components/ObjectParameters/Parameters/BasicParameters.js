@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import * as THREE from 'three';
+import React, { useState, useEffect } from "react";
+import * as THREE from "three";
 
 export default function BasicParameters({ selectedObject, setLinkName, setUserColor, setMass }) {
-    const [name, setName] = useState('');
-    const [mass, setMassTemp] = useState('');
-    const [color, setColor] = useState('#ffffff');
+    const [name, setName] = useState("");
+    const [mass, setMassTemp] = useState("");
+    const [color, setColor] = useState("#ffffff");
 
     useEffect(() => {
         if (selectedObject) {
-            setName(selectedObject.userData.name || '');
-            setMassTemp(selectedObject.userData.inertia.mass || '');
-            setColor(new THREE.Color(selectedObject.material.color).getStyle());
+            setName(selectedObject.userData.name || "");
+            setMassTemp(selectedObject.userData.inertia.mass || "");
+            setColor(new THREE.Color(selectedObject.mesh.material.color).getStyle());
         }
-    }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.material)]);
+    }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.mesh.material)]);
 
     const handleNameChange = (e) => {
         setName(e.target.value);

@@ -14,6 +14,7 @@ import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
 import ProjectModal from "./ProjectManager/ProjectModal.jsx"
 import MenuModal from "./Menu/MenuModal.jsx"
+import SceneObject from "../Models/SceneObject.jsx";
 
 export default function SceneState() {
     // State for the ProjectManager
@@ -54,8 +55,6 @@ export default function SceneState() {
         startPos: null,
     });
 
-    console.log("SceneState.jsx");
-
     // Set up the scene (initialization)
     useEffect(() => {
         const { current: obj } = threeObjects;
@@ -63,8 +62,6 @@ export default function SceneState() {
 
         const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
         const sceneCallback = initScene(threeObjects, mountRef);
-        console.log("set up scene");
-        console.log(obj.scene);
         setScene({ ...obj.scene });
 
         const animate = () => {
@@ -85,69 +82,21 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        let geometry;
-        let onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
-            this.userData.scaler.doScale();
-        };
-        switch (shape) {
-            case "cube":
-                geometry = new THREE.BoxGeometry(1, 1, 1);
-                break;
-            case "sphere":
-                geometry = new THREE.SphereGeometry(0.5, 32, 32);
-                // ensure spheres scale uniformly in all directions
-                onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
-                    const worldScale = new THREE.Vector3();
-                    this.getWorldScale(worldScale);
-                    const uniformScale = (worldScale.x + worldScale.y + worldScale.z) / 3;
-
-                    const localScale = this.scale;
-                    this.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
-                    this.userData.scaler.doScale();
-                };
-                break;
-            case "cylinder":
-                geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-                // ensure cylinders scale uniformly in two directions
-                onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
-                    const worldScale = new THREE.Vector3();
-                    this.getWorldScale(worldScale);
-                    const uniformScale = (worldScale.x + worldScale.z) / 2;
-
-                    const localScale = this.scale;
-                    this.scale.set((localScale.x / worldScale.x) * uniformScale, localScale.y, (localScale.z / worldScale.z) * uniformScale);
-                    this.userData.scaler.doScale();
-                };
-                break;
-            default:
-                return;
-        }
-
-        let material = new THREE.MeshPhongMaterial({
-            color: Math.random() * 0xffffff,
-        });
-
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.onBeforeRender = onBeforeRender;
-        mesh.userData = new UserData(shape, shape + (numShapes[shape] + 1).toString());
+        const newSceneObject = new SceneObject(shape, shape + (numShapes[shape] + 1).toString());
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        mesh.position.set(2.5, 0.5, 2.5);
-
-        //uniform scaler stuff so everything doesn't break when you scale and rotate :)
-
-        mesh.add(mesh.userData.scaler);
+        newSceneObject.position.set(2.5, 0.5, 2.5);
 
         if (selectedObject !== null) {
-            selectedObject.userData.scaler.attach(mesh);
+            selectedObject.attach(newSceneObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.userData.scaler.attach(mesh);
+            obj.baseLink.attach(newSceneObject);
         } else {
-            mesh.position.set(0, 0.5, 0);
-            mesh.userData.isBaseLink = true;
-            mesh.userData.name = "base_link";
-            obj.baseLink = mesh;
-            obj.scene.attach(mesh);
+            newSceneObject.position.set(0, 0.5, 0);
+            newSceneObject.userData.isBaseLink = true;
+            newSceneObject.userData.name = "base_link";
+            obj.baseLink = newSceneObject;
+            obj.scene.attach(newSceneObject);
         }
         forceSceneUpdate();
     };
@@ -158,11 +107,50 @@ export default function SceneState() {
         console.log(scene);
     };
 
-    const setTransformMode = (mode) => {
+    const setTransformMode = (mode, currentlySelectedObject) => {
         const { current: obj } = threeObjects;
         if (obj.transformControls) {
             obj.transformControls.setMode(mode);
         }
+        console.log(mode);
+
+        if (currentlySelectedObject) {
+            attachTransformControls(currentlySelectedObject);
+        }
+    };
+
+    const attachTransformControls = (currentlySelectedObject) => {
+        const { current: obj } = threeObjects;
+        const mode = obj.transformControls.mode;
+        console.log(mode);
+        switch (mode) {
+            // this case will attach the transform controls to the joint of the object and move everything together
+            case "translate":
+                obj.transformControls.attach(currentlySelectedObject);
+                break;
+            // will attach to the origin of rotation, which will rotate the mesh about said origin
+            case "rotate":
+                obj.transformControls.attach(currentlySelectedObject.originOfRotation);
+                break;
+            // will attach to the mesh and scale nothing else
+            case "scale":
+                obj.transformControls.attach(currentlySelectedObject.mesh);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const startRotateJoint = (object) => {
+        const { current: obj } = threeObjects;
+        obj.transformControls.setMode("rotate");
+        obj.transformControls.attach(object.jointAxis);
+    };
+
+    const startMoveJoint = (object) => {
+        const { current: obj } = threeObjects;
+        obj.transformControls.setMode("translate");
+        obj.transformControls.attach(object);
     };
 
     const selectObject = (object) => {
@@ -174,37 +162,41 @@ export default function SceneState() {
         }
         if (object.userData.selectable) {
             setSelectedObject(object);
-            obj.transformControls.attach(object);
+            attachTransformControls(object);
         } else {
             setSelectedObject(null);
             obj.transformControls.detach();
         }
+        forceSceneUpdate();
     };
+
     const setLinkName = (object, name) => {
         object.userData.name = name;
         forceSceneUpdate();
-    }
+    };
 
     const setUserColor = (object, color) => {
-        object.material.color.set(color);
+        object.mesh.material.color.set(color);
         forceSceneUpdate();
-    }
+    };
 
     const setMass = (object, mass) => {
         object.userData.inertia.updateMass(mass, object);
         forceSceneUpdate();
-    }
+    };
     const setInertia = (object, inertia) => {
         object.userData.inertia = inertia;
         forceSceneUpdate();
-    }
+    };
 
     const setSensor = (object, sensorObj) => {
         object.userData.sensor = sensorObj;
         forceSceneUpdate();
-    }
-    const setJoint = (object, jointObj) => {
-        object.userData.joint = jointObj;
+    };
+ 
+    const setJoint = (object, axis) => {
+        console.log("setting joint");
+        object.jointAxis = axis;
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
@@ -213,18 +205,18 @@ export default function SceneState() {
     };
     const getScene = () => {
         return threeObjects.current.scene;
-    }
+    } 
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
             case "scale":
-                object.scale.set(x, y, z);
+                object.mesh.scale.set(x, y, z);
                 break;
             case "position":
                 object.position.set(x, y, z);
                 break;
             case "rotation":
-                object.rotation.set(x, y, z);
+                object.originOfRotation.rotation.set(x, y, z);
                 break;
             default:
                 return;
@@ -276,9 +268,20 @@ export default function SceneState() {
                         <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar setTransformMode={setTransformMode} />
+                    <Toolbar setTransformMode={setTransformMode} selectedObject={selectedObject} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectObject} transformObject={transformObject} setLinkName={setLinkName} setUserColor={setUserColor} setMass={setMass} setJoint={setJoint} setInertia={setInertia} setSensor={setSensor} />
+                        <ObjectParameters
+                            selectedObject={selectedObject}
+                            transformObject={transformObject}
+                            setLinkName={setLinkName}
+                            setUserColor={setUserColor}
+                            setMass={setMass}
+                            setJoint={setJoint}
+                            setInertia={setInertia}
+                            setSensor={setSensor}
+                            startMoveJoint={startMoveJoint}
+                            startRotateJoint={startRotateJoint}
+                        />
                         <CodeDisplay scene={scene} />
                     </Column>
                 </Row>
