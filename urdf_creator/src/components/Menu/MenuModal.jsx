@@ -6,10 +6,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import { handleDownload } from '../../utils/HandleDownload';
 import './MenuModal.css'
 
-export default function MenuModal({ openProjectManager }) {
-  const [projectTitle, setProjectTitle] = useState('untitled');
+export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, scene }) {
 
   const StyledMenuItem = styled(props => (
     <MenuItem {...props} disableRipple>
@@ -48,10 +48,7 @@ export default function MenuModal({ openProjectManager }) {
     background:'rgba(0, 0, 0, 0.6)',
   }));
 
-  function changeProjectTitle(e){
-    setProjectTitle(e.target.value);
-  }
-
+  const downloadURDF = (scene, projectTitle) => handleDownload(scene, 'urdf', projectTitle);
 
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
@@ -64,14 +61,22 @@ export default function MenuModal({ openProjectManager }) {
             <input type='text' value={projectTitle}id='projectTitleInput' onChange={changeProjectTitle}/>
           </div>
           <StyledMenu {...bindMenu(popupState)}>
-            <StyledMenuItem onClick={popupState.close}>Profile</StyledMenuItem>
+            <StyledMenuItem 
+              onClick={() => {
+                openProjectManager();
+                popupState.close();
+              }}>
+              Project Manager
+            </StyledMenuItem>
+            <StyledMenuItem 
+              onClick={() => {
+                downloadURDF(scene, projectTitle);
+                popupState.close();
+              }}>
+              Export URDF
+            </StyledMenuItem>
             <StyledMenuItem onClick={popupState.close}>My account</StyledMenuItem>
             <StyledMenuItem onClick={popupState.close}>Logout</StyledMenuItem>
-            <StyledMenuItem onClick={() => {
-              openProjectManager();
-              popupState.close();
-              }
-            }>Project Manager</StyledMenuItem>
           </StyledMenu>
         </React.Fragment>
       )}

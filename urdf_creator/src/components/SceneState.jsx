@@ -18,6 +18,8 @@ import MenuModal from "./Menu/MenuModal.jsx"
 export default function SceneState() {
     // State for the ProjectManager
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
+    // Project Title
+    const [projectTitle, setProjectTitle] = useState('untitled');
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [scene, setScene] = useState();
@@ -253,6 +255,8 @@ export default function SceneState() {
     const openProjectManager = () => setIsProjectManagerOpen(true);
     const closeProjectManager = () => setIsProjectManagerOpen(false);
 
+    const changeProjectTitle = (e) => setProjectTitle(e.target.value);
+
     return (
         <div className="screen">
             <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager}/>
@@ -260,7 +264,7 @@ export default function SceneState() {
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal openProjectManager={openProjectManager}/>
+                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} scene={scene}/>
                         <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
                         <InsertTool addObject={addObject} />
                     </Column>
