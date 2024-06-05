@@ -200,7 +200,9 @@ export default function SceneState() {
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
-        threeObjects.current.scene.add(scene);// This Line NEEEEEEDS to be scene.add?? Not sure why
+        // threeObjects.current.scene.add(scene);// This Line NEEEEEEDS to be scene.add?? Not sure why
+        threeObjects.current.scene = scene;
+        console.log(threeObjects.current.scene);
         forceSceneUpdate();
     };
     const getScene = () => {
