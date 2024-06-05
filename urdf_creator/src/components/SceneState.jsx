@@ -155,6 +155,7 @@ export default function SceneState() {
     const forceSceneUpdate = () => {
         const { current: obj } = threeObjects;
         setScene({ ...obj.scene });
+        console.log(scene);
     };
 
     const setTransformMode = (mode) => {
@@ -207,7 +208,7 @@ export default function SceneState() {
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
-        threeObjects.current.scene = scene;
+        threeObjects.current.scene.add(scene);// This Line NEEEEEEDS to be scene.add?? Not sure why
         forceSceneUpdate();
     };
     const getScene = () => {

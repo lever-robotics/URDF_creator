@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { handleDownload } from '../../utils/HandleDownload';
-import { JSONtoScene } from '../../utils/ScenetoJSON';
+import { handleUpload } from '../../utils/HandleUpload';
 import './MenuModal.css'
 
 export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, getScene, loadScene }) {
@@ -54,8 +54,7 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
   const downloadURDF = (scene, projectTitle) => handleDownload(scene, 'urdf', projectTitle);
 
   const downloadJSON = (scene, projectTitle) => {
-    console.log(scene);
-    handleDownload(scene, 'json', projectTitle);
+    handleDownload(scene, 'gltf', projectTitle);
   }
   
   function JSONtoScene(jsonstring){
@@ -73,27 +72,11 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
   2. The input element has an onChange listener that uploads the file using the handleFileChange() function which calls handleUpload() */
   const onFileUpload = () => inputFile.current.click();
   const handleFileChange = (e) => {
-    handleUpload(e.target.files[0]);
+    handleUpload(e.target.files[0]).then((scene) => {
+      loadScene(scene);
+    });
   }
-  function handleUpload(file){
-    const type = file.name.split('.').pop();
-    const reader = new FileReader();
-    console.log(type);
-    reader.onload = (e) => {
-        if(type === 'xml'){
-          //Unsupported
-        }else if(type === 'urdf'){
-          //Unsupported
-            // return XMLtoScene(e.target.result);
-        }else if (type === 'json'){
-          console.log(e.target.result);
-            const scene = JSONtoScene(e.target.result);
-            console.log(scene);
-            // loadScene(scene);
-        }
-    }
-    reader.readAsText(file);
-  } 
+
 
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">

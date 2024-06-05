@@ -1,5 +1,6 @@
 // Handle misc download types
 import * as THREE from "three";
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
@@ -8,10 +9,15 @@ export async function handleDownload(scene, type, title){
     if(type === 'urdf'){
         const urdf = ScenetoXML(scene);
         await generateZip(urdf, title);
-    }else if(type === 'json'){
-        const json = scene.toJSON();
-        console.log(json);
-        otherFileDownload(JSON.stringify(json), type, title);
+    }else if(type === 'gltf'){
+        const exporter = new GLTFExporter();
+        exporter.parse(scene, ( gltf ) => {
+            console.log(gltf);
+            otherFileDownload(JSON.stringify(gltf), type, title);
+        })
+        // const json = scene.toJSON();
+        // console.log(json);
+        // otherFileDownload(JSON.stringify(json), type, title);
     }else{
         console.log("file type not supported");
         // Probably should implement an error box
