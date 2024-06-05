@@ -53,21 +53,23 @@ export default function MenuModal({
         background: 'rgba(0, 0, 0, 0.6)',
     }));
 
-    const StyledButton = styled((props) => <Button {...props} />)(({ theme }) => ({
-        borderRadius: '8px',
-        border: '1px solid transparent',
-        padding: '0.6em 1.2em',
-        fontSize: '1em',
-        fontWeight: 500,
-        fontFamily: 'inherit',
-        backgroundColor: '#1d2a31',
-        cursor: 'pointer',
-        transition: 'border-color 0.25s',
-        '&:hover, .Mui-focusVisible, .MuiButton-colorSuccess': {
-          borderColor: '#646cff',
-          backgroundColor: '#1d2a31',
-        }
-    }));
+    const StyledButton = styled((props) => <Button {...props} />)(
+        ({ theme }) => ({
+            borderRadius: '8px',
+            border: '1px solid transparent',
+            padding: '0.6em 1.2em',
+            fontSize: '1em',
+            fontWeight: 500,
+            fontFamily: 'inherit',
+            backgroundColor: '#1d2a31',
+            cursor: 'pointer',
+            transition: 'border-color 0.25s',
+            '&:hover, .Mui-focusVisible, .MuiButton-colorSuccess': {
+                borderColor: '#646cff',
+                backgroundColor: '#1d2a31',
+            },
+        })
+    );
 
     /* Annoying File Upload Logic
       1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
@@ -88,7 +90,7 @@ export default function MenuModal({
                             variant="contained"
                             {...bindTrigger(popupState)}
                             className="material-symbols-outlined">
-                            <MenuIcon/>
+                            <MenuIcon />
                         </StyledButton>
                         <input
                             type="text"
