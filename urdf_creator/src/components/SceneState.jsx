@@ -59,7 +59,12 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
+        const setUpMouseCallback = setUpSceneMouse(
+            threeObjects,
+            mountRef,
+            mouseData,
+            selectObject
+        );
         const sceneCallback = initScene(threeObjects, mountRef);
         setScene({ ...obj.scene });
 
@@ -81,7 +86,10 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const newSceneObject = new SceneObject(shape, shape + (numShapes[shape] + 1).toString());
+        const newSceneObject = new SceneObject(
+            shape,
+            shape + (numShapes[shape] + 1).toString()
+        );
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
         newSceneObject.position.set(2.5, 0.5, 2.5);
@@ -93,7 +101,7 @@ export default function SceneState() {
         } else {
             newSceneObject.position.set(0, 0.5, 0);
             newSceneObject.userData.isBaseLink = true;
-            newSceneObject.userData.name = "base_link";
+            newSceneObject.userData.name = 'base_link';
             obj.baseLink = newSceneObject;
             obj.scene.attach(newSceneObject);
         }
@@ -130,15 +138,17 @@ export default function SceneState() {
         console.log(mode);
         switch (mode) {
             // this case will attach the transform controls to the joint of the object and move everything together
-            case "translate":
+            case 'translate':
                 obj.transformControls.attach(currentlySelectedObject);
                 break;
             // will attach to the origin of rotation, which will rotate the mesh about said origin
-            case "rotate":
-                obj.transformControls.attach(currentlySelectedObject.originOfRotation);
+            case 'rotate':
+                obj.transformControls.attach(
+                    currentlySelectedObject.originOfRotation
+                );
                 break;
             // will attach to the mesh and scale nothing else
-            case "scale":
+            case 'scale':
                 obj.transformControls.attach(currentlySelectedObject.mesh);
                 break;
             default:
@@ -148,15 +158,13 @@ export default function SceneState() {
 
     const startRotateJoint = (object) => {
         const { current: obj } = threeObjects;
-        console.log("this is the object");
-        console.log(object);
-        obj.transformControls.setMode("rotate");
+        obj.transformControls.setMode('rotate');
         obj.transformControls.attach(object.jointAxis);
     };
 
     const startMoveJoint = (object) => {
         const { current: obj } = threeObjects;
-        obj.transformControls.setMode("translate");
+        obj.transformControls.setMode('translate');
         obj.transformControls.attach(object);
     };
 
@@ -207,13 +215,7 @@ export default function SceneState() {
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
-        // threeObjects.current.scene = scene;
-        // forceSceneUpdate();
-        const group = scene.scene.children.pop();
-        threeObjects.current.scene.add(group);// This Line NEEEEEEDS to be scene.add?? Not sure why
-        console.log(threeObjects.current.scene);
-        // threeObjects.current.baseLink.removeFromParent();
-        
+        threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
     };
     const getScene = () => {
         return threeObjects.current.scene;
@@ -221,13 +223,13 @@ export default function SceneState() {
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
-            case "scale":
+            case 'scale':
                 object.mesh.scale.set(x, y, z);
                 break;
-            case "position":
+            case 'position':
                 object.position.set(x, y, z);
                 break;
-            case "rotation":
+            case 'rotation':
                 object.originOfRotation.rotation.set(x, y, z);
                 break;
             default:
@@ -271,16 +273,34 @@ export default function SceneState() {
 
     return (
         <div className="screen">
-            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} />
+            <ProjectModal
+                isOpen={isProjectManagerOpen}
+                onClose={closeProjectManager}
+            />
             <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal openProjectManager={openProjectManager} changeProjectTitle={changeProjectTitle} projectTitle={projectTitle} getScene={getScene} loadScene={loadScene} />
-                        <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} />
+                        <MenuModal
+                            openProjectManager={openProjectManager}
+                            changeProjectTitle={changeProjectTitle}
+                            projectTitle={projectTitle}
+                            getScene={getScene}
+                            loadScene={loadScene}
+                        />
+                        <LinkTree
+                            scene={scene}
+                            deleteObject={deleteObject}
+                            duplicateObject={duplicateObject}
+                            selectedObject={selectedObject}
+                            selectObject={selectObject}
+                        />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar setTransformMode={setTransformMode} selectedObject={selectedObject} />
+                    <Toolbar
+                        setTransformMode={setTransformMode}
+                        selectedObject={selectedObject}
+                    />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters
                             selectedObject={selectedObject}
