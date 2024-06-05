@@ -1,32 +1,44 @@
-// import * as THREE from "three";
+import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
 
-
-export function handleUpload(file){
+export async function handleUpload(file) {
     const type = file.name.split('.').pop();
-    console.log(type);
+    const fileText = await readFile(file);
+    const object = await loadFileToObject(fileText, type);
+    return object.scene;
+}
+
+function loadFileToObject(fileText, type) {
+    const whichLoader = (type) => {
+        if (type === 'xml') {
+            //Unsupported
+        } else if (type === 'urdf') {
+            //Unsupported
+            //return XMLtoScene(e.target.result);
+        } else if (type === 'gltf') {
+            return new GLTFLoader();
+        } else if (type === 'json') {
+            // uses parse differently
+            // return new THREE.ObjectLoader();
+        }
+    };
+    const loader = whichLoader(type);
+    return new Promise((resolve, reject) => {
+        loader.parse(fileText, '', (obj) => {
+            resolve(obj);
+        });
+    });
+}
+
+function readFile(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            if(type === 'xml'){
-                //Unsupported
-            }else if(type === 'urdf'){
-                //Unsupported
-                //return XMLtoScene(e.target.result);
-            }else if (type === 'gltf'){
-                const loader = new GLTFLoader();
-                loader.parse(e.target.result,'', (gltf) => {
-                    console.log(gltf);
-                    resolve(gltf);
-                });
-                // console.log(e.target.result);
-                // const scene = JSONtoScene(e.target.result);
-                // console.log(scene);
-                // loadScene(scene);
-            }
-        }
+        reader.onload = () => {
+            resolve(reader.result);
+        };
         reader.onerror = reject;
         reader.readAsText(file);
-    })
+    }) 
   } 
-  
