@@ -94,10 +94,14 @@ export default function SceneState() {
 
         newSceneObject.position.set(2.5, 0.5, 2.5);
 
+        console.log(obj);
+        console.log(selectedObject);
+        console.log(obj.baseLink);
         if (selectedObject !== null) {
-            selectedObject.attach(newSceneObject);
+            console.log(selectedObject);
+            selectedObject.attachByUniformScaler(newSceneObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.attach(newSceneObject);
+            obj.baseLink.attachByUniformScaler(newSceneObject);
         } else {
             newSceneObject.position.set(0, 0.5, 0);
             newSceneObject.userData.isBaseLink = true;
@@ -112,6 +116,7 @@ export default function SceneState() {
     const createNewSceneObject = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
         const object = new SceneObject(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
         parent.add(object);
+        return object;
     };
 
     const forceSceneUpdate = () => {
@@ -135,7 +140,7 @@ export default function SceneState() {
     const attachTransformControls = (currentlySelectedObject) => {
         const { current: obj } = threeObjects;
         const mode = obj.transformControls.mode;
-        console.log(mode);
+        console.log(obj, mode, scene);
         switch (mode) {
             // this case will attach the transform controls to the joint of the object and move everything together
             case 'translate':
@@ -170,6 +175,7 @@ export default function SceneState() {
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
+        console.log(scene);
         if (!object) {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -255,7 +261,7 @@ export default function SceneState() {
         //This copies the onBeforeRender callback into the clone
         copyAttributes(object, clone);
 
-        object.parent.add(clone);
+        object.parent.addByUniformScaler(clone);
         setSelectedObject(null);
         forceSceneUpdate();
     };

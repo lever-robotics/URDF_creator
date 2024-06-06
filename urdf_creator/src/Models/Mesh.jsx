@@ -43,6 +43,9 @@ export default class Mesh extends THREE.Mesh {
         super(geometry, material);
         this.customRenderBehavior = customRenderBehavior;
         this.isShape = true;
+
+
+
     }
 
     onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
@@ -51,11 +54,24 @@ export default class Mesh extends THREE.Mesh {
     };
 
     addUniformScaler = (scaler) => {
-        this.add(scaler);
+        super.add(scaler);
         this.uniformScaler = scaler;
     };
+
+    add = (property) => {
+        const className = property.constructor.name;
+        console.log(className);
+        if(className === "SceneObject"){
+            this.setJoint(property);
+        }else if(className === "UniformScaler"){
+            this.addUniformScaler(property);
+        }
+    }
 
     setJoint = (joint) => {
         this.joint = joint;
     };
+
+
+
 }
