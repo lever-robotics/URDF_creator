@@ -48,27 +48,27 @@ export default class urdfObject extends THREE.Object3D {
         this.rotation.set(...attributes.rotation);
     }
 
-    get link () {
+    get link() {
         return this.shimmy.link;
     }
 
-    set link (link) {
+    set link(link) {
         this.shimmy.link = link;
     }
 
-    get mesh () {
+    get mesh() {
         return this.shimmy.link.mesh;
     }
 
-    set mesh (mesh) {
+    set mesh(mesh) {
         this.shimmy.link.mesh = mesh;
     }
 
-    get grandchildren () {
+    get grandchildren() {
         return this.shimmy.link.children;
     }
 
-    set grandchildren (object) {
+    set grandchildren(object) {
         this.shimmy.link.children.push(object);
     }
 
