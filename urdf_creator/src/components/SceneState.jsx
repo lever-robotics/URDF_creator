@@ -13,8 +13,8 @@ import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
 import ProjectModal from "./ProjectManager/ProjectModal.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
-import SceneObject from "../Models/SceneObject.jsx";
 import Link from "../Models/Link.jsx";
+import urdfObject from "../Models/urdfObject.jsx";
 
 export default function SceneState() {
     // State for the ProjectManager
@@ -87,28 +87,28 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const newLink = new Link(
+        const newUrdfObject = new urdfObject(
             shape,
             shape + (numShapes[shape] + 1).toString()
         );
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newLink.position.set(2.5, 0.5, 2.5);
+        newUrdfObject.position.set(2.5, 0.5, 2.5);
 
         // console.log(obj);
-        // console.log(selectedObject);
+        console.log(selectedObject);
         // console.log(obj.baseLink);
         if (selectedObject !== null) {
             console.log(selectedObject);
-            selectedObject.attach(newLink);
+            selectedObject.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.attach(newLink);
+            obj.baseLink.attach(newUrdfObject);
         } else {
-            newLink.position.set(0, 0.5, 0);
-            newLink.userData.isBaseLink = true;
-            newLink.userData.name = 'base_link';
-            obj.baseLink = newLink;
-            obj.scene.attach(newLink);
+            newUrdfObject.position.set(0, 0.5, 0);
+            newUrdfObject.userData.isBaseLink = true;
+            newUrdfObject.userData.name = 'base_link';
+            obj.baseLink = newUrdfObject;
+            obj.scene.attach(newUrdfObject);
         }
         console.log(obj.scene);
         forceSceneUpdate();
@@ -153,7 +153,7 @@ export default function SceneState() {
                 break;
             // will attach to the mesh and scale nothing else
             case 'scale':
-                obj.transformControls.attach(currentlySelectedObject.mesh);
+                obj.transformControls.attach(currentlySelectedObject.shimmy.link.mesh);
                 break;
             default:
                 break;
