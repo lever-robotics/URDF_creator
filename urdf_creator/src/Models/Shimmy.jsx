@@ -20,7 +20,7 @@ export default class Shimmy extends THREE.Object3D {
             link: new Link(shape, params),
         };
         const attributes = {
-            position: params?.position ?? [0, 0, 0],
+            position: params?.position ?? [0, 0, 0], // For the joints to shimmy
             rotation: params?.rotation ?? [0, 0, 0],
         };
 
