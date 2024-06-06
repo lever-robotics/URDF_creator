@@ -163,7 +163,7 @@ export default function SceneState() {
     const startRotateJoint = (object) => {
         const { current: obj } = threeObjects;
         obj.transformControls.setMode('rotate');
-        obj.transformControls.attach(object.jointAxis);
+        obj.transformControls.attach(object.joint);
     };
 
     const startMoveJoint = (object) => {
@@ -171,6 +171,31 @@ export default function SceneState() {
         obj.transformControls.setMode('translate');
         obj.transformControls.attach(object);
     };
+
+    const setRotationAboutJointAxis = (object, angle) => {
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(object.joint.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+        object.shimmy.setRotationFromAxisAngle(newAxis, angle)
+    }
+
+    const setPositionAcrossJointAxis = (object, distance) => {
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(object.joint.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+        object.shimmy.position.set(0, 0, 0)
+        object.shimmy.translateOnAxis(newAxis, distance)
+    }
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
@@ -216,7 +241,9 @@ export default function SceneState() {
 
     const setJoint = (object, type) => {
         console.log("setting joint");
-        object.jointAxis.type = type;
+        object.joint.type = type;
+        object.shimmy.position.set(0, 0, 0);
+        object.shimmy.rotation.set(0, 0, 0);
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
@@ -280,6 +307,36 @@ export default function SceneState() {
 
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
+    const stateFunctions = {
+        addObject,
+        createNewLink,
+        forceSceneUpdate,
+        setTransformMode,
+        attachTransformControls,
+        startRotateJoint,
+        startMoveJoint,
+        setRotationAboutJointAxis,
+        selectObject,
+        setLinkName,
+        setUserColor,
+        setMass,
+        setInertia,
+        setSensor,
+        setJoint,
+        loadScene,
+        getScene,
+        transformObject,
+        copyAttributes,
+        duplicateObject,
+        deleteObject,
+        getBaseLink,
+        openProjectManager,
+        closeProjectManager,
+        changeProjectTitle,
+        setPositionAcrossJointAxis
+    };
+
+
     return (
         <div className="screen">
             <ProjectModal
@@ -321,8 +378,7 @@ export default function SceneState() {
                             setJoint={setJoint}
                             setInertia={setInertia}
                             setSensor={setSensor}
-                            startMoveJoint={startMoveJoint}
-                            startRotateJoint={startRotateJoint}
+                            stateFunctions={stateFunctions}
                         />
                         <CodeDisplay scene={scene} />
                     </Column>
