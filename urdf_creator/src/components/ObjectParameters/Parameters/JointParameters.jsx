@@ -3,7 +3,7 @@ import Slider from "@mui/material/Slider";
 import MuiInput from "@mui/material/Input";
 
 export default function JointParameters({ selectedObject, setJoint, startMoveJoint, startRotateJoint }) {
-    const [jointType, setJointType] = useState(selectedObject.jointAxis.type);
+    const [jointType, setJointType] = useState(selectedObject.joint.type);
 
     const handleJointTypeChange = (e) => {
         setJointType(e.target.value);
@@ -11,7 +11,7 @@ export default function JointParameters({ selectedObject, setJoint, startMoveJoi
     };
 
     useEffect(() => {
-        setJointType(selectedObject.jointAxis.type);
+        setJointType(selectedObject.joint.type);
     }, [selectedObject]);
 
     return (
