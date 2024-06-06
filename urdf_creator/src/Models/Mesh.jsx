@@ -49,7 +49,7 @@ export default class Mesh extends THREE.Mesh {
     }
 
     onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-        this.uniformScaler.doScale();
+        // this.uniformScaler.doScale();
         this.customRenderBehavior(renderer, scene, camera, geometry, material, group);
     };
 

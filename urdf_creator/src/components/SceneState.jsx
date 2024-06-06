@@ -14,6 +14,7 @@ import Row from "../utils/ScreenTools/Row.jsx";
 import ProjectModal from "./ProjectManager/ProjectModal.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
 import SceneObject from "../Models/SceneObject.jsx";
+import Link from "../Models/Link.jsx";
 
 export default function SceneState() {
     // State for the ProjectManager
@@ -86,35 +87,35 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const newSceneObject = new SceneObject(
+        const newLink = new Link(
             shape,
             shape + (numShapes[shape] + 1).toString()
         );
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newSceneObject.position.set(2.5, 0.5, 2.5);
+        newLink.position.set(2.5, 0.5, 2.5);
 
-        console.log(obj);
-        console.log(selectedObject);
-        console.log(obj.baseLink);
+        // console.log(obj);
+        // console.log(selectedObject);
+        // console.log(obj.baseLink);
         if (selectedObject !== null) {
             console.log(selectedObject);
-            selectedObject.attachByUniformScaler(newSceneObject);
+            selectedObject.attach(newLink);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.attachByUniformScaler(newSceneObject);
+            obj.baseLink.attach(newLink);
         } else {
-            newSceneObject.position.set(0, 0.5, 0);
-            newSceneObject.userData.isBaseLink = true;
-            newSceneObject.userData.name = 'base_link';
-            obj.baseLink = newSceneObject;
-            obj.scene.attach(newSceneObject);
+            newLink.position.set(0, 0.5, 0);
+            newLink.userData.isBaseLink = true;
+            newLink.userData.name = 'base_link';
+            obj.baseLink = newLink;
+            obj.scene.attach(newLink);
         }
         console.log(obj.scene);
         forceSceneUpdate();
     };
 
-    const createNewSceneObject = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
-        const object = new SceneObject(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
+    const createNewLink = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
+        const object = new Link(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
         parent.add(object);
         return object;
     };
@@ -148,9 +149,7 @@ export default function SceneState() {
                 break;
             // will attach to the origin of rotation, which will rotate the mesh about said origin
             case 'rotate':
-                obj.transformControls.attach(
-                    currentlySelectedObject.originOfRotation
-                );
+                obj.transformControls.attach(currentlySelectedObject);
                 break;
             // will attach to the mesh and scale nothing else
             case 'scale':
@@ -272,6 +271,10 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
+    const getBaseLink = () => {
+        return threeObjects.current.baseLink;
+    }
+
     const openProjectManager = () => setIsProjectManagerOpen(true);
     const closeProjectManager = () => setIsProjectManagerOpen(false);
 
@@ -300,6 +303,7 @@ export default function SceneState() {
                             duplicateObject={duplicateObject}
                             selectedObject={selectedObject}
                             selectObject={selectObject}
+                            getBaseLink={getBaseLink}
                         />
                         <InsertTool addObject={addObject} />
                     </Column>

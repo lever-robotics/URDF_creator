@@ -3,7 +3,7 @@ import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useRef, useState } from "react";
 
 // RecursiveTreeView Component
-export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, duplicateObject }) => {
+export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, duplicateObject, getBaseLink }) => {
     const objectContextMenu = useRef(null);
     const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 });
     const [lastButtonObjectSelected, setLastButtonObjectSelected] = useState(null);
@@ -53,7 +53,8 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
         );
     };
 
-    let node = findBaseLink(scene);
+    // let node = findBaseLink(scene);
+    let node = getBaseLink();
 
     const hideContextMenu = () => {
         setLastButtonObjectSelected(null);
