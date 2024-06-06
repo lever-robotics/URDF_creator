@@ -31,25 +31,26 @@ export const ScenetoXML = (scene) => {
             linkIndex += 1;
 
             const position = formatVector(node.position);
+            const offset = formatVector(node.link.position);
             const rotation = quaternionToEuler(node.quaternion);
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
             xml += `    <visual>\n`;
-            xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${node.scale.x} ${node.scale.z} ${node.scale.y}`;
+                const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.scale.x / 3;
+                const radius = node.mesh.scale.x / 3;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
-                const radius = node.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.scale.y;
+                const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
+                const height = node.mesh.scale.y;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
@@ -67,7 +68,7 @@ export const ScenetoXML = (scene) => {
 
             // Add collision element with the same geometry
             xml += `    <collision>\n`;
-            xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
             xml += geometryXML;
             xml += `    </collision>\n`;
 
@@ -75,7 +76,7 @@ export const ScenetoXML = (scene) => {
             const mass = node.userData.mass || 0;
             const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
             xml += `    <inertial>\n`;
-            xml += `      <origin xyz="0 0 0" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
             xml += `      <mass value="${mass}" />\n`;
             xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
             xml += `    </inertial>\n`;
@@ -91,7 +92,7 @@ export const ScenetoXML = (scene) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.jointAxis.type}">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
                 xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
