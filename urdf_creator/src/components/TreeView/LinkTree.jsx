@@ -45,7 +45,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
                     <div>
                         {node
                             .getChildren()
-                            .filter((child) => child.sceneObject)
+                            .filter((child) => child.urdfObject)
                             .map((child) => renderNode(child))}
                     </div>
                 )}

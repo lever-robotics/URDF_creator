@@ -1,43 +1,80 @@
 import * as THREE from "three";
 import UserData from "./UserData";
-import Axis from "./Joint";
-import Mesh from "./Mesh";
 import Joint from "./Joint";
 import Shimmy from "./Shimmy";
 
 export default class urdfObject extends THREE.Object3D {
     constructor(shape, name, params) {
         super();
+        /* DESCRIPTION:
+        urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
+        ------------------
+        properties: Properties of the urdfObject are the values/references to pertinent flags and user defined data.
+            -> To modify the properties of urdfObject simply add the property name as the object key and the value as the value. A function later in the constructor will auto add these values to the object. 
+        children: Direct children of urdfObject.
+            -> Add direct children of urdfObject here. Their references will be automatically assigned as properties to the urdfObject. REMEMBER to use the add() function to add the references to the THREE.Object3D also
+        attributes: These are the values that THREE function will directly modify to change the state of the scene.
+            -> Add all attributes and their default values here and set them corresespondingly below
+        */
 
-        // Two dictionaries of properties. Once dictionary can be assigned. The other must be set using the set() function
-        const assignableProperties = {
+        //***Properties-Children-Attributes***/
+        const properties = {
             urdfObject: true, // Flag to determine if is urdfObject
-            joint: new Joint(params),
-            shimmy: new Shimmy(shape, params),
             userData: new UserData(shape, name),
         };
-        const settableProperties = {
+        const children = {
+            joint: new Joint(params),
+            shimmy: new Shimmy(shape, params),
+        };
+        const attributes = {
             position: params?.position ?? [0, 0, 0],
             rotation: params?.rotation ?? [0, 0, 0],
         };
 
-        // Assign assignableProperties
-        Object.entries(assignableProperties).forEach(([key, value]) => {
-            this[key] = value;
-        });
-
-        // Add what is a property reference as a child
+        //***Assign-add()-set()***//
+        const assignProperties = (elements) => {
+            // These are automatic
+            Object.entries(elements).forEach(([key, value]) => {
+                this[key] = value;
+            });
+        };
+        assignProperties(properties);
+        assignProperties(children);
+        // Add Children here...
         this.add(this.joint);
         this.add(this.shimmy);
+        // Add direct attributes here...
+        this.position.set(...attributes.position);
+        this.rotation.set(...attributes.rotation);
+    }
 
-        // Settable properties through the .set() function
-        this.position.set(...settableProperties.position);
-        this.rotation.set(...settableProperties.rotation);
+    get link () {
+        return this.shimmy.link;
+    }
+
+    set link (link) {
+        this.shimmy.link = link;
+    }
+
+    get mesh () {
+        return this.shimmy.link.mesh;
+    }
+
+    set mesh (mesh) {
+        this.shimmy.link.mesh = mesh;
+    }
+
+    get grandchildren () {
+        return this.shimmy.link.children;
+    }
+
+    set grandchildren (object) {
+        this.shimmy.link.children.push(object);
     }
 
     getChildren = () => {
-        console.log(this, this.uniformScaler);
-        return this.children;
+        console.log(this.shimmy.link.children);
+        return this.shimmy.link.children;
     };
 
     // JS technically doesn't allow overloading but this seems to work haha

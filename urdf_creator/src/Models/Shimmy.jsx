@@ -1,34 +1,43 @@
 import * as THREE from "three";
-import UserData from "./UserData";
-import Axis from "./Joint";
-import Mesh from "./Mesh";
-import Joint from "./Joint";
 import Link from "./Link";
 
 export default class Shimmy extends THREE.Object3D {
     constructor(shape, params) {
-        // shape, name, ...params
         super();
+        /* DESCRIPTION:
+        Shimmy: Used to demonstrate joint logic and keep data on specific joint keyframes
+        ------------------
+        properties: Properties of Shimmy are the values/references to pertinent flags and user defined data.
+            -> To modify the properties of Shimmy simply add the property name as the object key and the value as the value. A function later in the constructor will auto add these values to the object. 
+        children: Direct children of Shimmy.
+            -> Add direct children of Shimmy here. Their references will be automatically assigned as properties to the Shimmy. REMEMBER to use the add() function to add the references to the THREE.Object3D also
+        attributes: These are the values that THREE function will directly modify to change the state of the scene.
+            -> Add all attributes and their default values here and set them corresespondingly below
+        */
 
-        // Two dictionaries of properties. Once dictionary can be assigned. The other must be set using the set() function
-        const assignableProperties = {
+        const properties = {};
+        const children = {
             link: new Link(shape, params),
         };
-
-        Object.entries(assignableProperties).forEach(([key, value]) => {
-            this[key] = value;
-        });
-
-        const settableProperties = {
+        const attributes = {
             position: params?.position ?? [0, 0, 0],
             rotation: params?.rotation ?? [0, 0, 0],
         };
 
+        //***Assign-add()-set()***//
+        const assignProperties = (elements) => {
+            // These are automatic
+            Object.entries(elements).forEach(([key, value]) => {
+                this[key] = value;
+            });
+        };
+        assignProperties(properties);
+        assignProperties(children);
+        // Add Children here...
         this.add(this.link);
-
-        // Settable properties through the .set() function
-        this.position.set(...settableProperties.position);
-        this.rotation.set(...settableProperties.rotation);
+        // Add attributes here...
+        this.position.set(...attributes.position);
+        this.rotation.set(...attributes.rotation);
     }
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);

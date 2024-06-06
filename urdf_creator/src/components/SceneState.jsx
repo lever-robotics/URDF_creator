@@ -100,9 +100,9 @@ export default function SceneState() {
         // console.log(obj.baseLink);
         if (selectedObject !== null) {
             console.log(selectedObject);
-            selectedObject.attach(newUrdfObject);
+            selectedObject.shimmy.link.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.attach(newUrdfObject);
+            obj.baseLink.shimmy.link.attach(newUrdfObject);
         } else {
             newUrdfObject.position.set(0, 0.5, 0);
             newUrdfObject.userData.isBaseLink = true;
