@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import UserData from "./UserData";
 import Mesh from "./Mesh";
 
 export default class Link extends THREE.Object3D {
@@ -8,7 +7,6 @@ export default class Link extends THREE.Object3D {
 
         // Two dictionaries of properties. Once dictionary can be assigned. The other must be set using the set() function
         const assignableProperties = {
-            sceneObject: true,
             mesh: new Mesh(shape, params),
         };
         const settableProperties = {

@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import UserData from "./UserData";
-import Axis from "./Axis";
+import Axis from "./Joint";
 import Mesh from "./Mesh";
-import Joint from "./Axis";
+import Joint from "./Joint";
 import Link from "./Link";
 
 export default class Shimmy extends THREE.Object3D {
@@ -13,7 +13,6 @@ export default class Shimmy extends THREE.Object3D {
         // Two dictionaries of properties. Once dictionary can be assigned. The other must be set using the set() function
         const assignableProperties = {
             link: new Link(shape, params),
-            // userData: new UserData(shape, name),
         };
 
         Object.entries(assignableProperties).forEach(([key, value]) => {

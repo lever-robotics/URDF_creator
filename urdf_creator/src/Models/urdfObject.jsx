@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import UserData from "./UserData";
-import Axis from "./Axis";
+import Axis from "./Joint";
 import Mesh from "./Mesh";
-import Joint from "./Axis";
+import Joint from "./Joint";
 import Shimmy from "./Shimmy";
 
 export default class urdfObject extends THREE.Object3D {
@@ -11,7 +11,7 @@ export default class urdfObject extends THREE.Object3D {
 
         // Two dictionaries of properties. Once dictionary can be assigned. The other must be set using the set() function
         const assignableProperties = {
-            sceneObject: true,
+            urdfObject: true, // Flag to determine if is urdfObject
             joint: new Joint(params),
             shimmy: new Shimmy(shape, params),
             userData: new UserData(shape, name),
@@ -26,7 +26,7 @@ export default class urdfObject extends THREE.Object3D {
             this[key] = value;
         });
 
-        // Add property references to children
+        // Add what is a property reference as a child
         this.add(this.joint);
         this.add(this.shimmy);
 
