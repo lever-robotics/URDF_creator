@@ -46,6 +46,7 @@ export default function SceneState() {
         initialized: false,
         composer: null,
         baseLink: null,
+        currentOffsetChangeNode: null,
     });
 
     const mountRef = useRef(null);
@@ -95,11 +96,7 @@ export default function SceneState() {
 
         newUrdfObject.position.set(2.5, 0.5, 2.5);
 
-        // console.log(obj);
-        console.log(selectedObject);
-        // console.log(obj.baseLink);
         if (selectedObject !== null) {
-            console.log(selectedObject);
             selectedObject.shimmy.link.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
             obj.baseLink.shimmy.link.attach(newUrdfObject);
@@ -110,7 +107,6 @@ export default function SceneState() {
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
-        console.log(obj.scene);
         forceSceneUpdate();
     };
 
@@ -123,7 +119,6 @@ export default function SceneState() {
     const forceSceneUpdate = () => {
         const { current: obj } = threeObjects;
         setScene({ ...obj.scene });
-        console.log(scene);
     };
 
     const setTransformMode = (mode, currentlySelectedObject) => {
@@ -131,7 +126,6 @@ export default function SceneState() {
         if (obj.transformControls) {
             obj.transformControls.setMode(mode);
         }
-        console.log(mode);
 
         if (currentlySelectedObject) {
             attachTransformControls(currentlySelectedObject);
@@ -141,7 +135,6 @@ export default function SceneState() {
     const attachTransformControls = (currentlySelectedObject) => {
         const { current: obj } = threeObjects;
         const mode = obj.transformControls.mode;
-        console.log(obj, mode, scene);
         switch (mode) {
             // this case will attach the transform controls to the joint of the object and move everything together
             case 'translate':
@@ -170,7 +163,63 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         obj.transformControls.setMode('translate');
         obj.transformControls.attach(object);
+
+        const worldPosition = object.link.getWorldPosition(new THREE.Vector3())
+
+        const lockPosition = () => {
+            const currentPosition = object.link.getWorldPosition(new THREE.Vector3())
+            if (!worldPosition.equals(currentPosition)) {
+                setGlobalPosition(object.link, worldPosition);
+            }
+        }
+
+        addCustomRenderBehavior(object, "lockPosition", lockPosition);
+        obj.currentOffsetChangeNode = object;
     };
+
+    const setGlobalPosition = (object, newWorldPosition) => {
+        // Get the current world matrix of the object
+        const oldWorldMatrix = new THREE.Matrix4();
+        oldWorldMatrix.copy(object.matrixWorld);
+
+        // Extract the position, rotation, and scale from the world matrix
+        const oldWorldPosition = new THREE.Vector3();
+        const oldWorldRotation = new THREE.Quaternion();
+        const oldWorldScale = new THREE.Vector3();
+        oldWorldMatrix.decompose(oldWorldPosition, oldWorldRotation, oldWorldScale);
+
+        // Compute the difference between the new world position and the old world position
+        const offset = newWorldPosition.clone().sub(oldWorldPosition);
+
+        // Transform the offset by the inverse of the object's parent's world rotation
+        if (object.parent) {
+            const parentWorldRotation = new THREE.Quaternion();
+            object.parent.getWorldQuaternion(parentWorldRotation);
+            parentWorldRotation.invert(); // Corrected method
+            offset.applyQuaternion(parentWorldRotation);
+        }
+
+        // Add the transformed offset to the object's local position
+        object.position.add(offset);
+
+        // Force the scene to update
+        forceSceneUpdate();
+    };
+
+    const addCustomRenderBehavior = (object, behavior, func) => {
+        object.mesh.customRenderBehaviors[behavior] = func;
+    }
+
+    const clearCustomRenderBehavior = (object, behavior) => {
+        delete object.mesh.customRenderBehaviors[behavior];
+    }
+
+    const unlockCurrentOffsetChangeNode = () => {
+        const { current: obj } = threeObjects;
+        console.log("unlocking")
+        clearCustomRenderBehavior(obj.currentOffsetChangeNode, "lockPosition");
+        obj.currentOffsetChangeNode = null;
+    }
 
     const setRotationAboutJointAxis = (object, angle) => {
         const quaternion = new THREE.Quaternion();
@@ -199,7 +248,6 @@ export default function SceneState() {
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
-        console.log(scene);
         if (!object) {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -240,7 +288,6 @@ export default function SceneState() {
     };
 
     const setJoint = (object, type) => {
-        console.log("setting joint");
         object.joint.type = type;
         object.shimmy.position.set(0, 0, 0);
         object.shimmy.rotation.set(0, 0, 0);
@@ -333,7 +380,8 @@ export default function SceneState() {
         openProjectManager,
         closeProjectManager,
         changeProjectTitle,
-        setPositionAcrossJointAxis
+        setPositionAcrossJointAxis,
+        unlockCurrentOffsetChangeNode
     };
 
 

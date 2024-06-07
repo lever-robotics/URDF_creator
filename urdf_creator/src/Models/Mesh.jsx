@@ -20,7 +20,7 @@ export default class Mesh extends THREE.Mesh {
             material: new THREE.MeshPhongMaterial({
                 color: Math.random() * 0xffffff,
             }),
-            customRenderBehavior: defineRenderBehavior(shape),
+            customRenderBehaviors: { "defineRenderBehavior": defineRenderBehavior(shape) }
         };
         const children = {};
         const attributes = {
@@ -41,32 +41,31 @@ export default class Mesh extends THREE.Mesh {
         this.scale.set(...attributes.scale);
 
         //***Helper Function***/
-        function defineGeometry (shape, a, b, c) {
+        function defineGeometry(shape, a, b, c) {
             switch (shape) {
                 case "cube":
                     // a = width
                     // b = height
                     // c = depth
-                    return new THREE.BoxGeometry(1,1,1);
+                    return new THREE.BoxGeometry(1, 1, 1);
                 case "sphere":
                     // a = radius
                     // b = widthSegments
                     // c = heightSegments
-                    return new THREE.SphereGeometry(0.5,32,32);
+                    return new THREE.SphereGeometry(0.5, 32, 32);
                 case "cylinder":
                     // a = top and bottom radius
                     // b = height
                     // c = radialSegments = 'number of segmented faces around circumference
-                    return new THREE.CylinderGeometry(0.5,0.5,1,32);
+                    return new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
                 default:
-                    console.log('No shape provided to defineGeometry');
                     return;
             }
         }
-        function defineRenderBehavior (shape) {
+        function defineRenderBehavior(shape) {
             switch (shape) {
                 case "cube":
-                    return () => {};
+                    return () => { };
                 case "sphere":
                     // ensure spheres scale uniformly in all directions
                     return (context) => {
@@ -97,12 +96,11 @@ export default class Mesh extends THREE.Mesh {
                         );
                     }
                 default:
-                    console.log('No shape provided to customRenderBehavior');
                     return;
-                }
+            }
         }
     }
     onBeforeRender = () => {
-        this.customRenderBehavior(this);
+        Object.values(this.customRenderBehaviors).forEach((behavior) => behavior(this));
     };
 }

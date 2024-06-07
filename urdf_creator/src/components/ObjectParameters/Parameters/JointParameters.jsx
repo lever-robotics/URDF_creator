@@ -47,9 +47,7 @@ const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis
-    const startRotateJoint = stateFunctions.startRotateJoint;
-    const startMoveJoint = stateFunctions.startMoveJoint;
+    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis;
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
@@ -59,20 +57,8 @@ const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
 
     return (
         <>
-            <button
-                onClick={() => {
-                    startRotateJoint(selectedObject);
-                }}
-            >
-                Change Axis Angle
-            </button>
-            <button
-                onClick={() => {
-                    startMoveJoint(selectedObject);
-                }}
-            >
-                Change Axis Origin
-            </button>
+            <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
+            <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <div>
                 <span>
                     min:
@@ -116,8 +102,6 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
     const [current, setCurrent] = useState(0);
 
     const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis
-    const startRotateJoint = stateFunctions.startRotateJoint;
-    const startMoveJoint = stateFunctions.startMoveJoint;
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
@@ -128,20 +112,8 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
 
     return (
         <>
-            <button
-                onClick={() => {
-                    startRotateJoint(selectedObject);
-                }}
-            >
-                Change Axis Angle
-            </button>
-            <button
-                onClick={() => {
-                    startMoveJoint(selectedObject);
-                }}
-            >
-                Change Axis Origin
-            </button>
+            <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
+            <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <div>
             </div>
 
@@ -159,8 +131,6 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
     const [current, setCurrent] = useState(0);
 
     const setPositionAcrossJointAxis = stateFunctions.setPositionAcrossJointAxis
-    const startRotateJoint = stateFunctions.startRotateJoint;
-    const startMoveJoint = stateFunctions.startMoveJoint;
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
@@ -170,20 +140,8 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
 
     return (
         <>
-            <button
-                onClick={() => {
-                    startRotateJoint(selectedObject);
-                }}
-            >
-                Change Axis Angle
-            </button>
-            <button
-                onClick={() => {
-                    startMoveJoint(selectedObject);
-                }}
-            >
-                Change Axis Origin
-            </button>
+            <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
+            <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <div>
                 <span>
                     min:
@@ -221,3 +179,30 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
         </>
     );
 };
+
+const MoveOriginButton = ({ stateFunctions, selectedObject }) => {
+
+    const startMoveJoint = stateFunctions.startMoveJoint;
+    const unlockCurrentOffsetChangeNode = stateFunctions.unlockCurrentOffsetChangeNode;
+
+    return <button
+        onClick={() => {
+            startMoveJoint(selectedObject);
+        }}
+        onBlur={unlockCurrentOffsetChangeNode}
+    >
+        Change Axis Origin
+    </button>
+}
+
+const RotateAxisButton = ({ stateFunctions, selectedObject }) => {
+    const startRotateJoint = stateFunctions.startRotateJoint;
+
+    return <button
+        onClick={() => {
+            startRotateJoint(selectedObject);
+        }}
+    >
+        Change Axis Angle
+    </button>
+}

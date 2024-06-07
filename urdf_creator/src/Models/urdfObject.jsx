@@ -73,7 +73,6 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     getChildren = () => {
-        console.log(this.shimmy.link.children);
         return this.shimmy.link.children;
     };
 

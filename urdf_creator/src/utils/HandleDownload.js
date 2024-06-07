@@ -12,14 +12,11 @@ export async function handleDownload(scene, type, title) {
   } else if (type === "gltf") {
     const exporter = new GLTFExporter();
     exporter.parse(scene, (gltf) => {
-      console.log(gltf);
       otherFileDownload(JSON.stringify(gltf), type, title);
     });
     // const json = scene.toJSON();
-    // console.log(json);
     // otherFileDownload(JSON.stringify(json), type, title);
   } else {
-    console.log("file type not supported");
     // Probably should implement an error box
   }
 }
