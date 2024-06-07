@@ -122,8 +122,6 @@ export default function SceneState() {
         const link = shimmy.children[0];
         const linkChildren = link.children;
         const mesh = linkChildren.find((obj) => obj.type === 'Mesh');
-        console.log(linkChildren);
-
         const params = {
             position: gltfObject.position,
             rotation: gltfObject.rotation,
@@ -146,12 +144,10 @@ export default function SceneState() {
                 return object;
             }
         });
-
         const object = new urdfObject(params.shape, params.name, params);
-        console.log(object);
         children.forEach((child) => {
             if(child.type !== 'Mesh'){
-                return object.link.attach(createNewLink(child));
+                return object.link.add(createNewLink(child));
             }
         })
         return object;

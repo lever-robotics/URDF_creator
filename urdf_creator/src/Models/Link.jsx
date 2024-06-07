@@ -19,6 +19,7 @@ export default class Link extends THREE.Object3D {
             mesh: new Mesh(shape, params),
         };
         const attributes = {
+            offset: params?.offset ?? [0,0,0], // The offset from the joint
             // position: params?.position ?? [0, 0, 0],
         };
 
@@ -33,7 +34,12 @@ export default class Link extends THREE.Object3D {
         // Add Children here...
         this.add(this.mesh);
         // Set attributes here
+        this.position.set(...attributes.offset);
         // this.position.set(...attributes.position); // The offset from the joint
+    }
+
+    set offset (offset) {
+        this.position.set(...offset);
     }
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);
