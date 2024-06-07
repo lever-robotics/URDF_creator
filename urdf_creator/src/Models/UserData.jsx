@@ -9,6 +9,7 @@ export default class UserData {
         this.selectable = true;
         this.sensor = null; // Sensor object
         this.stlfile = null;
+        this.type = 'fixed';
     }
 
     duplicate() {

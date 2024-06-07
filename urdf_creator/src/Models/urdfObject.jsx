@@ -44,6 +44,7 @@ export default class urdfObject extends THREE.Object3D {
         this.add(this.joint);
         this.add(this.shimmy);
         // Add direct attributes here...
+        
         this.position.set(...attributes.position);
         this.rotation.set(...attributes.rotation);
     }

@@ -19,10 +19,7 @@ export default class Shimmy extends THREE.Object3D {
         const children = {
             link: new Link(shape, params),
         };
-        const attributes = {
-            position: params?.position ?? [0, 0, 0], // For the joints to shimmy
-            rotation: params?.rotation ?? [0, 0, 0],
-        };
+        const attributes = {}; // The shimmy's position and rotation will be set but only for a visual feature to shimmy the joints
 
         //***Assign-add()-set()***//
         const assignProperties = (elements) => {
@@ -36,8 +33,6 @@ export default class Shimmy extends THREE.Object3D {
         // Add Children here...
         this.add(this.link);
         // Add attributes here...
-        this.position.set(...attributes.position);
-        this.rotation.set(...attributes.rotation);
     }
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);
