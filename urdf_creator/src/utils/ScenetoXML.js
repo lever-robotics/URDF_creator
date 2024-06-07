@@ -5,7 +5,6 @@ import urdfObject from "../Models/urdfObject";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
-    debugger;
     let xml = `<robot name="GeneratedRobot">\n`;
     if (scene === undefined) return xml;
 
@@ -97,6 +96,16 @@ export const ScenetoXML = (scene) => {
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
                 xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
+                if (node.joint.type !== "fixed") {
+
+                    const quaternion = new THREE.Quaternion();
+                    quaternion.setFromEuler(node.joint.rotation);
+                    const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+                    xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
+                    if (node.joint.type !== "continuous") {
+                        xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
+                    }
+                }
                 xml += `  </joint>\n`;
             }
 

@@ -246,6 +246,16 @@ export default function SceneState() {
         object.shimmy.translateOnAxis(newAxis, distance)
     }
 
+    const setJointLimits = (object, min = null, max = null) => {
+        if (min) {
+            object.joint.min = min;
+        }
+
+        if (max) {
+            object.joint.max = max;
+        }
+    }
+
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
         if (!object) {
@@ -291,6 +301,15 @@ export default function SceneState() {
         object.joint.type = type;
         object.shimmy.position.set(0, 0, 0);
         object.shimmy.rotation.set(0, 0, 0);
+
+        if (type === "prismatic") {
+            object.joint.min = -1;
+            object.joint.max = 1;
+        } else if (type === "revolute") {
+            object.joint.min = -3.14;
+            object.joint.max = 3.14;
+        }
+
         forceSceneUpdate();
     };
     const loadScene = (scene) => {
@@ -381,7 +400,8 @@ export default function SceneState() {
         closeProjectManager,
         changeProjectTitle,
         setPositionAcrossJointAxis,
-        unlockCurrentOffsetChangeNode
+        unlockCurrentOffsetChangeNode,
+        setJointLimits
     };
 
 

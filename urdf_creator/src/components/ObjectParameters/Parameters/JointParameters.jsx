@@ -39,11 +39,64 @@ export default function JointParameters({ selectedObject, setJoint, stateFunctio
     );
 }
 
+const MinJointInput = ({ min, setMin, max, selectedObject, stateFunctions }) => {
+
+    const setJointLimits = stateFunctions.setJointLimits;
+
+    const handleChange = (value) => {
+        setJointLimits(selectedObject, null, value);
+        setMin(value);
+    }
+
+
+    return <span>
+        min:
+        <MuiInput
+            value={min}
+            size="small"
+            onChange={(e) => handleChange(parseFloat(e.target.value))}
+            inputProps={{
+                step: 0.1,
+                min: -6.28,
+                max: max,
+                type: "number",
+                "aria-labelledby": "input-slider",
+            }}
+        />
+    </span>
+}
+
+const MaxJointInput = ({ min, max, setMax, selectedObject, stateFunctions }) => {
+
+    const setJointLimits = stateFunctions.setJointLimits;
+
+    const handleChange = (value) => {
+        setJointLimits(selectedObject, null, value);
+        setMax(value);
+    }
+
+    return <span>
+        max:
+        <MuiInput
+            value={max}
+            size="small"
+            onChange={(e) => handleChange(parseFloat(e.target.value))}
+            inputProps={{
+                step: 0.1,
+                min: min,
+                max: 6.28,
+                type: "number",
+                "aria-labelledby": "input-slider",
+            }}
+        />
+    </span>
+}
+
 const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
     // min value
-    const [min, setMin] = useState(-6.28);
+    const [min, setMin] = useState(selectedObject.joint.min);
     // max value
-    const [max, setMax] = useState(6.28);
+    const [max, setMax] = useState(selectedObject.joint.max);
     // current value
     const [current, setCurrent] = useState(0);
 
@@ -60,38 +113,9 @@ const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
             <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <div>
-                <span>
-                    min:
-                    <MuiInput
-                        value={min}
-                        size="small"
-                        onChange={(e) => setMin(parseFloat(e.target.value))}
-                        inputProps={{
-                            step: 0.1,
-                            min: -6.28,
-                            max: max,
-                            type: "number",
-                            "aria-labelledby": "input-slider",
-                        }}
-                    />
-                </span>
-                <span>
-                    max:
-                    <MuiInput
-                        value={max}
-                        size="small"
-                        onChange={(e) => setMax(parseFloat(e.target.value))}
-                        inputProps={{
-                            step: 0.1,
-                            min: min,
-                            max: 6.28,
-                            type: "number",
-                            "aria-labelledby": "input-slider",
-                        }}
-                    />
-                </span>
+                <MinJointInput min={min} setMin={setMin} max={max} selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                <MaxJointInput min={min} max={max} setMax={setMax} selectedObject={selectedObject} stateFunctions={stateFunctions} />
             </div>
-
             <Slider step={0.01} value={current} min={min} max={max} aria-label="Default" valueLabelDisplay="auto" onChange={handleSlider} />
         </>
     );
@@ -114,9 +138,6 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
         <>
             <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
-            <div>
-            </div>
-
             <Slider step={0.01} value={current} min={-3.14} max={3.14} aria-label="Default" valueLabelDisplay="auto" onChange={handleSlider} />
         </>
     );
@@ -124,9 +145,9 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
 
 const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
     // min value
-    const [min, setMin] = useState(-1);
+    const [min, setMin] = useState(selectedObject.joint.min);
     // max value
-    const [max, setMax] = useState(1);
+    const [max, setMax] = useState(selectedObject.joint.max);
     // current value
     const [current, setCurrent] = useState(0);
 
@@ -143,36 +164,8 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
             <RotateAxisButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <MoveOriginButton selectedObject={selectedObject} stateFunctions={stateFunctions} />
             <div>
-                <span>
-                    min:
-                    <MuiInput
-                        value={min}
-                        size="small"
-                        onChange={(e) => setMin(parseFloat(e.target.value))}
-                        inputProps={{
-                            step: 0.1,
-                            min: -6.28,
-                            max: max,
-                            type: "number",
-                            "aria-labelledby": "input-slider",
-                        }}
-                    />
-                </span>
-                <span>
-                    max:
-                    <MuiInput
-                        value={max}
-                        size="small"
-                        onChange={(e) => setMax(parseFloat(e.target.value))}
-                        inputProps={{
-                            step: 0.1,
-                            min: min,
-                            max: 6.28,
-                            type: "number",
-                            "aria-labelledby": "input-slider",
-                        }}
-                    />
-                </span>
+                <MinJointInput min={min} setMin={setMin} max={max} selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                <MaxJointInput min={min} max={max} setMax={setMax} selectedObject={selectedObject} stateFunctions={stateFunctions} />
             </div>
 
             <Slider step={0.01} value={current} min={min} max={max} aria-label="Default" valueLabelDisplay="auto" onChange={handleSlider} />
