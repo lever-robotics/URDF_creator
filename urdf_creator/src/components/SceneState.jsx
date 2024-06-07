@@ -121,12 +121,7 @@ export default function SceneState() {
         const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1]: gltfObject.children[0];
         const link = shimmy.children[0];
         const linkChildren = link.children;
-        const mesh = linkChildren.find((obj) => {
-            console.log(obj, obj === THREE.Mesh)
-            if(obj.type === 'Mesh'){
-                return obj;
-            }
-        });
+        const mesh = linkChildren.find((obj) => obj.type === 'Mesh');
         console.log(linkChildren);
 
         const params = {
@@ -156,7 +151,7 @@ export default function SceneState() {
         console.log(object);
         children.forEach((child) => {
             if(child.type !== 'Mesh'){
-                return object.add(createNewLink(object, child));
+                return object.link.attach(createNewLink(child));
             }
         })
         return object;

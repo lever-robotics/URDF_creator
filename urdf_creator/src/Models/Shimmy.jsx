@@ -20,8 +20,8 @@ export default class Shimmy extends THREE.Object3D {
             link: new Link(shape, params),
         };
         const attributes = {
-            position: params?.position ?? [0, 0, 0], // For the joints to shimmy
-            rotation: params?.rotation ?? [0, 0, 0],
+            // position: params?.position ?? [0, 0, 0], // For the joints to shimmy
+            // rotation: params?.rotation ?? [0, 0, 0],
         };
 
         //***Assign-add()-set()***//
@@ -36,8 +36,8 @@ export default class Shimmy extends THREE.Object3D {
         // Add Children here...
         this.add(this.link);
         // Add attributes here...
-        this.position.set(...attributes.position);// Also joint origin
-        this.rotation.set(...attributes.rotation);
+        // this.position.set(...attributes.position);// Also joint origin
+        // this.rotation.set(...attributes.rotation);
     }
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);
