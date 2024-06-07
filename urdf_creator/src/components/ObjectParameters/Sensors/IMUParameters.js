@@ -14,7 +14,7 @@ function IMUParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="gaussianNoise"
-                    value={sensorData.gaussianNoise || 0}
+                    value={sensorData.gaussianNoise || 0.01}
                     onChange={handleChange}
                 />
             </label>
@@ -33,6 +33,42 @@ function IMUParameters({ selectedObject, sensorData, setSensor }) {
                     type="text"
                     name="rpyOffsets"
                     value={sensorData.rpyOffsets || '0 0 0'}
+                    onChange={handleChange}
+                />
+            </label>
+            <label>
+                Always On:
+                <input
+                    type="checkbox"
+                    name="alwaysOn"
+                    checked={sensorData.alwaysOn !== undefined ? sensorData.alwaysOn : true}
+                    onChange={(e) => handleChange({ target: { name: 'alwaysOn', value: e.target.checked } })}
+                />
+            </label>
+            <label>
+                Update Rate:
+                <input
+                    type="number"
+                    name="updateRate"
+                    value={sensorData.updateRate || 100}
+                    onChange={handleChange}
+                />
+            </label>
+            <label>
+                Mean:
+                <input
+                    type="number"
+                    name="mean"
+                    value={sensorData.mean || 0}
+                    onChange={handleChange}
+                />
+            </label>
+            <label>
+                Standard Deviation:
+                <input
+                    type="number"
+                    name="stddev"
+                    value={sensorData.stddev || 0}
                     onChange={handleChange}
                 />
             </label>
