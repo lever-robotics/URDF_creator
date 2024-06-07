@@ -1,18 +1,20 @@
 import * as THREE from "three";
-import { generateSensorXML } from "./generateSensorXML";
+import { generateSensorSDF } from "./generateSensorSDF";
 import findBaseLink from "./findBaseLink";
 import urdfObject from "../Models/urdfObject";
 
-// Helper function to convert Scene to URDF-compatible XML
-export const ScenetoXML = (scene) => {
+// Helper function to convert Scene to SDF-compatible XML
+export const ScenetoSDF = (scene) => {
     debugger;
-    let xml = `<robot name="GeneratedRobot">\n`;
+    let xml = `<sdf version="1.6">\n`;
     if (scene === undefined) return xml;
+
+    xml += `<model name="GeneratedModel">\n`;
 
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
 
-    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) and flip y and z
+    // Helper to convert rotation to SDF-compatible roll-pitch-yaw (rpy) and flip y and z
     const quaternionToEuler = (quaternion) => {
         const euler = new THREE.Euler();
         euler.setFromQuaternion(quaternion, "XYZ");
@@ -37,55 +39,42 @@ export const ScenetoXML = (scene) => {
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            xml += `    <visual>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `    <pose>${offset} 0 0 0</pose>\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
                 const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
-                geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
+                geometryXML = `    <collision>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "SphereGeometry") {
                 const radius = node.mesh.scale.x / 3;
-                geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
+                geometryXML = `    <collision>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
                 const height = node.mesh.scale.y;
-                geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
+                geometryXML = `    <collision>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
             }
             xml += geometryXML;
 
             // Material
             if (node.mesh.material && node.mesh.material.color) {
                 const color = node.mesh.material.color;
-                xml += `      <material name="${node.mesh.material.name || "material"}">\n`;
-                xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
-                xml += `      </material>\n`;
+                xml += `    <material>\n      <script>\n        <uri>file://media/materials/scripts/gazebo.material</uri>\n        <name>${node.mesh.material.name || "Gazebo/Red"}</name>\n      </script>\n      <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${color.b} 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
             }
-
-            // End visual
-            xml += `    </visual>\n`;
-
-            // Add collision element with the same geometry
-            xml += `    <collision>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
-            xml += geometryXML;
-            xml += `    </collision>\n`;
 
             // Add inertial element
             const mass = node.userData.mass || 0;
             const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
-            xml += `    <inertial>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
-            xml += `      <mass value="${mass}" />\n`;
-            xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
-            xml += `    </inertial>\n`;
+            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${Ixx || 0}</ixx>\n        <ixy>${Ixy || 0}</ixy>\n        <ixz>${Ixz || 0}</ixz>\n        <iyy>${Iyy || 0}</iyy>\n        <iyz>${Iyz || 0}</iyz>\n        <izz>${Izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.userData.sensorXML) {
-                const sensorXML = generateSensorXML(node);
-                xml += sensorXML;
+            if (node.userData.sensor) {
+                const sensorSDF = generateSensorSDF(node);
+                xml += sensorSDF;
             }
 
             // End link
@@ -94,9 +83,9 @@ export const ScenetoXML = (scene) => {
             // Add joint if there's a parent link
             if (parentName) {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
-                xml += `    <parent link="${parentName}" />\n`;
-                xml += `    <child link="${linkName}" />\n`;
-                xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
+                xml += `    <parent>${parentName}</parent>\n`;
+                xml += `    <child>${linkName}</child>\n`;
+                xml += `    <pose>${position} ${rotation}</pose>\n`;
                 xml += `  </joint>\n`;
             }
 
@@ -109,8 +98,9 @@ export const ScenetoXML = (scene) => {
     const baseLink = findBaseLink(scene);
     if (baseLink) processNode(baseLink);
 
-    // Close robot tag
-    xml += `</robot>`;
+    // Close model and sdf tags
+    xml += `</model>\n`;
+    xml += `</sdf>`;
 
     return xml;
 };

@@ -1,14 +1,13 @@
-// generateSensorXML.js
-export const generateSensorXML = (selectedObject) => {
+export const generateSensorSDF = (selectedObject) => {
 
     const sensorType = selectedObject.userData.sensorType;
     let sensorXML = '';
     switch (sensorType) {
         case 'imu':
-            sensorXML = generateIMUXML(selectedObject);
+            sensorXML = generateIMUPluginXML(selectedObject);
             break;
         case 'camera':
-            sensorXML = generateCameraXML(selectedObject);
+            sensorXML = generateCameraPluginXML(selectedObject);
             break;
         // Add cases for other sensor types here
         default:
@@ -19,15 +18,14 @@ export const generateSensorXML = (selectedObject) => {
     return sensorXML;
 };
 
-const generateIMUXML = (selectedObject) => {
+const generateIMUPluginXML = (selectedObject) => {
     const { sensor } = selectedObject.userData;
     const { sensorType, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
 
     return `
-        <sensor type="${sensorType}" name="${sensor.sensorType}">
+        <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
             <always_on>${alwaysOn}</always_on>
             <update_rate>${updateRate}</update_rate>
-            <pose>${xyzOffsets} ${rpyOffsets}</pose>
             <imu>
                 <noise>
                     <type>gaussian</type>
@@ -35,20 +33,23 @@ const generateIMUXML = (selectedObject) => {
                     <stddev>${stddev}</stddev>
                 </noise>
             </imu>
-        </sensor>
+            <ros>
+                <namespace>${sensorType}</namespace>
+                <remapping>~/out:=/imu/data</remapping>
+            </ros>
+            <pose>${xyzOffsets} ${rpyOffsets}</pose>
+        </plugin>
     `;
 };
 
-
-const generateCameraXML = (selectedObject) => {
+const generateCameraPluginXML = (selectedObject) => {
     const { sensor } = selectedObject.userData;
     const { sensorType, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
 
     return `
-        <sensor type="${sensorType}" name="${cameraName}">
+        <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
             <always_on>${alwaysOn}</always_on>
             <update_rate>${updateRate}</update_rate>
-            <pose>${xyzOffsets} ${rpyOffsets}</pose>
             <camera>
                 <horizontal_fov>${horizontal_fov}</horizontal_fov>
                 <image>
@@ -65,6 +66,12 @@ const generateCameraXML = (selectedObject) => {
                     <mean>${gaussianNoise}</mean>
                 </noise>
             </camera>
-        </sensor>
+            <ros>
+                <namespace>${sensorType}</namespace>
+                <remapping>~/image_raw:=${imageTopicName}</remapping>
+                <remapping>~/camera_info:=${cameraInfoTopicName}</remapping>
+            </ros>
+            <pose>${xyzOffsets} ${rpyOffsets}</pose>
+        </plugin>
     `;
 };
