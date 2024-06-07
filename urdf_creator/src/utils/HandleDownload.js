@@ -6,7 +6,6 @@ import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
 import { ScenetoSDF } from "./ScenetoSDF";
 import { SensorsContained } from "./CreatePackage/SensorsContained";
-import { GenerateLaunchFileContent } from "./CreatePackage/GenerateLaunchFileContent";
 
 export async function handleDownload(scene, type, title) {
   if (type === "urdf") {
@@ -101,7 +100,7 @@ export async function generateZip(urdfContent, SDFContent, title) {
   }
 
   //Programatically generate the launch file
-  const launchFileContent = GenerateLaunchFileContent(title);
+  // const launchFileContent = GenerateLaunchFileContent(title);
 
   // Generate the ZIP file and trigger the download
   zip.generateAsync({ type: "blob" }).then(function (content) {
