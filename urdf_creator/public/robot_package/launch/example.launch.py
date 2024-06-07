@@ -19,6 +19,7 @@ def generate_launch_description():
     gazebo_launch_file = os.path.join(
         get_package_share_directory("gazebo_ros"), "launch", "gazebo.launch.py"
     )
+    sdf_file = os.path.join(package_share_directory, "model", "example_robot.sdf")
 
     # Define the robot_state_publisher node
     robot_state_publisher_node = Node(
@@ -26,6 +27,12 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="screen",
         parameters=[{"robot_description": open(urdf_file).read()}],
+    )
+
+    joint_gui = Node(
+        package="joint_state_publisher_gui",
+        executable="joint_state_publisher_gui",
+        name="joint_state_publisher_gui",
     )
 
     # Define the RViz node
@@ -47,10 +54,26 @@ def generate_launch_description():
     spawn_entity_node = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "example_robot"],
+        arguments=[
+            "-file",
+            sdf_file,
+            "-entity",
+            "example_robot",
+        ],
         output="screen",
     )
 
     return LaunchDescription(
-        [robot_state_publisher_node, rviz_node, gazebo_node, spawn_entity_node]
+        [
+            DeclareLaunchArgument(
+                "use_sim_time",
+                default_value="true",
+                description="Use simulation (Gazebo) clock if true",
+            ),
+            robot_state_publisher_node,
+            joint_gui,
+            rviz_node,
+            gazebo_node,
+            spawn_entity_node,
+        ]
     )

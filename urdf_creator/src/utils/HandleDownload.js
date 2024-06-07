@@ -4,11 +4,16 @@ import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
+import { ScenetoSDF } from "./ScenetoSDF";
+import { SensorsContained } from "./CreatePackage/SensorsContained";
+import { GenerateLaunchFileContent } from "./CreatePackage/GenerateLaunchFileContent";
 
 export async function handleDownload(scene, type, title) {
   if (type === "urdf") {
     const urdf = ScenetoXML(scene);
-    await generateZip(urdf, title);
+    const sdf = ScenetoSDF(scene);
+    const sensorsContained = SensorsContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
+    await generateZip(urdf, sdf, sensorsContained, title);
   } else if (type === "gltf") {
     const exporter = new GLTFExporter();
     exporter.parse(scene, (gltf) => {
@@ -39,7 +44,7 @@ export function otherFileDownload(data, type, title) {
   URL.revokeObjectURL(link.href);
 }
 
-export async function generateZip(urdfContent, title) {
+export async function generateZip(urdfContent, SDFContent, title) {
   const zip = new JSZip();
 
   // List of static files and their paths in the ZIP
@@ -50,7 +55,7 @@ export async function generateZip(urdfContent, title) {
     },
     {
       path: "robot_package/launch/example.launch.py",
-      zipPath: `${title}/launch/example.launch.py`,
+      zipPath: `${title}/launch/robot_sim.launch.py`,
     },
     {
       path: "robot_package/rviz/my_robot.rviz",
@@ -91,6 +96,12 @@ export async function generateZip(urdfContent, title) {
   } else {
     console.error("No URDF file found in the state.");
   }
+  if (SDFContent) {
+    zip.file(`${title}/model/${title}.sdf`, SDFContent);
+  }
+
+  //Programatically generate the launch file
+  const launchFileContent = GenerateLaunchFileContent(title);
 
   // Generate the ZIP file and trigger the download
   zip.generateAsync({ type: "blob" }).then(function (content) {
