@@ -15,6 +15,7 @@ export default function MenuModal({
     openProjectManager,
     changeProjectTitle,
     projectTitle,
+    getBaseLink,
     getScene,
     loadScene,
 }) {
@@ -77,8 +78,10 @@ export default function MenuModal({
     */
     const onFileUpload = () => inputFile.current.click();
     const handleFileChange = async (e) => {
-        const scene = await handleUpload(e.target.files[0]);
-        loadScene(scene);
+        const group = await handleUpload(e.target.files[0]);
+        const base_link = group.children[0];
+        console.log(group);
+        loadScene(base_link);
     };
 
     return (
@@ -121,7 +124,7 @@ export default function MenuModal({
                         <StyledMenuItem
                             onClick={() => {
                                 handleDownload(
-                                    getScene(),
+                                    getBaseLink(),
                                     'gltf',
                                     projectTitle
                                 );

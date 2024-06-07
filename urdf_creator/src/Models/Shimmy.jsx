@@ -36,7 +36,7 @@ export default class Shimmy extends THREE.Object3D {
         // Add Children here...
         this.add(this.link);
         // Add attributes here...
-        this.position.set(...attributes.position);
+        this.position.set(...attributes.position);// Also joint origin
         this.rotation.set(...attributes.rotation);
     }
     // JS technically doesn't allow overloading but this seems to work haha

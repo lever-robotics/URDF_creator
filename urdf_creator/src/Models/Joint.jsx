@@ -32,4 +32,5 @@ export default class Joint extends THREE.Line {
         //                 name: params?.jointName ?? "",
         //             }),
     }
+
 }

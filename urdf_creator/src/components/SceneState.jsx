@@ -100,9 +100,9 @@ export default function SceneState() {
         // console.log(obj.baseLink);
         if (selectedObject !== null) {
             console.log(selectedObject);
-            selectedObject.shimmy.link.attach(newUrdfObject);
+            selectedObject.link.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.shimmy.link.attach(newUrdfObject);
+            obj.baseLink.link.attach(newUrdfObject);
         } else {
             newUrdfObject.position.set(0, 0.5, 0);
             newUrdfObject.userData.isBaseLink = true;
@@ -114,9 +114,51 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const createNewLink = (parent, shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName) => {
-        const object = new Link(shape, name, position, rotation, scale, jointPosition, jointAxis, jointType, jointName);
-        parent.add(object);
+    const createNewLink = (gltfObject) => {
+
+        console.log(gltfObject);
+        const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0]: gltfObject.children[1];
+        const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1]: gltfObject.children[0];
+        const link = shimmy.children[0];
+        const linkChildren = link.children;
+        const mesh = linkChildren.find((obj) => {
+            console.log(obj, obj === THREE.Mesh)
+            if(obj.type === 'Mesh'){
+                return obj;
+            }
+        });
+        console.log(linkChildren);
+
+        const params = {
+            position: gltfObject.position,
+            rotation: gltfObject.rotation,
+            scale: mesh.scale,
+            offset: link.position,
+            jointAxis: {
+                type: gltfObject.userData?.jointType ?? 'fixed',
+                axis: joint.position,
+                origin: [0,0,0], // Not sure how to do this
+                name: joint.name,
+            },
+            jointOrigin: joint.position,
+            material: mesh.material,
+            shape: gltfObject.userData.shape,
+            userData: gltfObject.userData,
+            name: gltfObject.userData.name,
+        };
+        const children = link.children.map((object) => {
+            if(object !== THREE.Mesh){
+                return object;
+            }
+        });
+
+        const object = new urdfObject(params.shape, params.name, params);
+        console.log(object);
+        children.forEach((child) => {
+            if(child.type !== 'Mesh'){
+                return object.add(createNewLink(object, child));
+            }
+        })
         return object;
     };
 
@@ -246,8 +288,14 @@ export default function SceneState() {
         object.shimmy.rotation.set(0, 0, 0);
         forceSceneUpdate();
     };
-    const loadScene = (scene) => {
-        threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
+    const loadScene = (base_link) => {
+        // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
+        const baseLink = createNewLink(base_link);
+        threeObjects.current.scene.attach(baseLink);
+        threeObjects.current.baseLink = baseLink;
+        baseLink.userData.isBaseLink = true;
+        forceSceneUpdate();
+        // createNewLink(threeObjects.current.scene, base_link);
     };
     const getScene = () => {
         return threeObjects.current.scene;
@@ -299,6 +347,7 @@ export default function SceneState() {
     };
 
     const getBaseLink = () => {
+        console.log(threeObjects.current.baseLink);
         return threeObjects.current.baseLink;
     }
 
@@ -351,8 +400,9 @@ export default function SceneState() {
                             openProjectManager={openProjectManager}
                             changeProjectTitle={changeProjectTitle}
                             projectTitle={projectTitle}
-                            getScene={getScene}
+                            getBaseLink={getBaseLink}
                             loadScene={loadScene}
+                            getScene={getScene}
                         />
                         <LinkTree
                             scene={scene}
