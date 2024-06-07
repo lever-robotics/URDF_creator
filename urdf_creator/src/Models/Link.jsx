@@ -41,6 +41,10 @@ export default class Link extends THREE.Object3D {
     set offset (offset) {
         this.position.set(...offset);
     }
+
+    addOffset (offset) {
+        this.position.add(offset);
+    }
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);
 }

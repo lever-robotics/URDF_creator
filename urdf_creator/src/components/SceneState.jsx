@@ -111,7 +111,7 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const createNewLink = (gltfObject) => {
+    const createUrdfObject = (gltfObject) => {
 
         console.log(gltfObject);
         const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0]: gltfObject.children[1];
@@ -144,7 +144,7 @@ export default function SceneState() {
         const object = new urdfObject(params.shape, params.name, params);
         children.forEach((child) => {
             if(child.type !== 'Mesh'){
-                return object.link.add(createNewLink(child));
+                return object.link.add(createUrdfObject(child));
             }
         })
         return object;
@@ -234,7 +234,7 @@ export default function SceneState() {
         }
 
         // Add the transformed offset to the object's local position
-        object.position.add(offset);
+        object.addOffset(offset);
 
         // Force the scene to update
         forceSceneUpdate();
@@ -348,7 +348,7 @@ export default function SceneState() {
     };
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
-        const baseLink = createNewLink(base_link);
+        const baseLink = createUrdfObject(base_link);
         threeObjects.current.scene.attach(baseLink);
         threeObjects.current.baseLink = baseLink;
         baseLink.userData.isBaseLink = true;
@@ -416,7 +416,7 @@ export default function SceneState() {
 
     const stateFunctions = {
         addObject,
-        createNewLink,
+        createUrdfObject,
         forceSceneUpdate,
         setTransformMode,
         attachTransformControls,
