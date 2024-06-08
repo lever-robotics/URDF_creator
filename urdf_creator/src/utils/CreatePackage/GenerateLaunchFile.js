@@ -19,7 +19,7 @@ def generate_launch_description():
     gazebo_launch_file = os.path.join(
         get_package_share_directory("gazebo_ros"), "launch", "gazebo.launch.py"
     )
-    sdf_file = os.path.join(package_share_directory, "urdf", "${title}.sdf")
+    sdf_file = os.path.join(package_share_directory, "model", "${title}.sdf")
 
     # Define the robot_state_publisher node
     robot_state_publisher_node = Node(
@@ -58,7 +58,7 @@ def generate_launch_description():
             "-file",
             sdf_file,
             "-entity",
-            "example_robot",
+            "${title}",
         ],
         output="screen",
     )

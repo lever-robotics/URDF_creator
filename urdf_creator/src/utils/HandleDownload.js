@@ -63,10 +63,6 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
       zipPath: `${title}_description/worlds/example.world`,
     },
     {
-      path: "robot_package/CMakeLists.txt",
-      zipPath: `${title}_description/CMakeLists.txt`,
-    },
-    {
       path: "robot_package/README.md",
       zipPath: `${title}_description/README.md`,
     },

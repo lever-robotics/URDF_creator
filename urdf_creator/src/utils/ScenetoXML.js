@@ -73,12 +73,12 @@ export const ScenetoXML = (scene) => {
             xml += `    </collision>\n`;
 
             // Add inertial element
-            const mass = node.userData.mass || 0;
-            const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
+            const mass = node.userData.inertia.mass || 0;
+            const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
             xml += `    <inertial>\n`;
             xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
             xml += `      <mass value="${mass}" />\n`;
-            xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
+            xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
