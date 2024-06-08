@@ -95,7 +95,14 @@ export const ScenetoXML = (scene) => {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
-                xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
+
+                // because urdf is dumb, children links are connected to parent joints, not parent meshes
+                // this code accounts for that and sets the joint origin in relation to the parent's joint origin
+                const originInRelationToParentsJoint = new THREE.Vector3.clone(node.position);
+                originInRelationToParentsJoint.sub(node.parent.mesh.offset);
+
+
+                xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
