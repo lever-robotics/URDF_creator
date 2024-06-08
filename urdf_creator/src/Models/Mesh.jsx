@@ -20,11 +20,11 @@ export default class Mesh extends THREE.Mesh {
             material: new THREE.MeshPhongMaterial({
                 color: Math.random() * 0xffffff,
             }),
-            customRenderBehaviors: { "defineRenderBehavior": defineRenderBehavior(shape) }
+            customRenderBehaviors: { defineRenderBehavior: defineRenderBehavior(shape) },
         };
         const children = {};
         const attributes = {
-            scale: params?.scale ?? [1, 1, 1]
+            scale: params?.scale ?? [1, 1, 1],
         };
 
         //***Assign-add()-set()***/
@@ -58,7 +58,7 @@ export default class Mesh extends THREE.Mesh {
                     // b = height
                     // c = radialSegments = 'number of segmented faces around circumference
                     const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-                    cylinder.rotateX(Math.PI / 2)
+                    cylinder.rotateX(Math.PI / 2);
                     return cylinder;
                 default:
                     return;
@@ -67,36 +67,27 @@ export default class Mesh extends THREE.Mesh {
         function defineRenderBehavior(shape) {
             switch (shape) {
                 case "cube":
-                    return () => { };
+                    return () => {};
                 case "sphere":
                     // ensure spheres scale uniformly in all directions
                     return (context) => {
                         const worldScale = new THREE.Vector3();
                         context.getWorldScale(worldScale);
-                        const uniformScale =
-                            (worldScale.x + worldScale.y + worldScale.z) / 3;
+                        const uniformScale = (worldScale.x + worldScale.y + worldScale.z) / 3;
 
                         const localScale = context.scale;
-                        context.scale.set(
-                            (localScale.x / worldScale.x) * uniformScale,
-                            (localScale.y / worldScale.y) * uniformScale,
-                            (localScale.z / worldScale.z) * uniformScale
-                        );
+                        context.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, (localScale.z / worldScale.z) * uniformScale);
                     };
                 case "cylinder":
                     // ensure cylinders scale uniformly in two directions
                     return (context) => {
                         const worldScale = new THREE.Vector3();
                         context.getWorldScale(worldScale);
-                        const uniformScale = (worldScale.x + worldScale.z) / 2;
+                        const uniformScale = (worldScale.x + worldScale.y) / 2;
 
                         const localScale = context.scale;
-                        context.scale.set(
-                            (localScale.x / worldScale.x) * uniformScale,
-                            localScale.y,
-                            (localScale.z / worldScale.z) * uniformScale
-                        );
-                    }
+                        context.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, localScale.z);
+                    };
                 default:
                     return;
             }

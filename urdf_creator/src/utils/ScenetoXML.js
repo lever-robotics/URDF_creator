@@ -44,7 +44,7 @@ export const ScenetoXML = (scene) => {
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.mesh.scale.y;
+                const height = node.mesh.scale.z;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
