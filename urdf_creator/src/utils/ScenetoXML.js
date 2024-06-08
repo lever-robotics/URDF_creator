@@ -8,14 +8,14 @@ export const ScenetoXML = (scene) => {
     let xml = `<robot name="GeneratedRobot">\n`;
     if (scene === undefined) return xml;
 
-    // Helper to flip THREE xyz into urdf xyz
+    // Helper to flip THREE xyz into urdf zxy
     const formatVector = (vec) => `${vec.z} ${vec.x} ${vec.y}`;
 
-    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) and flip y and z
+    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) xyz --> zxy
     const quaternionToEuler = (quaternion) => {
         const euler = new THREE.Euler();
         euler.setFromQuaternion(quaternion, "XYZ");
-        return `${euler.x} ${euler.z} ${euler.y}`;
+        return `${euler.z} ${euler.x} ${euler.y}`;
     };
 
     // Variables to keep track of link naming
@@ -97,9 +97,10 @@ export const ScenetoXML = (scene) => {
 
                 // because urdf is dumb, children links are connected to parent joints, not parent meshes
                 // this code accounts for that and sets the joint origin in relation to the parent's joint origin
+                // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.sub(node.parent.mesh.position);
+                originInRelationToParentsJoint.add(node.parent.position);
 
                 xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
