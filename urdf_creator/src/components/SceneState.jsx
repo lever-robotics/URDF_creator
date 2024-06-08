@@ -273,11 +273,11 @@ export default function SceneState() {
     };
 
     const setJointLimits = (object, min = null, max = null) => {
-        if (min) {
+        if (min !== null) {
             object.joint.min = min;
         }
 
-        if (max) {
+        if (max !== null) {
             object.joint.max = max;
         }
     };

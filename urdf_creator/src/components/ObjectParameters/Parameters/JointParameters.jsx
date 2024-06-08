@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
-import MuiInput from "@mui/material/Input";
 
 export default function JointParameters({ selectedObject, setJoint, stateFunctions }) {
     const [jointType, setJointType] = useState(selectedObject.joint.type);
@@ -39,54 +38,54 @@ export default function JointParameters({ selectedObject, setJoint, stateFunctio
     );
 }
 
-const MinJointInput = ({ min, setMin, max, selectedObject, stateFunctions }) => {
+const MinJointInput = ({ min, setMin, selectedObject, stateFunctions }) => {
+
+    const [value, setValue] = useState(min);
 
     const setJointLimits = stateFunctions.setJointLimits;
 
-    const handleChange = (value) => {
-        setJointLimits(selectedObject, null, value);
-        setMin(value);
+    const handleChange = () => {
+        setJointLimits(selectedObject, parseFloat(value), null);
+        setMin(parseFloat(value))
     }
-
-
     return <span>
         min:
-        <MuiInput
-            value={min}
+        <input
+            value={value}
             size="small"
-            onChange={(e) => handleChange(parseFloat(e.target.value))}
-            inputProps={{
-                step: 0.1,
-                min: -6.28,
-                max: max,
-                type: "number",
-                "aria-labelledby": "input-slider",
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleChange}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    handleChange();
+                }
             }}
         />
     </span>
 }
 
-const MaxJointInput = ({ min, max, setMax, selectedObject, stateFunctions }) => {
+const MaxJointInput = ({ max, setMax, selectedObject, stateFunctions }) => {
+
+    const [value, setValue] = useState(max);
 
     const setJointLimits = stateFunctions.setJointLimits;
 
-    const handleChange = (value) => {
-        setJointLimits(selectedObject, null, value);
-        setMax(value);
+    const handleChange = () => {
+        setJointLimits(selectedObject, null, parseFloat(value));
+        setMax(parseFloat(value));
     }
 
     return <span>
         max:
-        <MuiInput
-            value={max}
+        <input
+            value={value}
             size="small"
-            onChange={(e) => handleChange(parseFloat(e.target.value))}
-            inputProps={{
-                step: 0.1,
-                min: min,
-                max: 6.28,
-                type: "number",
-                "aria-labelledby": "input-slider",
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleChange}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    handleChange();
+                }
             }}
         />
     </span>
