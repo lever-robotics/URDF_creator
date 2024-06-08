@@ -33,6 +33,8 @@ function SensorsParameters({ selectedObject, setSensor }) {
             // Add cases for other sensor types here
             default:
                 setSensor(selectedObject, null);
+                setSensorType('');
+                break;
         }
     };
 
@@ -46,7 +48,7 @@ function SensorsParameters({ selectedObject, setSensor }) {
                 return <LidarParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
             // Add cases for other sensor types here
             default:
-                return <div>Not a Sensor Type</div>;
+                return <div></div>;
         }
     };
 

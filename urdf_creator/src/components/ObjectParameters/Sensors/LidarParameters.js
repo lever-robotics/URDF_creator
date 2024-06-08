@@ -10,24 +10,6 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
     return (
         <div>
             <label>
-                Sensor Type:
-                <input
-                    type="text"
-                    name="sensorType"
-                    value={sensorData.sensorType || 'ray'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                Always On:
-                <input
-                    type="checkbox"
-                    name="alwaysOn"
-                    checked={sensorData.alwaysOn !== undefined ? sensorData.alwaysOn : true}
-                    onChange={(e) => handleChange({ target: { name: 'alwaysOn', value: e.target.checked } })}
-                />
-            </label>
-            <label>
                 Update Rate:
                 <input
                     type="number"
@@ -35,15 +17,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.updateRate || 5}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Pose:
-                <input
-                    type="text"
-                    name="pose"
-                    value={sensorData.pose || '-0.064 0 0.121 0 0 0'}
-                    onChange={handleChange}
-                />
+                <span className="units">Hz</span>
             </label>
             <label>
                 Samples:
@@ -63,6 +37,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.resolution || 1.000000}
                     onChange={handleChange}
                 />
+                <span className="units">&deg; degrees</span>
             </label>
             <label>
                 Min Angle:
@@ -73,6 +48,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.minAngle || 0.000000}
                     onChange={handleChange}
                 />
+                <span className="units">&deg; degrees</span>
             </label>
             <label>
                 Max Angle:
@@ -83,6 +59,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.maxAngle || 6.280000}
                     onChange={handleChange}
                 />
+                <span className="units">&deg; degrees</span>
             </label>
             <label>
                 Min Range:
@@ -93,6 +70,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.minRange || 0.120000}
                     onChange={handleChange}
                 />
+                <span className="units">m</span>
             </label>
             <label>
                 Max Range:
@@ -103,6 +81,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.maxRange || 3.5}
                     onChange={handleChange}
                 />
+                <span className="units">m</span>
             </label>
             <label>
                 Range Resolution:
@@ -113,6 +92,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.rangeResolution || 0.015000}
                     onChange={handleChange}
                 />
+                <span className="units">&deg; degrees</span>
             </label>
             <label>
                 Gaussian Noise Mean:

@@ -7,9 +7,9 @@ function RotationParameters({ selectedObject, transformObject }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setRotationX(radToDeg(selectedObject.mesh.rotation.x).toFixed(2));
-            setRotationY(radToDeg(selectedObject.mesh.rotation.y).toFixed(2));
-            setRotationZ(radToDeg(selectedObject.mesh.rotation.z).toFixed(2));
+            setRotationX(radToDeg(selectedObject.rotation.x).toFixed(2));
+            setRotationY(radToDeg(selectedObject.rotation.y).toFixed(2));
+            setRotationZ(radToDeg(selectedObject.rotation.z).toFixed(2));
         }
     }, [JSON.stringify(selectedObject.rotation)]);
 
