@@ -57,7 +57,9 @@ export default class Mesh extends THREE.Mesh {
                     // a = top and bottom radius
                     // b = height
                     // c = radialSegments = 'number of segmented faces around circumference
-                    return new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                    const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                    cylinder.rotateX(Math.PI / 2)
+                    return cylinder;
                 default:
                     return;
             }

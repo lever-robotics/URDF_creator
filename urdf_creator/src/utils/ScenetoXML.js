@@ -11,7 +11,7 @@ export const ScenetoXML = (scene) => {
 
     // Helper to flip THREE xyz into urdf zxy
     // Helper to flip THREE xyz into urdf zxy
-    const formatVector = (vec) => `${vec.z} ${vec.x} ${vec.y}`;
+    const formatVector = (vec) => `${vec.x} ${vec.y} ${vec.z}`;
 
     // Variables to keep track of link naming
     let linkIndex = 0;

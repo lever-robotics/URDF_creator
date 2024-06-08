@@ -74,6 +74,7 @@ export default function SceneState() {
             requestAnimationFrame(animate);
             obj.composer.render();
             obj.orbitControls.update();
+            forceSceneUpdate();
         };
 
         animate();
@@ -94,7 +95,7 @@ export default function SceneState() {
         );
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newUrdfObject.position.set(2.5, 0.5, 2.5);
+        newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
             console.log(selectedObject);
@@ -115,8 +116,8 @@ export default function SceneState() {
     const createUrdfObject = (gltfObject) => {
 
         console.log(gltfObject);
-        const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0]: gltfObject.children[1];
-        const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1]: gltfObject.children[0];
+        const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
+        const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
         const link = shimmy.children[0];
         const linkChildren = link.children;
         const mesh = linkChildren.find((obj) => obj.type === 'Mesh');
@@ -128,7 +129,7 @@ export default function SceneState() {
             jointAxis: {
                 type: gltfObject.userData?.jointType ?? 'fixed',
                 axis: joint.position,
-                origin: [0,0,0], // Not sure how to do this
+                origin: [0, 0, 0], // Not sure how to do this
                 name: joint.name,
             },
             jointOrigin: joint.position,
@@ -138,13 +139,13 @@ export default function SceneState() {
             name: gltfObject.userData.name,
         };
         const children = link.children.map((object) => {
-            if(object !== THREE.Mesh){
+            if (object !== THREE.Mesh) {
                 return object;
             }
         });
         const object = new urdfObject(params.shape, params.name, params);
         children.forEach((child) => {
-            if(child.type !== 'Mesh'){
+            if (child.type !== 'Mesh') {
                 return object.link.add(createUrdfObject(child));
             }
         })

@@ -72,6 +72,10 @@ export default function initScene(threeObjects, mountRef) {
             bevelEnabled: false,
         });
         const textMeshX = new THREE.Mesh(textGeometryX, textMaterial);
+        textMeshX.up.copy(new THREE.Vector3(0, 0, 1))
+        textMeshX.onBeforeRender = () => {
+            textMeshX.lookAt(obj.camera.position)
+        }
         textMeshX.position.set(5, 0, 0);
         obj.scene.add(textMeshX);
 
@@ -84,6 +88,10 @@ export default function initScene(threeObjects, mountRef) {
             bevelEnabled: false,
         });
         const textMeshY = new THREE.Mesh(textGeometryY, textMaterial);
+        textMeshY.up.copy(new THREE.Vector3(0, 0, 1))
+        textMeshY.onBeforeRender = () => {
+            textMeshY.lookAt(obj.camera.position)
+        }
         textMeshY.position.set(0, 5, 0);
         obj.scene.add(textMeshY);
 
@@ -96,6 +104,10 @@ export default function initScene(threeObjects, mountRef) {
             bevelEnabled: false,
         });
         const textMeshZ = new THREE.Mesh(textGeometryZ, textMaterial);
+        textMeshZ.up.copy(new THREE.Vector3(0, 0, 1))
+        textMeshZ.onBeforeRender = () => {
+            textMeshZ.lookAt(obj.camera.position)
+        }
         textMeshZ.position.set(0, 0, 5);
         obj.scene.add(textMeshZ);
 
@@ -106,7 +118,7 @@ export default function initScene(threeObjects, mountRef) {
             textMeshZ.lookAt(obj.camera.position);
         };
     });
-    
+
     // Add an axes helper
     const axesHelper = new THREE.AxesHelper(50);  // Length of the axes
     obj.scene.add(axesHelper);
