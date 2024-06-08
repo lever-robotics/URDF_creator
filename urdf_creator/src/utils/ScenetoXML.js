@@ -8,8 +8,8 @@ export const ScenetoXML = (scene) => {
     let xml = `<robot name="GeneratedRobot">\n`;
     if (scene === undefined) return xml;
 
-    // Helper to format vector as a string and flip y and z coordinates
-    const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
+    // Helper to flip THREE xyz into urdf xyz
+    const formatVector = (vec) => `${vec.z} ${vec.x} ${vec.y}`;
 
     // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) and flip y and z
     const quaternionToEuler = (quaternion) => {
@@ -43,10 +43,10 @@ export const ScenetoXML = (scene) => {
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
+                const size = `${formatVector(node.mesh.scale)}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.mesh.scale.x / 3;
+                const radius = node.mesh.scale.x / 2;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
@@ -97,7 +97,6 @@ export const ScenetoXML = (scene) => {
                 xml += `    <child link="${linkName}" />\n`;
                 xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
-
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
                     const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
