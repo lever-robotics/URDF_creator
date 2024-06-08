@@ -3,7 +3,7 @@ import * as THREE from "three";
 export default class Joint extends THREE.Line {
     constructor({
         type = "fixed",
-        axis = [1, 0, 0],
+        axis = [0, 0, 1],
         origin = [0, 0, 0],
         name = "",
     } = {}) {
@@ -21,9 +21,11 @@ export default class Joint extends THREE.Line {
         points.push(endPoint);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
+        material.visible = false
         super(geometry, material);
         this.name = name;
         this.type = type;
+        this.axis = axis
 
         //             jointAxis: new Axis({
         //                 origin: params?.jointPosition ?? [0, 0, 0],

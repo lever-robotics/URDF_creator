@@ -67,7 +67,7 @@ export default class Mesh extends THREE.Mesh {
         function defineRenderBehavior(shape) {
             switch (shape) {
                 case "cube":
-                    return () => {};
+                    return () => { };
                 case "sphere":
                     // ensure spheres scale uniformly in all directions
                     return (context) => {
@@ -83,10 +83,15 @@ export default class Mesh extends THREE.Mesh {
                     return (context) => {
                         const worldScale = new THREE.Vector3();
                         context.getWorldScale(worldScale);
-                        const uniformScale = (worldScale.x + worldScale.y) / 2;
 
+                        // the absolute values prevent an error that will cause the cylinder to disappear
+                        // when the worldscale.z goes negative, it also flips the x scale to negative to prevent the cylinder from flipping horizontally
+                        // but this means that worldScale.x + worldScale.y = 0 :(
+                        // so making them abs will solve this
+                        const uniformScale = (Math.abs(worldScale.x) + Math.abs(worldScale.y)) / 2;
                         const localScale = context.scale;
-                        context.scale.set((localScale.x / worldScale.x) * uniformScale, (localScale.y / worldScale.y) * uniformScale, localScale.z);
+                        context.scale.setX((localScale.x / worldScale.x) * uniformScale);
+                        context.scale.setY((localScale.y / worldScale.y) * uniformScale)
                     };
                 default:
                     return;

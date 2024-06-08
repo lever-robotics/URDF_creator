@@ -254,7 +254,7 @@ export default function SceneState() {
         quaternion.setFromEuler(object.joint.rotation);
         // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+        const newAxis = new THREE.Vector3(...object.joint.axis).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
         object.shimmy.setRotationFromAxisAngle(newAxis, angle);
     };
@@ -330,6 +330,12 @@ export default function SceneState() {
         object.joint.type = type;
         object.shimmy.position.set(0, 0, 0);
         object.shimmy.rotation.set(0, 0, 0);
+
+        if (type === "fixed") {
+            object.joint.material.visible = false;
+        } else {
+            object.joint.material.visible = true;
+        }
 
         if (type === "prismatic") {
             object.joint.min = -1;
