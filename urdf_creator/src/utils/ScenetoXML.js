@@ -13,35 +13,6 @@ export const ScenetoXML = (scene) => {
     // Helper to flip THREE xyz into urdf zxy
     const formatVector = (vec) => `${vec.z} ${vec.x} ${vec.y}`;
 
-    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) xyz --> zxy
-    const quaternionToEuler = (quaternion) => {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion, "XYZ");
-        return `${euler.y} ${euler.x} ${euler.z}`;
-    };
-
-    function quaternionToRPY(quaternion) {
-        // Extract the quaternion components
-        const { x, y, z, w } = quaternion;
-
-        // Calculate the roll (x-axis rotation)
-        const sinr_cosp = 2 * (w * x + y * z);
-        const cosr_cosp = 1 - 2 * (x * x + y * y);
-        const roll = Math.atan2(sinr_cosp, cosr_cosp);
-
-        // Calculate the pitch (y-axis rotation)
-        const sinp = Math.sqrt(1 + 2 * (w * y - x * z));
-        const cosp = Math.sqrt(1 - 2 * (w * y - x * z));
-        const pitch = 2 * Math.atan2(sinp, cosp) - Math.PI / 2;
-
-        // Calculate the yaw (z-axis rotation)
-        const siny_cosp = 2 * (w * z + x * y);
-        const cosy_cosp = 1 - 2 * (y * y + z * z);
-        const yaw = Math.atan2(siny_cosp, cosy_cosp);
-
-        return `${yaw} ${pitch} ${roll}`;
-    }
-
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
