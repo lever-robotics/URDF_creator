@@ -81,7 +81,7 @@ export const ScenetoXML = (scene) => {
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.userData.sensorXML) {
+            if (node.userData.sensor) {
                 const sensorXML = generateSensorXML(node);
                 xml += sensorXML;
             }
