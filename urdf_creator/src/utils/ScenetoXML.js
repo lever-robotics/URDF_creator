@@ -13,6 +13,13 @@ export const ScenetoXML = (scene) => {
     // Helper to flip THREE xyz into urdf zxy
     const formatVector = (vec) => `${vec.z} ${vec.x} ${vec.y}`;
 
+    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) xyz --> zxy
+    const quaternionToEuler = (quaternion) => {
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(quaternion, "XYZ");
+        return `${euler.z} ${euler.x} ${euler.y}`;
+    };
+
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
