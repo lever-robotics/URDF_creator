@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Inertia from '../../../Models/Inertia';
 
-function InertiaParameters({ selectedObject, setInertia }) {
+function InertiaParameters({ selectedObject, setInertia, setMass }) {
+    const [mass, setMassTemp] = useState("");
     const [Ixx, setIxx] = useState('');
     const [Ixy, setIxy] = useState('');
     const [Ixz, setIxz] = useState('');
@@ -11,12 +12,13 @@ function InertiaParameters({ selectedObject, setInertia }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setIxx(selectedObject.userData.inertia.ixx || '');
-            setIxy(selectedObject.userData.inertia.ixy || '');
-            setIxz(selectedObject.userData.inertia.ixz || '');
-            setIyy(selectedObject.userData.inertia.iyy || '');
-            setIyz(selectedObject.userData.inertia.iyz || '');
-            setIzz(selectedObject.userData.inertia.izz || '');
+            setMassTemp(selectedObject.userData.inertia.mass || "");
+            setIxx(selectedObject.userData.inertia.ixx === 0 ? 0.0 : selectedObject.userData.inertia.ixx.toFixed(3) || '');
+            setIxy(selectedObject.userData.inertia.ixy === 0 ? 0.0 : selectedObject.userData.inertia.ixy.toFixed(3) || '');
+            setIxz(selectedObject.userData.inertia.ixz === 0 ? 0.0 : selectedObject.userData.inertia.ixz.toFixed(3) || '');
+            setIyy(selectedObject.userData.inertia.iyy === 0 ? 0.0 : selectedObject.userData.inertia.iyy.toFixed(3) || '');
+            setIyz(selectedObject.userData.inertia.iyz === 0 ? 0.0 : selectedObject.userData.inertia.iyz.toFixed(3) || '');
+            setIzz(selectedObject.userData.inertia.izz === 0 ? 0.0 : selectedObject.userData.inertia.izz.toFixed(3) || '');
         }
     }, [JSON.stringify(selectedObject.userData.inertia)]);
 
@@ -28,8 +30,18 @@ function InertiaParameters({ selectedObject, setInertia }) {
         setInertia(selectedObject, inertia);
     };
 
+    const handleMassChange = (e) => {
+        setMassTemp(e.target.value);
+        setMass(selectedObject, parseFloat(e.target.value));
+    };
+
     return (
         <div>
+            <strong>Mass:</strong>
+            <input type="number" value={mass} onChange={handleMassChange} />
+            <span className="units">kg</span>
+            <br />
+            <br />
             <strong>Moment of Inertia:</strong>
             <ul>
                 <li>
@@ -40,6 +52,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIxx(e.target.value)}
                         onBlur={() => handleInertiaChange('Ixx', Ixx)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
                 <li>
                     Ixy:
@@ -49,6 +62,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIxy(e.target.value)}
                         onBlur={() => handleInertiaChange('Ixy', Ixy)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
                 <li>
                     Ixz:
@@ -58,6 +72,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIxz(e.target.value)}
                         onBlur={() => handleInertiaChange('Ixz', Ixz)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
                 <li>
                     Iyy:
@@ -67,6 +82,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIyy(e.target.value)}
                         onBlur={() => handleInertiaChange('Iyy', Iyy)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
                 <li>
                     Iyz:
@@ -76,6 +92,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIyz(e.target.value)}
                         onBlur={() => handleInertiaChange('Iyz', Iyz)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
                 <li>
                     Izz:
@@ -85,6 +102,7 @@ function InertiaParameters({ selectedObject, setInertia }) {
                         onChange={(e) => setIzz(e.target.value)}
                         onBlur={() => handleInertiaChange('Izz', Izz)}
                     />
+                    <span className="units">km<span className="large-dot">·</span>m<sup>2</sup></span>
                 </li>
             </ul>
         </div>

@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { generateSensorSDF } from "./generateSensorSDF";
 import findBaseLink from "./findBaseLink";
 import urdfObject from "../Models/urdfObject";
+import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene) => {
@@ -12,13 +13,6 @@ export const ScenetoSDF = (scene) => {
 
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
-
-    // Helper to convert rotation to SDF-compatible roll-pitch-yaw (rpy) and flip y and z
-    const quaternionToEuler = (quaternion) => {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion, "XYZ");
-        return `${euler.x} ${euler.z} ${euler.y}`;
-    };
 
     // Variables to keep track of link naming
     let linkIndex = 0;
@@ -34,7 +28,7 @@ export const ScenetoSDF = (scene) => {
 
             const position = formatVector(node.position);
             const offset = formatVector(node.link.position);
-            const rotation = quaternionToEuler(node.quaternion);
+            const rotation = quaternionToRPY(node.quaternion);
 
             // Start link
             xml += `  <link name="${linkName}">\n`;

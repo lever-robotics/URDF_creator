@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import * as THREE from "three";
+import './parameters_style.css';
 
-export default function BasicParameters({ selectedObject, setLinkName, setUserColor, setMass }) {
+export default function BasicParameters({ selectedObject, setLinkName, setUserColor }) {
     const [name, setName] = useState("");
-    const [mass, setMassTemp] = useState("");
     const [color, setColor] = useState("#ffffff");
 
     useEffect(() => {
         if (selectedObject) {
             setName(selectedObject.userData.name || "");
-            setMassTemp(selectedObject.userData.inertia.mass || "");
             setColor(new THREE.Color(selectedObject.mesh.material.color).getStyle());
         }
     }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.mesh.material)]);
@@ -17,11 +16,6 @@ export default function BasicParameters({ selectedObject, setLinkName, setUserCo
     const handleNameChange = (e) => {
         setName(e.target.value);
         setLinkName(selectedObject, e.target.value);
-    };
-
-    const handleMassChange = (e) => {
-        setMassTemp(e.target.value);
-        setMass(selectedObject, parseInt(e.target.value, 10));
     };
 
     const handleColorChange = (e) => {
@@ -32,9 +26,16 @@ export default function BasicParameters({ selectedObject, setLinkName, setUserCo
     return (
         <div>
             <strong>Name:</strong>
-            <input type="text" value={name} onChange={handleNameChange} />
-            <strong>Mass:</strong>
-            <input type="number" value={mass} onChange={handleMassChange} />
+            <input
+                className="name-input"
+                type="text"
+                value={name}
+                onChange={handleNameChange}
+                readOnly={selectedObject.userData.name === "base_link"}
+                title={selectedObject.userData.name === "base_link" ? "The base_link's name is not changeable." : ""}
+            />
+            <br />
+            <br />
             <strong>Color:</strong>
             <input type="color" value={color} onChange={handleColorChange} style={{ borderColor: color }} />
         </div>

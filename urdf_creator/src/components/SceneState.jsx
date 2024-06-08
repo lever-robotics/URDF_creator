@@ -20,7 +20,7 @@ export default function SceneState() {
     // State for the ProjectManager
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     // Project Title
-    const [projectTitle, setProjectTitle] = useState("untitled");
+    const [projectTitle, setProjectTitle] = useState("robot");
     // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
     const [scene, setScene] = useState();
@@ -108,6 +108,7 @@ export default function SceneState() {
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
+        newUrdfObject.userData.inertia.updateInertia(newUrdfObject);
         forceSceneUpdate();
     };
 
@@ -319,10 +320,12 @@ export default function SceneState() {
 
     const setMass = (object, mass) => {
         object.userData.inertia.updateMass(mass, object);
+        object.userData.inertia.updateInertia(object);
         forceSceneUpdate();
     };
     const setInertia = (object, inertia) => {
         object.userData.inertia = inertia;
+        object.userData.inertia.customInertia = true;
         forceSceneUpdate();
     };
 
@@ -363,6 +366,8 @@ export default function SceneState() {
         switch (transformType) {
             case 'scale':
                 object.mesh.scale.set(x, y, z);
+                //update the moment of inertia
+                object.userData.inertia.updateInertia(object);
                 break;
             case 'position':
                 object.position.set(x, y, z);
