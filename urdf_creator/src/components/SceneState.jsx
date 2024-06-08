@@ -102,7 +102,7 @@ export default function SceneState() {
         } else if (obj.baseLink !== null) {
             obj.baseLink.link.attach(newUrdfObject);
         } else {
-            newUrdfObject.position.set(0, 0.5, 0);
+            newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.userData.isBaseLink = true;
             newUrdfObject.userData.name = 'base_link';
             obj.baseLink = newUrdfObject;
@@ -373,7 +373,7 @@ export default function SceneState() {
                 object.position.set(x, y, z);
                 break;
             case 'rotation':
-                object.originOfRotation.rotation.set(x, y, z);
+                object.rotation.set(x, y, z);
                 break;
             default:
                 return;

@@ -20,7 +20,7 @@ export default class Joint extends THREE.Line {
         points.push(startPoint);
         points.push(endPoint);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
         super(geometry, material);
         this.name = name;
         this.type = type;
