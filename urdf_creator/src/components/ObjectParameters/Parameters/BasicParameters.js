@@ -5,6 +5,7 @@ import './parameters_style.css';
 export default function BasicParameters({ selectedObject, setLinkName, setUserColor }) {
     const [name, setName] = useState("");
     const [color, setColor] = useState("#ffffff");
+    const [error, setError] = useState(""); // Step 5: Add error state
 
     useEffect(() => {
         if (selectedObject) {
@@ -14,8 +15,15 @@ export default function BasicParameters({ selectedObject, setLinkName, setUserCo
     }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.mesh.material)]);
 
     const handleNameChange = (e) => {
-        setName(e.target.value);
-        setLinkName(selectedObject, e.target.value);
+        const newName = e.target.value;
+        if (newName.includes(" ")) { // Step 2: Check for spaces
+            setName(newName);
+            setError("Name must have no spaces"); // Step 3: Set error message
+        } else {
+            setName(newName);
+            setLinkName(selectedObject, newName);
+            setError(""); // Clear error message if input is valid
+        }
     };
 
     const handleColorChange = (e) => {
@@ -30,10 +38,12 @@ export default function BasicParameters({ selectedObject, setLinkName, setUserCo
                 className="name-input"
                 type="text"
                 value={name}
+                style={{ width: '100px' }}
                 onChange={handleNameChange}
                 readOnly={selectedObject.userData.name === "base_link"}
                 title={selectedObject.userData.name === "base_link" ? "The base_link's name is not changeable." : ""}
             />
+            {error && <span style={{ color: 'red', marginLeft: '5px' }}>{error}</span>} {/* Step 6: Display error message */}
             <br />
             <br />
             <strong>Color:</strong>
