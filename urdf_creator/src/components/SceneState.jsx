@@ -61,12 +61,7 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        const setUpMouseCallback = setUpSceneMouse(
-            threeObjects,
-            mountRef,
-            mouseData,
-            selectObject
-        );
+        const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
         const sceneCallback = initScene(threeObjects, mountRef);
         setScene({ ...obj.scene });
 
@@ -89,23 +84,19 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const newUrdfObject = new urdfObject(
-            shape,
-            shape + (numShapes[shape] + 1).toString()
-        );
+        const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            console.log(selectedObject);
             selectedObject.link.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
             obj.baseLink.link.attach(newUrdfObject);
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.userData.isBaseLink = true;
-            newUrdfObject.userData.name = 'base_link';
+            newUrdfObject.userData.name = "base_link";
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
@@ -114,20 +105,18 @@ export default function SceneState() {
     };
 
     const createUrdfObject = (gltfObject) => {
-
-        console.log(gltfObject);
         const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
         const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
         const link = shimmy.children[0];
         const linkChildren = link.children;
-        const mesh = linkChildren.find((obj) => obj.type === 'Mesh');
+        const mesh = linkChildren.find((obj) => obj.type === "Mesh");
         const params = {
             position: gltfObject.position,
             rotation: gltfObject.rotation,
             scale: mesh.scale,
             offset: link.position,
             jointAxis: {
-                type: gltfObject.userData?.jointType ?? 'fixed',
+                type: gltfObject.userData?.jointType ?? "fixed",
                 axis: joint.position,
                 origin: [0, 0, 0], // Not sure how to do this
                 name: joint.name,
@@ -145,10 +134,10 @@ export default function SceneState() {
         });
         const object = new urdfObject(params.shape, params.name, params);
         children.forEach((child) => {
-            if (child.type !== 'Mesh') {
+            if (child.type !== "Mesh") {
                 return object.link.add(createUrdfObject(child));
             }
-        })
+        });
         return object;
     };
 
@@ -173,15 +162,15 @@ export default function SceneState() {
         const mode = obj.transformControls.mode;
         switch (mode) {
             // this case will attach the transform controls to the joint of the object and move everything together
-            case 'translate':
+            case "translate":
                 obj.transformControls.attach(currentlySelectedObject);
                 break;
             // will attach to the origin of rotation, which will rotate the mesh about said origin
-            case 'rotate':
+            case "rotate":
                 obj.transformControls.attach(currentlySelectedObject);
                 break;
             // will attach to the mesh and scale nothing else
-            case 'scale':
+            case "scale":
                 obj.transformControls.attach(currentlySelectedObject.shimmy.link.mesh);
                 break;
             default:
@@ -191,23 +180,23 @@ export default function SceneState() {
 
     const startRotateJoint = (object) => {
         const { current: obj } = threeObjects;
-        obj.transformControls.setMode('rotate');
+        obj.transformControls.setMode("rotate");
         obj.transformControls.attach(object.joint);
     };
 
     const startMoveJoint = (object) => {
         const { current: obj } = threeObjects;
-        obj.transformControls.setMode('translate');
+        obj.transformControls.setMode("translate");
         obj.transformControls.attach(object);
 
-        const worldPosition = object.link.getWorldPosition(new THREE.Vector3())
+        const worldPosition = object.link.getWorldPosition(new THREE.Vector3());
 
         const lockPosition = () => {
-            const currentPosition = object.link.getWorldPosition(new THREE.Vector3())
+            const currentPosition = object.link.getWorldPosition(new THREE.Vector3());
             if (!worldPosition.equals(currentPosition)) {
                 setGlobalPosition(object.link, worldPosition);
             }
-        }
+        };
 
         addCustomRenderBehavior(object, "lockPosition", lockPosition);
         obj.currentOffsetChangeNode = object;
@@ -244,18 +233,19 @@ export default function SceneState() {
 
     const addCustomRenderBehavior = (object, behavior, func) => {
         object.mesh.customRenderBehaviors[behavior] = func;
-    }
+    };
 
     const clearCustomRenderBehavior = (object, behavior) => {
         delete object.mesh.customRenderBehaviors[behavior];
-    }
+    };
 
     const unlockCurrentOffsetChangeNode = () => {
         const { current: obj } = threeObjects;
-        console.log("unlocking")
+        if (!obj.currentOffsetChangeNode) return;
+
         clearCustomRenderBehavior(obj.currentOffsetChangeNode, "lockPosition");
         obj.currentOffsetChangeNode = null;
-    }
+    };
 
     const setRotationAboutJointAxis = (object, angle) => {
         const quaternion = new THREE.Quaternion();
@@ -266,8 +256,8 @@ export default function SceneState() {
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        object.shimmy.setRotationFromAxisAngle(newAxis, angle)
-    }
+        object.shimmy.setRotationFromAxisAngle(newAxis, angle);
+    };
 
     const setPositionAcrossJointAxis = (object, distance) => {
         const quaternion = new THREE.Quaternion();
@@ -278,9 +268,9 @@ export default function SceneState() {
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        object.shimmy.position.set(0, 0, 0)
-        object.shimmy.translateOnAxis(newAxis, distance)
-    }
+        object.shimmy.position.set(0, 0, 0);
+        object.shimmy.translateOnAxis(newAxis, distance);
+    };
 
     const setJointLimits = (object, min = null, max = null) => {
         if (min) {
@@ -290,10 +280,11 @@ export default function SceneState() {
         if (max) {
             object.joint.max = max;
         }
-    }
+    };
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
+        unlockCurrentOffsetChangeNode();
         if (!object) {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -365,15 +356,15 @@ export default function SceneState() {
 
     const transformObject = (object, transformType, x, y, z) => {
         switch (transformType) {
-            case 'scale':
+            case "scale":
                 object.mesh.scale.set(x, y, z);
                 //update the moment of inertia
                 object.userData.inertia.updateInertia(object);
                 break;
-            case 'position':
+            case "position":
                 object.position.set(x, y, z);
                 break;
-            case 'rotation':
+            case "rotation":
                 object.rotation.set(x, y, z);
                 break;
             default:
@@ -411,9 +402,8 @@ export default function SceneState() {
     };
 
     const getBaseLink = () => {
-        console.log(threeObjects.current.baseLink);
         return threeObjects.current.baseLink;
-    }
+    };
 
     const openProjectManager = () => setIsProjectManagerOpen(true);
     const closeProjectManager = () => setIsProjectManagerOpen(false);
@@ -448,16 +438,12 @@ export default function SceneState() {
         changeProjectTitle,
         setPositionAcrossJointAxis,
         unlockCurrentOffsetChangeNode,
-        setJointLimits
+        setJointLimits,
     };
-
 
     return (
         <div className="screen">
-            <ProjectModal
-                isOpen={isProjectManagerOpen}
-                onClose={closeProjectManager}
-            />
+            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} />
             <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
@@ -470,20 +456,10 @@ export default function SceneState() {
                             loadScene={loadScene}
                             getScene={getScene}
                         />
-                        <LinkTree
-                            scene={scene}
-                            deleteObject={deleteObject}
-                            duplicateObject={duplicateObject}
-                            selectedObject={selectedObject}
-                            selectObject={selectObject}
-                            getBaseLink={getBaseLink}
-                        />
+                        <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} getBaseLink={getBaseLink} />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar
-                        setTransformMode={setTransformMode}
-                        selectedObject={selectedObject}
-                    />
+                    <Toolbar setTransformMode={setTransformMode} selectedObject={selectedObject} />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters
                             selectedObject={selectedObject}
