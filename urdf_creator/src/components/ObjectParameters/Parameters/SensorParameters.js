@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import IMUParameters from '../Sensors/IMUParameters';
 import CameraParameters from '../Sensors/CameraParameters';
-import { IMU, Camera } from '../../../Models/SensorsClass';
+import LidarParameters from '../Sensors/LidarParameters';
+import { IMU, Camera, Lidar } from '../../../Models/SensorsClass';
 // Import other sensor parameter components here
 
 function SensorsParameters({ selectedObject, setSensor }) {
@@ -26,6 +27,9 @@ function SensorsParameters({ selectedObject, setSensor }) {
             case 'camera':
                 setSensor(selectedObject, new Camera());
                 break;
+            case 'lidar':
+                setSensor(selectedObject, new Lidar());
+                break;
             // Add cases for other sensor types here
             default:
                 setSensor(selectedObject, null);
@@ -38,6 +42,8 @@ function SensorsParameters({ selectedObject, setSensor }) {
                 return <IMUParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
             case 'camera':
                 return <CameraParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
+            case 'lidar':
+                return <LidarParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
             // Add cases for other sensor types here
             default:
                 return <div>Not a Sensor Type</div>;

@@ -5,7 +5,6 @@ import urdfObject from "../Models/urdfObject";
 
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene) => {
-    debugger;
     let xml = `<sdf version="1.6">\n`;
     if (scene === undefined) return xml;
 
