@@ -6,6 +6,7 @@ export default function JointParameters({ selectedObject, setJoint, stateFunctio
 
     const handleJointTypeChange = (e) => {
         setJointType(e.target.value);
+        selectedObject.joint.type = e.target.value;
         setJoint(selectedObject, e.target.value);
     };
 

@@ -1,14 +1,15 @@
 import * as THREE from "three";
 
 export default class Joint extends THREE.Line {
-    constructor({
-        type = "fixed",
-        axis = [0, 0, 1],
-        origin = [0, 0, 0],
-        name = "",
-    } = {}) {
-        const point = new THREE.Vector3(...origin);
-        axis = new THREE.Vector3(...axis);
+    constructor(urdfObject, params) {
+        const jointAxis = {
+            origin: [0, 0, 0],
+            axis: [1, 0, 0],
+            type: params?.jointAxis?.type ?? "fixed",
+            name: params?.jointName ?? "",
+        };
+        const point = new THREE.Vector3(...jointAxis.origin);
+        const axis = new THREE.Vector3(...jointAxis.axis);
         const length = 10;
         const startPoint = point
             .clone()
@@ -23,16 +24,21 @@ export default class Joint extends THREE.Line {
         const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
         material.visible = false
         super(geometry, material);
-        this.name = name;
-        this.type = type;
-        this.axis = axis
+        this.name = jointAxis.name;
+        this.urdfObject = urdfObject;
+        this.jointType = jointAxis.type;
+        this.type = jointAxis.type;
 
-        //             jointAxis: new Axis({
-        //                 origin: params?.jointPosition ?? [0, 0, 0],
-        //                 axis: params?.jointAxis ?? [1, 0, 0],
-        //                 type: params?.jointType ?? "fixed",
-        //                 name: params?.jointName ?? "",
-        //             }),
     }
+
+    set type (jointType){
+        this.jointType = jointType;
+        this.userData = { jointType: jointType};
+    }
+
+    get type () {
+        return this.userData.jointType;
+    }
+
 
 }

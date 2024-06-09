@@ -87,24 +87,6 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 />
             </label>
             <label>
-                XYZ Offsets:
-                <input
-                    type="text"
-                    name="xyzOffsets"
-                    value={sensorData.xyzOffsets || '0 0 0'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                RPY Offsets:
-                <input
-                    type="text"
-                    name="rpyOffsets"
-                    value={sensorData.rpyOffsets || '0 0 0'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
                 Update Rate:
                 <input
                     type="number"

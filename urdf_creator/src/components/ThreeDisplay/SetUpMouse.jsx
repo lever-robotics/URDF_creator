@@ -1,4 +1,4 @@
-export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject) {
+export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject, forceSceneUpdate) {
     const { current: obj } = threeObjects;
     if (!mountRef.current || obj.initialized) return;
 
@@ -46,6 +46,7 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
             onClick(event);
         }
         mouseData.current.previousUpTime = Date.now();
+        forceSceneUpdate();
     }
 
     function onMouseDown(event) {

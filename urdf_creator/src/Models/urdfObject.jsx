@@ -15,29 +15,30 @@ export default class urdfObject extends THREE.Object3D {
             -> Add direct children of urdfObject here. Their references will be automatically assigned as properties to the urdfObject. REMEMBER to use the add() function to add the references to the THREE.Object3D also
         attributes: These are the values that THREE function will directly modify to change the state of the scene.
             -> Add all attributes and their default values here and set them corresespondingly below
-        */
-
+            */
+           
+           
         //***Properties-Children-Attributes***/
         const properties = {
             urdfObject: true, // Flag to determine if is urdfObject
             userData: new UserData(shape, name),
         };
         const children = {
-            joint: new Joint(params),
+            joint: new Joint(this, params),
             shimmy: new Shimmy(shape, params),
         };
         const attributes = {
             position: params?.position ?? [0, 0, 0],
             rotation: params?.rotation ?? [0, 0, 0],
         };
-
-        //***Assign-add()-set()***//
+        
         const assignProperties = (elements) => {
             // These are automatic
             Object.entries(elements).forEach(([key, value]) => {
                 this[key] = value;
             });
         };
+        //***Assign-add()-set()***//
         assignProperties(properties);
         assignProperties(children);
         // Add Children here...

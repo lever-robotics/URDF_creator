@@ -82,7 +82,7 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
                         </StyledButton>
                         <input type="text" value={projectTitle} id="projectTitleInput" onChange={changeProjectTitle} />
                     </div>
-                    <StyledMenu {...bindMenu(popupState)}>
+                    <StyledMenu {...bindMenu(popupState)} >
                         <StyledMenuItem
                             onClick={() => {
                                 openProjectManager();
