@@ -2,6 +2,7 @@ import * as THREE from "three";
 import UserData from "./UserData";
 import Joint from "./Joint";
 import Shimmy from "./Shimmy";
+import Mesh from "./Mesh";
 
 export default class urdfObject extends THREE.Object3D {
     constructor(shape, name, params) {
@@ -16,8 +17,8 @@ export default class urdfObject extends THREE.Object3D {
         attributes: These are the values that THREE function will directly modify to change the state of the scene.
             -> Add all attributes and their default values here and set them corresespondingly below
             */
-           
-           
+
+
         //***Properties-Children-Attributes***/
         const properties = {
             urdfObject: true, // Flag to determine if is urdfObject
@@ -31,7 +32,7 @@ export default class urdfObject extends THREE.Object3D {
             position: params?.position ?? [0, 0, 0],
             rotation: params?.rotation ?? [0, 0, 0],
         };
-        
+
         const assignProperties = (elements) => {
             // These are automatic
             Object.entries(elements).forEach(([key, value]) => {
@@ -75,7 +76,7 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     getChildren = () => {
-        return this.shimmy.link.children;
+        return this.shimmy.link.children.filter((child) => !(child instanceof Mesh));
     };
 
     getParent = () => {
