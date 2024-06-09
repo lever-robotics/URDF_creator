@@ -125,7 +125,7 @@ export default function SceneState() {
             scale: mesh.scale,
             offset: link.position,
             jointAxis: {
-                type: gltfObject.userData?.jointType ?? 'fixed',
+                type: joint.userData?.jointType ?? 'fixed',
                 axis: joint.position,
                 origin: [0,0,0], // Not sure how to do this
                 name: joint.name,
