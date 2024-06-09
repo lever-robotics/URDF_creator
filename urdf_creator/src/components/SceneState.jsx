@@ -61,7 +61,7 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject);
+        const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject, forceSceneUpdate);
         const sceneCallback = initScene(threeObjects, mountRef);
         setScene({ ...obj.scene });
 
@@ -478,7 +478,7 @@ export default function SceneState() {
                             setSensor={setSensor}
                             stateFunctions={stateFunctions}
                         />
-                        <CodeDisplay scene={threeObjects.current.scene} />
+                        <CodeDisplay scene={scene} />
                     </Column>
                 </Row>
             </AbsolutePosition>
