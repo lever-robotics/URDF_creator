@@ -25,13 +25,22 @@ export const ScenetoXML = (scene) => {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
-            const offset = formatVector(node.link.position);
-            const rotation = quaternionToRPY(node.quaternion);
+            let offset = formatVector(node.link.position);
+            let rotation = quaternionToRPY(node.quaternion);
+            let linkRotation = "0 0 0";
+
+            if (node.userData.isBaseLink) {
+                offset = formatVector(node.position);
+                linkRotation = quaternionToRPY(node.quaternion);
+            } else if (node.getParent().userData.isBaseLink) {
+                const quaternion = new THREE.Quaternion();
+                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.getParent().quaternion, node.quaternion));
+            }
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
             xml += `    <visual>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
@@ -62,7 +71,7 @@ export const ScenetoXML = (scene) => {
 
             // Add collision element with the same geometry
             xml += `    <collision>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
             xml += geometryXML;
             xml += `    </collision>\n`;
 
@@ -70,7 +79,7 @@ export const ScenetoXML = (scene) => {
             const mass = node.userData.inertia.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
             xml += `    <inertial>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
             xml += `      <mass value="${mass}" />\n`;
             xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
@@ -95,7 +104,11 @@ export const ScenetoXML = (scene) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parent.position);
+                originInRelationToParentsJoint.add(node.getParent().link.position);
+
+                if (node.getParent().userData.isBaseLink) {
+                    node.getWorldPosition(originInRelationToParentsJoint);
+                }
 
                 xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
