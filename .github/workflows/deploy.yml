@@ -6,21 +6,19 @@ on:
       - deploy
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Navigate to React project folder
-        run: cd urdf_creator
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '21.6.1'
 
@@ -29,21 +27,24 @@ jobs:
           cd urdf_creator
           npm install
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Build the project
         run: |
           cd urdf_creator
-          CI=false
-          npm run build
+          # Set CI to false to avoid treating warnings as errors
+          CI=false npm run build
 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: urdf_creator/build
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
-        run: |
-          cd urdf_creator
-          CI=false
-          npm run deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: deployment
+        uses: actions/deploy-pages@v1
