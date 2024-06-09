@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/URDF_creator/static/css/main.d769720c.css",
+    "main.js": "/URDF_creator/static/js/main.bc61fdfb.js",
+    "static/js/453.226555af.chunk.js": "/URDF_creator/static/js/453.226555af.chunk.js",
+    "index.html": "/URDF_creator/index.html",
+    "main.d769720c.css.map": "/URDF_creator/static/css/main.d769720c.css.map",
+    "main.bc61fdfb.js.map": "/URDF_creator/static/js/main.bc61fdfb.js.map",
+    "453.226555af.chunk.js.map": "/URDF_creator/static/js/453.226555af.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d769720c.css",
+    "static/js/main.bc61fdfb.js"
+  ]
+}
