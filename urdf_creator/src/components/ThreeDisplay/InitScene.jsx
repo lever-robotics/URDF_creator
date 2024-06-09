@@ -60,7 +60,7 @@ export default function initScene(threeObjects, mountRef) {
 
     // Load font and create text meshes
     const loader = new FontLoader();
-    loader.load('/fonts/helvetiker_regular.typeface.json', function (font) {
+    loader.load(process.env.PUBLIC_URL + '/fonts/helvetiker_regular.typeface.json', function (font) {
         const textMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); // Change color to blue
 
         // Create the text geometry for X
