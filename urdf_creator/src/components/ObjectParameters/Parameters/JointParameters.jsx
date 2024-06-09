@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
 
 export default function JointParameters({ selectedObject, setJoint, stateFunctions }) {
-    const [jointType, setJointType] = useState(selectedObject.joint.type);
+    const [jointType, setJointType] = useState(selectedObject.joint.jointType);
 
     const handleJointTypeChange = (e) => {
         setJointType(e.target.value);
-        selectedObject.joint.type = e.target.value;
+        selectedObject.joint.jointType = e.target.value;
         setJoint(selectedObject, e.target.value);
     };
 
     useEffect(() => {
-        setJointType(selectedObject.joint.type);
+        setJointType(selectedObject.joint.jointType);
     }, [selectedObject]);
 
     return (

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Joint extends THREE.Line {
-    constructor(urdfObject, params) {
+    constructor(params) {
         const jointAxis = {
             origin: [0, 0, 0],
             axis: [0, 0, 1],
@@ -24,22 +24,40 @@ export default class Joint extends THREE.Line {
         const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
         material.visible = jointAxis.type !== "fixed";
         super(geometry, material);
+        this.rotation.set(...params.jointRotation);
         this.name = jointAxis.name;
-        this.urdfObject = urdfObject;
-        this.jointType = jointAxis.type;
-        this.type = jointAxis.type;
+        this.userData = {
+            jointType: jointAxis.type,
+            min: params?.jointMin ?? -1,
+            max: params?.jointMax ?? 1,
+        }
         this.axis = axis;
 
     }
 
-    set type(jointType) {
-        this.jointType = jointType;
-        this.userData = { jointType: jointType };
+    set jointType(jointType){
+        this.userData.jointType = jointType;
     }
 
-    get type() {
+    get jointType () {
         return this.userData.jointType;
     }
 
+    set min (min) {
+        this.userData.min = min;
+        console.log(min);
+    }
+
+    get min() {
+        return this.userData.min;
+    }
+
+    set max (max) {
+        this.userData.max = max;
+    }
+
+    get max() {
+        return this.userData.max;
+    }
 
 }

@@ -25,7 +25,7 @@ export default class urdfObject extends THREE.Object3D {
             userData: new UserData(shape, name),
         };
         const children = {
-            joint: new Joint(this, params),
+            joint: new Joint(params),
             shimmy: new Shimmy(shape, params),
         };
         const attributes = {

@@ -121,6 +121,9 @@ export default function SceneState() {
                 origin: [0, 0, 0], // Not sure how to do this
                 name: joint.name,
             },
+            jointMin: joint.userData?.min,
+            jointMax: joint.userData?.max,
+            jointRotation: joint.rotation,
             jointOrigin: joint.position,
             material: mesh.material,
             shape: gltfObject.userData.shape,
@@ -144,6 +147,7 @@ export default function SceneState() {
     const forceSceneUpdate = () => {
         const { current: obj } = threeObjects;
         setScene({ ...obj.scene });
+        console.log(obj.scene);
     };
 
     const setTransformMode = (mode, currentlySelectedObject) => {
@@ -334,7 +338,7 @@ export default function SceneState() {
     };
 
     const setJoint = (object, type) => {
-        object.joint.type = type;
+        object.joint.jointType = type;
         clearShimmy(object);
 
         if (type === "fixed") {
