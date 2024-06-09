@@ -2,24 +2,17 @@ import * as THREE from "three";
 import { generateSensorSDF } from "./generateSensorSDF";
 import findBaseLink from "./findBaseLink";
 import urdfObject from "../Models/urdfObject";
+import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene) => {
-    debugger;
     let xml = `<sdf version="1.6">\n`;
     if (scene === undefined) return xml;
 
-    xml += `<model name="GeneratedModel">\n`;
+    xml += `<model name="GeneratedModel" canonical_link='base_link'>\n`;
 
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
-
-    // Helper to convert rotation to SDF-compatible roll-pitch-yaw (rpy) and flip y and z
-    const quaternionToEuler = (quaternion) => {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion, "XYZ");
-        return `${euler.x} ${euler.z} ${euler.y}`;
-    };
 
     // Variables to keep track of link naming
     let linkIndex = 0;
@@ -35,28 +28,28 @@ export const ScenetoSDF = (scene) => {
 
             const position = formatVector(node.position);
             const offset = formatVector(node.link.position);
-            const rotation = quaternionToEuler(node.quaternion);
+            const rotation = quaternionToRPY(node.quaternion);
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            xml += `    <pose>${offset} 0 0 0</pose>\n`;
+            xml += `    <pose>${position} ${rotation}</pose>\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
                 const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
-                geometryXML = `    <collision>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "SphereGeometry") {
                 const radius = node.mesh.scale.x / 3;
-                geometryXML = `    <collision>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
                 const height = node.mesh.scale.y;
-                geometryXML = `    <collision>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
             }
             xml += geometryXML;
 
@@ -67,9 +60,9 @@ export const ScenetoSDF = (scene) => {
             }
 
             // Add inertial element
-            const mass = node.userData.mass || 0;
-            const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
-            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${Ixx || 0}</ixx>\n        <ixy>${Ixy || 0}</ixy>\n        <ixz>${Ixz || 0}</ixz>\n        <iyy>${Iyy || 0}</iyy>\n        <iyz>${Iyz || 0}</iyz>\n        <izz>${Izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
+            const mass = node.userData.inertia.mass || 0;
+            const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
+            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${ixx || 0}</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${ixz || 0}</ixz>\n        <iyy>${iyy || 0}</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
             if (node.userData.sensor) {

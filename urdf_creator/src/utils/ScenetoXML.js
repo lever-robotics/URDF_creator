@@ -2,21 +2,16 @@ import * as THREE from "three";
 import { generateSensorXML } from "./generateSensorXML";
 import findBaseLink from "./findBaseLink";
 import urdfObject from "../Models/urdfObject";
+import { quaternionToRPY } from "./quaternionToRPY.js";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene) => {
     let xml = `<robot name="GeneratedRobot">\n`;
     if (scene === undefined) return xml;
 
-    // Helper to format vector as a string and flip y and z coordinates
-    const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
-
-    // Helper to convert rotation to URDF-compatible roll-pitch-yaw (rpy) and flip y and z
-    const quaternionToEuler = (quaternion) => {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion, "XYZ");
-        return `${euler.x} ${euler.z} ${euler.y}`;
-    };
+    // Helper to flip THREE xyz into urdf zxy
+    // Helper to flip THREE xyz into urdf zxy
+    const formatVector = (vec) => `${vec.x} ${vec.y} ${vec.z}`;
 
     // Variables to keep track of link naming
     let linkIndex = 0;
@@ -30,9 +25,8 @@ export const ScenetoXML = (scene) => {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
-            const position = formatVector(node.position);
             const offset = formatVector(node.link.position);
-            const rotation = quaternionToEuler(node.quaternion);
+            const rotation = quaternionToRPY(node.quaternion);
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
@@ -43,14 +37,14 @@ export const ScenetoXML = (scene) => {
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
+                const size = `${formatVector(node.mesh.scale)}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.mesh.scale.x / 3;
+                const radius = node.mesh.scale.x / 2;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.mesh.scale.y;
+                const height = node.mesh.scale.z;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
@@ -73,16 +67,16 @@ export const ScenetoXML = (scene) => {
             xml += `    </collision>\n`;
 
             // Add inertial element
-            const mass = node.userData.mass || 0;
-            const { Ixx, Ixy, Ixz, Iyy, Iyz, Izz } = node.userData;
+            const mass = node.userData.inertia.mass || 0;
+            const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
             xml += `    <inertial>\n`;
             xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
             xml += `      <mass value="${mass}" />\n`;
-            xml += `      <inertia ixx="${Ixx || 0}" ixy="${Ixy || 0}" ixz="${Ixz || 0}" iyy="${Iyy || 0}" iyz="${Iyz || 0}" izz="${Izz || 0}" />\n`;
+            xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.userData.sensorXML) {
+            if (node.userData.sensor) {
                 const sensorXML = generateSensorXML(node);
                 xml += sensorXML;
             }
@@ -95,12 +89,19 @@ export const ScenetoXML = (scene) => {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
-                xml += `    <origin xyz="${position}" rpy="${rotation}" />\n`;
-                if (node.joint.type !== "fixed") {
 
+                // because urdf is dumb, children links are connected to parent joints, not parent meshes
+                // this code accounts for that and sets the joint origin in relation to the parent's joint origin
+                // ie it add the links position to its own since it isnt passed with
+                const originInRelationToParentsJoint = new THREE.Vector3();
+                originInRelationToParentsJoint.copy(node.position);
+                originInRelationToParentsJoint.add(node.parent.position);
+
+                xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
+                if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
-                    const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
                     if (node.joint.type !== "continuous") {
                         xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;

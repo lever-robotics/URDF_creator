@@ -19,24 +19,6 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 />
             </label>
             <label>
-                Image Topic Name:
-                <input
-                    type="text"
-                    name="imageTopicName"
-                    value={sensorData.imageTopicName || '/camera/image_raw'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                Camera Info Topic Name:
-                <input
-                    type="text"
-                    name="cameraInfoTopicName"
-                    value={sensorData.cameraInfoTopicName || '/camera/camera_info'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
                 Horizontal FOV:
                 <input
                     type="number"
@@ -44,6 +26,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.horizontal_fov || 1.3962634}
                     onChange={handleChange}
                 />
+                <span className="units">&deg; degrees</span>
             </label>
             <label>
                 Image Width:
@@ -53,6 +36,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.width || 800}
                     onChange={handleChange}
                 />
+                <span className="units">px</span>
             </label>
             <label>
                 Image Height:
@@ -62,6 +46,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.height || 600}
                     onChange={handleChange}
                 />
+                <span className="units">px</span>
             </label>
             <label>
                 Image Format:
@@ -80,6 +65,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.near || 0.1}
                     onChange={handleChange}
                 />
+                <span className="units">m</span>
             </label>
             <label>
                 Clip Far:
@@ -89,6 +75,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.far || 100}
                     onChange={handleChange}
                 />
+                <span className="units">m</span>
             </label>
             <label>
                 Gaussian Noise:
@@ -118,20 +105,32 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 />
             </label>
             <label>
-                Always On:
-                <input
-                    type="checkbox"
-                    name="alwaysOn"
-                    checked={sensorData.alwaysOn !== undefined ? sensorData.alwaysOn : true}
-                    onChange={(e) => handleChange({ target: { name: 'alwaysOn', value: e.target.checked } })}
-                />
-            </label>
-            <label>
                 Update Rate:
                 <input
                     type="number"
                     name="updateRate"
                     value={sensorData.updateRate || 100}
+                    onChange={handleChange}
+                />
+                <span className="units">Hz</span>
+            </label>
+            <label>
+                Image Topic Name:
+                <input
+                    type="text"
+                    name="imageTopicName"
+                    style={{ width: '200px' }}
+                    value={sensorData.imageTopicName || '/camera/image_raw'}
+                    onChange={handleChange}
+                />
+            </label>
+            <label>
+                Camera Info Topic Name:
+                <input
+                    type="text"
+                    name="cameraInfoTopicName"
+                    style={{ width: '200px' }}
+                    value={sensorData.cameraInfoTopicName || '/camera/camera_info'}
                     onChange={handleChange}
                 />
             </label>

@@ -10,42 +10,6 @@ function IMUParameters({ selectedObject, sensorData, setSensor }) {
     return (
         <div>
             <label>
-                Gaussian Noise:
-                <input
-                    type="number"
-                    name="gaussianNoise"
-                    value={sensorData.gaussianNoise || 0.01}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                XYZ Offsets:
-                <input
-                    type="text"
-                    name="xyzOffsets"
-                    value={sensorData.xyzOffsets || '0 0 0'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                RPY Offsets:
-                <input
-                    type="text"
-                    name="rpyOffsets"
-                    value={sensorData.rpyOffsets || '0 0 0'}
-                    onChange={handleChange}
-                />
-            </label>
-            <label>
-                Always On:
-                <input
-                    type="checkbox"
-                    name="alwaysOn"
-                    checked={sensorData.alwaysOn !== undefined ? sensorData.alwaysOn : true}
-                    onChange={(e) => handleChange({ target: { name: 'alwaysOn', value: e.target.checked } })}
-                />
-            </label>
-            <label>
                 Update Rate:
                 <input
                     type="number"
@@ -53,6 +17,7 @@ function IMUParameters({ selectedObject, sensorData, setSensor }) {
                     value={sensorData.updateRate || 100}
                     onChange={handleChange}
                 />
+                <span className="units">Hz</span>
             </label>
             <label>
                 Mean:
@@ -69,6 +34,15 @@ function IMUParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     name="stddev"
                     value={sensorData.stddev || 0}
+                    onChange={handleChange}
+                />
+            </label>
+            <label>
+                Gaussian Noise:
+                <input
+                    type="number"
+                    name="gaussianNoise"
+                    value={sensorData.gaussianNoise || 0.01}
                     onChange={handleChange}
                 />
             </label>

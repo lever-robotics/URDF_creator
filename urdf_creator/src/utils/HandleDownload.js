@@ -5,14 +5,16 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
 import { ScenetoSDF } from "./ScenetoSDF";
-import { SensorsContained } from "./CreatePackage/SensorsContained";
+import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesContained";
+import { GenerateLaunchFile } from "./CreatePackage/GenerateLaunchFile";
+import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/GenerateBuildFiles";
 
 export async function handleDownload(scene, type, title) {
   if (type === "urdf") {
     const urdf = ScenetoXML(scene);
     const sdf = ScenetoSDF(scene);
-    const sensorsContained = SensorsContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
-    await generateZip(urdf, sdf, sensorsContained, title);
+    const projectProperties = LaunchPropertiesContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
+    await generateZip(urdf, sdf, projectProperties, title);
   } else if (type === "gltf") {
     const exporter = new GLTFExporter();
     exporter.parse(scene, (gltf) => {
@@ -43,40 +45,32 @@ export function otherFileDownload(data, type, title) {
   URL.revokeObjectURL(link.href);
 }
 
-export async function generateZip(urdfContent, SDFContent, title) {
+export async function generateZip(urdfContent, SDFContent, projectProperties, title) {
   const zip = new JSZip();
 
   // List of static files and their paths in the ZIP
   const filesToAdd = [
     {
       path: "robot_package/config/example_config.yaml",
-      zipPath: `${title}/config/example_config.yaml`,
-    },
-    {
-      path: "robot_package/launch/example.launch.py",
-      zipPath: `${title}/launch/robot_sim.launch.py`,
+      zipPath: `${title}_description/config/example_config.yaml`,
     },
     {
       path: "robot_package/rviz/my_robot.rviz",
-      zipPath: `${title}/rviz/my_robot.rviz`,
+      zipPath: `${title}_description/rviz/my_robot.rviz`,
     },
     {
       path: "robot_package/worlds/example.world",
-      zipPath: `${title}/worlds/example.world`,
-    },
-    {
-      path: "robot_package/CMakeLists.txt",
-      zipPath: `${title}/CMakeLists.txt`,
-    },
-    {
-      path: "robot_package/package.xml",
-      zipPath: `${title}/package.xml`,
+      zipPath: `${title}_description/worlds/example.world`,
     },
     {
       path: "robot_package/README.md",
-      zipPath: `${title}/README.md`,
+      zipPath: `${title}_description/README.md`,
     },
   ];
+  //generate the package.xml file
+  zip.file(`${title}_description/package.xml`, GeneratePackageXMLFile(title, projectProperties));
+  //generate the CMakeLists.txt file
+  zip.file(`${title}_description/CMakeLists.txt`, GenerateCMakelistsFile(title, projectProperties));
 
   // Function to fetch and add files to the zip
   const addFilesToZip = async (fileInfo) => {
@@ -89,18 +83,23 @@ export async function generateZip(urdfContent, SDFContent, title) {
   const filePromises = filesToAdd.map((fileInfo) => addFilesToZip(fileInfo));
   await Promise.all(filePromises);
 
-  // Add the latest URDF file to the ZIP
+  // Add the URDF file to the ZIP
   if (urdfContent) {
-    zip.file(`${title}/urdf/${title}.urdf`, urdfContent);
+    zip.file(`${title}_description/urdf/${title}.urdf`, urdfContent);
   } else {
     console.error("No URDF file found in the state.");
   }
+
+  // Add the SDF file to the ZIP
   if (SDFContent) {
-    zip.file(`${title}/model/${title}.sdf`, SDFContent);
+    zip.file(`${title}_description/model/${title}.sdf`, SDFContent);
   }
 
   //Programatically generate the launch file
-  // const launchFileContent = GenerateLaunchFileContent(title);
+  const launchFileContent = GenerateLaunchFile(title, projectProperties);
+
+  // Add the launch file to the ZIP
+  zip.file(`${title}_description/launch/${title}.launch.py`, launchFileContent);
 
   // Generate the ZIP file and trigger the download
   zip.generateAsync({ type: "blob" }).then(function (content) {

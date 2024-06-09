@@ -40,6 +40,7 @@ function PositionParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('position', 'x', positionX)}
                     onKeyDown={(e) => handleKeyDown(e, 'position', 'x', positionX)}
                 />
+                <span className="units">m</span>
             </li>
             <li>
                 Y:
@@ -50,6 +51,7 @@ function PositionParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('position', 'y', positionY)}
                     onKeyDown={(e) => handleKeyDown(e, 'position', 'y', positionY)}
                 />
+                <span className="units">m</span>
             </li>
             <li>
                 Z:
@@ -60,6 +62,7 @@ function PositionParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('position', 'z', positionZ)}
                     onKeyDown={(e) => handleKeyDown(e, 'position', 'z', positionZ)}
                 />
+                <span className="units">m</span>
             </li>
         </ul>
     );

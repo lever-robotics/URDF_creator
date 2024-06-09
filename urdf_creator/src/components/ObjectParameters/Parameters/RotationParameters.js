@@ -43,6 +43,7 @@ function RotationParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('rotation', 'x', rotationX)}
                     onKeyDown={(e) => handleKeyDown(e, 'rotation', 'x', rotationX)}
                 />
+                <span className="units">&deg; degrees</span>
             </li>
             <li>
                 Y:
@@ -53,6 +54,7 @@ function RotationParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('rotation', 'y', rotationY)}
                     onKeyDown={(e) => handleKeyDown(e, 'rotation', 'y', rotationY)}
                 />
+                <span className="units">&deg; degrees</span>
             </li>
             <li>
                 Z:
@@ -63,6 +65,7 @@ function RotationParameters({ selectedObject, transformObject }) {
                     onBlur={() => handleBlur('rotation', 'z', rotationZ)}
                     onKeyDown={(e) => handleKeyDown(e, 'rotation', 'z', rotationZ)}
                 />
+                <span className="units">&deg; degrees</span>
             </li>
         </ul>
     );

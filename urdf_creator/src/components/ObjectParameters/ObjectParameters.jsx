@@ -22,7 +22,7 @@ function ObjectParameters({ selectedObject, transformObject, setLinkName, setUse
         <div className="object-parameters">
             <h3>Object Parameters</h3>
             <ToggleSection title="Basic Parameters">
-                <BasicParameters selectedObject={selectedObject} setLinkName={setLinkName} setUserColor={setUserColor} setMass={setMass} />
+                <BasicParameters selectedObject={selectedObject} setLinkName={setLinkName} setUserColor={setUserColor} />
             </ToggleSection>
             <ToggleSection title="Position">
                 <PositionParameters selectedObject={selectedObject} transformObject={transformObject} />
@@ -34,7 +34,7 @@ function ObjectParameters({ selectedObject, transformObject, setLinkName, setUse
                 <ScaleParameters selectedObject={selectedObject} transformObject={transformObject} />
             </ToggleSection>
             <ToggleSection title="Inertia Parameters">
-                <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} />
+                <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} setMass={setMass}/>
             </ToggleSection>
             {!selectedObject.userData.isBaseLink && (
                 <ToggleSection title="Joint Parameters">

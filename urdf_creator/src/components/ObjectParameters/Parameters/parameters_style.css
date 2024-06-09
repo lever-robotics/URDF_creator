@@ -1,0 +1,26 @@
+.name-input:read-only,
+.name-input:read-only:hover,
+.name-input:read-only:focus {
+    background-color: #202020; /* Light gray */
+    color: #80808080;
+    border: 1px solid transparent; /* Keeps the border consistent and "invisible" */
+    outline: none; /* Removes the focus outline */
+}
+
+.units {
+    font-family: "Times New Roman", Times, serif; /* Gives a more "mathematical" look */
+    color: #7e7e7e; /* Darker text for better readability */
+    font-size: 0.8em;
+    margin-left: 0.2em; /* Adds a small margin between the number and the units */
+}
+
+.units sup {
+    font-size: 0.7em; /* Smaller font size for the exponent */
+    vertical-align: super; /* Properly aligns the exponent */
+}
+
+.large-dot {
+    font-size: 1.5em; /* Makes the dot larger */
+    vertical-align: middle; /* Adjusts the vertical alignment to match surrounding text */
+    display: inline-block;
+}
