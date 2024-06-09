@@ -26,12 +26,13 @@ export const ScenetoXML = (scene) => {
             linkIndex += 1;
 
             const offset = formatVector(node.link.position);
+            const mesh_pos = formatVector(node.position);
             const rotation = quaternionToRPY(node.quaternion);
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
             xml += `    <visual>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${mesh_pos}" rpy="${rotation}" />\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
@@ -62,7 +63,7 @@ export const ScenetoXML = (scene) => {
 
             // Add collision element with the same geometry
             xml += `    <collision>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${mesh_pos}" rpy="${rotation}" />\n`;
             xml += geometryXML;
             xml += `    </collision>\n`;
 
@@ -70,7 +71,7 @@ export const ScenetoXML = (scene) => {
             const mass = node.userData.inertia.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
             xml += `    <inertial>\n`;
-            xml += `      <origin xyz="${offset}" rpy="0 0 0" />\n`;
+            xml += `      <origin xyz="${mesh_pos}" rpy="${rotation}" />\n`;
             xml += `      <mass value="${mass}" />\n`;
             xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
