@@ -409,7 +409,7 @@ export default function SceneState() {
             material: mesh.material,
             shape: objectToClone.userData.shape,
             userData: objectToClone.userData,
-            name: objectToClone.userData.name + " copy",
+            name: objectToClone.userData.name + "_copy",
         };
         const children = link.children.filter((child) => child.type !== "Mesh");
         const object = new urdfObject(params.shape, params.name, params);
