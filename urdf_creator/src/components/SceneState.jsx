@@ -69,7 +69,7 @@ export default function SceneState() {
             requestAnimationFrame(animate);
             obj.composer.render();
             obj.orbitControls.update();
-            forceSceneUpdate();
+            // forceSceneUpdate();
         };
 
         animate();
@@ -478,7 +478,7 @@ export default function SceneState() {
                             setSensor={setSensor}
                             stateFunctions={stateFunctions}
                         />
-                        <CodeDisplay scene={scene} />
+                        <CodeDisplay scene={threeObjects.current.scene} />
                     </Column>
                 </Row>
             </AbsolutePosition>
