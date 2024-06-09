@@ -29,6 +29,7 @@ jobs:
       - name: Build the project
         run: |
           cd urdf_creator
+          CI=false
           npm run build
 
       - name: Deploy to GitHub Pages
