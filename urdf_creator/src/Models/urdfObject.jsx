@@ -83,6 +83,10 @@ export default class urdfObject extends THREE.Object3D {
         return this.parent.parent.parent;
     };
 
+    getParent = () => {
+        return this.parent.parent.parent;
+    };
+
     // JS technically doesn't allow overloading but this seems to work haha
     // add = (object) => super.add(object);
 }
