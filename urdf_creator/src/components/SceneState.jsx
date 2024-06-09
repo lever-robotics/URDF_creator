@@ -180,15 +180,16 @@ export default function SceneState() {
 
     const startRotateJoint = (object) => {
         const { current: obj } = threeObjects;
+        clearShimmy(object);
         obj.transformControls.setMode("rotate");
         obj.transformControls.attach(object.joint);
     };
 
     const startMoveJoint = (object) => {
         const { current: obj } = threeObjects;
+        clearShimmy(object);
         obj.transformControls.setMode("translate");
         obj.transformControls.attach(object);
-
         const worldPosition = object.link.getWorldPosition(new THREE.Vector3());
 
         const lockPosition = () => {
@@ -266,7 +267,7 @@ export default function SceneState() {
         quaternion.setFromEuler(object.joint.rotation);
         // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(1, 0, 0).applyQuaternion(quaternion);
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
         object.shimmy.position.set(0, 0, 0);
         object.shimmy.translateOnAxis(newAxis, distance);
@@ -280,7 +281,13 @@ export default function SceneState() {
         if (max !== null) {
             object.joint.max = max;
         }
+        clearShimmy(object);
     };
+
+    const clearShimmy = (object) => {
+        object.shimmy.position.set(0, 0, 0);
+        object.shimmy.rotation.set(0, 0, 0);
+    }
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
@@ -328,8 +335,7 @@ export default function SceneState() {
 
     const setJoint = (object, type) => {
         object.joint.type = type;
-        object.shimmy.position.set(0, 0, 0);
-        object.shimmy.rotation.set(0, 0, 0);
+        clearShimmy(object);
 
         if (type === "fixed") {
             object.joint.material.visible = false;
@@ -379,24 +385,38 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const copyAttributes = (object, clone) => {
-        if (!object || !clone) return;
 
-        // make the clone onBeforeRender be the same as the original
-        clone.onBeforeRender = object.onBeforeRender;
-        clone.userData = object.userData.duplicate();
-        for (let i = 0; i < object.children.length; i++) {
-            copyAttributes(object.children[i], clone.children[i]);
-        }
-    };
+    const makeClone = (objectToClone) => {
+        const shimmy = objectToClone.children[1]
+        const joint = objectToClone.children[0]
+        const link = shimmy.children[0];
+        const mesh = link.children[0];
+        const params = {
+            position: objectToClone.position,
+            rotation: objectToClone.rotation,
+            scale: mesh.scale,
+            offset: link.position,
+            jointAxis: {
+                type: joint.type,
+                axis: joint.axis,
+                origin: [0, 0, 0], // Not sure how to do this
+                name: joint.name,
+            },
+            jointOrigin: joint.position,
+            material: mesh.material,
+            shape: objectToClone.userData.shape,
+            userData: objectToClone.userData,
+            name: objectToClone.userData.name + " copy",
+        };
+        const children = link.children.filter((child) => child.type !== "Mesh");
+        const object = new urdfObject(params.shape, params.name, params);
+        children.forEach((child) => object.link.add(makeClone(child)));
+        return object;
+    }
 
     const duplicateObject = (object) => {
-        const clone = object.clone(true);
-
-        //This copies the onBeforeRender callback into the clone
-        copyAttributes(object, clone);
-
-        object.parent.addByUniformScaler(clone);
+        const clone = makeClone(object);
+        object.getParent().link.add(clone);
         setSelectedObject(null);
         forceSceneUpdate();
     };
@@ -435,7 +455,6 @@ export default function SceneState() {
         loadScene,
         getScene,
         transformObject,
-        copyAttributes,
         duplicateObject,
         deleteObject,
         getBaseLink,
