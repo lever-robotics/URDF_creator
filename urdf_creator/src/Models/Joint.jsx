@@ -4,7 +4,7 @@ export default class Joint extends THREE.Line {
     constructor(urdfObject, params) {
         const jointAxis = {
             origin: [0, 0, 0],
-            axis: [1, 0, 0],
+            axis: [0, 0, 1],
             type: params?.jointAxis?.type ?? "fixed",
             name: params?.jointName ?? "",
         };
@@ -28,15 +28,16 @@ export default class Joint extends THREE.Line {
         this.urdfObject = urdfObject;
         this.jointType = jointAxis.type;
         this.type = jointAxis.type;
+        this.axis = axis;
 
     }
 
-    set type (jointType){
+    set type(jointType) {
         this.jointType = jointType;
-        this.userData = { jointType: jointType};
+        this.userData = { jointType: jointType };
     }
 
-    get type () {
+    get type() {
         return this.userData.jointType;
     }
 
