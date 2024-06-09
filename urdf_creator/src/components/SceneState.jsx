@@ -356,6 +356,9 @@ export default function SceneState() {
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
         const baseLink = createUrdfObject(base_link);
+        if (threeObjects.current.baseLink) {
+            threeObjects.current.baseLink.removeFromParent()
+        }
         threeObjects.current.scene.attach(baseLink);
         threeObjects.current.baseLink = baseLink;
         baseLink.userData.isBaseLink = true;
