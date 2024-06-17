@@ -10,6 +10,7 @@ export const ScenetoSDF = (scene) => {
     if (scene === undefined) return xml;
 
     xml += `<model name="GeneratedModel" canonical_link='base_link'>\n`;
+    xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
 
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
@@ -26,14 +27,27 @@ export const ScenetoSDF = (scene) => {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
-            const position = formatVector(node.position);
-            const offset = formatVector(node.link.position);
-            const rotation = quaternionToRPY(node.quaternion);
+            //offset from parent to joint origin
+            let offset = formatVector(node.link.position);
+            // position of link in relation to parent
+            let position = formatVector(node.position);
+            let rotation = quaternionToRPY(node.quaternion);
+            let linkRotation = "0 0 0";
+
+            if (node.userData.isBaseLink) {
+                linkRotation = quaternionToRPY(node.quaternion);
+            } else if (node.getParent().userData.isBaseLink) {
+                const quaternion = new THREE.Quaternion();
+                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.getParent().quaternion, node.quaternion));
+            }
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            xml += `    <pose>${position} ${rotation}</pose>\n`;
-
+            if (node.userData.isBaseLink) {
+                xml += `    <pose relative_to='__model__'>${position} ${rotation}</pose>\n`;
+            } else {
+                xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
+            }
             // Geometry
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
@@ -76,9 +90,32 @@ export const ScenetoSDF = (scene) => {
             // Add joint if there's a parent link
             if (parentName) {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
+
+                
+                // because urdf is dumb, children links are connected to parent joints, not parent meshes
+                // this code accounts for that and sets the joint origin in relation to the parent's joint origin
+                // ie it add the links position to its own since it isnt passed with
+                const originInRelationToParentsJoint = new THREE.Vector3();
+                originInRelationToParentsJoint.copy(node.position);
+                originInRelationToParentsJoint.add(node.getParent().link.position);
+
+                if (node.getParent().userData.isBaseLink) {
+                    node.getWorldPosition(originInRelationToParentsJoint);
+                }
+
+                xml += `    <pose relative_to='${linkName}'>${offset} 0 0 0 <pose/>\n`;
+
                 xml += `    <parent>${parentName}</parent>\n`;
-                xml += `    <child>${linkName}</child>\n`;
-                xml += `    <pose>${position} ${rotation}</pose>\n`;
+                xml += `    <child>${linkName}<child/>\n`;
+                if (node.joint.type !== "fixed") {
+                    const quaternion = new THREE.Quaternion();
+                    quaternion.setFromEuler(node.joint.rotation);
+                    const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
+                    xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
+                    if (node.joint.type !== "continuous") {
+                        xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
+                    }
+                }
                 xml += `  </joint>\n`;
             }
 
