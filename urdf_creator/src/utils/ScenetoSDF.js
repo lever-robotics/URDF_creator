@@ -111,10 +111,15 @@ export const ScenetoSDF = (scene) => {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
                     const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
-                    xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
+                    xml += `    <axis>\n`;
+                    xml += `        <xyz expressed_in='${linkName}'>${formatVector(newAxis)}</xyz>\n`;
                     if (node.joint.type !== "continuous") {
-                        xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
+                        xml += `        <limit>`
+                        xml += `            <lower>${node.joint.min}</lower>`
+                        xml += `            <upper>${node.joint.max}</upper>`
+                        xml += `        </limit>\n`
                     }
+                    xml += `    </axis>\n`;
                 }
                 xml += `  </joint>\n`;
             }
