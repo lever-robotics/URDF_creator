@@ -67,7 +67,9 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
     */
     const onFileUpload = () => inputFile.current.click();
     const handleFileChange = async (e) => {
-        const group = await handleUpload(e.target.files[0]);
+        const file = e.target.files[0];
+        const type = file.name.split('.').pop();
+        const group = await handleUpload(file, type);
         const base_link = group.children[0];
         loadScene(base_link);
     };

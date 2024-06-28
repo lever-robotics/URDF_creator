@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ProjectDisplayer from './ProjectDisplayer';
 import './Project.css';
 
-const ProjectModal = ({ isOpen, onClose }) => {
+const ProjectModal = ({ isOpen, onClose, handleProjectClick }) => {
   const [isVisible, setIsVisible] = useState(false);
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
@@ -57,7 +57,7 @@ const ProjectModal = ({ isOpen, onClose }) => {
         </button>
         <div className="modal-body">
           <h1>Project Manager</h1>
-          <ProjectDisplayer/>
+          <ProjectDisplayer handleProjectClick={handleProjectClick}></ProjectDisplayer>
         </div>
       </div>
     </div>

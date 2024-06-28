@@ -24,7 +24,7 @@ export default class Joint extends THREE.Line {
         const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
         material.visible = jointAxis.type !== "fixed";
         super(geometry, material);
-        this.rotation.set(...params.jointRotation);
+        this.rotation.set(params?.jointRotation ?? 0);
         this.name = jointAxis.name;
         this.userData = {
             jointType: jointAxis.type,

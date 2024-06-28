@@ -3,8 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
 
-export async function handleUpload(file) {
-    const type = file.name.split('.').pop();
+export async function handleUpload(file, type) {
     const fileText = await readFile(file);
     const object = await loadFileToObject(fileText, type);
     return object.scene;
@@ -42,3 +41,12 @@ function readFile(file) {
         reader.readAsText(file);
     }) 
   } 
+
+export async function handleProject(path){
+    const loader = new GLTFLoader();
+    return new Promise((resolve, reject) => {
+        loader.load(path, (obj) => {
+            resolve(obj);
+        });
+    });
+}

@@ -15,6 +15,7 @@ import ProjectModal from "./ProjectManager/ProjectModal.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
 import Link from "../Models/Link.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
+import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 
 export default function SceneState() {
     // State for the ProjectManager
@@ -443,6 +444,14 @@ export default function SceneState() {
 
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
+    const handleProjectClick = async (projectPath, title) => {
+        const group = await handleProject(process.env.PUBLIC_URL + projectPath);
+        const base_link = group.scene.children[0];
+        loadScene(base_link);
+        setProjectTitle(title);
+        setIsProjectManagerOpen(false);
+    };
+
     const stateFunctions = {
         addObject,
         createUrdfObject,
@@ -471,11 +480,12 @@ export default function SceneState() {
         setPositionAcrossJointAxis,
         unlockCurrentOffsetChangeNode,
         setJointLimits,
+        handleProjectClick,
     };
 
     return (
         <div className="screen">
-            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} />
+            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} handleProjectClick={handleProjectClick}/>
             <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
