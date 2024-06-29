@@ -142,4 +142,15 @@ export default class urdfObject extends THREE.Object3D {
                 break;
         }
     }
+
+    // Clear's any shimmy position/rotation changes
+    clearShimmy = () => {
+        this.shimmy.position.set(0,0,0);
+        this.shimmy.rotation.set(0,0,0);
+    }
+
+    startRotateJoint = (transformControls) => {
+        this.clearShimmy();
+        transformControls.attach(this.joint);
+    }
 }

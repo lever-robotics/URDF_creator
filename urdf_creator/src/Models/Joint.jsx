@@ -21,29 +21,29 @@ export default class Joint extends THREE.Line {
         points.push(startPoint);
         points.push(endPoint);
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
+        const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
         material.visible = jointAxis.type !== "fixed";
         super(geometry, material);
-        this.rotation.set(params?.jointRotation ?? 0);
+        console.log("joint");
+        this.rotation.set(...(params?.jointRotation ?? [0, 0, 0]));
         this.name = jointAxis.name;
         this.userData = {
             jointType: jointAxis.type,
             min: params?.jointMin ?? -1,
             max: params?.jointMax ?? 1,
-        }
+        };
         this.axis = axis;
-
     }
 
-    set jointType(jointType){
+    set jointType(jointType) {
         this.userData.jointType = jointType;
     }
 
-    get jointType () {
+    get jointType() {
         return this.userData.jointType;
     }
 
-    set min (min) {
+    set min(min) {
         this.userData.min = min;
         console.log(min);
     }
@@ -52,12 +52,11 @@ export default class Joint extends THREE.Line {
         return this.userData.min;
     }
 
-    set max (max) {
+    set max(max) {
         this.userData.max = max;
     }
 
     get max() {
         return this.userData.max;
     }
-
 }

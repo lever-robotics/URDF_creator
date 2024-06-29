@@ -162,16 +162,17 @@ export default function SceneState() {
         }
     };
 
-    const startRotateJoint = (object) => {
+    const startRotateJoint = (urdfObject) => {
         const { current: obj } = threeObjects;
-        clearShimmy(object);
         obj.transformControls.setMode("rotate");
-        obj.transformControls.attach(object.joint);
+        urdfObject.startRotateJoint(obj.transformControls);
     };
 
+
+    // REVIEW THE NEXT FOUR FUNCTIONS **JARED**
     const startMoveJoint = (object) => {
         const { current: obj } = threeObjects;
-        clearShimmy(object);
+        object.clearShimmy();
         obj.transformControls.setMode("translate");
         obj.transformControls.attach(object);
         const worldPosition = object.link.getWorldPosition(new THREE.Vector3());
@@ -265,13 +266,8 @@ export default function SceneState() {
         if (max !== null) {
             object.joint.max = max;
         }
-        clearShimmy(object);
+        object.clearShimmy();
     };
-
-    const clearShimmy = (object) => {
-        object.shimmy.position.set(0, 0, 0);
-        object.shimmy.rotation.set(0, 0, 0);
-    }
 
     const selectObject = (object) => {
         const { current: obj } = threeObjects;
@@ -319,7 +315,7 @@ export default function SceneState() {
 
     const setJoint = (object, type) => {
         object.joint.jointType = type;
-        clearShimmy(object);
+        object.clearShimmy();
 
         if (type === "fixed") {
             object.joint.material.visible = false;
