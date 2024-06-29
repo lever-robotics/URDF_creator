@@ -58,6 +58,11 @@ export default class urdfObject extends THREE.Object3D {
         this.userData.name = name;
     }
 
+    // Set the color of the mesh
+    setColor = (color) => {
+        this.mesh.material.color.set(color);
+    }
+
     // Get urdfObject's position
     getPosition() {
         return this.position;
@@ -105,16 +110,25 @@ export default class urdfObject extends THREE.Object3D {
     };
 
     getParent = () => {
-        return this.parent.parent.parent;
-    };
-
-    getParent = () => {
-        return this.parent.parent.parent;
+        if(this.isBaseLink()){
+            return this.parent;
+        }else{
+            return this.parent.parent.parent;
+        }
     };
 
     // Adds a child to the urdfObject. This specifically gets added to the Link object.
     attachChild = (childObject) => {
         this.link.attach(childObject);
+    }
+
+    setInertia = (inertia) => {
+        this.userData.inertia = inertia;
+        this.userData.inertia.customInertia = true;
+    }
+
+    setSensor = (sensorObj) => {
+        this.userData.sensor = sensorObj;
     }
 
     // Updates the inertia object in the userData
@@ -140,6 +154,25 @@ export default class urdfObject extends THREE.Object3D {
                 break;
             default:
                 break;
+        }
+    }
+
+    // Operate on an object, either scale, position, or rotation
+    operate = (type, x, y, z) => {
+        switch (type) {
+            case "scale":
+                this.mesh.scale.set(x, y, z);
+                //update the moment of inertia
+                this.userData.inertia.updateInertia(this);
+                break;
+            case "position":
+                this.position.set(x, y, z);
+                break;
+            case "rotation":
+                this.rotation.set(x, y, z);
+                break;
+            default:
+                return;
         }
     }
 
@@ -235,10 +268,56 @@ export default class urdfObject extends THREE.Object3D {
         this.clearShimmy();
     }
 
+    setJointType = (type) => {
+        this.joint.jointType = type;
+        this.clearShimmy();
+
+        if (type === "fixed") {
+            this.joint.material.visible = false;
+        } else {
+            this.joint.material.visible = true;
+        }
+
+        if (type === "prismatic") {
+            this.joint.min = -1;
+            this.joint.max = 1;
+        } else if (type === "revolute") {
+            this.joint.min = -3.14;
+            this.joint.max = 3.14;
+        }
+    }
+
     // Is the urdfObject selectable?
     isSelectable = () => {
         return this.userData.selectable;
     }
+
+    // update the mass stored in the userData object in the Inertia object
+    updateMass = (mass) => {
+        this.userData.inertia.updateMass(mass, this);
+    }
+
+    clone = () => {
+        const params = {
+            position: this.position,
+            rotation: this.rotation,
+            scale: this.mesh.scale,
+            offset: this.link.getOffset(),
+            jointAxis: {
+                type: this.joint.type,
+                axis: this.joint.axis,
+                origin: [0, 0, 0], // Not sure how to do this
+                name: this.joint.name,
+            },
+            jointOrigin: this.joint.position,
+            material: this.mesh.material,
+            shape: this.userData.shape,
+            userData: this.userData,
+            name: this.userData.name + "_copy",
+        }
+        return new urdfObject(params.shape, params.name, params);
+    }
+
 
 
 }

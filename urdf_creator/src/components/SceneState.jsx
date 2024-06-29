@@ -212,52 +212,33 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const setLinkName = (object, name) => {
-        object.userData.name = name;
+    const setUserColor = (urdfObject, color) => {
+        urdfObject.setColor(color);
         forceSceneUpdate();
     };
 
-    const setUserColor = (object, color) => {
-        object.mesh.material.color.set(color);
+    const setMass = (urdfObject, mass) => {
+        urdfObject.updateMass(mass);
+        urdfObject.updateInertia();
         forceSceneUpdate();
     };
 
-    const setMass = (object, mass) => {
-        object.userData.inertia.updateMass(mass, object);
-        object.userData.inertia.updateInertia(object);
-        forceSceneUpdate();
-    };
-    const setInertia = (object, inertia) => {
-        object.userData.inertia = inertia;
-        object.userData.inertia.customInertia = true;
+    const setInertia = (urdfObject, inertia) => {
+        urdfObject.setInertia(inertia);
         forceSceneUpdate();
     };
 
-    const setSensor = (object, sensorObj) => {
-        object.userData.sensor = sensorObj;
+    const setSensor = (urdfObject, sensorObj) => {
+        urdfObject.setSensor(sensorObj);
         forceSceneUpdate();
     };
 
-    const setJoint = (object, type) => {
-        object.joint.jointType = type;
-        object.clearShimmy();
-
-        if (type === "fixed") {
-            object.joint.material.visible = false;
-        } else {
-            object.joint.material.visible = true;
-        }
-
-        if (type === "prismatic") {
-            object.joint.min = -1;
-            object.joint.max = 1;
-        } else if (type === "revolute") {
-            object.joint.min = -3.14;
-            object.joint.max = 3.14;
-        }
-
+    const setJointType = (urdfObject, type) => {
+        urdfObject.setJointType(type);
         forceSceneUpdate();
     };
+
+    // Loads a scene from gltf
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
         const baseLink = createUrdfObject(base_link);
@@ -266,72 +247,30 @@ export default function SceneState() {
         }
         threeObjects.current.scene.attach(baseLink);
         threeObjects.current.baseLink = baseLink;
-        baseLink.userData.isBaseLink = true;
+        baseLink.setAsBaseLink = true;
         forceSceneUpdate();
         // createNewLink(threeObjects.current.scene, base_link);
     };
+
     const getScene = () => {
         return threeObjects.current.scene;
     };
 
-    const transformObject = (object, transformType, x, y, z) => {
-        switch (transformType) {
-            case "scale":
-                object.mesh.scale.set(x, y, z);
-                //update the moment of inertia
-                object.userData.inertia.updateInertia(object);
-                break;
-            case "position":
-                object.position.set(x, y, z);
-                break;
-            case "rotation":
-                object.rotation.set(x, y, z);
-                break;
-            default:
-                return;
-        }
+    const transformObject = (urdfObject, transformType, x, y, z) => {
+        urdfObject.operate(transformType, x, y, z);
         forceSceneUpdate();
     };
 
-
-    const makeClone = (objectToClone) => {
-        const shimmy = objectToClone.children[1]
-        const joint = objectToClone.children[0]
-        const link = shimmy.children[0];
-        const mesh = link.children[0];
-        const params = {
-            position: objectToClone.position,
-            rotation: objectToClone.rotation,
-            scale: mesh.scale,
-            offset: link.position,
-            jointAxis: {
-                type: joint.type,
-                axis: joint.axis,
-                origin: [0, 0, 0], // Not sure how to do this
-                name: joint.name,
-            },
-            jointOrigin: joint.position,
-            material: mesh.material,
-            shape: objectToClone.userData.shape,
-            userData: objectToClone.userData,
-            name: objectToClone.userData.name + "_copy",
-        };
-        const children = link.children.filter((child) => child.type !== "Mesh");
-        const object = new urdfObject(params.shape, params.name, params);
-        children.forEach((child) => object.link.add(makeClone(child)));
-        return object;
-    }
-
-    const duplicateObject = (object) => {
-        const clone = makeClone(object);
-        object.getParent().link.add(clone);
+    const duplicateObject = (urdfObject) => {
+        const clone = urdfObject.clone();
+        urdfObject.getParent().attachChild(clone);
         setSelectedObject(null);
         forceSceneUpdate();
     };
 
-    const deleteObject = (object) => {
+    const deleteObject = (urdfObject) => {
         setSelectedObject(null);
-        object.removeFromParent();
+        urdfObject.removeFromParent();
         forceSceneUpdate();
     };
 
@@ -360,12 +299,11 @@ export default function SceneState() {
         startRotateJoint,
         startMoveJoint,
         selectObject,
-        setLinkName,
         setUserColor,
         setMass,
         setInertia,
         setSensor,
-        setJoint,
+        setJointType,
         loadScene,
         getScene,
         transformObject,
@@ -402,10 +340,9 @@ export default function SceneState() {
                         <ObjectParameters
                             selectedObject={selectedObject}
                             transformObject={transformObject}
-                            setLinkName={setLinkName}
                             setUserColor={setUserColor}
                             setMass={setMass}
-                            setJoint={setJoint}
+                            setJointType={setJointType}
                             setInertia={setInertia}
                             setSensor={setSensor}
                             stateFunctions={stateFunctions}

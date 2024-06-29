@@ -42,6 +42,10 @@ export default class Link extends THREE.Object3D {
         this.position.set(...offset);
     }
 
+    getOffset = () => {
+        return this.position;
+    }
+
     addOffset (offset) {
         this.position.add(offset);
     }
