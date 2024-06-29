@@ -100,12 +100,11 @@ const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis;
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setRotationAboutJointAxis(selectedObject, value)
+        selectedObject.setJointAxisRotation(value) 
     };
 
     return (
@@ -125,12 +124,11 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setRotationAboutJointAxis(selectedObject, value)
+        selectedObject.setJointAxisRotation(value) 
     };
 
 

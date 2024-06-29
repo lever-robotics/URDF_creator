@@ -149,8 +149,64 @@ export default class urdfObject extends THREE.Object3D {
         this.shimmy.rotation.set(0,0,0);
     }
 
-    startRotateJoint = (transformControls) => {
+    // Start rotating joint?
+    rotateJoint = (transformControls) => {
         this.clearShimmy();
         transformControls.attach(this.joint);
     }
+
+    // add a custom render behavior to the mesh
+    addCustomRenderBehavior = (behavior, func) => {
+        this.mesh.customRenderBehaviors[behavior] = func;
+    }
+    // clear custom render behavior
+    clearCustomRenderBehavior = (behavior) => {
+        delete this.mesh.customRenderBehaviors[behavior];
+    }
+
+    // Get the worldPosition of the Link object
+    linkWorldPosition = () => {
+        return this.link.getWorldPosition(new THREE.Vector3());
+    }
+
+    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin. 
+    setGlobalPosition = (offsetPosition) => {
+        // Get the current world matrix of the object
+        const worldMatrix = new THREE.Matrix4();
+        worldMatrix.copy(this.link.matrixWorld);
+
+        // Extract the position, rotation, and scale from the world matrix
+        const worldPosition = new THREE.Vector3();
+        const worldRotation = new THREE.Quaternion();
+        const worldScale = new THREE.Vector3();
+        worldMatrix.decompose(worldPosition, worldRotation, worldScale);
+
+        // Compute the difference between the new world position and the old world position
+        const offset = offsetPosition.clone().sub(worldPosition);
+
+        // Transform the offset by the inverse of the object's parent's world rotation
+        if (this.shimmy) {
+            const parentWorldRotation = new THREE.Quaternion();
+            this.shimmy.getWorldQuaternion(parentWorldRotation);
+            parentWorldRotation.invert(); // Corrected method
+            offset.applyQuaternion(parentWorldRotation);
+        }
+
+        // Add the transformed offset to the object's local position
+        this.link.addOffset(offset);
+    };
+
+    setJointAxisRotation = (angle) => {
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(this.joint.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(...this.joint.axis).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle.
+        this.shimmy.setRotationFromAxisAngle(newAxis, angle);
+    }
+
+
 }

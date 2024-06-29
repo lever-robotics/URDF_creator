@@ -165,85 +165,46 @@ export default function SceneState() {
     const startRotateJoint = (urdfObject) => {
         const { current: obj } = threeObjects;
         obj.transformControls.setMode("rotate");
-        urdfObject.startRotateJoint(obj.transformControls);
+        urdfObject.rotateJoint(obj.transformControls);
     };
 
-
-    // REVIEW THE NEXT FOUR FUNCTIONS **JARED**
-    const startMoveJoint = (object) => {
+    const startMoveJoint = (urdfObject) => {
         const { current: obj } = threeObjects;
-        object.clearShimmy();
+        urdfObject.clearShimmy();
         obj.transformControls.setMode("translate");
-        obj.transformControls.attach(object);
-        const worldPosition = object.link.getWorldPosition(new THREE.Vector3());
+        urdfObject.attachTransformControls(obj.transformControls);
+        const worldPosition = urdfObject.linkWorldPosition();
 
         const lockPosition = () => {
-            const currentPosition = object.link.getWorldPosition(new THREE.Vector3());
+            const currentPosition = urdfObject.linkWorldPosition();
             if (!worldPosition.equals(currentPosition)) {
-                setGlobalPosition(object.link, worldPosition);
+                urdfObject.setGlobalPosition(worldPosition);
+                forceSceneUpdate();
             }
         };
 
-        addCustomRenderBehavior(object, "lockPosition", lockPosition);
-        obj.currentOffsetChangeNode = object;
-    };
-
-    const setGlobalPosition = (object, newWorldPosition) => {
-        // Get the current world matrix of the object
-        const oldWorldMatrix = new THREE.Matrix4();
-        oldWorldMatrix.copy(object.matrixWorld);
-
-        // Extract the position, rotation, and scale from the world matrix
-        const oldWorldPosition = new THREE.Vector3();
-        const oldWorldRotation = new THREE.Quaternion();
-        const oldWorldScale = new THREE.Vector3();
-        oldWorldMatrix.decompose(oldWorldPosition, oldWorldRotation, oldWorldScale);
-
-        // Compute the difference between the new world position and the old world position
-        const offset = newWorldPosition.clone().sub(oldWorldPosition);
-
-        // Transform the offset by the inverse of the object's parent's world rotation
-        if (object.parent) {
-            const parentWorldRotation = new THREE.Quaternion();
-            object.parent.getWorldQuaternion(parentWorldRotation);
-            parentWorldRotation.invert(); // Corrected method
-            offset.applyQuaternion(parentWorldRotation);
-        }
-
-        // Add the transformed offset to the object's local position
-        object.addOffset(offset);
-
-        // Force the scene to update
-        forceSceneUpdate();
-    };
-
-    const addCustomRenderBehavior = (object, behavior, func) => {
-        object.mesh.customRenderBehaviors[behavior] = func;
-    };
-
-    const clearCustomRenderBehavior = (object, behavior) => {
-        delete object.mesh.customRenderBehaviors[behavior];
+        urdfObject.addCustomRenderBehavior("lockPosition", lockPosition);
+        obj.currentOffsetChangeNode = urdfObject;
     };
 
     const unlockCurrentOffsetChangeNode = () => {
         const { current: obj } = threeObjects;
         if (!obj.currentOffsetChangeNode) return;
-
-        clearCustomRenderBehavior(obj.currentOffsetChangeNode, "lockPosition");
+        obj.currentOffsetChangeNode.clearCustomRenderBehavior('lockPosition');
         obj.currentOffsetChangeNode = null;
     };
 
-    const setRotationAboutJointAxis = (object, angle) => {
-        const quaternion = new THREE.Quaternion();
-        // a quaternion is basically how to get from one rotation to another
-        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(object.joint.rotation);
-        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(...object.joint.axis).applyQuaternion(quaternion);
-        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        object.shimmy.setRotationFromAxisAngle(newAxis, angle);
-    };
+    // const setRotationAboutJointAxis = (object, angle) => {
+    //     const quaternion = new THREE.Quaternion();
+    //     // a quaternion is basically how to get from one rotation to another
+    //     // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+    //     quaternion.setFromEuler(object.joint.rotation);
+    //     // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+    //     // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+    //     const newAxis = new THREE.Vector3(...object.joint.axis).applyQuaternion(quaternion);
+    //     // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+    //     object.shimmy.setRotationFromAxisAngle(newAxis, angle);
+    // };
 
     const setPositionAcrossJointAxis = (object, distance) => {
         const quaternion = new THREE.Quaternion();
@@ -434,7 +395,6 @@ export default function SceneState() {
         setTransformMode,
         startRotateJoint,
         startMoveJoint,
-        setRotationAboutJointAxis,
         selectObject,
         setLinkName,
         setUserColor,
