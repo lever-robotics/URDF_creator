@@ -16,14 +16,12 @@ export default class urdfObject extends THREE.Object3D {
             -> Add direct children of urdfObject here. Their references will be automatically assigned as properties to the urdfObject. REMEMBER to use the add() function to add the references to the THREE.Object3D also
         attributes: These are the values that THREE function will directly modify to change the state of the scene.
             -> Add all attributes and their default values here and set them corresespondingly below
-            */
+        */
 
+        // Properties
+        this.urdfObject = true; // Flag to determine if is urdfObject
+        this.userData = new UserData(shape, name);
 
-        //***Properties-Children-Attributes***/
-        const properties = {
-            urdfObject: true, // Flag to determine if is urdfObject
-            userData: new UserData(shape, name),
-        };
         const children = {
             joint: new Joint(params),
             shimmy: new Shimmy(shape, params),
@@ -40,7 +38,6 @@ export default class urdfObject extends THREE.Object3D {
             });
         };
         //***Assign-add()-set()***//
-        assignProperties(properties);
         assignProperties(children);
         // Add Children here...
         this.add(this.joint);
@@ -49,6 +46,34 @@ export default class urdfObject extends THREE.Object3D {
 
         this.position.set(...attributes.position);
         this.rotation.set(...attributes.rotation);
+    }
+
+    // Get name of urdfObject from userData
+    getName() {
+        return this.userData.name;
+    }
+    // Set the name of the urdfObject via userData
+    setName(name) {
+        console.log(this);
+        this.userData.name = name;
+    }
+
+    // Get urdfObject's position
+    getPosition() {
+        return this.position;
+    }
+    // Set urdfObject's position
+    setPosition(positionVector) {
+        this.position.set(positionVector[0], positionVector[1], positionVector[2]);
+    }
+
+    // Is the urdfObject the base link? Information stored in userData
+    isBaseLink = () => {
+        return this.userData.isBaseLink;
+    }
+    // Set if the urdfObject is the baseLink
+    setAsBaseLink = (flag) => {
+        this.userData.isBaseLink = flag;
     }
 
     get link() {
@@ -87,6 +112,34 @@ export default class urdfObject extends THREE.Object3D {
         return this.parent.parent.parent;
     };
 
-    // JS technically doesn't allow overloading but this seems to work haha
-    // add = (object) => super.add(object);
+    // Adds a child to the urdfObject. This specifically gets added to the Link object.
+    attachChild = (childObject) => {
+        this.link.attach(childObject);
+    }
+
+    // Updates the inertia object in the userData
+    updateInertia = () => {
+        this.userData.inertia.updateInertia(this);
+    }
+
+    // Attaches transform controls to the correct child
+    attachTransformControls = (transformControls) => {
+        const mode = transformControls.mode;
+        switch (mode) {
+            // this case will attach the transform controls to the urdfObject and move everything together
+            case "translate":
+                transformControls.attach(this);
+                break;
+            // will attach to urdfObject which will rotate the mesh about said origin
+            case "rotate":
+                transformControls.attach(this);
+                break;
+            // will attach to the mesh and scale nothing else
+            case "scale":
+                transformControls.attach(this.mesh);
+                break;
+            default:
+                break;
+        }
+    }
 }

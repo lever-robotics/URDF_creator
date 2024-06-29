@@ -88,20 +88,20 @@ export default function SceneState() {
         const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newUrdfObject.position.set(2.5, 2.5, 0.5);
+        newUrdfObject.setPosition([2.5, 2.5, 0.5]);
 
         if (selectedObject !== null) {
-            selectedObject.link.attach(newUrdfObject);
+            selectedObject.attachChild(newUrdfObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.link.attach(newUrdfObject);
+            obj.baseLink.attachChild(newUrdfObject);
         } else {
-            newUrdfObject.position.set(0, 0, 0.5);
-            newUrdfObject.userData.isBaseLink = true;
-            newUrdfObject.userData.name = "base_link";
+            newUrdfObject.setPosition([0, 0, 0.5]);
+            newUrdfObject.setAsBaseLink(true);
+            newUrdfObject.setName = "base_link";
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
-        newUrdfObject.userData.inertia.updateInertia(newUrdfObject);
+        newUrdfObject.updateInertia();
         forceSceneUpdate();
     };
 
@@ -158,28 +158,7 @@ export default function SceneState() {
         }
 
         if (currentlySelectedObject) {
-            attachTransformControls(currentlySelectedObject);
-        }
-    };
-
-    const attachTransformControls = (currentlySelectedObject) => {
-        const { current: obj } = threeObjects;
-        const mode = obj.transformControls.mode;
-        switch (mode) {
-            // this case will attach the transform controls to the joint of the object and move everything together
-            case "translate":
-                obj.transformControls.attach(currentlySelectedObject);
-                break;
-            // will attach to the origin of rotation, which will rotate the mesh about said origin
-            case "rotate":
-                obj.transformControls.attach(currentlySelectedObject);
-                break;
-            // will attach to the mesh and scale nothing else
-            case "scale":
-                obj.transformControls.attach(currentlySelectedObject.shimmy.link.mesh);
-                break;
-            default:
-                break;
+            currentlySelectedObject.attachTransformControls(obj.transformControls);
         }
     };
 
@@ -304,7 +283,7 @@ export default function SceneState() {
         }
         if (object.userData.selectable) {
             setSelectedObject(object);
-            attachTransformControls(object);
+            object.attachTransformControls(obj.transformControls);
         } else {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -457,7 +436,6 @@ export default function SceneState() {
         createUrdfObject,
         forceSceneUpdate,
         setTransformMode,
-        attachTransformControls,
         startRotateJoint,
         startMoveJoint,
         setRotationAboutJointAxis,
