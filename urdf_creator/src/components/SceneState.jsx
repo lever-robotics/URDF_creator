@@ -194,31 +194,6 @@ export default function SceneState() {
         obj.currentOffsetChangeNode = null;
     };
 
-    // const setRotationAboutJointAxis = (object, angle) => {
-    //     const quaternion = new THREE.Quaternion();
-    //     // a quaternion is basically how to get from one rotation to another
-    //     // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-    //     quaternion.setFromEuler(object.joint.rotation);
-    //     // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-    //     // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-    //     const newAxis = new THREE.Vector3(...object.joint.axis).applyQuaternion(quaternion);
-    //     // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-    //     object.shimmy.setRotationFromAxisAngle(newAxis, angle);
-    // };
-
-    const setPositionAcrossJointAxis = (object, distance) => {
-        const quaternion = new THREE.Quaternion();
-        // a quaternion is basically how to get from one rotation to another
-        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(object.joint.rotation);
-        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        object.shimmy.position.set(0, 0, 0);
-        object.shimmy.translateOnAxis(newAxis, distance);
-    };
-
     const setJointLimits = (object, min = null, max = null) => {
         if (min !== null) {
             object.joint.min = min;
@@ -411,7 +386,6 @@ export default function SceneState() {
         openProjectManager,
         closeProjectManager,
         changeProjectTitle,
-        setPositionAcrossJointAxis,
         unlockCurrentOffsetChangeNode,
         setJointLimits,
         handleProjectClick,

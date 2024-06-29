@@ -149,12 +149,10 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setPositionAcrossJointAxis = stateFunctions.setPositionAcrossJointAxis
-
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setPositionAcrossJointAxis(selectedObject, value)
+        selectedObject.setJointAxisPosition(value);
     };
 
     return (
