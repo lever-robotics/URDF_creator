@@ -194,28 +194,17 @@ export default function SceneState() {
         obj.currentOffsetChangeNode = null;
     };
 
-    const setJointLimits = (object, min = null, max = null) => {
-        if (min !== null) {
-            object.joint.min = min;
-        }
-
-        if (max !== null) {
-            object.joint.max = max;
-        }
-        object.clearShimmy();
-    };
-
-    const selectObject = (object) => {
+    const selectObject = (urdfObject) => {
         const { current: obj } = threeObjects;
         unlockCurrentOffsetChangeNode();
-        if (!object) {
+        if (!urdfObject) {
             setSelectedObject(null);
             obj.transformControls.detach();
             return;
         }
-        if (object.userData.selectable) {
-            setSelectedObject(object);
-            object.attachTransformControls(obj.transformControls);
+        if (urdfObject.isSelectable()) {
+            setSelectedObject(urdfObject);
+            urdfObject.attachTransformControls(obj.transformControls);
         } else {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -387,7 +376,6 @@ export default function SceneState() {
         closeProjectManager,
         changeProjectTitle,
         unlockCurrentOffsetChangeNode,
-        setJointLimits,
         handleProjectClick,
     };
 

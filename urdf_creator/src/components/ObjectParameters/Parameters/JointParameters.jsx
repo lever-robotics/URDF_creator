@@ -43,10 +43,8 @@ const MinJointInput = ({ min, setMin, selectedObject, stateFunctions }) => {
 
     const [value, setValue] = useState(min);
 
-    const setJointLimits = stateFunctions.setJointLimits;
-
     const handleChange = () => {
-        setJointLimits(selectedObject, parseFloat(value), null);
+        selectedObject.setJointLimits(parseFloat(value), null);
         setMin(parseFloat(value))
     }
     return <span>
@@ -69,10 +67,8 @@ const MaxJointInput = ({ max, setMax, selectedObject, stateFunctions }) => {
 
     const [value, setValue] = useState(max);
 
-    const setJointLimits = stateFunctions.setJointLimits;
-
     const handleChange = () => {
-        setJointLimits(selectedObject, null, parseFloat(value));
+        selectedObject.setJointLimits(null, parseFloat(value));
         setMax(parseFloat(value));
     }
 

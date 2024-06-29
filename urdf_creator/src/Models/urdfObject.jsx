@@ -223,5 +223,22 @@ export default class urdfObject extends THREE.Object3D {
         this.shimmy.translateOnAxis(newAxis, distance);
     }
 
+    // Updates joint limits
+    setJointLimits = (min = null, max = null) => {
+        if (min !== null) {
+            this.joint.min = min;
+        }
+
+        if (max !== null) {
+            this.joint.max = max;
+        }
+        this.clearShimmy();
+    }
+
+    // Is the urdfObject selectable?
+    isSelectable = () => {
+        return this.userData.selectable;
+    }
+
 
 }
