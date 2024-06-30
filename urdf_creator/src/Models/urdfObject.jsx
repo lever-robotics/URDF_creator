@@ -4,58 +4,63 @@ import Joint from "./Joint";
 import Shimmy from "./Shimmy";
 import Mesh from "./Mesh";
 
+/* DESCRIPTION:
+        urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
+*/
 export default class urdfObject extends THREE.Object3D {
     constructor(shape, name, params) {
-        super();
-        /* DESCRIPTION:
-        urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
-        ------------------
-        properties: Properties of the urdfObject are the values/references to pertinent flags and user defined data.
-            -> To modify the properties of urdfObject simply add the property name as the object key and the value as the value. A function later in the constructor will auto add these values to the object. 
-        children: Direct children of urdfObject.
-            -> Add direct children of urdfObject here. Their references will be automatically assigned as properties to the urdfObject. REMEMBER to use the add() function to add the references to the THREE.Object3D also
-        attributes: These are the values that THREE function will directly modify to change the state of the scene.
-            -> Add all attributes and their default values here and set them corresespondingly below
+        super();   
+        /*PROPERTIES:
+            - urdfObject: A boolean flag to determine if is a urdfObject
+            - userData: userData Object containing all relevant userData
+            - position: Contains the Origin for the urdfObject. Needs to be an array of three values spread out
+            - rotation: Contains the Rotation for the urdfObject. Needs to be an array of three values spread out
         */
-
-        // Properties
-        this.urdfObject = true; // Flag to determine if is urdfObject
+        this.urdfObject = true;
         this.userData = new UserData(shape, name);
-
-        const children = {
-            joint: new Joint(params),
-            shimmy: new Shimmy(shape, params),
-        };
-        const attributes = {
-            position: params?.position ?? [0, 0, 0],
-            rotation: params?.rotation ?? [0, 0, 0],
-        };
-
-        const assignProperties = (elements) => {
-            // These are automatic
-            Object.entries(elements).forEach(([key, value]) => {
-                this[key] = value;
-            });
-        };
-        //***Assign-add()-set()***//
-        assignProperties(children);
-        // Add Children here...
+        this.position.set(...(params?.position ?? [0, 0, 0]));
+        this.rotation.set(...(params?.rotation ?? [0, 0, 0]));
+        /*CHILDREN: Children need to be 'added' for them to visually appear. Use the .add() function.
+            - joint: A Joint Object
+            - shimmy: A Shimmy Object
+        */
+        this.joint = new Joint(this, params);
+        this.shimmy = new Shimmy(this, shape, params);
+        // *Remember to add children*
         this.add(this.joint);
         this.add(this.shimmy);
-        // Add direct attributes here...
-
-        this.position.set(...attributes.position);
-        this.rotation.set(...attributes.rotation);
     }
 
-    // Get name of urdfObject from userData
-    getName() {
-        return this.userData.name;
+    /**
+     * 
+     * 
+     * 
+     * 
+     * GETTER/SETTER: Alphabetical
+     * 
+     * 
+     * 
+     * 
+     **/
+
+    // Returns children that are specifically Meshs
+    getChildren = () => {
+        return this.link.children.filter((child) => !(child instanceof Mesh));
+    };
+
+    // Adds a child to the urdfObject. This specifically gets added as a child to the Link object.
+    attachChild = (childObject) => {
+        this.link.attach(childObject);
     }
-    // Set the name of the urdfObject via userData
-    setName(name) {
-        console.log(this);
-        this.userData.name = name;
+
+    // Is the urdfObject the base link? Information is stored in userData
+    isBaseLink = () => {
+        return this.userData.isBaseLink;
+    }
+
+    // Set this urdfObject as the baseLink
+    setAsBaseLink = (flag) => {
+        this.userData.isBaseLink = flag;
     }
 
     // Set the color of the mesh
@@ -63,171 +68,11 @@ export default class urdfObject extends THREE.Object3D {
         this.mesh.material.color.set(color);
     }
 
-    // Get urdfObject's position
-    getPosition() {
-        return this.position;
-    }
-    // Set urdfObject's position
-    setPosition(positionVector) {
-        this.position.set(positionVector[0], positionVector[1], positionVector[2]);
-    }
-
-    // Is the urdfObject the base link? Information stored in userData
-    isBaseLink = () => {
-        return this.userData.isBaseLink;
-    }
-    // Set if the urdfObject is the baseLink
-    setAsBaseLink = (flag) => {
-        this.userData.isBaseLink = flag;
-    }
-
-    get link() {
-        return this.shimmy.link;
-    }
-
-    set link(link) {
-        this.shimmy.link = link;
-    }
-
-    get mesh() {
-        return this.shimmy.link.mesh;
-    }
-
-    set mesh(mesh) {
-        this.shimmy.link.mesh = mesh;
-    }
-
-    get grandchildren() {
-        return this.shimmy.link.children;
-    }
-
-    set grandchildren(object) {
-        this.shimmy.link.children.push(object);
-    }
-
-    getChildren = () => {
-        return this.shimmy.link.children.filter((child) => !(child instanceof Mesh));
-    };
-
-    getParent = () => {
-        if(this.isBaseLink()){
-            return this.parent;
-        }else{
-            return this.parent.parent.parent;
-        }
-    };
-
-    // Adds a child to the urdfObject. This specifically gets added to the Link object.
-    attachChild = (childObject) => {
-        this.link.attach(childObject);
-    }
-
+    // Sets the inertia of the urdfObject in the userData Object in the Inertia object
     setInertia = (inertia) => {
         this.userData.inertia = inertia;
         this.userData.inertia.customInertia = true;
     }
-
-    setSensor = (sensorObj) => {
-        this.userData.sensor = sensorObj;
-    }
-
-    // Updates the inertia object in the userData
-    updateInertia = () => {
-        this.userData.inertia.updateInertia(this);
-    }
-
-    // Attaches transform controls to the correct child
-    attachTransformControls = (transformControls) => {
-        const mode = transformControls.mode;
-        switch (mode) {
-            // this case will attach the transform controls to the urdfObject and move everything together
-            case "translate":
-                transformControls.attach(this);
-                break;
-            // will attach to urdfObject which will rotate the mesh about said origin
-            case "rotate":
-                transformControls.attach(this);
-                break;
-            // will attach to the mesh and scale nothing else
-            case "scale":
-                transformControls.attach(this.mesh);
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Operate on an object, either scale, position, or rotation
-    operate = (type, x, y, z) => {
-        switch (type) {
-            case "scale":
-                this.mesh.scale.set(x, y, z);
-                //update the moment of inertia
-                this.userData.inertia.updateInertia(this);
-                break;
-            case "position":
-                this.position.set(x, y, z);
-                break;
-            case "rotation":
-                this.rotation.set(x, y, z);
-                break;
-            default:
-                return;
-        }
-    }
-
-    // Clear's any shimmy position/rotation changes
-    clearShimmy = () => {
-        this.shimmy.position.set(0,0,0);
-        this.shimmy.rotation.set(0,0,0);
-    }
-
-    // Start rotating joint?
-    rotateJoint = (transformControls) => {
-        this.clearShimmy();
-        transformControls.attach(this.joint);
-    }
-
-    // add a custom render behavior to the mesh
-    addCustomRenderBehavior = (behavior, func) => {
-        this.mesh.customRenderBehaviors[behavior] = func;
-    }
-    // clear custom render behavior
-    clearCustomRenderBehavior = (behavior) => {
-        delete this.mesh.customRenderBehaviors[behavior];
-    }
-
-    // Get the worldPosition of the Link object
-    linkWorldPosition = () => {
-        return this.link.getWorldPosition(new THREE.Vector3());
-    }
-
-    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin. 
-    setGlobalPosition = (offsetPosition) => {
-        // Get the current world matrix of the object
-        const worldMatrix = new THREE.Matrix4();
-        worldMatrix.copy(this.link.matrixWorld);
-
-        // Extract the position, rotation, and scale from the world matrix
-        const worldPosition = new THREE.Vector3();
-        const worldRotation = new THREE.Quaternion();
-        const worldScale = new THREE.Vector3();
-        worldMatrix.decompose(worldPosition, worldRotation, worldScale);
-
-        // Compute the difference between the new world position and the old world position
-        const offset = offsetPosition.clone().sub(worldPosition);
-
-        // Transform the offset by the inverse of the object's parent's world rotation
-        if (this.shimmy) {
-            const parentWorldRotation = new THREE.Quaternion();
-            this.shimmy.getWorldQuaternion(parentWorldRotation);
-            parentWorldRotation.invert(); // Corrected method
-            offset.applyQuaternion(parentWorldRotation);
-        }
-
-        // Add the transformed offset to the object's local position
-        this.link.addOffset(offset);
-    };
 
     // Rotate the joint axis (which is stored in the Shimmy object)
     setJointAxisRotation = (angle) => {
@@ -268,6 +113,7 @@ export default class urdfObject extends THREE.Object3D {
         this.clearShimmy();
     }
 
+    // Set the Joint type
     setJointType = (type) => {
         this.joint.jointType = type;
         this.clearShimmy();
@@ -287,16 +133,116 @@ export default class urdfObject extends THREE.Object3D {
         }
     }
 
+    // Get the Link
+    get link() {
+        return this.shimmy.link;
+    }
+
+    // Set the link
+    set link(link) {
+        this.shimmy.link = link;
+    }
+
+    // Get the mesh
+    get mesh() {
+        return this.shimmy.link.mesh;
+    }
+
+    // Set the mesh
+    set mesh(mesh) {
+        this.shimmy.link.mesh = mesh;
+    }
+
+    // Get name of urdfObject from userData
+    getName() {
+        return this.userData.name;
+    }
+
+    // Set the name of the urdfObject via userData
+    setName(name) {
+        console.log(this);
+        this.userData.name = name;
+    }
+
+    // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
+    getParent = () => {
+        if(this.isBaseLink()){
+            return this.parent;
+        }else{
+            return this.parent.parent.parent;
+        }
+    };
+
+    // Get urdfObject's position
+    getPosition() {
+        return this.position;
+    }
+
+    // Set urdfObject's position
+    setPosition(positionVector) {
+        this.position.set(positionVector[0], positionVector[1], positionVector[2]);
+    }
+
+    // Set a sensor object in the userData object
+    setSensor = (sensorObj) => {
+        this.userData.sensor = sensorObj;
+    }   
+
     // Is the urdfObject selectable?
     isSelectable = () => {
         return this.userData.selectable;
     }
+    
+    /**
+     * 
+     * 
+     * 
+     * 
+     * Logic Functions: Alphabetical
+     * 
+     * 
+     * 
+     * 
+     **/
 
-    // update the mass stored in the userData object in the Inertia object
-    updateMass = (mass) => {
-        this.userData.inertia.updateMass(mass, this);
+    // add a custom render behavior to the mesh
+    addCustomRenderBehavior = (behavior, func) => {
+        this.mesh.customRenderBehaviors[behavior] = func;
     }
 
+    // Attaches transform controls to the correct child
+    attachTransformControls = (transformControls) => {
+        const mode = transformControls.mode;
+        switch (mode) {
+            // this case will attach the transform controls to the urdfObject and move everything together
+            case "translate":
+                transformControls.attach(this);
+                break;
+            // will attach to urdfObject which will rotate the mesh about said origin
+            case "rotate":
+                transformControls.attach(this);
+                break;
+            // will attach to the mesh and scale nothing else
+            case "scale":
+                transformControls.attach(this.mesh);
+                break;
+            default:
+                break;
+        }
+    }
+
+    // clear custom render behavior
+    clearCustomRenderBehavior = (behavior) => {
+        delete this.mesh.customRenderBehaviors[behavior];
+    }
+
+    // Clear's any shimmy position/rotation changes
+    clearShimmy = () => {
+        this.shimmy.position.set(0,0,0);
+        this.shimmy.rotation.set(0,0,0);
+    }
+
+    // Clones the urdfObject and everything that goes with it. Children included
     clone = () => {
         const params = {
             position: this.position,
@@ -318,6 +264,70 @@ export default class urdfObject extends THREE.Object3D {
         return new urdfObject(params.shape, params.name, params);
     }
 
+    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin. 
+    setGlobalPosition = (offsetPosition) => {
+        // Get the current world matrix of the object
+        const worldMatrix = new THREE.Matrix4();
+        worldMatrix.copy(this.link.matrixWorld);
 
+        // Extract the position, rotation, and scale from the world matrix
+        const worldPosition = new THREE.Vector3();
+        const worldRotation = new THREE.Quaternion();
+        const worldScale = new THREE.Vector3();
+        worldMatrix.decompose(worldPosition, worldRotation, worldScale);
 
+        // Compute the difference between the new world position and the old world position
+        const offset = offsetPosition.clone().sub(worldPosition);
+
+        // Transform the offset by the inverse of the object's parent's world rotation
+        if (this.shimmy) {
+            const parentWorldRotation = new THREE.Quaternion();
+            this.shimmy.getWorldQuaternion(parentWorldRotation);
+            parentWorldRotation.invert(); // Corrected method
+            offset.applyQuaternion(parentWorldRotation);
+        }
+
+        // Add the transformed offset to the object's local position
+        this.link.addOffset(offset);
+    };
+
+    // Get the worldPosition of the Link object
+    linkWorldPosition = () => {
+        return this.link.getWorldPosition(new THREE.Vector3());
+    }
+
+    // Operate on an object, either scale, position, or rotation
+    operate = (type, x, y, z) => {
+        switch (type) {
+            case "scale":
+                this.mesh.scale.set(x, y, z);
+                //update the moment of inertia
+                this.userData.inertia.updateInertia(this);
+                break;
+            case "position":
+                this.position.set(x, y, z);
+                break;
+            case "rotation":
+                this.rotation.set(x, y, z);
+                break;
+            default:
+                return;
+        }
+    }
+
+    // Start rotating joint?
+    rotateJoint = (transformControls) => {
+        this.clearShimmy();
+        transformControls.attach(this.joint);
+    }
+
+    // Updates the inertia object in the userData
+    updateInertia = () => {
+        this.userData.inertia.updateInertia(this);
+    }
+
+    // update the mass stored in the userData object in the Inertia object
+    updateMass = (mass) => {
+        this.userData.inertia.updateMass(mass, this);
+    }
 }

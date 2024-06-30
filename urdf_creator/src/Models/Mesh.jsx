@@ -1,44 +1,23 @@
 import * as THREE from "three";
 
 export default class Mesh extends THREE.Mesh {
-    constructor(shape, params) {
+    constructor(urdfObject, shape, params) {
         /* DESCRIPTION:
             Mesh: This is the visual representation of the the link
             ------------------
-            properties: The desired properties
-                -> Add the desired name as the key and the value to be set as the value
-            children: Mesh should'nt have any children
-                -> 
-            attributes: Mesh contains the scale attribute
-                -> Add attributes to the attribute object. Then set them to the object
+            children: Mesh
+                -> STL: I have a fat comment at the bottom of the class where you can prolly put logic stuff for the STL
         */
         super();
-        //***Properties-Children-Attributes***/
-        const properties = {
-            isShape: true,
-            geometry: defineGeometry(shape),
-            material: new THREE.MeshPhongMaterial({
-                color: Math.random() * 0xffffff,
-            }),
-            customRenderBehaviors: { defineRenderBehavior: defineRenderBehavior(shape) },
-        };
-        const children = {};
-        const attributes = {
-            scale: params?.scale ?? [1, 1, 1],
-        };
+        this.isShape = true;
+        this.geometry = defineGeometry(shape);
+        this.material = new THREE.MeshPhongMaterial({
+            color: Math.random() * 0xffffff,
+        });
+        this.customRenderBehaviors = { defineRenderBehavior: defineRenderBehavior(shape) };
+        this.scale.set(...(params?.scale ?? [1, 1, 1]));
 
-        //***Assign-add()-set()***/
-        const assignProperties = (elements) => {
-            // These are automatic
-            Object.entries(elements).forEach(([key, value]) => {
-                this[key] = value;
-            });
-        };
-        assignProperties(properties);
-        assignProperties(children);
-        // Add scene here
-        // Set attributes here
-        this.scale.set(...attributes.scale);
+        //this.stl = stlFileStuff; // Might need to use the THREE.STLLoader?
 
         //***Helper Function***/
         function defineGeometry(shape, a, b, c) {
@@ -101,4 +80,16 @@ export default class Mesh extends THREE.Mesh {
     onBeforeRender = () => {
         Object.values(this.customRenderBehaviors).forEach((behavior) => behavior(this));
     };
+
+    /**
+     * 
+     * 
+     * 
+     * FAT comment for the STL logic
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
 }
