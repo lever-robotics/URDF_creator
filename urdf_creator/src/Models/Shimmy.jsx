@@ -2,7 +2,7 @@ import * as THREE from "three";
 import Link from "./Link";
 
 export default class Shimmy extends THREE.Object3D {
-    constructor(shape, params) {
+    constructor(urdfObject, shape, params) {
         super();
         /* DESCRIPTION:
         Shimmy: Used to demonstrate joint logic and keep data on specific joint keyframes
@@ -17,7 +17,7 @@ export default class Shimmy extends THREE.Object3D {
 
         const properties = {};
         const children = {
-            link: new Link(shape, params),
+            link: new Link(urdfObject, shape, params),
         };
         const attributes = {}; // The shimmy's position and rotation will be set but only for a visual feature to shimmy the joints
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as THREE from "three";
 import './parameters_style.css';
 
-export default function BasicParameters({ selectedObject, setLinkName, setUserColor }) {
+export default function BasicParameters({ selectedObject, setUserColor }) {
     const [name, setName] = useState("");
     const [color, setColor] = useState("#ffffff");
     const [error, setError] = useState(""); // Step 5: Add error state
@@ -21,7 +21,7 @@ export default function BasicParameters({ selectedObject, setLinkName, setUserCo
             setError("Name must have no spaces"); // Step 3: Set error message
         } else {
             setName(newName);
-            setLinkName(selectedObject, newName);
+            selectedObject.setName(newName);
             setError(""); // Clear error message if input is valid
         }
     };

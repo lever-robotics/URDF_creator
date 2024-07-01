@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Joint extends THREE.Line {
-    constructor(params) {
+    constructor(urdfObject, params) {
         const jointAxis = {
             origin: [0, 0, 0],
             axis: [0, 0, 1],
@@ -20,44 +20,44 @@ export default class Joint extends THREE.Line {
         const points = [];
         points.push(startPoint);
         points.push(endPoint);
+
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.LineBasicMaterial({ color: 0x00FFFF });
+        const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
         material.visible = jointAxis.type !== "fixed";
+
         super(geometry, material);
-        this.rotation.set(params?.jointRotation ?? 0);
-        this.name = jointAxis.name;
-        this.userData = {
-            jointType: jointAxis.type,
-            min: params?.jointMin ?? -1,
-            max: params?.jointMax ?? 1,
-        }
+        this.urdfObject = urdfObject; // Grab a reference to the urdfObject
+        this.jointData = this.urdfObject.userData.jointData; // Grab a reference to the jointData
+        this.rotation.set(...(params?.jointRotation ?? [0, 0, 0]));
+        this.jointData.name = jointAxis.name;
+        this.jointData.type = jointAxis.type;
+        this.jointData.min = params?.jointMin ?? -1;
+        this.jointData.max = params?.jointMax ?? 1;
         this.axis = axis;
-
     }
 
-    set jointType(jointType){
-        this.userData.jointType = jointType;
+    set jointType(jointType) {
+        this.jointData.type = jointType;
     }
 
-    get jointType () {
-        return this.userData.jointType;
+    get jointType() {
+        return this.jointData.type;
     }
 
-    set min (min) {
-        this.userData.min = min;
+    set min(min) {
+        this.jointData.min = min;
         console.log(min);
     }
 
     get min() {
-        return this.userData.min;
+        return this.jointData.min;
     }
 
-    set max (max) {
-        this.userData.max = max;
+    set max(max) {
+        this.jointData.max = max;
     }
 
     get max() {
-        return this.userData.max;
+        return this.jointData.max;
     }
-
 }

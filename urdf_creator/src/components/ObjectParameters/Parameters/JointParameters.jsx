@@ -43,10 +43,8 @@ const MinJointInput = ({ min, setMin, selectedObject, stateFunctions }) => {
 
     const [value, setValue] = useState(min);
 
-    const setJointLimits = stateFunctions.setJointLimits;
-
     const handleChange = () => {
-        setJointLimits(selectedObject, parseFloat(value), null);
+        selectedObject.setJointLimits(parseFloat(value), null);
         setMin(parseFloat(value))
     }
     return <span>
@@ -69,10 +67,8 @@ const MaxJointInput = ({ max, setMax, selectedObject, stateFunctions }) => {
 
     const [value, setValue] = useState(max);
 
-    const setJointLimits = stateFunctions.setJointLimits;
-
     const handleChange = () => {
-        setJointLimits(selectedObject, null, parseFloat(value));
+        selectedObject.setJointLimits(null, parseFloat(value));
         setMax(parseFloat(value));
     }
 
@@ -100,12 +96,11 @@ const RevoluteOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis;
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setRotationAboutJointAxis(selectedObject, value)
+        selectedObject.setJointAxisRotation(value) 
     };
 
     return (
@@ -125,12 +120,11 @@ const ContinuousOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setRotationAboutJointAxis = stateFunctions.setRotationAboutJointAxis
 
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setRotationAboutJointAxis(selectedObject, value)
+        selectedObject.setJointAxisRotation(value) 
     };
 
 
@@ -151,12 +145,10 @@ const PrismaticOptions = ({ selectedObject, stateFunctions }) => {
     // current value
     const [current, setCurrent] = useState(0);
 
-    const setPositionAcrossJointAxis = stateFunctions.setPositionAcrossJointAxis
-
     const handleSlider = (e) => {
         const value = parseFloat(e.target.value);
         setCurrent(value);
-        setPositionAcrossJointAxis(selectedObject, value)
+        selectedObject.setJointAxisPosition(value);
     };
 
     return (

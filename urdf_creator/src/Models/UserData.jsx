@@ -10,6 +10,18 @@ export default class UserData {
         this.sensor = null; // Sensor object
         this.stlfile = null;
         this.jointType = 'fixed';
+        this.jointName = "";
+        this.jointData = {
+            type: 'fixed',
+            axis: null,
+            origin: null, 
+            name: '',
+            min: null,
+            max: null,
+            rotation: null,
+        }
+        this.material = null;
+        this.color = null;
     }
 
     duplicate() {

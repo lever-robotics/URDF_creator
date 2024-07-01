@@ -8,7 +8,7 @@ import JointParameters from "./Parameters/JointParameters";
 import SensorsParameters from "./Parameters/SensorParameters";
 import "./ObjectParameters.css";
 
-function ObjectParameters({ selectedObject, transformObject, setLinkName, setUserColor, setMass, setJoint, setInertia, setSensor, stateFunctions }) {
+function ObjectParameters({ selectedObject, transformObject, setUserColor, setMass, setJointType, setInertia, setSensor, stateFunctions }) {
     if (!selectedObject || !selectedObject.userData) {
         return (
             <div className="object-parameters">
@@ -22,7 +22,7 @@ function ObjectParameters({ selectedObject, transformObject, setLinkName, setUse
         <div className="object-parameters">
             <h3>Object Parameters</h3>
             <ToggleSection title="Basic Parameters">
-                <BasicParameters selectedObject={selectedObject} setLinkName={setLinkName} setUserColor={setUserColor} />
+                <BasicParameters selectedObject={selectedObject} setUserColor={setUserColor} />
             </ToggleSection>
             <ToggleSection title="Position">
                 <PositionParameters selectedObject={selectedObject} transformObject={transformObject} />
@@ -38,7 +38,7 @@ function ObjectParameters({ selectedObject, transformObject, setLinkName, setUse
             </ToggleSection>
             {!selectedObject.userData.isBaseLink && (
                 <ToggleSection title="Joint Parameters">
-                    <JointParameters selectedObject={selectedObject} setJoint={setJoint} stateFunctions={stateFunctions} />
+                    <JointParameters selectedObject={selectedObject} setJoint={setJointType} stateFunctions={stateFunctions} />
                 </ToggleSection>
             )}
             <ToggleSection title="Sensor Parameters">

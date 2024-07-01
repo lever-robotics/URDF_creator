@@ -2,7 +2,7 @@ import * as THREE from "three";
 import Mesh from "./Mesh";
 
 export default class Link extends THREE.Object3D {
-    constructor(shape, params) {
+    constructor(urdfObject, shape, params) {
         super();
         /* DESCRIPTION:
         Link: Used to demonstrate joint logic and keep data on specific joint keyframes
@@ -14,33 +14,23 @@ export default class Link extends THREE.Object3D {
         attributes: These are the values that THREE function will directly modify to change the state of the scene.
             -> Add all attributes and their default values here and set them corresespondingly below
         */
-        const properties = {};
-        const children = {
-            mesh: new Mesh(shape, params),
-        };
-        const attributes = {
-            offset: params?.offset ?? [0,0,0], // The offset from the joint
-            // position: params?.position ?? [0, 0, 0],
-        };
+        this.mesh = new Mesh(urdfObject, shape, params);
+            // position: params?.position ?? [0, 0, 0]
 
-        const assignProperties = (elements) => {
-            // These are automatic
-            Object.entries(elements).forEach(([key, value]) => {
-                this[key] = value;
-            });
-        };
-        assignProperties(properties);
-        assignProperties(children);
         // Add Children here...
         this.add(this.mesh);
         // Set attributes here
-        this.position.set(...attributes.offset);
+        this.position.set(...(params?.offset ?? [0,0,0]));// The offset from the joint
         // this.position.set(...attributes.position); // The offset from the joint
     }
 
     set offset (offset) {
         this.position.set(...offset);
     }
+
+    getOffset = () => {
+        return this.position;
+    } 
 
     addOffset (offset) {
         this.position.add(offset);
