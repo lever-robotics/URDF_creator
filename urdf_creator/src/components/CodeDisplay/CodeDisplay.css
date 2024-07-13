@@ -1,0 +1,13 @@
+.code-container:hover {
+    opacity: 0.8; /* Adjust as needed for desired opacity */
+}
+
+.tooltip {
+    position: fixed;
+    padding: 5px 10px;
+    background: black;
+    color: white;
+    border-radius: 5px;
+    pointer-events: none; /* So it doesn't interfere with other mouse events */
+    transform: translate(-50%, -50%);
+}

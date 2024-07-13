@@ -10,10 +10,12 @@ export const ScenetoSDF = (scene, projectTitle) => {
     if (scene === undefined) return xml;
 
     xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
+    //put on static for debugging
+    xml += `  <static>false</static>\n`;
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
 
     // Helper to format vector as a string and flip y and z coordinates
-    const formatVector = (vec) => `${vec.x} ${vec.z} ${vec.y}`;
+    const formatVector = (vec) => `${vec.x} ${vec.y} ${vec.z}`;
 
     // Variables to keep track of link naming
     let linkIndex = 0;
@@ -28,23 +30,22 @@ export const ScenetoSDF = (scene, projectTitle) => {
             linkIndex += 1;
 
             //offset from parent to joint origin
-            let offset = formatVector(node.link.position);
+            let offset = formatVector(node.link.position.clone().negate()); // offset from parent link to joint origin as sdf is link defined and not joint defined
             // position of link in relation to parent
-            let position = formatVector(node.position);
+            debugger;
+            let position = formatVector(node.position.clone().add(node.link.position));
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
             if (node.userData.isBaseLink) {
+                offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.getParent().userData.isBaseLink) {
-                const quaternion = new THREE.Quaternion();
-                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.getParent().quaternion, node.quaternion));
-            }
-
+            } 
+            
             // Start link
             xml += `  <link name="${linkName}">\n`;
             if (node.userData.isBaseLink) {
-                xml += `    <pose relative_to='__model__'>${position} ${rotation}</pose>\n`;
+                xml += `    <pose relative_to='__model__'>${formatVector(node.position)} ${quaternionToRPY(node.quaternion)}</pose>\n`;
             } else {
                 xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
             }
@@ -89,7 +90,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.jointType}">\n`;
 
                 
                 // because urdf is dumb, children links are connected to parent joints, not parent meshes
@@ -103,10 +104,10 @@ export const ScenetoSDF = (scene, projectTitle) => {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 
-                xml += `    <pose relative_to='${linkName}'>${offset} 0 0 0 <pose/>\n`;
+                xml += `    <pose relative_to='${linkName}'>${offset} 0 0 0 </pose>\n`;
 
                 xml += `    <parent>${parentName}</parent>\n`;
-                xml += `    <child>${linkName}<child/>\n`;
+                xml += `    <child>${linkName}</child>\n`;
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);

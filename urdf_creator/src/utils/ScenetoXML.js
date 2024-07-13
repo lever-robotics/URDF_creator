@@ -94,7 +94,7 @@ export const ScenetoXML = (scene, projectTitle) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.jointType}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
 
