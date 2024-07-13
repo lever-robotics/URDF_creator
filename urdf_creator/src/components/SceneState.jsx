@@ -97,7 +97,7 @@ export default function SceneState() {
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
             newUrdfObject.setAsBaseLink(true);
-            newUrdfObject.setName = "base_link";
+            newUrdfObject.setLinkName("base_link");
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
@@ -347,7 +347,7 @@ export default function SceneState() {
                             setSensor={setSensor}
                             stateFunctions={stateFunctions}
                         />
-                        <CodeDisplay scene={scene} />
+                        <CodeDisplay scene={scene} projectTitle={projectTitle}/>
                     </Column>
                 </Row>
             </AbsolutePosition>

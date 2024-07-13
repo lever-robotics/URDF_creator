@@ -4,7 +4,7 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ScenetoXML } from "../../utils/ScenetoXML";
 import { ScenetoSDF } from "../../utils/ScenetoSDF";
 
-export default function CodeDisplay({ scene }) {
+export default function CodeDisplay({ scene, projectTitle }) {
     const [format, setFormat] = useState('urdf'); // Default format
 
     
@@ -15,13 +15,13 @@ export default function CodeDisplay({ scene }) {
             case 'urdf':
                 return (
                     <SyntaxHighlighter language="xml" style={atomDark} customStyle={style}>
-                        {ScenetoXML(scene)}
+                        {ScenetoXML(scene, projectTitle)}
                     </SyntaxHighlighter>
                 );
             case 'sdf':
                 return (
                     <SyntaxHighlighter language="xml" style={atomDark}customStyle={style}>
-                        {ScenetoSDF(scene)}
+                        {ScenetoSDF(scene, projectTitle)}
                     </SyntaxHighlighter>
                 );
             case 'xacro':

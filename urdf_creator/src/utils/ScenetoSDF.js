@@ -5,11 +5,11 @@ import urdfObject from "../Models/urdfObject";
 import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to SDF-compatible XML
-export const ScenetoSDF = (scene) => {
+export const ScenetoSDF = (scene, projectTitle) => {
     let xml = `<sdf version="1.6">\n`;
     if (scene === undefined) return xml;
 
-    xml += `<model name="GeneratedModel" canonical_link='base_link'>\n`;
+    xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
 
     // Helper to format vector as a string and flip y and z coordinates

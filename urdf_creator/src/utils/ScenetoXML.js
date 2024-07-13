@@ -5,11 +5,10 @@ import urdfObject from "../Models/urdfObject";
 import { quaternionToRPY } from "./quaternionToRPY.js";
 
 // Helper function to convert Scene to URDF-compatible XML
-export const ScenetoXML = (scene) => {
-    let xml = `<robot name="GeneratedRobot">\n`;
+export const ScenetoXML = (scene, projectTitle) => {
+    let xml = `<robot name="${projectTitle}">\n`;
     if (scene === undefined) return xml;
 
-    // Helper to flip THREE xyz into urdf zxy
     // Helper to flip THREE xyz into urdf zxy
     const formatVector = (vec) => `${vec.x} ${vec.y} ${vec.z}`;
 
@@ -24,7 +23,7 @@ export const ScenetoXML = (scene) => {
         if (node instanceof urdfObject) {
             const linkName = generateLinkName(node);
             linkIndex += 1;
-
+            // debugger;
             let offset = formatVector(node.link.position);
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";

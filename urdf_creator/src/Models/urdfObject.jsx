@@ -161,7 +161,7 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     // Set the name of the urdfObject via userData
-    setName(name) {
+    setLinkName(name) {
         console.log(this);
         this.userData.name = name;
     }

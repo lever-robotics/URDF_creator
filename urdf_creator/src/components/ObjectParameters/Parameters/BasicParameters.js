@@ -3,13 +3,13 @@ import * as THREE from "three";
 import './parameters_style.css';
 
 export default function BasicParameters({ selectedObject, setUserColor }) {
-    const [name, setName] = useState("");
+    const [name, changeName] = useState("");
     const [color, setColor] = useState("#ffffff");
     const [error, setError] = useState(""); // Step 5: Add error state
 
     useEffect(() => {
         if (selectedObject) {
-            setName(selectedObject.userData.name || "");
+            changeName(selectedObject.userData.name || "");
             setColor(new THREE.Color(selectedObject.mesh.material.color).getStyle());
         }
     }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.mesh.material)]);
@@ -17,11 +17,11 @@ export default function BasicParameters({ selectedObject, setUserColor }) {
     const handleNameChange = (e) => {
         const newName = e.target.value;
         if (newName.includes(" ")) { // Step 2: Check for spaces
-            setName(newName);
+            changeName(newName);
             setError("Name must have no spaces"); // Step 3: Set error message
         } else {
-            setName(newName);
-            selectedObject.setName(newName);
+            changeName(newName);
+            selectedObject.setLinkName(newName);
             setError(""); // Clear error message if input is valid
         }
     };
