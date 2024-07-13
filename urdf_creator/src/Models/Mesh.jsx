@@ -1,5 +1,4 @@
 import * as THREE from "three";
-
 export default class Mesh extends THREE.Mesh {
     constructor(urdfObject, shape, params) {
         /* DESCRIPTION:
@@ -16,8 +15,6 @@ export default class Mesh extends THREE.Mesh {
         });
         this.customRenderBehaviors = { defineRenderBehavior: defineRenderBehavior(shape) };
         this.scale.set(...(params?.scale ?? [1, 1, 1]));
-
-        //this.stl = stlFileStuff; // Might need to use the THREE.STLLoader?
 
         //***Helper Function***/
         function defineGeometry(shape, a, b, c) {

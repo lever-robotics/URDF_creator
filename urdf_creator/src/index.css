@@ -53,6 +53,11 @@ button {
     transition: border-color 0.25s;
 }
 
+/* For when the button is the currently used item */
+.button_selected {
+    border: 2px solid white;
+}
+
 button:hover {
     border-color: #646cff;
 }

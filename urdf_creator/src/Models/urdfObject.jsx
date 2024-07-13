@@ -3,6 +3,8 @@ import UserData from "./UserData";
 import Joint from "./Joint";
 import Shimmy from "./Shimmy";
 import Mesh from "./Mesh";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+
 
 /* DESCRIPTION:
         urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
@@ -329,5 +331,17 @@ export default class urdfObject extends THREE.Object3D {
     // update the mass stored in the userData object in the Inertia object
     updateMass = (mass) => {
         this.userData.inertia.updateMass(mass, this);
+    }
+
+    //Add STL to the urdfObject
+    setSTL = (stlfile) => {
+        const loader = new STLLoader();
+        loader.load(stlfile, (geometry) => {
+            const material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+            const mesh = new THREE.Mesh(geometry, material);
+            this.shimmy.link.mesh.add(mesh);
+        });
+        //make the mesh object a wireframe
+        this.shimmy.link.mesh.children[0].material.wireframe = true;
     }
 }
