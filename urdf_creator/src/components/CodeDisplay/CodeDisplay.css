@@ -1,5 +1,11 @@
+.code-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 .code-container:hover {
-    opacity: 0.8; /* Adjust as needed for desired opacity */
+    opacity: 0.8;
 }
 
 .tooltip {
