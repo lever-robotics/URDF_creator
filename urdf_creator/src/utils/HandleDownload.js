@@ -1,5 +1,5 @@
 // Handle misc download types
-import * as THREE from "three";
+import { openDB } from 'idb';
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -82,6 +82,13 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
   // Add all files to the ZIP
   const filePromises = filesToAdd.map((fileInfo) => addFilesToZip(fileInfo));
   await Promise.all(filePromises);
+
+  //Add the meshes to the ZIP
+  const db = await openDB('stlFilesDB', 1);
+  const files = await db.getAll('files');
+  files.forEach(async (file) => {
+    zip.file(`${title}_description/meshes/${file.name}`, file.file);
+  });
 
   // Add the URDF file to the ZIP
   if (urdfContent) {

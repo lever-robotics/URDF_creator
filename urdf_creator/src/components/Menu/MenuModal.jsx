@@ -9,11 +9,14 @@ import { styled } from "@mui/material/styles";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { handleDownload } from "../../utils/HandleDownload";
 import { handleUpload } from "../../utils/HandleUpload";
+import { openDB } from 'idb';
 import "./MenuModal.css";
 
 export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, getBaseLink, getScene, loadScene }) {
     const inputFile = useRef(null);
+    const inputSTLFile = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
+
 
     const StyledMenuItem = styled((props) => <MenuItem {...props} disableRipple></MenuItem>)(({ theme }) => ({
         minWidth: 0,
@@ -74,6 +77,23 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
         loadScene(base_link);
     };
 
+    const onSTLFileUpload = () => inputSTLFile.current.click();
+    const handleSTLFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            const db = await openDB('stlFilesDB', 1, {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains('files')) {
+                        db.createObjectStore('files', { keyPath: 'name' });
+                    }
+                }
+            });
+          await db.put('files', { name: selectedFile.name, file: selectedFile });
+
+          event.target.value = null; // Clear the input value after upload
+        }
+      };
+
     return (
         <PopupState variant="popover" popupId="demo-popup-menu">
             {(popupState) => (
@@ -117,8 +137,17 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
                         >
                             Upload File
                         </StyledMenuItem>
+                        <StyledMenuItem
+                            onClick={() => {
+                                onSTLFileUpload();
+                                popupState.close();
+                            }}
+                        >
+                            Upload STL
+                        </StyledMenuItem>
                     </StyledMenu>
                     <input type="file" ref={inputFile} style={{ display: "none" }} onChange={handleFileChange} />
+                    <input type="file" ref={inputSTLFile}  style={{ display: 'none' }} onChange={handleSTLFileChange} accept=".stl" />
                 </React.Fragment>
             )}
         </PopupState>

@@ -4,7 +4,8 @@ import Joint from "./Joint";
 import Shimmy from "./Shimmy";
 import Mesh from "./Mesh";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-
+import { openDB } from "idb";
+import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 /* DESCRIPTION:
         urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
@@ -194,7 +195,85 @@ export default class urdfObject extends THREE.Object3D {
     isSelectable = () => {
         return this.userData.selectable;
     }
+
+    setMesh = async (mesh) => {
+        if (mesh === "") {
+            this.shimmy.link.mesh.children = [];
+            this.shimmy.link.mesh.material.wireframe = false;
+            this.userData.stlfile = null;
+            return;
+        }
+
+        this.userData.stlfile = mesh;
+
+        // Add the STL Mesh to the urdfObject as a child of urdfObject.shimmy.link.mesh and apply wireframe to Mesh
+        //get stl file from openDB
+        try {
+            // Get the STL file from IndexedDB
+            const file = await getFile(mesh);
     
+            if (file) {
+                //convert the file to an array buffer
+                const arrayBuffer = await blobToArrayBuffer(file);
+                // Load the STL file
+                // Create a Blob URL from the ArrayBuffer
+                const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+
+                // Load the STL file using STLLoader.load
+                const loader = new STLLoader();
+                loader.load(url, (geometry) => {
+                    const material = new THREE.MeshPhongMaterial({ color: this.userData.color || Math.random() * 0xffffff });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    // Compute the bounding box of the geometry
+                    const boundingBox = new THREE.Box3().setFromObject(mesh);
+                    console.log('Bounding Box:', boundingBox);
+
+                    // Define the desired bounding box dimensions
+                    const desiredBox = new THREE.Box3(
+                        new THREE.Vector3(-0.5, -0.5, -0.5),
+                        new THREE.Vector3(0.5, 0.5, 0.5)
+                    );
+                    console.log('Desired Box:', desiredBox);
+
+                    // Calculate the size of the bounding box and desired box
+                    const boundingBoxSize = new THREE.Vector3();
+                    boundingBox.getSize(boundingBoxSize);
+                    const desiredBoxSize = new THREE.Vector3();
+                    desiredBox.getSize(desiredBoxSize);
+                    console.log('Bounding Box Size:', boundingBoxSize);
+                    console.log('Desired Box Size:', desiredBoxSize);
+
+                    // Calculate the scaling factor
+                    const scaleX = desiredBoxSize.x / boundingBoxSize.x;
+                    const scaleY = desiredBoxSize.y / boundingBoxSize.y;
+                    const scaleZ = desiredBoxSize.z / boundingBoxSize.z;
+                    const scale = Math.min(scaleX, scaleY, scaleZ);
+                    console.log('Scale Factor:', scale);
+
+                    // Apply the scaling to the mesh
+                    mesh.scale.set(scale, scale, scale);
+                    console.log('Scaled Mesh:', mesh);
+
+                    // Add the mesh to the scene
+                    this.shimmy.link.mesh.add(mesh);
+
+                    // Revoke the Blob URL after use
+                    URL.revokeObjectURL(url);
+                }, undefined, (error) => {
+                    console.error('Error loading the STL file:', error);
+                });
+
+               // Make the mesh object a wireframe
+                this.shimmy.link.mesh.material.wireframe = true;
+            } else {
+                console.error('File not found in database');
+            }
+        } catch (error) {
+            console.error('Error retrieving file from database:', error);
+        }
+    }
+
     /**
      * 
      * 

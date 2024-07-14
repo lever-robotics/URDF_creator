@@ -6,9 +6,10 @@ import ScaleParameters from "./Parameters/ScaleParameters";
 import InertiaParameters from "./Parameters/InertiaParameters";
 import JointParameters from "./Parameters/JointParameters";
 import SensorsParameters from "./Parameters/SensorParameters";
+import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 
-function ObjectParameters({ selectedObject, transformObject, setUserColor, setMass, setJointType, setInertia, setSensor, stateFunctions }) {
+function ObjectParameters({ selectedObject, transformObject, setUserColor, setMass, setJointType, setInertia, setSensor, stateFunctions, setMesh }) {
     if (!selectedObject || !selectedObject.userData) {
         return (
             <div className="object-parameters">
@@ -43,6 +44,9 @@ function ObjectParameters({ selectedObject, transformObject, setUserColor, setMa
             )}
             <ToggleSection title="Sensor Parameters">
                 <SensorsParameters selectedObject={selectedObject} setSensor={setSensor} />
+            </ToggleSection>
+            <ToggleSection title="Mesh Parameters">
+                <MeshParameters selectedObject={selectedObject} setMesh={setMesh} />
             </ToggleSection>
         </div>
     );

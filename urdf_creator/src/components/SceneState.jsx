@@ -238,6 +238,11 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
+    const setMesh = (urdfObject, mesh) => {
+        urdfObject.setMesh(mesh);
+        forceSceneUpdate();
+    }
+
     // Loads a scene from gltf
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
@@ -346,6 +351,7 @@ export default function SceneState() {
                             setInertia={setInertia}
                             setSensor={setSensor}
                             stateFunctions={stateFunctions}
+                            setMesh={setMesh}
                         />
                         <CodeDisplay scene={scene} projectTitle={projectTitle}/>
                     </Column>
