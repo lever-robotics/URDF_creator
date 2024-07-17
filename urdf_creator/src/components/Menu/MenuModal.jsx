@@ -1,68 +1,26 @@
 import * as React from "react";
 import * as THREE from "three";
 import { useState, useRef } from "react";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { handleDownload } from "../../utils/HandleDownload";
 import { handleUpload } from "../../utils/HandleUpload";
 import { openDB } from 'idb';
+import { StyledMenu, StyledButton, StyledMenuItem } from "./StyledItems";
 import "./MenuModal.css";
 
-export default function MenuModal({ openProjectManager, changeProjectTitle, projectTitle, getBaseLink, getScene, loadScene }) {
+export default function MenuModal({
+    openProjectManager,
+    changeProjectTitle,
+    projectTitle,
+    getBaseLink,
+    getScene,
+    loadScene,
+}) {
     const inputFile = useRef(null);
     const inputSTLFile = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
 
-
-    const StyledMenuItem = styled((props) => <MenuItem {...props} disableRipple></MenuItem>)(({ theme }) => ({
-        minWidth: 0,
-        fontSize: "3em",
-        fontWeight: 200,
-        fontFamily: "inherit",
-        transition: "font-size 0.4s",
-        "&:hover, &.Mui-focusVisible": {
-            fontSize: "4em",
-        },
-    }));
-
-    const StyledMenu = styled((props) => <Menu {...props} />)(({ theme }) => ({
-        "& .MuiPaper-root": {
-            background: "transparent",
-            color: "white",
-            boxShadow: "none",
-            height: "100%",
-            width: "30%",
-        },
-        "& .MuiList-root": {
-            textOverflow: "ellipsis",
-            height: "90%",
-            display: "flex",
-            paddingLeft: "15%",
-            justifyContent: "space-evenly",
-            flexDirection: "column",
-        },
-        background: "rgba(0, 0, 0, 0.6)",
-    }));
-
-    const StyledButton = styled((props) => <Button {...props} />)(({ theme }) => ({
-        borderRadius: "8px",
-        border: "1px solid transparent",
-        padding: "0.6em 1.2em",
-        fontSize: "1em",
-        fontWeight: 500,
-        fontFamily: "inherit",
-        backgroundColor: "#1d2a31",
-        cursor: "pointer",
-        transition: "border-color 0.25s",
-        "&:hover, .Mui-focusVisible, .MuiButton-colorSuccess": {
-            borderColor: "#646cff",
-            backgroundColor: "#1d2a31",
-        },
-    }));
 
     /* Annoying File Upload Logic
       1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
@@ -71,7 +29,7 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
     const onFileUpload = () => inputFile.current.click();
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        const type = file.name.split('.').pop();
+        const type = file.name.split(".").pop();
         const group = await handleUpload(file, type);
         const base_link = group.children[0];
         loadScene(base_link);
@@ -94,39 +52,56 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
         }
       };
 
+    // Consider creating a menuItemFactory to map menuItems out. Then all the menu items can be defined above and implemented below. Could be a more extendable and easier to read approach
+
+    // Unrelated to this class but consider creating a urdfBuilder class. This might make it more extendable in the future because we may add urdfObjects in lots of different ways and configurations. Instead of storing all that functionality in the urdfObject itself, the construction knowledge would be kept in the builder. I think this could be useful for "addUrdfObject" "loadScene" and for eventually handling different formats
+
     return (
         <PopupState variant="popover" popupId="demo-popup-menu">
             {(popupState) => (
                 <React.Fragment>
                     <div className="menu">
-                        <StyledButton variant="contained" {...bindTrigger(popupState)} className="material-symbols-outlined">
+                        <StyledButton
+                            variant="contained"
+                            {...bindTrigger(popupState)}
+                            className="material-symbols-outlined">
                             <MenuIcon />
                         </StyledButton>
-                        <input type="text" value={projectTitle} id="projectTitleInput" onChange={changeProjectTitle} />
+                        <input
+                            type="text"
+                            value={projectTitle}
+                            id="projectTitleInput"
+                            onChange={changeProjectTitle}
+                        />
                     </div>
-                    <StyledMenu {...bindMenu(popupState)} >
+                    <StyledMenu {...bindMenu(popupState)}>
                         <StyledMenuItem
                             onClick={() => {
                                 openProjectManager();
                                 popupState.close();
-                            }}
-                        >
+                            }}>
                             Project Manager
                         </StyledMenuItem>
                         <StyledMenuItem
                             onClick={() => {
-                                handleDownload(getScene(), "urdf", projectTitle);
+                                handleDownload(
+                                    getScene(),
+                                    "urdf",
+                                    projectTitle
+                                );
                                 popupState.close();
-                            }}
-                        >
+                            }}>
                             Export URDF
                         </StyledMenuItem>
                         <StyledMenuItem
                             onClick={() => {
-                                handleDownload(getBaseLink(), "gltf", projectTitle);
+                                handleDownload(
+                                    getBaseLink(),
+                                    "gltf",
+                                    projectTitle
+                                );
                                 popupState.close();
-                            }}
-                        >
+                            }}>
                             Export GLTF
                         </StyledMenuItem>
                         <StyledMenuItem
@@ -146,7 +121,12 @@ export default function MenuModal({ openProjectManager, changeProjectTitle, proj
                             Upload STL
                         </StyledMenuItem>
                     </StyledMenu>
-                    <input type="file" ref={inputFile} style={{ display: "none" }} onChange={handleFileChange} />
+                    <input
+                        type="file"
+                        ref={inputFile}
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                    />
                     <input type="file" ref={inputSTLFile}  style={{ display: 'none' }} onChange={handleSTLFileChange} accept=".stl" />
                 </React.Fragment>
             )}
