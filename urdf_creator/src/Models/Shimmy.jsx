@@ -2,7 +2,7 @@ import * as THREE from "three";
 import Link from "./Link";
 
 export default class Shimmy extends THREE.Object3D {
-    constructor(urdfObject, shape, params) {
+    constructor() {
         super();
         /* DESCRIPTION:
         Shimmy: Used to demonstrate joint logic and keep data on specific joint keyframes
@@ -16,9 +16,9 @@ export default class Shimmy extends THREE.Object3D {
         */
 
         const properties = {};
-        const children = {
-            link: new Link(urdfObject, shape, params),
-        };
+        // const children = {
+        //     link: new Link(urdfObject, shape, params),
+        // };
         const attributes = {}; // The shimmy's position and rotation will be set but only for a visual feature to shimmy the joints
 
         //***Assign-add()-set()***//
@@ -28,10 +28,10 @@ export default class Shimmy extends THREE.Object3D {
                 this[key] = value;
             });
         };
-        assignProperties(properties);
-        assignProperties(children);
+        // assignProperties(properties);
+        // assignProperties(children);
         // Add Children here...
-        this.add(this.link);
+        // this.add(this.link);
         // Add attributes here...
     }
     // JS technically doesn't allow overloading but this seems to work haha

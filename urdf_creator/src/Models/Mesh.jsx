@@ -1,6 +1,6 @@
 import * as THREE from "three";
 export default class Mesh extends THREE.Mesh {
-    constructor(urdfObject, shape, params) {
+    constructor(shape, scale) {
         /* DESCRIPTION:
             Mesh: This is the visual representation of the the link
             ------------------
@@ -14,8 +14,8 @@ export default class Mesh extends THREE.Mesh {
             color: Math.random() * 0xffffff,
         });
         this.customRenderBehaviors = { defineRenderBehavior: defineRenderBehavior(shape) };
-        this.scale.set(...(params?.scale ?? [1, 1, 1]));
-
+        // this.scale.set(...(params?.scale ?? [1, 1, 1]));
+        this.scale.set(...scale);
         //***Helper Function***/
         function defineGeometry(shape, a, b, c) {
             switch (shape) {

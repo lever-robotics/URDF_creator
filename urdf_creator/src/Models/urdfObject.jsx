@@ -11,7 +11,7 @@ import { blobToArrayBuffer, getFile } from "../utils/localdb";
         urdfObject: The encompassing object. Contains children/grandchildren that makeup the Joint/Link logic of a URDF
 */
 export default class urdfObject extends THREE.Object3D {
-    constructor(shape, name, params) {
+    constructor(origin, rotation) {
         super();   
         /*PROPERTIES:
             - urdfObject: A boolean flag to determine if is a urdfObject
@@ -20,18 +20,20 @@ export default class urdfObject extends THREE.Object3D {
             - rotation: Contains the Rotation for the urdfObject. Needs to be an array of three values spread out
         */
         this.urdfObject = true;
-        this.userData = new UserData(shape, name);
-        this.position.set(...(params?.position ?? [0, 0, 0]));
-        this.rotation.set(...(params?.rotation ?? [0, 0, 0]));
+        // this.userData = new UserData(shape, name);
+        // this.position.set(...(params?.position ?? [0, 0, 0]));
+        this.position.set(...origin);
+        // this.rotation.set(...(params?.rotation ?? [0, 0, 0]));
+        this.rotation.set(...rotation);
         /*CHILDREN: Children need to be 'added' for them to visually appear. Use the .add() function.
             - joint: A Joint Object
             - shimmy: A Shimmy Object
         */
-        this.joint = new Joint(this, params);
-        this.shimmy = new Shimmy(this, shape, params);
+        // this.joint = new Joint(this, params);
+        // this.shimmy = new Shimmy(this, shape, params);
         // *Remember to add children*
-        this.add(this.joint);
-        this.add(this.shimmy);
+        // this.add(this.joint);
+        // this.add(this.shimmy);
     }
 
     /**
@@ -172,7 +174,8 @@ export default class urdfObject extends THREE.Object3D {
         if(this.isBaseLink()){
             return this.parent;
         }else{
-            return this.parent.parent.parent;
+            // return this.parent.parent.parent;
+            return this.parent;
         }
     };
 

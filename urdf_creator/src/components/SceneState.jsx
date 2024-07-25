@@ -16,6 +16,7 @@ import MenuModal from "./Menu/MenuModal.jsx";
 import Link from "../Models/Link.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
+import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState() {
     // State for the ProjectManager
@@ -85,7 +86,13 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
+        const manager = new urdfObjectManager();
+        const newUrdfObject = manager.createUrdfObject({
+            shape: shape,
+            name: shape + (numShapes[shape] + 1).toString()
+        });
+
+        // const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
         newUrdfObject.setPosition([2.5, 2.5, 0.5]);
@@ -96,12 +103,12 @@ export default function SceneState() {
             obj.baseLink.attachChild(newUrdfObject);
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
-            newUrdfObject.setAsBaseLink(true);
-            newUrdfObject.setLinkName("base_link");
+            // newUrdfObject.setAsBaseLink(true);
+            // newUrdfObject.setLinkName("base_link");
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }
-        newUrdfObject.updateInertia();
+        // newUrdfObject.updateInertia();
         forceSceneUpdate();
     };
 
