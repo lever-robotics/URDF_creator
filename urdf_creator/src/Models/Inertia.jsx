@@ -16,20 +16,20 @@ export default class Inertia {
 
         const shape = threeObject.userData.shape;
         if (shape === 'cube') {
-            const width = threeObject.mesh.scale.x;
-            const height = threeObject.mesh.scale.y;
-            const depth = threeObject.mesh.scale.z;
+            const width = threeObject.link.scale.x;
+            const height = threeObject.link.scale.y;
+            const depth = threeObject.link.scale.z;
             this.ixx = (1 / 12) * this.mass * (height ** 2 + depth ** 2);
             this.iyy = (1 / 12) * this.mass * (width ** 2 + depth ** 2);
             this.izz = (1 / 12) * this.mass * (width ** 2 + height ** 2);
         } else if (shape === 'cylinder') {
-            const radius = threeObject.mesh.scale.x;
-            const height = threeObject.mesh.scale.y;
+            const radius = threeObject.link.scale.x;
+            const height = threeObject.link.scale.y;
             this.ixx = (1 / 12) * this.mass * (3 * radius ** 2 + height ** 2);
             this.iyy = (1 / 2) * this.mass * radius ** 2;
             this.izz = this.ixx;
         } else if (shape === 'sphere') {
-            const radius = threeObject.mesh.scale.x;
+            const radius = threeObject.link.scale.x;
             this.ixx = (2 / 5) * this.mass * radius ** 2;
             this.iyy = this.ixx;
             this.izz = this.ixx;

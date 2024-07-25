@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Joint extends THREE.Line {
-    constructor(origin, ax, type, name, jointMin, jointMax) {
+    constructor(origin, ax, type, jointMin, jointMax) {
 
         const point = new THREE.Vector3(...origin);
         const axis = new THREE.Vector3(...ax);

@@ -32,7 +32,7 @@ export default class urdfObjectManager {
         };
             
         const link = new Link(ps.offset,ps.shape, ps.scale);
-        const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointAxis.name, ps.jointMin, ps.jointMax);
+        const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointMin, ps.jointMax);
 
         const urdfobject = new urdfObject(ps.position, ps.rotation);
         urdfobject.link = link;
