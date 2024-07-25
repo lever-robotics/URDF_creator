@@ -42,25 +42,25 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
 
             // Geometry
-            const geometryType = node.mesh.geometry.type;
+            const geometryType = node.link.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${formatVector(node.mesh.scale)}`;
+                const size = `${formatVector(node.link.scale)}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.mesh.scale.x / 2;
+                const radius = node.link.scale.x / 2;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
-                const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.mesh.scale.z;
+                const radius = node.link.scale.x / 2; // Assume uniform scaling for the radius
+                const height = node.link.scale.z;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
 
             // Material
-            if (node.mesh.material && node.mesh.material.color) {
-                const color = node.mesh.material.color;
-                xml += `      <material name="${node.mesh.material.name || "material"}">\n`;
+            if (node.link.material && node.link.material.color) {
+                const color = node.link.material.color;
+                xml += `      <material name="${node.link.material.name || "material"}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -94,7 +94,7 @@ export const ScenetoXML = (scene, projectTitle) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.jointType}">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
 

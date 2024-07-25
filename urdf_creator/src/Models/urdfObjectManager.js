@@ -1,4 +1,3 @@
-import Mesh from "./Mesh";
 import Link from "./Link";
 import Shimmy from "./Shimmy";
 import Joint from "./Joint";
@@ -29,23 +28,15 @@ export default class urdfObjectManager {
             // material: ,
             shape: params?.shape ?? "cube",
             // userData: ,
-            // name: ,
+            name: params?.name ?? "",
         };
             
-        const mesh = new Mesh(ps.shape, ps.scale);
-        const link = new Link(ps.offset);
-        link.mesh = mesh;
-        link.add(mesh);
-
-        const shimmy = new Shimmy();
-        shimmy.link = link;
-        shimmy.add(link);
-
-        const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointAxis.name);
+        const link = new Link(ps.offset,ps.shape, ps.scale);
+        const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointAxis.name, ps.jointMin, ps.jointMax);
 
         const urdfobject = new urdfObject(ps.position, ps.rotation);
-        urdfobject.shimmy = shimmy;
-        urdfobject.add(shimmy);
+        urdfobject.link = link;
+        urdfobject.add(link);
         urdfobject.joint = joint;
         urdfobject.add(joint);
 

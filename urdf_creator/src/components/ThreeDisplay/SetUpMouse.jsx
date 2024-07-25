@@ -15,9 +15,10 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
 
         const shapes = intersects.filter((collision) => collision.object.isShape);
         const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
+        console.log(meshes, shapes);
 
         if (shapes.length > 0) {
-            const object = shapes[0].object.parent.parent.parent;
+            const object = shapes[0].object.parent;
             selectObject(object);
         } else if (meshes.length === 0) {
             selectObject(null);
