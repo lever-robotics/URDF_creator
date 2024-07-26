@@ -1,70 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import ToggleSection from '../ToggleSection';
+import Parameter from './Parameter';
 
-function PositionParameters({ selectedObject, transformObject }) {
-    const [positionX, setPositionX] = useState('');
-    const [positionY, setPositionY] = useState('');
-    const [positionZ, setPositionZ] = useState('');
+function PositionParameters({ selectedObject, stateFunctions }) {
 
-    useEffect(() => {
-        if (selectedObject) {
-            setPositionX(selectedObject.position.x.toFixed(2));
-            setPositionY(selectedObject.position.y.toFixed(2));
-            setPositionZ(selectedObject.position.z.toFixed(2));
-        }
-    }, [JSON.stringify(selectedObject.position)]);
-
-    const handleChange = (prop, axis, value) => {
-        const newValue = parseFloat(value);
+    const handlePositionChange = (e) => {
+        const axis = e.target.title.toLowerCase().replace(":", "");
+        const newValue = parseFloat(e.target.value);
         if (isNaN(newValue)) return;
-        transformObject(selectedObject, "position", parseFloat(positionX), parseFloat(positionY), parseFloat(positionZ));
-    };
 
-    const handleBlur = (prop, axis, value) => {
-        handleChange(prop, axis, value);
-    };
-
-    const handleKeyDown = (e, prop, axis, value) => {
-        if (e.key === 'Enter') {
-            handleBlur(prop, axis, value);
-        }
+        stateFunctions.transformObject(selectedObject, "position", axis, newValue);
     };
 
     return (
-        <ul>
-            <li>
-                X:
-                <input
+        <ToggleSection title="Position">
+            <ul>
+                <Parameter
+                    title="X:"
                     type="number"
-                    value={positionX}
-                    onChange={(e) => setPositionX(e.target.value)}
-                    onBlur={() => handleBlur('position', 'x', positionX)}
-                    onKeyDown={(e) => handleKeyDown(e, 'position', 'x', positionX)}
+                    units="m"
+                    value={selectedObject.position.x}
+                    onChange={handlePositionChange}
                 />
-                <span className="units">m</span>
-            </li>
-            <li>
-                Y:
-                <input
+                <Parameter
+                    title="Y:"
                     type="number"
-                    value={positionY}
-                    onChange={(e) => setPositionY(e.target.value)}
-                    onBlur={() => handleBlur('position', 'y', positionY)}
-                    onKeyDown={(e) => handleKeyDown(e, 'position', 'y', positionY)}
+                    units="m"
+                    value={selectedObject.position.y}
+                    onChange={handlePositionChange}
                 />
-                <span className="units">m</span>
-            </li>
-            <li>
-                Z:
-                <input
+                <Parameter
+                    title="Z:"
                     type="number"
-                    value={positionZ}
-                    onChange={(e) => setPositionZ(e.target.value)}
-                    onBlur={() => handleBlur('position', 'z', positionZ)}
-                    onKeyDown={(e) => handleKeyDown(e, 'position', 'z', positionZ)}
+                    units="m"
+                    value={selectedObject.position.z}
+                    onChange={handlePositionChange}
                 />
-                <span className="units">m</span>
-            </li>
-        </ul>
+            </ul>
+        </ToggleSection>
     );
 }
 

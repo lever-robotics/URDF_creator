@@ -13,7 +13,6 @@ import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
 import ProjectModal from "./ProjectManager/ProjectModal.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
-import Link from "../Models/Link.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
@@ -271,8 +270,8 @@ export default function SceneState() {
         return threeObjects.current.scene;
     };
 
-    const transformObject = (urdfObject, transformType, x, y, z) => {
-        urdfObject.operate(transformType, x, y, z);
+    const transformObject = (urdfObject, transformType, axis, value) => {
+        urdfObject.operate(transformType, axis, value);
         forceSceneUpdate();
     };
 

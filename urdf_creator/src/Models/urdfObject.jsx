@@ -77,7 +77,7 @@ export default class urdfObject extends THREE.Object3D {
         return this.link.scale;
     }
 
-    setCustomInertia(type, inertia){
+    setCustomInertia(type, inertia) {
         this.inertia.setCustomInertia(type, inertia);
     }
 
@@ -374,31 +374,49 @@ export default class urdfObject extends THREE.Object3D {
     };
 
     // Operate on an object, either scale, position, or rotation
-    operate = (type, x, y, z) => {
-        switch (type) {
-            case "scale":
-                this.link.scale.set(x, y, z);
-                //update the moment of inertia
-                this.inertia.updateInertia(this);
-                break;
-            case "position":
-                this.position.set(x, y, z);
-                break;
-            case "rotation":
-                this.rotation.set(x, y, z);
-                break;
-            default:
-                return;
-        }
+    operate = (type, axis, value) => {
+        // switch (type) {
+        //     case "scale":
+        //         this.scale.setComponent(this.determineComponentIndex, value);
+        //         this.link.scale.set(x, y, z);
+        //         //update the moment of inertia
+        //         this.inertia.updateInertia(this);
+        //         break;
+        //     case "position":
+        //         this.position.set(x, y, z);
+        //         break;
+        //     case "rotation":
+        //         this.rotation.set(x, y, z);
+        //         break;
+        //     default:
+        //         return;
+        // }
+
+        this[type].setComponent(this.determineComponentIndex(axis), value);
     };
+
+    determineComponentIndex(axis) {
+        try {
+            switch (axis) {
+                case "x":
+                    return 0;
+                case "y":
+                    return 1;
+                case "z":
+                    return 2;
+                default:
+                    throw new Error("Axis must be 'x', 'y', or 'z'");
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     // Start rotating joint?
     rotateJoint = (transformControls) => {
         // this.clearShimmy();
         transformControls.attach(this.joint);
     };
-
-
 
     //Add STL to the urdfObject
     // setSTL = (stlfile) => {

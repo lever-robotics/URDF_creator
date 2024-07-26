@@ -38,7 +38,7 @@ function ObjectParameters({
             <ToggleSection title="Position">
                 <PositionParameters
                     selectedObject={selectedObject}
-                    transformObject={transformObject}
+                    stateFunctions={stateFunctions}
                 />
             </ToggleSection>
             <ToggleSection title="Rotation">
