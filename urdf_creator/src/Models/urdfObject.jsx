@@ -20,7 +20,6 @@ export default class urdfObject extends THREE.Object3D {
         this.sensor = null;
         this.stlfile = null;
         this.material = null;
-        this.color = null;
     }
 
     /**
@@ -45,11 +44,6 @@ export default class urdfObject extends THREE.Object3D {
         this.isBaseLink = flag;
     }
 
-    // Set the color of the mesh
-    setColor = (color) => {
-        this.link.material.color.set(color);
-    }
-
     // Sets the inertia of the urdfObject in the userData Object in the Inertia object
     setInertia = (inertia) => {
         this.inertia = inertia;
@@ -58,6 +52,14 @@ export default class urdfObject extends THREE.Object3D {
 
     get shape () {
         return this.link.shape;
+    }
+
+    get color () {
+        return this.link.material.color;
+    }
+
+    set color (color) {
+        this.link.color = color;
     }
 
     // duplicate() {
@@ -151,17 +153,6 @@ export default class urdfObject extends THREE.Object3D {
     // set mesh(mesh) {
     //     this.shimmy.link.mesh = mesh;
     // }
-
-    // Get name of urdfObject from userData
-    getName() {
-        return this.name;
-    }
-
-    // Set the name of the urdfObject via
-    setLinkName(name) {
-        console.log(this);
-        this.name = name;
-    }
 
     // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
     getParent = () => {

@@ -103,8 +103,8 @@ export default function SceneState() {
             obj.baseLink.attach(newUrdfObject);
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
-            // newUrdfObject.setAsBaseLink(true);
-            // newUrdfObject.setLinkName("base_link");
+            newUrdfObject.setAsBaseLink(true);
+            newUrdfObject.name = "base_link";
             obj.baseLink = newUrdfObject;
             obj.scene.attach(newUrdfObject);
         }

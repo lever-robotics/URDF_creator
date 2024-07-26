@@ -22,9 +22,7 @@ function ObjectParameters({ selectedObject, transformObject, setUserColor, setMa
     return (
         <div className="object-parameters">
             <h3>Object Parameters</h3>
-            <ToggleSection title="Basic Parameters">
-                <BasicParameters selectedObject={selectedObject} setUserColor={setUserColor} />
-            </ToggleSection>
+            <BasicParameters selectedObject={selectedObject} setUserColor={setUserColor} />
             <ToggleSection title="Position">
                 <PositionParameters selectedObject={selectedObject} transformObject={transformObject} />
             </ToggleSection>
