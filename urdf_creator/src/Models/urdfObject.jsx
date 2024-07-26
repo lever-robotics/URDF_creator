@@ -377,24 +377,8 @@ export default class urdfObject extends THREE.Object3D {
         return this.link.getWorldPosition(new THREE.Vector3());
     };
 
-    // Operate on an object, either scale, position, or rotation
     operate = (type, axis, value) => {
-        // switch (type) {
-        //     case "scale":
-        //         this.scale.setComponent(this.determineComponentIndex, value);
-        //         this.link.scale.set(x, y, z);
-        //         //update the moment of inertia
-        //         this.inertia.updateInertia(this);
-        //         break;
-        //     case "position":
-        //         this.position.set(x, y, z);
-        //         break;
-        //     case "rotation":
-        //         this.rotation.set(x, y, z);
-        //         break;
-        //     default:
-        //         return;
-        // }
+        /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
         newValues[this.determineComponentIndex(axis)] = value;
 
