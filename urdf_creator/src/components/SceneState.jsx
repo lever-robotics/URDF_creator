@@ -216,13 +216,17 @@ export default function SceneState() {
             setSelectedObject(null);
             obj.transformControls.detach();
         }
+    };
+
+    const setLinkColor = (urdfObject, color) => {
+        urdfObject.color = color;
         forceSceneUpdate();
     };
 
-    const setUserColor = (urdfObject, color) => {
-        urdfObject.setColor(color);
+    const setLinkName = (urdfObject, name) => {
+        urdfObject.name = name;
         forceSceneUpdate();
-    };
+    }
 
     const setMass = (urdfObject, mass) => {
         urdfObject.updateMass(mass);
@@ -310,7 +314,8 @@ export default function SceneState() {
         startRotateJoint,
         startMoveJoint,
         selectObject,
-        setUserColor,
+        setLinkColor,
+        setLinkName,
         setMass,
         setInertia,
         setSensor,
@@ -351,7 +356,6 @@ export default function SceneState() {
                         <ObjectParameters
                             selectedObject={selectedObject}
                             transformObject={transformObject}
-                            setUserColor={setUserColor}
                             setMass={setMass}
                             setJointType={setJointType}
                             setInertia={setInertia}

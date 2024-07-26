@@ -50,10 +50,6 @@
     -moz-appearance: textfield;
 }
 
-.object-parameters input[type="number"] {
-    -moz-appearance: textfield;
-}
-
 .object-parameters label {
     display: block;
     margin-bottom: 8px;

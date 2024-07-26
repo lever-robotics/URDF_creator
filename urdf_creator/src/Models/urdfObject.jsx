@@ -90,7 +90,7 @@ export default class urdfObject extends THREE.Object3D {
     updateMass = (mass) => {
         this.inertia.updateMass(mass, this);
     };
-    
+
     // duplicate() {
     //     const duplicated = new UserData(this.shape);
     //     duplicated.stlfile = this.stlfile;

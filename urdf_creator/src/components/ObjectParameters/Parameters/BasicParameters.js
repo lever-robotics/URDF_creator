@@ -3,32 +3,22 @@ import "./parameters_style.css";
 import Parameter from "./Parameter";
 import ToggleSection from "../ToggleSection";
 
-export default function BasicParameters({ selectedObject }) {
-    const [name, changeName] = useState(selectedObject.name);
-    const [color, setColor] = useState("#" + selectedObject.color.getHexString());
-    const [error, setError] = useState(""); // Step 5: Add error state
-
-    if(name !== selectedObject.name){
-        setColor("#" + selectedObject.color.getHexString());
-        changeName(selectedObject.name);
-    }
+export default function BasicParameters({ stateFunctions, selectedObject }) {
+    const [error, setError] = useState("");
 
     const handleNameChange = (e) => {
         const newName = e.target.value;
         if (newName.includes(" ")) {
-            // Check for spaces
-            changeName(newName);
-            setError("Name must have no spaces"); // Set error message
+            stateFunctions.setLinkName(selectedObject, newName);
+            setError("Name must have no spaces");
         } else {
-            changeName(newName);
-            selectedObject.name(newName);
-            setError(""); // Clear error message if input is valid
+            stateFunctions.setLinkName(selectedObject, newName);
+            setError("");
         }
     };
 
     const handleColorChange = (e) => {
-        selectedObject.color = e.target.value;
-        setColor(e.target.value);
+        stateFunctions.setLinkColor(selectedObject, e.target.value);
     };
 
     return (
@@ -37,7 +27,7 @@ export default function BasicParameters({ selectedObject }) {
                 <Parameter
                     title={"Name:"}
                     type={"text"}
-                    value={name}
+                    value={selectedObject.name}
                     onChange={handleNameChange}
                     readOnly={selectedObject.name === "base_link"}
                     className={"name-input"}
@@ -45,7 +35,7 @@ export default function BasicParameters({ selectedObject }) {
                 <Parameter
                     title={"Color:"}
                     type="color"
-                    value={color}
+                    value={"#"+ selectedObject.color.getHexString()}
                     onChange={handleColorChange}
                 />
             </ul>
