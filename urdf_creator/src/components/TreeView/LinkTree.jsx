@@ -21,7 +21,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
         // Display the current node's data and recursively render its children
         return (
             <div style={{ marginLeft: "20px" }}>
-                {node.userData && (
+                {(
                     <button
                         className="tree-item"
                         onClick={() => {
@@ -29,7 +29,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
                         }}
                         onContextMenu={(e) => {
                             e.preventDefault();
-                            if (node.userData.isBaseLink) {
+                            if (node.isBaseLink) {
                                 setLastButtonObjectSelected(null);
                                 return;
                             }
@@ -38,7 +38,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
                             setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY });
                         }}
                     >
-                        {node.userData.name}
+                        {node.name}
                     </button>
                 )}
                 {node.getChildren() && node.getChildren().length > 0 && (

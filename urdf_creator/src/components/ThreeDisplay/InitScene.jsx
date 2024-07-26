@@ -54,7 +54,6 @@ export default function initScene(threeObjects, mountRef) {
 
     // Add a grid helper to the scene
     const gridHelper = new THREE.GridHelper(10, 10);
-    gridHelper.userData.selectable = false;
     gridHelper.rotation.x = Math.PI / 2; // Rotate the grid to lie on the XY plane
     obj.scene.add(gridHelper);
 

@@ -98,9 +98,9 @@ export default function SceneState() {
         newUrdfObject.setPosition([2.5, 2.5, 0.5]);
 
         if (selectedObject !== null) {
-            selectedObject.attachChild(newUrdfObject);
+            selectedObject.attach(newUrdfObject);
         } else if (obj.baseLink !== null) {
-            obj.baseLink.attachChild(newUrdfObject);
+            obj.baseLink.attach(newUrdfObject);
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
             // newUrdfObject.setAsBaseLink(true);
@@ -275,7 +275,7 @@ export default function SceneState() {
 
     const duplicateObject = (urdfObject) => {
         const clone = urdfObject.clone();
-        urdfObject.getParent().attachChild(clone);
+        urdfObject.getParent().attach(clone);
         setSelectedObject(null);
         forceSceneUpdate();
     };

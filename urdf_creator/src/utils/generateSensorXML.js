@@ -3,7 +3,7 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // generateSensorXML.js
 export const generateSensorXML = (selectedObject) => {
 
-    const sensorType = selectedObject.userData.sensor.sensorType;
+    const sensorType = selectedObject.sensor.sensorType;
     let sensorXML = '';
     switch (sensorType) {
         case 'imu':
@@ -25,7 +25,7 @@ export const generateSensorXML = (selectedObject) => {
 };
 
 const generateIMUXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
 
     const { x, y, z } = selectedObject.mesh.position;
@@ -52,7 +52,7 @@ const generateIMUXML = (selectedObject) => {
 
 
 const generateCameraXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
 
     //currently settinng the origin of the sensor to that of the mesh
@@ -86,7 +86,7 @@ const generateCameraXML = (selectedObject) => {
 };
 
 const generateLidarXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, alwaysOn, updateRate, origin, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     //currently settinng the origin of the sensor to that of the mesh

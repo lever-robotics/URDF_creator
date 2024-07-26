@@ -19,7 +19,7 @@ export default function JointParameters({ selectedObject, setJoint, stateFunctio
             <strong>Joint Information:</strong>
             <div>
                 <strong>Parent Link:</strong>
-                <span> {selectedObject.parent.parent.userData.name}</span>
+                <span> {selectedObject.parent.name}</span>
             </div>
             <div>
                 <strong>Joint Type:</strong>

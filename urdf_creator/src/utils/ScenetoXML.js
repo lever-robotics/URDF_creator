@@ -15,7 +15,7 @@ export const ScenetoXML = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.userData.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
     };
 
     // Function to process a single node
@@ -28,10 +28,10 @@ export const ScenetoXML = (scene, projectTitle) => {
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
-            if (node.userData.isBaseLink) {
+            if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.getParent().userData.isBaseLink) {
+            } else if (node.getParent().isBaseLink) {
                 const quaternion = new THREE.Quaternion();
                 rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.getParent().quaternion, node.quaternion));
             }
@@ -75,8 +75,8 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `    </collision>\n`;
 
             // Add inertial element
-            const mass = node.userData.inertia.mass || 0;
-            const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
+            const mass = node.inertia.mass || 0;
+            const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia;
             xml += `    <inertial>\n`;
             xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
             xml += `      <mass value="${mass}" />\n`;
@@ -84,7 +84,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.userData.sensor) {
+            if (node.sensor) {
                 const sensorXML = generateSensorXML(node);
                 xml += sensorXML;
             }
@@ -105,7 +105,7 @@ export const ScenetoXML = (scene, projectTitle) => {
                 originInRelationToParentsJoint.copy(node.position);
                 originInRelationToParentsJoint.add(node.getParent().link.position);
 
-                if (node.getParent().userData.isBaseLink) {
+                if (node.getParent().isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 

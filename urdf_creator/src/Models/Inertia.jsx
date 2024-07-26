@@ -14,7 +14,7 @@ export default class Inertia {
     updateInertia(threeObject) {
         if (this.customInertia) return;
 
-        const shape = threeObject.userData.shape;
+        const shape = threeObject.shape;
         if (shape === 'cube') {
             const width = threeObject.link.scale.x;
             const height = threeObject.link.scale.y;

@@ -10,7 +10,7 @@ import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 
 function ObjectParameters({ selectedObject, transformObject, setUserColor, setMass, setJointType, setInertia, setSensor, stateFunctions, setMesh }) {
-    if (!selectedObject || !selectedObject.userData) {
+    if (!selectedObject) {
         return (
             <div className="object-parameters">
                 <h3>Object Parameters</h3>
@@ -37,7 +37,7 @@ function ObjectParameters({ selectedObject, transformObject, setUserColor, setMa
             <ToggleSection title="Inertia Parameters">
                 <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} setMass={setMass}/>
             </ToggleSection>
-            {!selectedObject.userData.isBaseLink && (
+            {!selectedObject.isBaseLink && (
                 <ToggleSection title="Joint Parameters">
                     <JointParameters selectedObject={selectedObject} setJoint={setJointType} stateFunctions={stateFunctions} />
                 </ToggleSection>

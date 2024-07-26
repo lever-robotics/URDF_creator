@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import UserData from "./UserData";
 import Joint from "./Joint";
 import Link from "./Link";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
@@ -8,12 +7,20 @@ import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 
 export default class urdfObject extends THREE.Object3D {
-    constructor(origin, rotation) {
+    constructor(origin, rotation, name) {
         super();   
        
         this.urdfObject = true;
         this.position.set(...origin);
         this.rotation.set(...rotation);
+
+        this.name = name;
+        this.isBaseLink = false;
+        this.selectable = true;
+        this.sensor = null;
+        this.stlfile = null;
+        this.material = null;
+        this.color = null;
     }
 
     /**
@@ -33,19 +40,9 @@ export default class urdfObject extends THREE.Object3D {
         return this.children.filter((child) => !(child instanceof Link));
     };
 
-    // Adds a child to the urdfObject. This specifically gets added as a child to the Link object.
-    attachChild = (childObject) => {
-        this.attach(childObject);
-    }
-
-    // Is the urdfObject the base link? Information is stored in userData
-    isBaseLink = () => {
-        return this.userData.isBaseLink;
-    }
-
     // Set this urdfObject as the baseLink
     setAsBaseLink = (flag) => {
-        this.userData.isBaseLink = flag;
+        this.isBaseLink = flag;
     }
 
     // Set the color of the mesh
@@ -55,9 +52,26 @@ export default class urdfObject extends THREE.Object3D {
 
     // Sets the inertia of the urdfObject in the userData Object in the Inertia object
     setInertia = (inertia) => {
-        this.userData.inertia = inertia;
-        this.userData.inertia.customInertia = true;
+        this.inertia = inertia;
+        this.inertia.customInertia = true;
     }
+
+    get shape () {
+        return this.link.shape;
+    }
+
+    // duplicate() {
+    //     const duplicated = new UserData(this.shape);
+    //     duplicated.stlfile = this.stlfile;
+    //     duplicated.name = this.name + " copy";
+    //     duplicated.inertia = this.inertia.duplicate();
+    //     duplicated.isBaseLink = false;
+    //     if (this.sensor) {
+    //         duplicated.sensor = this.sensor.duplicate();
+    //     }
+
+    //     return duplicated;
+    // }
 
     // Rotate the joint axis (which is stored in the Shimmy object)
     // setJointAxisRotation = (angle) => {
@@ -140,13 +154,13 @@ export default class urdfObject extends THREE.Object3D {
 
     // Get name of urdfObject from userData
     getName() {
-        return this.userData.name;
+        return this.name;
     }
 
-    // Set the name of the urdfObject via userData
+    // Set the name of the urdfObject via
     setLinkName(name) {
         console.log(this);
-        this.userData.name = name;
+        this.name = name;
     }
 
     // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
@@ -166,12 +180,12 @@ export default class urdfObject extends THREE.Object3D {
 
     // Set a sensor object in the userData object
     setSensor = (sensorObj) => {
-        this.userData.sensor = sensorObj;
+        this.sensor = sensorObj;
     }   
 
     // Is the urdfObject selectable?
     isSelectable = () => {
-        return this.userData.selectable;
+        return this.selectable;
     }
 
     // setMesh = async (mesh) => {
@@ -361,7 +375,7 @@ export default class urdfObject extends THREE.Object3D {
             case "scale":
                 this.link.scale.set(x, y, z);
                 //update the moment of inertia
-                this.userData.inertia.updateInertia(this);
+                this.inertia.updateInertia(this);
                 break;
             case "position":
                 this.position.set(x, y, z);
@@ -382,12 +396,12 @@ export default class urdfObject extends THREE.Object3D {
 
     // Updates the inertia object in the userData
     updateInertia = () => {
-        this.userData.inertia.updateInertia(this);
+        this.inertia.updateInertia(this);
     }
 
-    // update the mass stored in the userData object in the Inertia object
+    // update the mass stored in the object in the Inertia object
     updateMass = (mass) => {
-        this.userData.inertia.updateMass(mass, this);
+        this.inertia.updateMass(mass, this);
     }
 
     //Add STL to the urdfObject

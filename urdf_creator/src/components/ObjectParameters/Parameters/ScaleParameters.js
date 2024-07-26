@@ -7,11 +7,11 @@ function ScaleParameters({ selectedObject, transformObject }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setScaleX(selectedObject.mesh.scale.x.toFixed(2));
-            setScaleY(selectedObject.mesh.scale.y.toFixed(2));
-            setScaleZ(selectedObject.mesh.scale.z.toFixed(2));
+            setScaleX(selectedObject.scale.x.toFixed(2));
+            setScaleY(selectedObject.scale.y.toFixed(2));
+            setScaleZ(selectedObject.scale.z.toFixed(2));
         }
-    }, [JSON.stringify(selectedObject.mesh.scale)]);
+    }, [JSON.stringify(selectedObject.scale)]);
 
     const handleChange = (axis, value) => {
         const newValue = parseFloat(value);
@@ -20,9 +20,9 @@ function ScaleParameters({ selectedObject, transformObject }) {
         const y = parseFloat(scaleY);
         const z = parseFloat(scaleZ);
 
-        if (selectedObject.userData.shape === "sphere") {
+        if (selectedObject.shape === "sphere") {
             transformObject(selectedObject, "scale", x, x, x);
-        } else if (selectedObject.userData.shape === "cylinder") {
+        } else if (selectedObject.shape === "cylinder") {
             if (axis === "x" || axis === "y") {
                 transformObject(selectedObject, "scale", x, x, z);
             } else {
@@ -44,7 +44,7 @@ function ScaleParameters({ selectedObject, transformObject }) {
     };
 
     let scaleInputs;
-    switch (selectedObject.userData.shape) {
+    switch (selectedObject.shape) {
         case "sphere":
             scaleInputs = (
                 <li>

@@ -7,7 +7,7 @@ function MeshParameters({ selectedObject, setMesh }) {
 
     useEffect(() => {
         if (selectedObject) {
-            setMeshTemp(selectedObject.userData.stlfile || "");
+            setMeshTemp(selectedObject.stlfile || "");
         }
     }, [selectedObject]);
 

@@ -20,7 +20,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.userData.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
     };
 
     // Function to process a single node
@@ -37,14 +37,14 @@ export const ScenetoSDF = (scene, projectTitle) => {
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
-            if (node.userData.isBaseLink) {
+            if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
             } 
             
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            if (node.userData.isBaseLink) {
+            if (node.isBaseLink) {
                 xml += `    <pose relative_to='__model__'>${formatVector(node.position)} ${quaternionToRPY(node.quaternion)}</pose>\n`;
             } else {
                 xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
@@ -54,17 +54,17 @@ export const ScenetoSDF = (scene, projectTitle) => {
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
                 const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
-                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "SphereGeometry") {
                 const radius = node.mesh.scale.x / 3;
-                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
                 const height = node.mesh.scale.y;
-                geometryXML = `    <collision name='${node.userData.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.userData.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
+                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
             }
             xml += geometryXML;
 
@@ -75,12 +75,12 @@ export const ScenetoSDF = (scene, projectTitle) => {
             }
 
             // Add inertial element
-            const mass = node.userData.inertia.mass || 0;
-            const { ixx, ixy, ixz, iyy, iyz, izz } = node.userData.inertia;
+            const mass = node.inertia.mass || 0;
+            const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia;
             xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${ixx || 0}</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${ixz || 0}</ixz>\n        <iyy>${iyy || 0}</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.userData.sensor) {
+            if (node.sensor) {
                 const sensorSDF = generateSensorSDF(node);
                 xml += sensorSDF;
             }
@@ -100,7 +100,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 originInRelationToParentsJoint.copy(node.position);
                 originInRelationToParentsJoint.add(node.getParent().link.position);
 
-                if (node.getParent().userData.isBaseLink) {
+                if (node.getParent().isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 

@@ -10,13 +10,13 @@ function SensorsParameters({ selectedObject, setSensor }) {
 
     useEffect(() => {
         if (selectedObject) {
-            if (selectedObject.userData.sensor) {
-                setSensorType(selectedObject.userData.sensor.sensorType || '');
+            if (selectedObject.sensor) {
+                setSensorType(selectedObject.sensor.sensorType || '');
             } else {
                 setSensorType('');
             }
         }
-    }, [JSON.stringify(selectedObject.userData.sensor)]);
+    }, [JSON.stringify(selectedObject.sensor)]);
 
     const handleSensorTypeChange = (e) => {
         switch (e.target.value) {
@@ -41,11 +41,11 @@ function SensorsParameters({ selectedObject, setSensor }) {
     const renderSensorParameters = () => {
         switch (localSensorType) {
             case 'imu':
-                return <IMUParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
+                return <IMUParameters selectedObject={selectedObject} sensorData={selectedObject.sensor} setSensor={setSensor} />;
             case 'camera':
-                return <CameraParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
+                return <CameraParameters selectedObject={selectedObject} sensorData={selectedObject.sensor} setSensor={setSensor} />;
             case 'lidar':
-                return <LidarParameters selectedObject={selectedObject} sensorData={selectedObject.userData.sensor} setSensor={setSensor} />;
+                return <LidarParameters selectedObject={selectedObject} sensorData={selectedObject.sensor} setSensor={setSensor} />;
             // Add cases for other sensor types here
             default:
                 return <div></div>;

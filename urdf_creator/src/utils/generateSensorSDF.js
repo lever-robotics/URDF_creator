@@ -1,6 +1,6 @@
 export const generateSensorSDF = (selectedObject) => {
 
-    const sensorType = selectedObject.userData.sensor.sensorType;
+    const sensorType = selectedObject.sensor.sensorType;
     let sensorXML = '';
     switch (sensorType) {
         case 'imu':
@@ -22,7 +22,7 @@ export const generateSensorSDF = (selectedObject) => {
 };
 
 const generateIMUPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, alwaysOn, updateRate, mean, stddev } = sensor;
 
     return `
@@ -81,7 +81,7 @@ const generateIMUPluginXML = (selectedObject) => {
 };
 
 const generateCameraPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, alwaysOn, updateRate, horizontal_fov, width, height, format, near, far, mean, stddev } = sensor;
 
     return `
@@ -121,7 +121,7 @@ const generateCameraPluginXML = (selectedObject) => {
 };
 
 const generateLidarPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject.userData;
+    const { sensor } = selectedObject;
     const { sensorType, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     return `

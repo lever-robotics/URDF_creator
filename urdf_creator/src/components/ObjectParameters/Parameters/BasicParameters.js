@@ -9,10 +9,10 @@ export default function BasicParameters({ selectedObject, setUserColor }) {
 
     useEffect(() => {
         if (selectedObject) {
-            changeName(selectedObject.userData.name || "");
+            changeName(selectedObject.name || "");
             setColor(new THREE.Color(selectedObject.mesh.material.color).getStyle());
         }
-    }, [JSON.stringify(selectedObject.userData), JSON.stringify(selectedObject.mesh.material)]);
+    }, [JSON.stringify(selectedObject), JSON.stringify(selectedObject.mesh.material)]);
 
     const handleNameChange = (e) => {
         const newName = e.target.value;
@@ -40,8 +40,8 @@ export default function BasicParameters({ selectedObject, setUserColor }) {
                 value={name}
                 style={{ width: '100px' }}
                 onChange={handleNameChange}
-                readOnly={selectedObject.userData.name === "base_link"}
-                title={selectedObject.userData.name === "base_link" ? "The base_link's name is not changeable." : ""}
+                readOnly={selectedObject.name === "base_link"}
+                title={selectedObject.name === "base_link" ? "The base_link's name is not changeable." : ""}
             />
             {error && <span style={{ color: 'red', marginLeft: '5px' }}>{error}</span>} {/* Step 6: Display error message */}
             <br />
