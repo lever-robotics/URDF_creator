@@ -9,7 +9,16 @@ import SensorsParameters from "./Parameters/SensorParameters";
 import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 
-function ObjectParameters({ selectedObject, transformObject, setUserColor, setMass, setJointType, setInertia, setSensor, stateFunctions, setMesh }) {
+function ObjectParameters({
+    selectedObject,
+    transformObject,
+    setMass,
+    setJointType,
+    setInertia,
+    setSensor,
+    stateFunctions,
+    setMesh,
+}) {
     if (!selectedObject) {
         return (
             <div className="object-parameters">
@@ -22,27 +31,52 @@ function ObjectParameters({ selectedObject, transformObject, setUserColor, setMa
     return (
         <div className="object-parameters">
             <h3>Object Parameters</h3>
-            <BasicParameters stateFunctions={stateFunctions}selectedObject={selectedObject} setUserColor={setUserColor} />
+            <BasicParameters
+                stateFunctions={stateFunctions}
+                selectedObject={selectedObject}
+            />
             <ToggleSection title="Position">
-                <PositionParameters selectedObject={selectedObject} transformObject={transformObject} />
+                <PositionParameters
+                    selectedObject={selectedObject}
+                    transformObject={transformObject}
+                />
             </ToggleSection>
             <ToggleSection title="Rotation">
-                <RotationParameters selectedObject={selectedObject} transformObject={transformObject} />
+                <RotationParameters
+                    selectedObject={selectedObject}
+                    transformObject={transformObject}
+                />
             </ToggleSection>
             <ToggleSection title="Scale">
-                <ScaleParameters selectedObject={selectedObject} transformObject={transformObject} />
+                <ScaleParameters
+                    selectedObject={selectedObject}
+                    transformObject={transformObject}
+                />
             </ToggleSection>
-            <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} setMass={setMass}/>
+            <InertiaParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
             {!selectedObject.isBaseLink && (
                 <ToggleSection title="Joint Parameters">
-                    <JointParameters selectedObject={selectedObject} setJoint={setJointType} stateFunctions={stateFunctions} />
+                    <JointParameters
+                        selectedObject={selectedObject}
+                        setJoint={setJointType}
+                        stateFunctions={stateFunctions}
+                    />
                 </ToggleSection>
             )}
             <ToggleSection title="Sensor Parameters">
-                <SensorsParameters selectedObject={selectedObject} setSensor={setSensor} />
+                <SensorsParameters
+                    selectedObject={selectedObject}
+                    setSensor={setSensor}
+                />
             </ToggleSection>
             <ToggleSection title="Mesh Parameters">
-                <MeshParameters selectedObject={selectedObject} setMesh={setMesh} />
+                <MeshParameters
+                    selectedObject={selectedObject}
+                    setMesh={setMesh}
+                />
             </ToggleSection>
         </div>
     );

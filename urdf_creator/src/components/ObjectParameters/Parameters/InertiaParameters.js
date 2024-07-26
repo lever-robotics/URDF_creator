@@ -4,7 +4,7 @@ import Parameter from "./Parameter";
 import ToggleSection from "../ToggleSection";
 import { handleDownload } from "../../../utils/HandleDownload";
 
-function InertiaParameters({ selectedObject, setInertia, setMass }) {
+function InertiaParameters({ selectedObject, stateFunctions }) {
     const { mass, ixx, ixy, ixz, iyy, iyz, izz } = selectedObject.inertia;
 
     const handleInertiaChange = (e) => {
@@ -13,12 +13,12 @@ function InertiaParameters({ selectedObject, setInertia, setMass }) {
 
         if (isNaN(inertia)) return;
 
-        setInertia(selectedObject, type, inertia);
+        stateFunctions.setInertia(selectedObject, type, inertia);
     };
 
     const handleMassChange = (e) => {
         if (isNaN(e.target.value)) return;
-        setMass(selectedObject, parseFloat(e.target.value));
+        stateFunctions.setMass(selectedObject, parseFloat(e.target.value));
     };
 
     return (
