@@ -12,7 +12,7 @@ export default class Link extends THREE.Mesh {
 
         this.geometry = defineGeometry(shape);
         this.material = new THREE.MeshPhongMaterial();
-        this.color = Math.random() * 0xffffff
+        this.color = Math.random() * 0xffffff;
 
         this.customRenderBehaviors = {
             defineRenderBehavior: defineRenderBehavior(shape),
@@ -96,7 +96,7 @@ export default class Link extends THREE.Mesh {
     set offset(offset) {
         this.position.set(...offset);
     }
-    get color(){
+    get color() {
         return this.material.color;
     }
 
@@ -116,4 +116,8 @@ export default class Link extends THREE.Mesh {
             behavior(this)
         );
     };
+
+    onAfterRender = () => {
+        this.parent.updateInertia();
+    }
 }

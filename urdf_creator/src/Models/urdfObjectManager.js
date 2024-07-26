@@ -40,7 +40,9 @@ export default class urdfObjectManager {
         urdfobject.add(joint);
 
         const inertia = new Inertia();
+        inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
+
 
         return urdfobject;
     }

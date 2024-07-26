@@ -38,14 +38,9 @@ export default class Inertia {
         }
     }
 
-    setCustomInertia(ixx, iyy, izz, ixy, ixz, iyz) {
+    setCustomInertia(type, inertia) {
         this.customInertia = true;
-        this.ixx = ixx;
-        this.iyy = iyy;
-        this.izz = izz;
-        this.ixy = ixy;
-        this.ixz = ixz;
-        this.iyz = iyz;
+        this[type] = inertia;
     }
 
     updateMass(newMass, object) {

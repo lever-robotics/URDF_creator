@@ -32,9 +32,7 @@ function ObjectParameters({ selectedObject, transformObject, setUserColor, setMa
             <ToggleSection title="Scale">
                 <ScaleParameters selectedObject={selectedObject} transformObject={transformObject} />
             </ToggleSection>
-            <ToggleSection title="Inertia Parameters">
-                <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} setMass={setMass}/>
-            </ToggleSection>
+            <InertiaParameters selectedObject={selectedObject} setInertia={setInertia} setMass={setMass}/>
             {!selectedObject.isBaseLink && (
                 <ToggleSection title="Joint Parameters">
                     <JointParameters selectedObject={selectedObject} setJoint={setJointType} stateFunctions={stateFunctions} />

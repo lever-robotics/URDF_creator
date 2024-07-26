@@ -5,11 +5,10 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { openDB } from "idb";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
-
 export default class urdfObject extends THREE.Object3D {
     constructor(origin, rotation, name) {
-        super();   
-       
+        super();
+
         this.urdfObject = true;
         this.position.set(...origin);
         this.rotation.set(...rotation);
@@ -23,15 +22,15 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     /**
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
      * GETTER/SETTER: Alphabetical
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
      **/
 
     // Returns children that are specifically Meshs
@@ -42,26 +41,56 @@ export default class urdfObject extends THREE.Object3D {
     // Set this urdfObject as the baseLink
     setAsBaseLink = (flag) => {
         this.isBaseLink = flag;
-    }
+    };
 
     // Sets the inertia of the urdfObject in the userData Object in the Inertia object
     setInertia = (inertia) => {
         this.inertia = inertia;
         this.inertia.customInertia = true;
+    };
+
+    set mass(mass) {
+        this.inertia.updateMass(mass, this);
     }
 
-    get shape () {
+    get mass() {
+        return this.inertia.mass;
+    }
+
+    get shape() {
         return this.link.shape;
     }
 
-    get color () {
+    get color() {
         return this.link.material.color;
     }
 
-    set color (color) {
+    set color(color) {
         this.link.color = color;
     }
 
+    set scale(scale) {
+        this.link.scale.set(...scale);
+    }
+
+    get scale() {
+        return this.link.scale;
+    }
+
+    setCustomInertia(type, inertia){
+        this.inertia.setCustomInertia(type, inertia);
+    }
+
+    // Updates the inertia object in the userData
+    updateInertia = () => {
+        this.inertia.updateInertia(this);
+    };
+
+    // update the mass stored in the object in the Inertia object
+    updateMass = (mass) => {
+        this.inertia.updateMass(mass, this);
+    };
+    
     // duplicate() {
     //     const duplicated = new UserData(this.shape);
     //     duplicated.stlfile = this.stlfile;
@@ -112,7 +141,7 @@ export default class urdfObject extends THREE.Object3D {
             this.joint.max = max;
         }
         // this.clearShimmy();
-    }
+    };
 
     // Set the Joint type
     setJointType = (type) => {
@@ -132,27 +161,7 @@ export default class urdfObject extends THREE.Object3D {
             this.joint.min = -3.14;
             this.joint.max = 3.14;
         }
-    }
-
-    // Get the Link
-    // get link() {
-    //     return this.link;
-    // }
-
-    // Set the link
-    // set link(link) {
-    //     this.link = link;
-    // }
-
-    // Get the mesh
-    // get mesh() {
-    //     return this.shimmy.link.mesh;
-    // }
-
-    // Set the mesh
-    // set mesh(mesh) {
-    //     this.shimmy.link.mesh = mesh;
-    // }
+    };
 
     // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
     getParent = () => {
@@ -166,18 +175,22 @@ export default class urdfObject extends THREE.Object3D {
 
     // Set urdfObject's position
     setPosition(positionVector) {
-        this.position.set(positionVector[0], positionVector[1], positionVector[2]);
+        this.position.set(
+            positionVector[0],
+            positionVector[1],
+            positionVector[2]
+        );
     }
 
     // Set a sensor object in the userData object
     setSensor = (sensorObj) => {
         this.sensor = sensorObj;
-    }   
+    };
 
     // Is the urdfObject selectable?
     isSelectable = () => {
         return this.selectable;
-    }
+    };
 
     // setMesh = async (mesh) => {
     //     if (mesh === "") {
@@ -194,7 +207,7 @@ export default class urdfObject extends THREE.Object3D {
     //     try {
     //         // Get the STL file from IndexedDB
     //         const file = await getFile(mesh);
-    
+
     //         if (file) {
     //             //convert the file to an array buffer
     //             const arrayBuffer = await blobToArrayBuffer(file);
@@ -258,21 +271,21 @@ export default class urdfObject extends THREE.Object3D {
     // }
 
     /**
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
      * Logic Functions: Alphabetical
-     * 
-     * 
-     * 
-     * 
+     *
+     *
+     *
+     *
      **/
 
     // add a custom render behavior to the link
     addCustomRenderBehavior = (behavior, func) => {
         this.link.customRenderBehaviors[behavior] = func;
-    }
+    };
 
     // Attaches transform controls to the correct child
     attachTransformControls = (transformControls) => {
@@ -293,12 +306,12 @@ export default class urdfObject extends THREE.Object3D {
             default:
                 break;
         }
-    }
+    };
 
     // clear custom render behavior
     clearCustomRenderBehavior = (behavior) => {
         delete this.link.customRenderBehaviors[behavior];
-    }
+    };
 
     // Clear's any shimmy position/rotation changes
     // clearShimmy = () => {
@@ -328,7 +341,7 @@ export default class urdfObject extends THREE.Object3D {
     //     return new urdfObject(params.shape, params.name, params);
     // }
 
-    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin. 
+    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin.
     setGlobalPosition = (offsetPosition) => {
         // Get the current world matrix of the object
         const worldMatrix = new THREE.Matrix4();
@@ -358,7 +371,7 @@ export default class urdfObject extends THREE.Object3D {
     // Get the worldPosition of the Link object
     linkWorldPosition = () => {
         return this.link.getWorldPosition(new THREE.Vector3());
-    }
+    };
 
     // Operate on an object, either scale, position, or rotation
     operate = (type, x, y, z) => {
@@ -377,23 +390,15 @@ export default class urdfObject extends THREE.Object3D {
             default:
                 return;
         }
-    }
+    };
 
     // Start rotating joint?
     rotateJoint = (transformControls) => {
         // this.clearShimmy();
         transformControls.attach(this.joint);
-    }
+    };
 
-    // Updates the inertia object in the userData
-    updateInertia = () => {
-        this.inertia.updateInertia(this);
-    }
 
-    // update the mass stored in the object in the Inertia object
-    updateMass = (mass) => {
-        this.inertia.updateMass(mass, this);
-    }
 
     //Add STL to the urdfObject
     // setSTL = (stlfile) => {

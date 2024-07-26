@@ -226,12 +226,11 @@ export default function SceneState() {
 
     const setMass = (urdfObject, mass) => {
         urdfObject.updateMass(mass);
-        urdfObject.updateInertia();
         forceSceneUpdate();
     };
 
-    const setInertia = (urdfObject, inertia) => {
-        urdfObject.setInertia(inertia);
+    const setInertia = (urdfObject, type, inertia) => {
+        urdfObject.setCustomInertia(type, inertia);
         forceSceneUpdate();
     };
 
