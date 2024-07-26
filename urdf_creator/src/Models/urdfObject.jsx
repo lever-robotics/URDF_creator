@@ -77,6 +77,10 @@ export default class urdfObject extends THREE.Object3D {
         return this.link.scale;
     }
 
+    get rotation() {
+
+    }
+
     setCustomInertia(type, inertia) {
         this.inertia.setCustomInertia(type, inertia);
     }
@@ -391,8 +395,10 @@ export default class urdfObject extends THREE.Object3D {
         //     default:
         //         return;
         // }
+        const newValues = this[type].toArray();
+        newValues[this.determineComponentIndex(axis)] = value;
 
-        this[type].setComponent(this.determineComponentIndex(axis), value);
+        this[type].set(...newValues);
     };
 
     determineComponentIndex(axis) {

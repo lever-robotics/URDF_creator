@@ -35,18 +35,14 @@ function ObjectParameters({
                 stateFunctions={stateFunctions}
                 selectedObject={selectedObject}
             />
-            <ToggleSection title="Position">
-                <PositionParameters
-                    selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
-                />
-            </ToggleSection>
-            <ToggleSection title="Rotation">
-                <RotationParameters
-                    selectedObject={selectedObject}
-                    transformObject={transformObject}
-                />
-            </ToggleSection>
+            <PositionParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <RotationParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
             <ToggleSection title="Scale">
                 <ScaleParameters
                     selectedObject={selectedObject}
