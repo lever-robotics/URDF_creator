@@ -46,7 +46,7 @@ function ObjectParameters({
             <ToggleSection title="Scale">
                 <ScaleParameters
                     selectedObject={selectedObject}
-                    transformObject={transformObject}
+                    stateFunctions={stateFunctions}
                 />
             </ToggleSection>
             <InertiaParameters

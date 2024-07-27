@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import SceneState from './components/SceneState';
 
 const App = () => {
   return (
-    <SceneState />
+    // Taking strictmode off makes the scaling of meshes really jerky
+    <StrictMode>
+      <SceneState />
+    </StrictMode>
   );
 };
 

@@ -77,10 +77,6 @@ export default class urdfObject extends THREE.Object3D {
         return this.link.scale;
     }
 
-    get rotation() {
-
-    }
-
     setCustomInertia(type, inertia) {
         this.inertia.setCustomInertia(type, inertia);
     }
@@ -306,6 +302,7 @@ export default class urdfObject extends THREE.Object3D {
             // will attach to the link and scale nothing else
             case "scale":
                 transformControls.attach(this.link);
+                console.log(this.scale);
                 break;
             default:
                 break;
@@ -380,25 +377,31 @@ export default class urdfObject extends THREE.Object3D {
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
+        console.log(newValues);
         newValues[this.determineComponentIndex(axis)] = value;
-
+        console.log(value);
         this[type].set(...newValues);
+        console.log(newValues);
     };
 
     determineComponentIndex(axis) {
         try {
             switch (axis) {
-                case "x":
+                case ("x"):
+                case ("radius"):
                     return 0;
                 case "y":
                     return 1;
-                case "z":
+                case ("z"):
+                case ("height"):
                     return 2;
                 default:
-                    throw new Error("Axis must be 'x', 'y', or 'z'");
+                    throw new Error(
+                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
+                    );
             }
         } catch (e) {
-            console.error(e);
+            console.error(e, "axis provided" , axis);
         }
     }
 

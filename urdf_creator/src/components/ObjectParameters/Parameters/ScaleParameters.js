@@ -1,135 +1,92 @@
-import React, { useState, useEffect } from "react";
+import ToggleSection from "../ToggleSection";
+import Parameter from "./Parameter";
 
-function ScaleParameters({ selectedObject, transformObject }) {
-    const [scaleX, setScaleX] = useState("");
-    const [scaleY, setScaleY] = useState("");
-    const [scaleZ, setScaleZ] = useState("");
+function ScaleParameters({ selectedObject, stateFunctions }) {
 
-    useEffect(() => {
-        if (selectedObject) {
-            setScaleX(selectedObject.scale.x.toFixed(2));
-            setScaleY(selectedObject.scale.y.toFixed(2));
-            setScaleZ(selectedObject.scale.z.toFixed(2));
+    const handleScaleChange = (e) => {
+        const axis = e.target.title.toLowerCase().replace(":", "");
+        let newValue = parseFloat(e.target.value);
+
+        if(axis === 'radius'){
+            newValue = newValue * 2;
         }
-    }, [JSON.stringify(selectedObject.scale)]);
 
-    const handleChange = (axis, value) => {
-        const newValue = parseFloat(value);
+        if(newValue <= 0){
+            newValue = .001;
+        }
+
         if (isNaN(newValue)) return;
-        const x = parseFloat(scaleX);
-        const y = parseFloat(scaleY);
-        const z = parseFloat(scaleZ);
+        console.log(newValue);
 
-        if (selectedObject.shape === "sphere") {
-            transformObject(selectedObject, "scale", x, x, x);
-        } else if (selectedObject.shape === "cylinder") {
-            if (axis === "x" || axis === "y") {
-                transformObject(selectedObject, "scale", x, x, z);
-            } else {
-                transformObject(selectedObject, "scale", x, y, z);
-            }
-        } else {
-            transformObject(selectedObject, "scale", x, y, z);
-        }
+        stateFunctions.transformObject(
+            selectedObject,
+            "scale",
+            axis,
+            newValue
+        );
     };
 
-    const handleBlur = (axis, value) => {
-        handleChange(axis, value);
+    const props = {
+        type: "number",
+        unit: "m",
+        onChange: handleScaleChange,
     };
 
-    const handleKeyDown = (e, axis, value) => {
-        if (e.key === "Enter") {
-            handleBlur(axis, value);
-        }
-    };
-
-    let scaleInputs;
-    switch (selectedObject.shape) {
-        case "sphere":
-            scaleInputs = (
-                <li>
-                    Radius:
-                    <input
-                        type="number"
-                        value={scaleX / 2}
-                        onChange={(e) => setScaleX(e.target.value * 2)}
-                        onBlur={() => handleBlur("x", scaleX * 2)}
-                        onKeyDown={(e) => handleKeyDown(e, "x", scaleX * 2)}
+    const determineParametersFromShape = (shape) => {
+        switch (shape) {
+            case "sphere":
+                return (
+                    <Parameter
+                        title="Radius:"
+                        value={selectedObject.scale.x / 2}
+                        {...props}
                     />
-                    <span className="units">m</span>
-                </li>
-            );
-            break;
-        case "cylinder":
-            scaleInputs = (
-                <>
-                    <li>
-                        Radius:
-                        <input
-                            type="number"
-                            value={scaleX / 2}
-                            onChange={(e) => setScaleX(2 * e.target.value)}
-                            onBlur={() => handleBlur("x", 2 * scaleX)}
-                            onKeyDown={(e) => handleKeyDown(e, "x", 2 * scaleX)}
+                );
+            case "cylinder":
+                return (
+                    <>
+                        <Parameter
+                            title="Radius:"
+                            value={selectedObject.scale.x / 2}
+                            {...props}
                         />
-                        <span className="units">m</span>
-                    </li>
-                    <li>
-                        Height:
-                        <input
-                            type="number"
-                            value={scaleZ}
-                            onChange={(e) => setScaleZ(e.target.value)}
-                            onBlur={() => handleBlur("z", scaleZ)}
-                            onKeyDown={(e) => handleKeyDown(e, "z", scaleZ)}
+                        <Parameter
+                            title="Height:"
+                            value={selectedObject.scale.z}
+                            {...props}
                         />
-                        <span className="units">m</span>
-                    </li>
-                </>
-            );
-            break;
-        default:
-            scaleInputs = (
-                <>
-                    <li>
-                        X:
-                        <input
-                            type="number"
-                            value={scaleX}
-                            onChange={(e) => setScaleX(e.target.value)}
-                            onBlur={() => handleBlur("x", scaleX)}
-                            onKeyDown={(e) => handleKeyDown(e, "x", scaleX)}
+                    </>
+                );
+            case "cube":
+                return (
+                    <>
+                        <Parameter
+                            title="X:"
+                            value={selectedObject.scale.x}
+                            {...props}
                         />
-                        <span className="units">m</span>
-                    </li>
-                    <li>
-                        Y:
-                        <input
-                            type="number"
-                            value={scaleY}
-                            onChange={(e) => setScaleY(e.target.value)}
-                            onBlur={() => handleBlur("y", scaleY)}
-                            onKeyDown={(e) => handleKeyDown(e, "y", scaleY)}
+                        <Parameter
+                            title="Y:"
+                            value={selectedObject.scale.y}
+                            {...props}
                         />
-                        <span className="units">m</span>
-                    </li>
-                    <li>
-                        Z:
-                        <input
-                            type="number"
-                            value={scaleZ}
-                            onChange={(e) => setScaleZ(e.target.value)}
-                            onBlur={() => handleBlur("z", scaleZ)}
-                            onKeyDown={(e) => handleKeyDown(e, "z", scaleZ)}
+                        <Parameter
+                            title="Z:"
+                            value={selectedObject.scale.z}
+                            {...props}
                         />
-                        <span className="units">m</span>
-                    </li>
-                </>
-            );
-            break;
-    }
+                    </>
+                );
+            default:
+                throw Error("Shape not supported");
+        }
+    };
 
-    return <ul>{scaleInputs}</ul>;
+    return (
+        <ToggleSection title="Scale">
+            <ul>{determineParametersFromShape(selectedObject.shape)}</ul>
+        </ToggleSection>
+    );
 }
 
 export default ScaleParameters;
