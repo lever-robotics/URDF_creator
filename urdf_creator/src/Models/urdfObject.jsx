@@ -19,6 +19,15 @@ export default class urdfObject extends THREE.Object3D {
         this.sensor = null;
         this.stlfile = null;
         this.material = null;
+
+        Object.defineProperty(this, "scale", {
+            get() {
+                return this._scale;
+            },
+            set(newVector) {
+                this._scale.set(...newVector);
+            },
+        });
     }
 
     /**
@@ -57,6 +66,14 @@ export default class urdfObject extends THREE.Object3D {
         return this.inertia.mass;
     }
 
+    get _scale() {
+        return this.link.scale;
+    }
+
+    set _scale(newVector) {
+        this.link.scale = newVector;
+    }
+
     get shape() {
         return this.link.shape;
     }
@@ -67,14 +84,6 @@ export default class urdfObject extends THREE.Object3D {
 
     set color(color) {
         this.link.color = color;
-    }
-
-    set scale(scale) {
-        this.link.scale.set(...scale);
-    }
-
-    get scale() {
-        return this.link.scale;
     }
 
     setCustomInertia(type, inertia) {
@@ -387,13 +396,13 @@ export default class urdfObject extends THREE.Object3D {
     determineComponentIndex(axis) {
         try {
             switch (axis) {
-                case ("x"):
-                case ("radius"):
+                case "x":
+                case "radius":
                     return 0;
                 case "y":
                     return 1;
-                case ("z"):
-                case ("height"):
+                case "z":
+                case "height":
                     return 2;
                 default:
                     throw new Error(
@@ -401,7 +410,7 @@ export default class urdfObject extends THREE.Object3D {
                     );
             }
         } catch (e) {
-            console.error(e, "axis provided" , axis);
+            console.error(e, "axis provided", axis);
         }
     }
 

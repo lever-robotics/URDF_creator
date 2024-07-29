@@ -6,9 +6,9 @@ export default class Link extends THREE.Mesh {
         super();
 
         this.position.set(...offset); // The offset from the joint
-        
+
         this.scale.set(...scale);
-        this._scale = new ScaleVector(shape,...scale);
+        this._scale = new ScaleVector(shape, ...scale);
         this.shape = shape;
 
         this.isShape = true;
@@ -33,27 +33,27 @@ export default class Link extends THREE.Mesh {
                     // a = radius
                     // b = widthSegments
                     // c = heightSegments
-                    Object.defineProperty(context, 'scale', {
-                        get(){
+                    Object.defineProperty(context, "scale", {
+                        get() {
                             return this._scale;
                         },
-                        set(newVector){
-                            this._scale.set(newVector);
-                        }
-                    })
+                        set(newVector) {
+                            this._scale.set(...newVector);
+                        },
+                    });
                     return new THREE.SphereGeometry(0.5, 32, 32);
                 case "cylinder":
                     // a = top and bottom radius
                     // b = height
                     // c = radialSegments = 'number of segmented faces around circumference
-                    Object.defineProperty(context, 'scale', {
-                        get(){
+                    Object.defineProperty(context, "scale", {
+                        get() {
                             return this._scale;
                         },
-                        set(newVector){
-                            this._scale.set(newVector);
-                        }
-                    })
+                        set(newVector) {
+                            this._scale.set(...newVector);
+                        },
+                    });
                     const cylinder = new THREE.CylinderGeometry(
                         0.5,
                         0.5,
@@ -66,49 +66,9 @@ export default class Link extends THREE.Mesh {
                     return;
             }
         }
+
+        // There was a problem with scaling spheres and cylinders based off render. It could cause a bug where the user would enter a radius value that they probably want to be exact and then the render would average that input out to uniformly scale the object. So a user would enter a diameter of 10 and then the sphere would have a diameter of 3.33. To fix this I customized the scaling behavior with a new Vector3 class called scale vector. It is probablly not the most elegant solution but it is functional.
         function defineRenderBehavior(shape) {
-            // switch (shape) {
-            //     case "cube":
-            //         return () => {};
-            //     case "sphere":
-            //         // ensure spheres scale uniformly in all directions
-            //         return (context) => {
-            //             const worldScale = new THREE.Vector3();
-            //             context.getWorldScale(worldScale);
-            //             const uniformScale =
-            //                 (worldScale.x + worldScale.y + worldScale.z) / 3;
-
-            //             const localScale = context.scale;
-            //             context.scale.set(
-            //                 (localScale.x / worldScale.x) * uniformScale,
-            //                 (localScale.y / worldScale.y) * uniformScale,
-            //                 (localScale.z / worldScale.z) * uniformScale
-            //             );
-            //         };
-            //     case "cylinder":
-            //         // ensure cylinders scale uniformly in two directions
-            //         return (context) => {
-            //             const worldScale = new THREE.Vector3();
-            //             context.getWorldScale(worldScale);
-
-            //             // the absolute values prevent an error that will cause the cylinder to disappear
-            //             // when the worldscale.z goes negative, it also flips the x scale to negative to prevent the cylinder from flipping horizontally
-            //             // but this means that worldScale.x + worldScale.y = 0 :(
-            //             // so making them abs will solve this
-            //             const uniformScale =
-            //                 (Math.abs(worldScale.x) + Math.abs(worldScale.y)) /
-            //                 2;
-            //             const localScale = context.scale;
-            //             context.scale.setX(
-            //                 (localScale.x / worldScale.x) * uniformScale
-            //             );
-            //             context.scale.setY(
-            //                 (localScale.y / worldScale.y) * uniformScale
-            //             );
-            //         };
-            //     default:
-            //         return;
-            // }
             return () => {};
         }
     }
@@ -118,6 +78,11 @@ export default class Link extends THREE.Mesh {
     }
     get color() {
         return this.material.color;
+    }
+
+    get scale() {
+        console.log("basic getter");
+        return this._scale;
     }
 
     set color(color) {
@@ -135,10 +100,9 @@ export default class Link extends THREE.Mesh {
         Object.values(this.customRenderBehaviors).forEach((behavior) =>
             behavior(this)
         );
-    
     };
 
     onAfterRender = () => {
         this.parent.updateInertia();
-    }
+    };
 }
