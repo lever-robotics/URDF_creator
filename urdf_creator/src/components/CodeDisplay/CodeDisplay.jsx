@@ -7,7 +7,7 @@ import "./CodeDisplay.css"; // Assuming you have a CSS file for this component
 /**
  * Displays buttons to determine with format the text representation of the scene should be displayed in as well as a text box containing the text
  * @param {Scene} scene The scene object
- * @param {string} projectTitle  
+ * @param {string} projectTitle
  * @returns Format buttons and a text box
  */
 export default function CodeDisplay({ scene, projectTitle }) {
@@ -60,10 +60,9 @@ export default function CodeDisplay({ scene, projectTitle }) {
 }
 
 /**
- * Contains the text representation of the scene object
- * @param {Scene} scene The scene object
+ * @param {Scene} scene
  * @param {string} projectTitle
- * @param {string} selectedFormat The format the text representation of the scene will be displayed in
+ * @param {string} selectedFormat
  * @returns A text box with syntax highlighting and text representation of the scene
  */
 function CodeBox({ scene, projectTitle, selectedFormat }) {
@@ -114,8 +113,7 @@ function CodeBox({ scene, projectTitle, selectedFormat }) {
 }
 
 /**
- * A tooltip meant to display below the mouse when the mouse clicks on the codebox
- * @param {*} mousePosition The x and y coords for the mouse
+ * @param {*} mousePosition
  * @returns JSX component that displays the text 'Copied!'
  */
 function Tooltip({ mousePosition }) {

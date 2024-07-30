@@ -1,6 +1,8 @@
-export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject, forceSceneUpdate) {
-    const { current: obj } = threeObjects;
-    if (!mountRef.current || obj.initialized) return;
+
+
+export default function setUpSceneMouse(threeScene, mountRef, mouseData) {
+    const { current: obj } = threeScene;
+    if (!mountRef.current) return;
 
     function clickObject(event) {
         const rect = mountRef.current.getBoundingClientRect();
@@ -19,9 +21,9 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
 
         if (shapes.length > 0) {
             const object = shapes[0].object.parent.parent;
-            selectObject(object);
+            // selectObject(object);
         } else if (meshes.length === 0) {
-            selectObject(null);
+            // selectObject(null);
         }
     }
 
@@ -30,7 +32,7 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
     }
 
     function onClick(event) {
-        clickObject(event);
+        // clickObject(event);
     }
 
     function onMouseUp(event) {
@@ -47,7 +49,7 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
             onClick(event);
         }
         mouseData.current.previousUpTime = Date.now();
-        forceSceneUpdate();
+        // forceSceneUpdate();
     }
 
     function onMouseDown(event) {

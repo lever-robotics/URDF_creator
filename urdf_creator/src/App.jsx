@@ -1,11 +1,11 @@
 import React, { StrictMode } from 'react';
-import SceneState from './components/SceneState';
+import ThreeDisplay from './components/ThreeDisplay/ThreeDisplay';
 
 const App = () => {
   return (
     // Taking strictmode off makes the scaling of meshes really jerky
     <StrictMode>
-      <SceneState />
+      <ThreeDisplay/>
     </StrictMode>
   );
 };

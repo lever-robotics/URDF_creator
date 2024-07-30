@@ -3,13 +3,25 @@ import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useRef, useState } from "react";
 
 // RecursiveTreeView Component
-export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, duplicateObject, getBaseLink }) => {
+export const LinkTree = ({
+    scene,
+    selectObject,
+    selectedObject,
+    deleteObject,
+    duplicateObject,
+    getBaseLink,
+}) => {
     const objectContextMenu = useRef(null);
-    const [objectContextMenuPosition, setUseObjectContextMenuPosition] = useState({ left: -1000, top: -10000 });
-    const [lastButtonObjectSelected, setLastButtonObjectSelected] = useState(null);
+    const [objectContextMenuPosition, setUseObjectContextMenuPosition] =
+        useState({ left: -1000, top: -10000 });
+    const [lastButtonObjectSelected, setLastButtonObjectSelected] =
+        useState(null);
 
     // this keeps the context menu from coming back on when a previously right clicked object that was unselected is selected again
-    if (lastButtonObjectSelected !== selectedObject && lastButtonObjectSelected) {
+    if (
+        lastButtonObjectSelected !== selectedObject &&
+        lastButtonObjectSelected
+    ) {
         setLastButtonObjectSelected(null);
     }
 
@@ -21,7 +33,7 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
         // Display the current node's data and recursively render its children
         return (
             <div style={{ marginLeft: "20px" }}>
-                {(
+                {
                     <button
                         className="tree-item"
                         onClick={() => {
@@ -35,12 +47,14 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
                             }
                             selectObject(node);
                             setLastButtonObjectSelected(node);
-                            setUseObjectContextMenuPosition({ left: e.clientX, top: e.clientY });
-                        }}
-                    >
+                            setUseObjectContextMenuPosition({
+                                left: e.clientX,
+                                top: e.clientY,
+                            });
+                        }}>
                         {node.name}
                     </button>
-                )}
+                }
                 {node.getChildren() && node.getChildren().length > 0 && (
                     <div>
                         {node
@@ -61,7 +75,10 @@ export const LinkTree = ({ scene, selectObject, selectedObject, deleteObject, du
     };
 
     return (
-        <div className="object-tree" onClick={hideContextMenu} onMouseLeave={hideContextMenu}>
+        <div
+            className="object-tree"
+            onClick={hideContextMenu}
+            onMouseLeave={hideContextMenu}>
             Object Tree
             <div className="scroll-box">{node && renderNode(node)}</div>
             {lastButtonObjectSelected === selectedObject && selectedObject && (

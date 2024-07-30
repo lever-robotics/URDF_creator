@@ -9,16 +9,7 @@ import SensorsParameters from "./Parameters/SensorParameters";
 import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 
-function ObjectParameters({
-    selectedObject,
-    transformObject,
-    setMass,
-    setJointType,
-    setInertia,
-    setSensor,
-    stateFunctions,
-    setMesh,
-}) {
+function ObjectParameters({ selectedObject, stateFunctions }) {
     if (!selectedObject) {
         return (
             <div className="object-parameters">

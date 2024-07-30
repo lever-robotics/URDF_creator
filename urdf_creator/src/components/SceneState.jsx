@@ -17,80 +17,45 @@ import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 
-export default function SceneState() {
-    // State for the ProjectManager
+export default function SceneState({ threeScene }) {
+
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
-    // Project Title
     const [projectTitle, setProjectTitle] = useState("robot");
-    // State to manage the currently selected object and its position
     const [selectedObject, setSelectedObject] = useState(null);
-    const [scene, setScene] = useState();
+    const manager = new urdfObjectManager();
+    const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
         cube: 0,
         sphere: 0,
         cylinder: 0,
     });
 
-    const manager = new urdfObjectManager();
-    // three objects contain all the objects needed for the threescene
-    //This data is only used for threescene
-    const threeObjects = useRef({
-        scene: null,
-        camera: null,
-        renderer: null,
-        orbitControls: null,
-        transformControls: null,
-        ambientLight: null,
-        directionalLight1: null,
-        directionalLight2: null,
-        pointLight: null,
-        raycaster: new THREE.Raycaster(),
-        mouse: new THREE.Vector2(),
-        initialized: false,
-        composer: null,
-        baseLink: null,
-    });
 
-    const mountRef = useRef(null);
-    const mouseData = useRef({
-        previousUpTime: null,
-        currentDownTime: null,
-        startPos: null,
-    });
+    
+    // Used by THREE.js
+    // const threeObjects = useRef({
+    //     scene: null,
+    //     camera: null,
+    //     renderer: null,
+    //     orbitControls: null,
+    //     transformControls: null,
+    //     ambientLight: null,
+    //     directionalLight1: null,
+    //     directionalLight2: null,
+    //     pointLight: null,
+    //     raycaster: new THREE.Raycaster(),
+    //     mouse: new THREE.Vector2(),
+    //     initialized: false,
+    //     composer: null,
+    //     baseLink: null,
+    // });
 
-    // Set up the scene (initialization)
-    useEffect(() => {
-        const { current: obj } = threeObjects;
-        if (!mountRef.current || obj.initialized) return;
+    
 
-        const setUpMouseCallback = setUpSceneMouse(
-            threeObjects,
-            mountRef,
-            mouseData,
-            selectObject,
-            forceSceneUpdate
-        );
-        const sceneCallback = initScene(threeObjects, mountRef);
-        setScene({ ...obj.scene });
 
-        const animate = () => {
-            requestAnimationFrame(animate);
-            obj.composer.render();
-            obj.orbitControls.update();
-            // forceSceneUpdate();
-        };
-
-        animate();
-
-        return () => {
-            sceneCallback();
-            setUpMouseCallback();
-        };
-    }, []);
 
     const addObject = (shape) => {
-        const { current: obj } = threeObjects;
-        if (!obj.scene) return;
+        if (!threeScene.scene) return;
 
         const newUrdfObject = manager.createUrdfObject({
             shape: shape,
@@ -104,14 +69,14 @@ export default function SceneState() {
 
         if (selectedObject !== null) {
             selectedObject.attach(newUrdfObject);
-        } else if (obj.baseLink !== null) {
-            obj.baseLink.attach(newUrdfObject);
+        } else if (threeScene.baseLink !== null) {
+            threeScene.baseLink.attach(newUrdfObject);
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
             newUrdfObject.setAsBaseLink(true);
             newUrdfObject.name = "base_link";
-            obj.baseLink = newUrdfObject;
-            obj.scene.attach(newUrdfObject);
+            threeScene.baseLink = newUrdfObject;
+            threeScene.scene.attach(newUrdfObject);
         }
         // newUrdfObject.updateInertia();
         forceSceneUpdate();
@@ -164,55 +129,49 @@ export default function SceneState() {
     };
 
     const forceSceneUpdate = () => {
-        const { current: obj } = threeObjects;
-        setScene({ ...obj.scene });
-        console.log(obj.scene);
+        setScene({ ...threeScene.scene });
+        console.log(threeScene.scene);
     };
 
     const setTransformMode = (mode, currentlySelectedObject) => {
-        const { current: obj } = threeObjects;
-        if (obj.transformControls) {
-            obj.transformControls.setMode(mode);
+        if (threeScene.transformControls) {
+            threeScene.transformControls.setMode(mode);
         }
 
         if (currentlySelectedObject) {
             currentlySelectedObject.attachTransformControls(
-                obj.transformControls
+                threeScene.transformControls
             );
         }
     };
 
     const startRotateJoint = (urdfObject) => {
-        const obj = threeObjects.current;
-        obj.transformControls.setMode("rotate");
-        urdfObject.rotateJoint(obj.transformControls);
+        threeScene.transformControls.setMode("rotate");
+        urdfObject.rotateJoint(threeScene.transformControls);
     };
 
     const startMoveJoint = (urdfObject) => {
-        const obj = threeObjects.current;
-        obj.transformControls.setMode("translate");
-        urdfObject.moveJoint(obj.transformControls);
+        threeScene.transformControls.setMode("translate");
+        urdfObject.moveJoint(threeScene.transformControls);
     };
 
     const reattachLink = (urdfObject) => {
-        const obj = threeObjects.current;
-        obj.transformControls.detach();
+        threeScene.transformControls.detach();
         urdfObject.reattachLink();
-    }
+    };
 
     const selectObject = (urdfObject) => {
-        const { current: obj } = threeObjects;
         if (!urdfObject) {
             setSelectedObject(null);
-            obj.transformControls.detach();
+            threeScene.transformControls.detach();
             return;
         }
         if (urdfObject.isSelectable()) {
             setSelectedObject(urdfObject);
-            urdfObject.attachTransformControls(obj.transformControls);
+            urdfObject.attachTransformControls(threeScene.transformControls);
         } else {
             setSelectedObject(null);
-            obj.transformControls.detach();
+            threeScene.transformControls.detach();
         }
     };
 
@@ -244,7 +203,7 @@ export default function SceneState() {
     const updateSensor = (urdfObject, name, value) => {
         urdfObject.sensor.update(name, value);
         forceSceneUpdate();
-    }
+    };
 
     const setJointType = (urdfObject, type) => {
         urdfObject.jointType = type;
@@ -253,7 +212,7 @@ export default function SceneState() {
 
     const setJointMinMax = (urdfObject, type, value) => {
         urdfObject[type] = value;
-    }
+    };
 
     const rotateAroundJointAxis = (urdfObject, angle) => {
         urdfObject.rotateAroundJointAxis(angle);
@@ -283,18 +242,18 @@ export default function SceneState() {
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
         const baseLink = createUrdfObject(base_link);
-        if (threeObjects.current.baseLink) {
-            threeObjects.current.baseLink.removeFromParent();
+        if (threeScene.baseLink) {
+            threeScene.baseLink.removeFromParent();
         }
-        threeObjects.current.scene.attach(baseLink);
-        threeObjects.current.baseLink = baseLink;
+        threeScene.scene.attach(baseLink);
+        threeScene.baseLink = baseLink;
         baseLink.setAsBaseLink = true;
         forceSceneUpdate();
         // createNewLink(threeObjects.current.scene, base_link);
     };
 
     const getScene = () => {
-        return threeObjects.current.scene;
+        return threeScene.scene;
     };
 
     const transformObject = (urdfObject, transformType, axis, value) => {
@@ -316,7 +275,7 @@ export default function SceneState() {
     };
 
     const getBaseLink = () => {
-        return threeObjects.current.baseLink;
+        return threeScene?.baseLink;
     };
 
     const openProjectManager = () => setIsProjectManagerOpen(true);
@@ -372,7 +331,6 @@ export default function SceneState() {
                 onClose={closeProjectManager}
                 handleProjectClick={handleProjectClick}
             />
-            <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">

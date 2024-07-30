@@ -5,144 +5,169 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 
 //For putting letters in the scene
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 
-export default function initScene(threeObjects, mountRef) {
-    const { current: obj } = threeObjects;
-    if (!mountRef.current || obj.initialized) return;
-
-    // Initialize the scene, camera, and renderer
-    obj.scene = new THREE.Scene();
-    obj.camera = new THREE.PerspectiveCamera(75, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
-    obj.camera.position.set(5, 5, 5);
-    obj.camera.up.set(0, 0, 1);
-
-    obj.renderer = new THREE.WebGLRenderer({ antialias: true });
-    obj.renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    mountRef.current.appendChild(obj.renderer.domElement);
-
-    // Initialize and configure OrbitControls
-    obj.orbitControls = new OrbitControls(obj.camera, obj.renderer.domElement);
-
-    // Initialize and configure TransformControls
-    obj.transformControls = new TransformControls(obj.camera, obj.renderer.domElement);
-    obj.scene.add(obj.transformControls);
-
-    // Disable orbit controls when transforming objects
-    obj.transformControls.addEventListener("dragging-changed", (event) => {
-        obj.orbitControls.enabled = !event.value;
-    });
-
-    // Add an ambient light to the scene
-    obj.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    obj.scene.add(obj.ambientLight);
-
-    // Add directional lights to the scene
-    obj.directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
-    obj.directionalLight1.position.set(5, 10, 7.5);
-    obj.scene.add(obj.directionalLight1);
-
-    obj.directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    obj.directionalLight2.position.set(-5, -10, -7.5);
-    obj.scene.add(obj.directionalLight2);
-
-    // Add a point light to the scene
-    obj.pointLight = new THREE.PointLight(0xffffff, 0.5);
-    obj.pointLight.position.set(0, 5, 0);
-    obj.scene.add(obj.pointLight);
-
-    // Add a grid helper to the scene
-    const gridHelper = new THREE.GridHelper(10, 10);
-    gridHelper.rotation.x = Math.PI / 2; // Rotate the grid to lie on the XY plane
-    obj.scene.add(gridHelper);
-
-    // Load font and create text meshes
-    const loader = new FontLoader();
-    loader.load(process.env.PUBLIC_URL + '/fonts/helvetiker_regular.typeface.json', function (font) {
-        const textMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); // Change color to blue
-
-        // Create the text geometry for X
-        const textGeometryX = new TextGeometry('X', {
-            font: font,
-            size: 0.1, // Make the text smaller
-            height: 0.02,
-            curveSegments: 12,
-            bevelEnabled: false,
-        });
-        const textMeshX = new THREE.Mesh(textGeometryX, textMaterial);
-        textMeshX.up.copy(new THREE.Vector3(0, 0, 1))
-        textMeshX.onBeforeRender = () => {
-            textMeshX.lookAt(obj.camera.position)
-        }
-        textMeshX.position.set(5, 0, 0);
-        obj.scene.add(textMeshX);
-
-        // Create the text geometry for Y
-        const textGeometryY = new TextGeometry('Y', {
-            font: font,
-            size: 0.1, // Make the text smaller
-            height: 0.02,
-            curveSegments: 12,
-            bevelEnabled: false,
-        });
-        const textMeshY = new THREE.Mesh(textGeometryY, textMaterial);
-        textMeshY.up.copy(new THREE.Vector3(0, 0, 1))
-        textMeshY.onBeforeRender = () => {
-            textMeshY.lookAt(obj.camera.position)
-        }
-        textMeshY.position.set(0, 5, 0);
-        obj.scene.add(textMeshY);
-
-        // Create the text geometry for Z
-        const textGeometryZ = new TextGeometry('Z', {
-            font: font,
-            size: 0.1, // Make the text smaller
-            height: 0.02,
-            curveSegments: 12,
-            bevelEnabled: false,
-        });
-        const textMeshZ = new THREE.Mesh(textGeometryZ, textMaterial);
-        textMeshZ.up.copy(new THREE.Vector3(0, 0, 1))
-        textMeshZ.onBeforeRender = () => {
-            textMeshZ.lookAt(obj.camera.position)
-        }
-        textMeshZ.position.set(0, 0, 5);
-        obj.scene.add(textMeshZ);
-
-        // Make text always face the camera
-        obj.updateTextRotation = () => {
-            textMeshX.lookAt(obj.camera.position);
-            textMeshY.lookAt(obj.camera.position);
-            textMeshZ.lookAt(obj.camera.position);
+class ThreeScene {
+    constructor(mountRef) {
+        this.mountRef = mountRef;
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(
+            75,
+            mountRef.current.clientWidth / mountRef.current.clientHeight,
+            0.1,
+            1000
+        );
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.orbitControls = new OrbitControls(
+            this.camera,
+            this.renderer.domElement
+        );
+        this.transformControls = new TransformControls(
+            this.camera,
+            this.renderer.domElement
+        );
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        this.directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
+        this.directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
+        this.pointLight = new THREE.PointLight(0xffffff, 0.5);
+        this.gridHelper = new THREE.GridHelper(10, 10);
+        this.fontLoader = new FontLoader();
+        this.axesHelper = new THREE.AxesHelper(50);
+        this.composer = new EffectComposer(this.renderer);
+        this.renderPass = new RenderPass(this.scene, this.camera);
+        this.background = new THREE.TextureLoader().load(
+            "../../textures/blue.png"
+        );
+        this.callback = () => {
+            this.orbitControls.dispose();
+            this.transformControls.dispose();
+            this.renderer.dispose();
+            this.scene.clear();
+            if (mountRef.current) {
+                mountRef.current.removeChild(this.renderer.domElement);
+            }
+            this.initialized = false;
         };
+        this.baseLink = null;
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+    }
+
+    //double back and add everything
+    //Add event listeners
+    addToScene(objects) {
+        objects.forEach((object) => {
+            this.scene.add(object);
+        });
+    }
+
+    setupCamera() {
+        this.camera.position.set(5, 5, 5);
+        this.camera.up.set(0, 0, 1);
+        return this;
+    }
+
+    setupRenderer() {
+        this.renderer.setSize(
+            this.mountRef.current.clientWidth,
+            this.mountRef.current.clientHeight
+        );
+        this.mountRef.current.appendChild(this.renderer.domElement);
+        return this;
+    }
+
+    setupLights() {
+        this.directionalLight1.position.set(5, 10, 7.5);
+        this.directionalLight2.position.set(-5, -10, -7.5);
+        this.pointLight.position.set(0, 5, 0);
+        return this;
+    }
+
+    setupGridHelper() {
+        this.gridHelper.rotation.x = Math.PI / 2;
+        return this;
+    }
+
+    setupFont() {
+        const obj = this;
+        this.fontLoader.load(
+            process.env.PUBLIC_URL + "/fonts/helvetiker_regular.typeface.json",
+            (font) => {
+                const textMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                }); // Change color to blue
+
+                const textGemetry = (title, position) => {
+                    const textGeo = new TextGeometry(title, {
+                        font: font,
+                        size: 0.1, // Make the text smaller
+                        height: 0.02,
+                        curveSegments: 12,
+                        bevelEnabled: false,
+                    });
+                    const textMesh = new THREE.Mesh(textGeo, textMaterial);
+                    textMesh.up.copy(new THREE.Vector3(0, 0, 1));
+                    textMesh.position.set(...position);
+                    textMesh.onBeforeRender = () => {
+                        textMesh.lookAt(obj.camera.position);
+                    };
+                    return textMesh;
+                };
+
+                const textMeshX = textGemetry("X", [5, 0, 0]);
+                const textMeshY = textGemetry("Y", [0, 5, 0]);
+                const textMeshZ = textGemetry("Z", [0, 0, 5]);
+
+                obj.scene.add(textMeshX);
+                obj.scene.add(textMeshY);
+                obj.scene.add(textMeshZ);
+
+                // Make text always face the camera
+                obj.updateTextRotation = () => {
+                    textMeshX.lookAt(obj.camera.position);
+                    textMeshY.lookAt(obj.camera.position);
+                    textMeshZ.lookAt(obj.camera.position);
+                };
+            }
+        );
+        return this;
+    }
+
+    setupComposer() {
+        this.composer.addPass(this.renderPass);
+        return this;
+    }
+}
+
+export default function InitScene(mountRef) {
+    const three = new ThreeScene(mountRef);
+
+    three
+        .setupCamera()
+        .setupRenderer()
+        .setupLights()
+        .setupGridHelper()
+        .setupFont()
+        .setupComposer();
+
+    three.addToScene([
+        three.transformControls,
+        three.ambientLight,
+        three.directionalLight1,
+        three.directionalLight2,
+        three.pointLight,
+        three.gridHelper,
+        three.axesHelper,
+    ]);
+
+    three.transformControls.addEventListener("dragging-changed", (event) => {
+        three.orbitControls.enabled = !event.value;
     });
 
-    // Add an axes helper
-    const axesHelper = new THREE.AxesHelper(50);  // Length of the axes
-    obj.scene.add(axesHelper);
+    three.scene.background = three.background;
 
-    // Setup Effect Composer for post-processing
-    obj.composer = new EffectComposer(obj.renderer);
-    const renderPass = new RenderPass(obj.scene, obj.camera);
-    obj.composer.addPass(renderPass);
+    three.initialized = true;
 
-    // Load and apply background gradient
-    const background = new THREE.TextureLoader().load("../../textures/blue.png");
-    obj.scene.background = background;
-
-    obj.initialized = true;
-
-    const callback = () => {
-        obj.orbitControls.dispose();
-        obj.transformControls.dispose();
-        obj.renderer.dispose();
-        obj.scene.clear();
-        if (mountRef.current) {
-            mountRef.current.removeChild(obj.renderer.domElement);
-        }
-        obj.initialized = false;
-    };
-
-    return callback;
+    return three;
 }
