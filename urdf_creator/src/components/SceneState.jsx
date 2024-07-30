@@ -274,8 +274,8 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const setMesh = (urdfObject, mesh) => {
-        urdfObject.setMesh(mesh);
+    const setMesh = (urdfObject, meshFileName) => {
+        urdfObject.setMesh(meshFileName);
         forceSceneUpdate();
     };
 

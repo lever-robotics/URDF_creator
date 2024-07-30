@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ToggleSection from "../ToggleSection";
 import IMUParameters from "../Sensors/IMUParameters";
 import CameraParameters from "../Sensors/CameraParameters";
 import LidarParameters from "../Sensors/LidarParameters";
@@ -13,7 +14,7 @@ function SensorsParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <div>
+        <ToggleSection title="Sensor Parameters">
             <strong>Sensor Type:</strong>
             <select value={selectedObject.sensorType} onChange={handleSensorTypeChange}>
                 <option value="">Not a Sensor</option>
@@ -26,7 +27,7 @@ function SensorsParameters({ selectedObject, stateFunctions }) {
                 selectedObject={selectedObject}
                 stateFunctions={stateFunctions}
             />
-        </div>
+        </ToggleSection>
     );
 }
 

@@ -1,40 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { openDB } from 'idb';
+import React, { useState, useEffect } from "react";
+import ToggleSection from "../ToggleSection";
+import { openDB } from "idb";
 
-function MeshParameters({ selectedObject, setMesh }) {
-    const [mesh, setMeshTemp] = useState("");
+function MeshParameters({ selectedObject, stateFunctions }) {
     const [files, setFiles] = useState([]);
 
-    useEffect(() => {
-        if (selectedObject) {
-            setMeshTemp(selectedObject.stlfile || "");
-        }
-    }, [selectedObject]);
-
     const handleMeshChange = (e) => {
-        setMeshTemp(e.target.value);
-        setMesh(selectedObject, e.target.value);
+        stateFunctions.setMesh(selectedObject, e.target.value);
     };
 
     useEffect(() => {
         const getFiles = async () => {
-            const db = await openDB('stlFilesDB', 1);
-            const files = await db.getAll('files');
+            const db = await openDB("stlFilesDB", 1);
+            const files = await db.getAll("files");
             setFiles(files);
         };
-        getFiles();
+        try{
+            // If I don't have the DB created then this crashes the program. Can we build some error checking into this so even if no STL files are uploaded the program works?
+            
+            // getFiles();
+        }
+        catch (error) {
+            console.error(error);
+        }
     }, []);
 
     return (
-        <div>
+        <ToggleSection title="Mesh Parameters">
             <strong>Mesh (only for visual):</strong>
-            <select value={mesh} onChange={handleMeshChange}>
+            <select value={selectedObject.mesh} onChange={handleMeshChange}>
                 <option value="">No Mesh</option>
-                {files.map(file => (
-                    <option key={file.name} value={file.name}>{file.name}</option>
+                {files.map((file) => (
+                    <option key={file.name} value={file.name}>
+                        {file.name}
+                    </option>
                 ))}
             </select>
-        </div>
+        </ToggleSection>
     );
 }
 

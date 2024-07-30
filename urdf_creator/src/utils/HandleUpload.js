@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
-import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
+import { ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
 
 export async function handleUpload(file, type) {
     const fileText = await readFile(file);
@@ -11,21 +11,21 @@ export async function handleUpload(file, type) {
 
 function loadFileToObject(fileText, type) {
     const whichLoader = (type) => {
-        if (type === 'xml') {
+        if (type === "xml") {
             //Unsupported
-        } else if (type === 'urdf') {
+        } else if (type === "urdf") {
             //Unsupported
             //return XMLtoScene(e.target.result);
-        } else if (type === 'gltf') {
+        } else if (type === "gltf") {
             return new GLTFLoader();
-        } else if (type === 'json') {
+        } else if (type === "json") {
             // uses parse differently
             // return new THREE.ObjectLoader();
         }
     };
     const loader = whichLoader(type);
     return new Promise((resolve, reject) => {
-        loader.parse(fileText, '', (obj) => {
+        loader.parse(fileText, "", (obj) => {
             resolve(obj);
         });
     });
@@ -39,10 +39,10 @@ function readFile(file) {
         };
         reader.onerror = reject;
         reader.readAsText(file);
-    }) 
-  } 
+    });
+}
 
-export async function handleProject(path){
+export async function handleProject(path) {
     const loader = new GLTFLoader();
     return new Promise((resolve, reject) => {
         loader.load(path, (obj) => {

@@ -52,25 +52,19 @@ function ObjectParameters({
                 stateFunctions={stateFunctions}
             />
             {!selectedObject.isBaseLink && (
-                <ToggleSection title="Joint Parameters">
-                    <JointParameters
-                        selectedObject={selectedObject}
-                        stateFunctions={stateFunctions}
-                    />
-                </ToggleSection>
-            )}
-            <ToggleSection title="Sensor Parameters">
-                <SensorsParameters
+                <JointParameters
                     selectedObject={selectedObject}
                     stateFunctions={stateFunctions}
                 />
-            </ToggleSection>
-            <ToggleSection title="Mesh Parameters">
-                <MeshParameters
-                    selectedObject={selectedObject}
-                    setMesh={setMesh}
-                />
-            </ToggleSection>
+            )}
+            <SensorsParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <MeshParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
         </div>
     );
 }

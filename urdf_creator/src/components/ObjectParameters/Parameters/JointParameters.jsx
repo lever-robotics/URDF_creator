@@ -1,4 +1,5 @@
 import Slider from "@mui/material/Slider";
+import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
 export default function JointParameters({ selectedObject, stateFunctions }) {
@@ -55,7 +56,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     }
 
     return (
-        <div>
+        <ToggleSection title="Joint Parameters">
             <strong>Joint Information:</strong>
             <div>
                 <strong>Parent Link:</strong>
@@ -114,6 +115,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                     />
                 </>
             )}
-        </div>
+        </ToggleSection>
     );
 }
