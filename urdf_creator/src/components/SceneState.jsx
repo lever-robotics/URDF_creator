@@ -30,6 +30,42 @@ export default function SceneState({ threeScene }) {
         cylinder: 0,
     });
 
+    useEffect(() => {
+        if(threeScene.current){
+            threeScene.current.mouse.addOnClickFunctions(clickObject);
+        }
+    },[]);
+
+
+    function clickObject(event) {
+        const three = threeScene.current;
+        const rect = three.mountRef.current.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        three.mouse.x = (x / rect.width) * 2 - 1;
+        three.mouse.y = -(y / rect.height) * 2 + 1;
+
+        three.raycaster.setFromCamera(three.mouse, three.camera);
+        const intersects = three.raycaster.intersectObjects(three.scene.children);
+
+        const shapes = intersects.filter(
+            (collision) => collision.object.isShape
+        );
+        const meshes = intersects.filter(
+            (collision) => collision.object.type === "Mesh"
+        );
+        console.log(meshes, shapes);
+
+        if (shapes.length > 0) {
+            const object = shapes[0].object.parent.parent;
+            selectObject(object);
+        } else if (meshes.length === 0) {
+            selectObject(null);
+        }
+    }
+    
+
 
     
     // Used by THREE.js
@@ -55,7 +91,9 @@ export default function SceneState({ threeScene }) {
 
 
     const addObject = (shape) => {
-        if (!threeScene.scene) return;
+        console.log("addObject");
+        const three = threeScene.current;
+        if (!three.scene) return;
 
         const newUrdfObject = manager.createUrdfObject({
             shape: shape,
@@ -69,14 +107,14 @@ export default function SceneState({ threeScene }) {
 
         if (selectedObject !== null) {
             selectedObject.attach(newUrdfObject);
-        } else if (threeScene.baseLink !== null) {
-            threeScene.baseLink.attach(newUrdfObject);
+        } else if (three.baseLink !== null) {
+            three.baseLink.attach(newUrdfObject);
         } else {
             newUrdfObject.setPosition([0, 0, 0.5]);
             newUrdfObject.setAsBaseLink(true);
             newUrdfObject.name = "base_link";
-            threeScene.baseLink = newUrdfObject;
-            threeScene.scene.attach(newUrdfObject);
+            three.baseLink = newUrdfObject;
+            three.scene.attach(newUrdfObject);
         }
         // newUrdfObject.updateInertia();
         forceSceneUpdate();
@@ -129,49 +167,54 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceSceneUpdate = () => {
-        setScene({ ...threeScene.scene });
+        setScene({ ...threeScene.current.scene });
         console.log(threeScene.scene);
     };
 
     const setTransformMode = (mode, currentlySelectedObject) => {
-        if (threeScene.transformControls) {
-            threeScene.transformControls.setMode(mode);
+        const three = threeScene.current;
+        if (three.transformControls) {
+            three.transformControls.setMode(mode);
         }
 
         if (currentlySelectedObject) {
             currentlySelectedObject.attachTransformControls(
-                threeScene.transformControls
+                three.transformControls
             );
         }
     };
 
     const startRotateJoint = (urdfObject) => {
-        threeScene.transformControls.setMode("rotate");
-        urdfObject.rotateJoint(threeScene.transformControls);
+        const { current: three } = threeScene;
+        three.transformControls.setMode("rotate");
+        urdfObject.rotateJoint(three.transformControls);
     };
 
     const startMoveJoint = (urdfObject) => {
-        threeScene.transformControls.setMode("translate");
-        urdfObject.moveJoint(threeScene.transformControls);
+        const { current: three } = threeScene;
+        three.transformControls.setMode("translate");
+        urdfObject.moveJoint(three.transformControls);
     };
 
     const reattachLink = (urdfObject) => {
-        threeScene.transformControls.detach();
+        const { current: three } = threeScene;
+        three.transformControls.detach();
         urdfObject.reattachLink();
     };
 
     const selectObject = (urdfObject) => {
+        const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
-            threeScene.transformControls.detach();
+            three.transformControls.detach();
             return;
         }
         if (urdfObject.isSelectable()) {
             setSelectedObject(urdfObject);
-            urdfObject.attachTransformControls(threeScene.transformControls);
+            urdfObject.attachTransformControls(three.transformControls);
         } else {
             setSelectedObject(null);
-            threeScene.transformControls.detach();
+            three.transformControls.detach();
         }
     };
 
@@ -241,19 +284,21 @@ export default function SceneState({ threeScene }) {
     // Loads a scene from gltf
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
+        const { current: three } = threeScene;
         const baseLink = createUrdfObject(base_link);
-        if (threeScene.baseLink) {
-            threeScene.baseLink.removeFromParent();
+        if (three.baseLink) {
+            three.baseLink.removeFromParent();
         }
-        threeScene.scene.attach(baseLink);
-        threeScene.baseLink = baseLink;
+        three.scene.attach(baseLink);
+        three.baseLink = baseLink;
         baseLink.setAsBaseLink = true;
         forceSceneUpdate();
         // createNewLink(threeObjects.current.scene, base_link);
     };
 
     const getScene = () => {
-        return threeScene.scene;
+        const { current: three } = threeScene;
+        return three.scene;
     };
 
     const transformObject = (urdfObject, transformType, axis, value) => {
@@ -275,7 +320,8 @@ export default function SceneState({ threeScene }) {
     };
 
     const getBaseLink = () => {
-        return threeScene?.baseLink;
+        const { current: three } = threeScene;
+        return three?.baseLink;
     };
 
     const openProjectManager = () => setIsProjectManagerOpen(true);

@@ -1,72 +1,88 @@
+export class Mouse {
+    constructor(mountRef) {
+        this.mountRef = mountRef.current;
+        this.eventFunctions = [
+            { type: "pointerdown", func: this.onMouseDown.bind(this) },
+            { type: "pointerup", func: this.onMouseUp.bind(this) },
+        ];
+        this.previousUpTime = null;
+        this.currentDownTime = null;
+        this.startPos = null;
 
+        this.onClickFunctions = [];
+        this.onDoubleClickFunctions = [];
 
-export default function setUpSceneMouse(threeScene, mountRef, mouseData) {
-    const { current: obj } = threeScene;
-    if (!mountRef.current) return;
+        
+    }
 
-    function clickObject(event) {
-        const rect = mountRef.current.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-
-        obj.mouse.x = (x / rect.width) * 2 - 1;
-        obj.mouse.y = -(y / rect.height) * 2 + 1;
-
-        obj.raycaster.setFromCamera(obj.mouse, obj.camera);
-        const intersects = obj.raycaster.intersectObjects(obj.scene.children);
-
-        const shapes = intersects.filter((collision) => collision.object.isShape);
-        const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
-        console.log(meshes, shapes);
-
-        if (shapes.length > 0) {
-            const object = shapes[0].object.parent.parent;
-            // selectObject(object);
-        } else if (meshes.length === 0) {
-            // selectObject(null);
+    addListeners(){
+        if(this.mountRef){
+            this.eventFunctions.forEach((event) => {
+                this.mountRef.addEventListener(event.type, event.func);
+            });
         }
     }
 
-    function onDoubleClick(event) {
-        // Handle double click event if needed
+    callback() {
+        if(this){
+            if (this.mountRef) {
+                this.eventFunctions.forEach((event) => {
+                    this.mountRef.removeEventListener(event.type, event.func);
+                });
+            }
+        }
     }
 
-    function onClick(event) {
-        // clickObject(event);
+    onMouseDown(event) {
+        if(event.target.localName !== "canvas") return;
+        event.preventDefault();
+        this.currentDownTime = Date.now();
+        this.startPos = [event.clientX, event.clientY];
     }
 
-    function onMouseUp(event) {
+    onMouseUp(event) {
+        if(event.target.localName !== "canvas") return;
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;
         const endPos = [event.clientX, event.clientY];
 
-        if (Math.sqrt((endPos[0] - mouseData.current.startPos[0]) ** 2 + (endPos[1] - mouseData.current.startPos[1]) ** 2) > dragThreshold) {
+        if (
+            Math.sqrt(
+                (endPos[0] - this.startPos[0]) ** 2 +
+                    (endPos[1] - this.startPos[1]) ** 2
+            ) > dragThreshold
+        ) {
             // Do nothing if dragged
-        } else if (mouseData.current.currentDownTime - mouseData.current.previousUpTime < clickTime && Date.now() - mouseData.current.currentDownTime < clickTime) {
-            onDoubleClick(event);
-        } else if (Date.now() - mouseData.current.currentDownTime < clickTime) {
-            onClick(event);
+        } else if (
+            this.currentDownTime - this.previousUpTime < clickTime &&
+            Date.now() - this.currentDownTime < clickTime
+        ) {
+            this.onDoubleClick(event);
+        } else if (Date.now() - this.currentDownTime < clickTime) {
+            this.onClick(event);
         }
-        mouseData.current.previousUpTime = Date.now();
-        // forceSceneUpdate();
+        this.previousUpTime = Date.now();
     }
 
-    function onMouseDown(event) {
-        event.preventDefault();
-        mouseData.current.currentDownTime = Date.now();
-        mouseData.current.startPos = [event.clientX, event.clientY];
+    onDoubleClick(event) {
+        this.onDoubleClickFunctions.forEach((func) => {
+            func(event);
+        })
     }
 
-    mountRef.current.addEventListener("pointerdown", onMouseDown);
-    mountRef.current.addEventListener("pointerup", onMouseUp);
+    addOnDoubleClickFunctions(func){
+        this.onDoubleClickFunctions.push(func);
+    }
 
-    const callback = () => {
-        if (mountRef.current) {
-            mountRef.current.removeEventListener("pointerdown", onMouseDown);
-            mountRef.current.removeEventListener("pointerup", onMouseUp);
-        }
-    };
+    addOnClickFunctions(func){
+        this.onClickFunctions.push(func);
+    }
 
-    return callback;
+    onClick(event) {
+        console.log(this.onClickFunctions);
+        this.onClickFunctions.forEach((func) => {
+            func(event);
+        })
+    }
 }

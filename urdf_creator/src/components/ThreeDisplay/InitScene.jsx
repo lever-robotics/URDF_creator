@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { Mouse } from "./SetUpMouse";
 
 //For putting letters in the scene
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
@@ -18,11 +19,15 @@ class ThreeScene {
             0.1,
             1000
         );
+        this.camera.position.set(5,5,5);
+        this.camera.up.set(0,0,1);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.orbitControls = new OrbitControls(
             this.camera,
             this.renderer.domElement
         );
+        // this.orbitControls.rotateSpeed = -1;
+        // this.orbitControls.panSpeed = -1;
         this.transformControls = new TransformControls(
             this.camera,
             this.renderer.domElement
@@ -51,7 +56,8 @@ class ThreeScene {
         };
         this.baseLink = null;
         this.raycaster = new THREE.Raycaster();
-        this.mouse = new THREE.Vector2();
+        this.mouse = new Mouse(this.mountRef);
+        this.mouse.addListeners();
     }
 
     //double back and add everything

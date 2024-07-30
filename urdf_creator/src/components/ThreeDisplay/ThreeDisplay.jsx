@@ -22,11 +22,7 @@ function ThreeDisplay() {
             startPos: null,
         };
 
-        const setUpMouseCallback = setUpSceneMouse(
-            threeScene,
-            mountRef,
-            mouseData
-        );
+        const setUpMouseCallback = three.mouse.callback;
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -47,7 +43,7 @@ function ThreeDisplay() {
             className="display"
             ref={mountRef}
             style={{ width: "100%", height: "100%" }}>
-            {/* <SceneState threeScene={threeScene.current}/> */}
+            <SceneState threeScene={threeScene}/>
         </div>
     );
 }
