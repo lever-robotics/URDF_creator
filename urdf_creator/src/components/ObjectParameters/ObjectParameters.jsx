@@ -43,12 +43,10 @@ function ObjectParameters({
                 selectedObject={selectedObject}
                 stateFunctions={stateFunctions}
             />
-            <ToggleSection title="Scale">
-                <ScaleParameters
-                    selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
-                />
-            </ToggleSection>
+            <ScaleParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
             <InertiaParameters
                 selectedObject={selectedObject}
                 stateFunctions={stateFunctions}
@@ -57,7 +55,6 @@ function ObjectParameters({
                 <ToggleSection title="Joint Parameters">
                     <JointParameters
                         selectedObject={selectedObject}
-                        setJoint={setJointType}
                         stateFunctions={stateFunctions}
                     />
                 </ToggleSection>

@@ -34,9 +34,10 @@ export default class urdfObjectManager {
         const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointMin, ps.jointMax);
 
         const urdfobject = new urdfObject(ps.position, ps.rotation, ps.name);
-        urdfobject.link = link;
-        urdfobject.add(link);
+        joint.link = link;
+        joint.add(link);
         urdfobject.joint = joint;
+        urdfobject.link = link;
         urdfobject.add(joint);
 
         const inertia = new Inertia();

@@ -7,6 +7,7 @@ export default class Link extends THREE.Mesh {
 
         this.position.set(...offset); // The offset from the joint
 
+
         this.scale.set(...scale);
         this._scale = new ScaleVector(shape, ...scale);
         this.shape = shape;
@@ -73,9 +74,6 @@ export default class Link extends THREE.Mesh {
         }
     }
 
-    set offset(offset) {
-        this.position.set(...offset);
-    }
     get color() {
         return this.material.color;
     }
@@ -103,6 +101,6 @@ export default class Link extends THREE.Mesh {
     };
 
     onAfterRender = () => {
-        this.parent.updateInertia();
+        this.parent.parent.updateInertia();
     };
 }

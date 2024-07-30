@@ -47,7 +47,6 @@ export default function SceneState() {
         initialized: false,
         composer: null,
         baseLink: null,
-        currentOffsetChangeNode: null,
     });
 
     const mountRef = useRef(null);
@@ -62,7 +61,13 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!mountRef.current || obj.initialized) return;
 
-        const setUpMouseCallback = setUpSceneMouse(threeObjects, mountRef, mouseData, selectObject, forceSceneUpdate);
+        const setUpMouseCallback = setUpSceneMouse(
+            threeObjects,
+            mountRef,
+            mouseData,
+            selectObject,
+            forceSceneUpdate
+        );
         const sceneCallback = initScene(threeObjects, mountRef);
         setScene({ ...obj.scene });
 
@@ -88,7 +93,7 @@ export default function SceneState() {
         const manager = new urdfObjectManager();
         const newUrdfObject = manager.createUrdfObject({
             shape: shape,
-            name: shape + (numShapes[shape] + 1).toString()
+            name: shape + (numShapes[shape] + 1).toString(),
         });
 
         // const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
@@ -112,8 +117,14 @@ export default function SceneState() {
     };
 
     const createUrdfObject = (gltfObject) => {
-        const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
-        const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
+        const shimmy =
+            gltfObject.children[0] === THREE.Line
+                ? gltfObject.children[0]
+                : gltfObject.children[1];
+        const joint =
+            gltfObject.children[0] === THREE.Line
+                ? gltfObject.children[1]
+                : gltfObject.children[0];
         const link = shimmy.children[0];
         const linkChildren = link.children;
         const mesh = linkChildren.find((obj) => obj.type === "Mesh");
@@ -123,7 +134,7 @@ export default function SceneState() {
             scale: mesh.scale,
             offset: link.position,
             jointAxis: {
-                type: joint.userData?.jointType ?? 'fixed',
+                type: joint.userData?.jointType ?? "fixed",
                 axis: joint.position,
                 origin: [0, 0, 0], // Not sure how to do this
                 name: joint.name,
@@ -164,45 +175,32 @@ export default function SceneState() {
         }
 
         if (currentlySelectedObject) {
-            currentlySelectedObject.attachTransformControls(obj.transformControls);
+            currentlySelectedObject.attachTransformControls(
+                obj.transformControls
+            );
         }
     };
 
     const startRotateJoint = (urdfObject) => {
-        const { current: obj } = threeObjects;
+        const obj = threeObjects.current;
         obj.transformControls.setMode("rotate");
         urdfObject.rotateJoint(obj.transformControls);
     };
 
     const startMoveJoint = (urdfObject) => {
-        const { current: obj } = threeObjects;
-        urdfObject.clearShimmy();
+        const obj = threeObjects.current;
         obj.transformControls.setMode("translate");
-        urdfObject.attachTransformControls(obj.transformControls);
-        const worldPosition = urdfObject.linkWorldPosition();
-
-        const lockPosition = () => {
-            const currentPosition = urdfObject.linkWorldPosition();
-            if (!worldPosition.equals(currentPosition)) {
-                urdfObject.setGlobalPosition(worldPosition);
-                forceSceneUpdate();
-            }
-        };
-
-        urdfObject.addCustomRenderBehavior("lockPosition", lockPosition);
-        obj.currentOffsetChangeNode = urdfObject;
+        urdfObject.moveJoint(obj.transformControls);
     };
 
-    const unlockCurrentOffsetChangeNode = () => {
-        const { current: obj } = threeObjects;
-        if (!obj.currentOffsetChangeNode) return;
-        obj.currentOffsetChangeNode.clearCustomRenderBehavior('lockPosition');
-        obj.currentOffsetChangeNode = null;
-    };
+    const reattachLink = (urdfObject) => {
+        const obj = threeObjects.current;
+        obj.transformControls.detach();
+        urdfObject.reattachLink();
+    }
 
     const selectObject = (urdfObject) => {
         const { current: obj } = threeObjects;
-        unlockCurrentOffsetChangeNode();
         if (!urdfObject) {
             setSelectedObject(null);
             obj.transformControls.detach();
@@ -225,7 +223,7 @@ export default function SceneState() {
     const setLinkName = (urdfObject, name) => {
         urdfObject.name = name;
         forceSceneUpdate();
-    }
+    };
 
     const setMass = (urdfObject, mass) => {
         urdfObject.updateMass(mass);
@@ -243,21 +241,44 @@ export default function SceneState() {
     };
 
     const setJointType = (urdfObject, type) => {
-        urdfObject.setJointType(type);
+        urdfObject.jointType = type;
+        forceSceneUpdate();
+    };
+
+    const setJointMinMax = (urdfObject, type, value) => {
+        urdfObject[type] = value;
+    }
+
+    const rotateAroundJointAxis = (urdfObject, angle) => {
+        urdfObject.rotateAroundJointAxis(angle);
+        forceSceneUpdate();
+    };
+
+    const translateAlongJointAxis = (urdfObject, distance) => {
+        urdfObject.translateAlongJointAxis(distance);
+        forceSceneUpdate();
+    };
+
+    const saveForDisplayChanges = (urdfObject) => {
+        urdfObject.saveForDisplayChanges();
+    };
+
+    const resetFromDisplayChanges = (urdfObject) => {
+        urdfObject.resetFromDisplayChanges();
         forceSceneUpdate();
     };
 
     const setMesh = (urdfObject, mesh) => {
         urdfObject.setMesh(mesh);
         forceSceneUpdate();
-    }
+    };
 
     // Loads a scene from gltf
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
         const baseLink = createUrdfObject(base_link);
         if (threeObjects.current.baseLink) {
-            threeObjects.current.baseLink.removeFromParent()
+            threeObjects.current.baseLink.removeFromParent();
         }
         threeObjects.current.scene.attach(baseLink);
         threeObjects.current.baseLink = baseLink;
@@ -312,6 +333,7 @@ export default function SceneState() {
         setTransformMode,
         startRotateJoint,
         startMoveJoint,
+        reattachLink,
         selectObject,
         setLinkColor,
         setLinkName,
@@ -319,6 +341,11 @@ export default function SceneState() {
         setInertia,
         setSensor,
         setJointType,
+        saveForDisplayChanges,
+        resetFromDisplayChanges,
+        translateAlongJointAxis,
+        rotateAroundJointAxis,
+        setJointMinMax,
         loadScene,
         getScene,
         transformObject,
@@ -328,13 +355,16 @@ export default function SceneState() {
         openProjectManager,
         closeProjectManager,
         changeProjectTitle,
-        unlockCurrentOffsetChangeNode,
         handleProjectClick,
     };
 
     return (
         <div className="screen">
-            <ProjectModal isOpen={isProjectManagerOpen} onClose={closeProjectManager} handleProjectClick={handleProjectClick}/>
+            <ProjectModal
+                isOpen={isProjectManagerOpen}
+                onClose={closeProjectManager}
+                handleProjectClick={handleProjectClick}
+            />
             <ThreeDisplay mountRef={mountRef} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
@@ -347,10 +377,20 @@ export default function SceneState() {
                             loadScene={loadScene}
                             getScene={getScene}
                         />
-                        <LinkTree scene={scene} deleteObject={deleteObject} duplicateObject={duplicateObject} selectedObject={selectedObject} selectObject={selectObject} getBaseLink={getBaseLink} />
+                        <LinkTree
+                            scene={scene}
+                            deleteObject={deleteObject}
+                            duplicateObject={duplicateObject}
+                            selectedObject={selectedObject}
+                            selectObject={selectObject}
+                            getBaseLink={getBaseLink}
+                        />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar setTransformMode={setTransformMode} selectedObject={selectedObject} />
+                    <Toolbar
+                        setTransformMode={setTransformMode}
+                        selectedObject={selectedObject}
+                    />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters
                             selectedObject={selectedObject}
@@ -362,7 +402,10 @@ export default function SceneState() {
                             stateFunctions={stateFunctions}
                             setMesh={setMesh}
                         />
-                        <CodeDisplay scene={scene} projectTitle={projectTitle}/>
+                        <CodeDisplay
+                            scene={scene}
+                            projectTitle={projectTitle}
+                        />
                     </Column>
                 </Row>
             </AbsolutePosition>

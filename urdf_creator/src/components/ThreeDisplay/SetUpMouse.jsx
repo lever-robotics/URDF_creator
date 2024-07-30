@@ -18,7 +18,7 @@ export default function setUpSceneMouse(threeObjects, mountRef, mouseData, selec
         console.log(meshes, shapes);
 
         if (shapes.length > 0) {
-            const object = shapes[0].object.parent;
+            const object = shapes[0].object.parent.parent;
             selectObject(object);
         } else if (meshes.length === 0) {
             selectObject(null);

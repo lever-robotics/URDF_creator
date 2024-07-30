@@ -11,6 +11,7 @@ export default class urdfObject extends THREE.Object3D {
 
         this.urdfObject = true;
         this.position.set(...origin);
+
         this.rotation.set(...rotation);
 
         this.name = name;
@@ -57,6 +58,34 @@ export default class urdfObject extends THREE.Object3D {
         this.inertia = inertia;
         this.inertia.customInertia = true;
     };
+
+    get parentName() {
+        return this.parent.name;
+    }
+
+    get jointType() {
+        return this.joint.type;
+    }
+
+    set jointType(type) {
+        this.joint.type = type;
+    }
+
+    get min() {
+        return this.joint.min;
+    }
+
+    set min(value) {
+        this.joint.min = value;
+    }
+
+    get max() {
+        return this.joint.max;
+    }
+
+    set max(value) {
+        this.joint.max = value;
+    }
 
     set mass(mass) {
         this.inertia.updateMass(mass, this);
@@ -113,32 +142,49 @@ export default class urdfObject extends THREE.Object3D {
     //     return duplicated;
     // }
 
-    // Rotate the joint axis (which is stored in the Shimmy object)
-    // setJointAxisRotation = (angle) => {
-    //     const quaternion = new THREE.Quaternion();
-    //     // a quaternion is basically how to get from one rotation to another
-    //     // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-    //     quaternion.setFromEuler(this.joint.rotation);
-    //     // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-    //     // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-    //     const newAxis = new THREE.Vector3(...this.joint.axis).applyQuaternion(quaternion);
-    //     // the shimmy's rotation is then set to be a rotation around the new axis by this angle.
-    //     this.shimmy.setRotationFromAxisAngle(newAxis, angle);
-    // }
 
-    // Move the joint axis (which is stored in the Shimmy object)
-    // setJointAxisPosition = (distance) => {
-    //     const quaternion = new THREE.Quaternion();
-    //     // a quaternion is basically how to get from one rotation to another
-    //     // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-    //     quaternion.setFromEuler(this.joint.rotation);
-    //     // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-    //     // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-    //     const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-    //     // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-    //     this.shimmy.position.set(0, 0, 0);
-    //     this.shimmy.translateOnAxis(newAxis, distance);
-    // }
+    /*known bugs
+    1. The blur effect that resets the position from the slider obviously will not work if you release hold of the slider and the mouse is no longer over that general element
+    2. When releaseing the mouse after a change of origin or angle the joint is set just slightly off from the expected 0. Mayber because of old savedPosition/savedRotation values?
+    */
+    // Angle must be in radians
+    rotateAroundJointAxis(angle) {
+        const newRotation = this.joint.rotation.toArray();
+        newRotation[2] = angle;
+        console.log(newRotation);
+        this.joint.rotation.set(...newRotation);
+    }
+
+    translateAlongJointAxis(distance) {
+        this.joint.position.setZ(distance);
+    }
+
+    distanceAlongJointAxis() {
+        if(this.joint.position.z <= this.joint.savedPosition.z){
+            return - this.joint.savedPosition.distanceTo(this.joint.position)
+        }
+        return this.joint.savedPosition.distanceTo(this.joint.position);
+    }
+
+    angleAroundJointAxis() {
+        const rotation = new THREE.Vector3().setFromEuler(this.joint.rotation);
+        const savedRotation = new THREE.Vector3().setFromEuler(this.joint.savedRotation);
+
+        if(rotation.z <= savedRotation.z){
+            return - savedRotation.distanceTo(rotation);
+        }
+        return savedRotation.distanceTo(rotation);
+    }
+
+    saveForDisplayChanges(){
+        this.joint.savedRotation.copy(this.joint.rotation);
+        this.joint.savedPosition.copy(this.joint.position);
+    }
+
+    resetFromDisplayChanges() {
+        this.joint.position.copy(this.joint.savedPosition);
+        this.joint.rotation.copy(this.joint.savedRotation);
+    }
 
     // Updates joint limits
     setJointLimits = (min = null, max = null) => {
@@ -150,26 +196,6 @@ export default class urdfObject extends THREE.Object3D {
             this.joint.max = max;
         }
         // this.clearShimmy();
-    };
-
-    // Set the Joint type
-    setJointType = (type) => {
-        this.joint.jointType = type;
-        // this.clearShimmy();
-
-        if (type === "fixed") {
-            this.joint.material.visible = false;
-        } else {
-            this.joint.material.visible = true;
-        }
-
-        if (type === "prismatic") {
-            this.joint.min = -1;
-            this.joint.max = 1;
-        } else if (type === "revolute") {
-            this.joint.min = -3.14;
-            this.joint.max = 3.14;
-        }
     };
 
     // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
@@ -378,11 +404,6 @@ export default class urdfObject extends THREE.Object3D {
         this.link.addOffset(offset);
     };
 
-    // Get the worldPosition of the Link object
-    linkWorldPosition = () => {
-        return this.link.getWorldPosition(new THREE.Vector3());
-    };
-
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
@@ -415,10 +436,20 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     // Start rotating joint?
-    rotateJoint = (transformControls) => {
-        // this.clearShimmy();
+    rotateJoint(transformControls) {
+        this.attach(this.link);
         transformControls.attach(this.joint);
-    };
+    }
+
+    moveJoint(transformControls){
+        this.attach(this.link);
+        transformControls.attach(this.joint);
+    }
+
+    reattachLink(){
+        this.joint.attach(this.link);
+        this.remove(this.link);
+    }
 
     //Add STL to the urdfObject
     // setSTL = (stlfile) => {
