@@ -1,10 +1,9 @@
-import React from 'react';
-import { Camera } from '../../../Models/SensorsClass';
+import React from "react";
 
-function CameraParameters({ selectedObject, sensorData, setSensor }) {
+function CameraParameters({ selectedObject, stateFunctions }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSensor(selectedObject, new Camera({ ...sensorData, [name]: value }));
+        stateFunctions.updateSensor(selectedObject, name, value);
     };
 
     return (
@@ -14,7 +13,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="text"
                     name="cameraName"
-                    value={sensorData.cameraName || 'camera'}
+                    value={selectedObject.sensor.cameraName}
                     onChange={handleChange}
                 />
             </label>
@@ -23,7 +22,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="horizontal_fov"
-                    value={sensorData.horizontal_fov || 1.3962634}
+                    value={selectedObject.sensor.horizontal_fov}
                     onChange={handleChange}
                 />
                 <span className="units">&deg; degrees</span>
@@ -33,7 +32,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="width"
-                    value={sensorData.width || 800}
+                    value={selectedObject.sensor.width}
                     onChange={handleChange}
                 />
                 <span className="units">px</span>
@@ -43,7 +42,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="height"
-                    value={sensorData.height || 600}
+                    value={selectedObject.sensor.height}
                     onChange={handleChange}
                 />
                 <span className="units">px</span>
@@ -53,7 +52,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="text"
                     name="format"
-                    value={sensorData.format || 'R8G8B8'}
+                    value={selectedObject.sensor.format}
                     onChange={handleChange}
                 />
             </label>
@@ -62,7 +61,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="near"
-                    value={sensorData.near || 0.1}
+                    value={selectedObject.sensor.near}
                     onChange={handleChange}
                 />
                 <span className="units">m</span>
@@ -72,7 +71,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="far"
-                    value={sensorData.far || 100}
+                    value={selectedObject.sensor.far}
                     onChange={handleChange}
                 />
                 <span className="units">m</span>
@@ -82,7 +81,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="gaussianNoise"
-                    value={sensorData.gaussianNoise || 0.01}
+                    value={selectedObject.sensor.gaussianNoise}
                     onChange={handleChange}
                 />
             </label>
@@ -91,7 +90,7 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="updateRate"
-                    value={sensorData.updateRate || 100}
+                    value={selectedObject.sensor.updateRate}
                     onChange={handleChange}
                 />
                 <span className="units">Hz</span>
@@ -101,8 +100,8 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="text"
                     name="imageTopicName"
-                    style={{ width: '200px' }}
-                    value={sensorData.imageTopicName || '/camera/image_raw'}
+                    style={{ width: "200px" }}
+                    value={selectedObject.sensor.imageTopicName}
                     onChange={handleChange}
                 />
             </label>
@@ -111,8 +110,8 @@ function CameraParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="text"
                     name="cameraInfoTopicName"
-                    style={{ width: '200px' }}
-                    value={sensorData.cameraInfoTopicName || '/camera/camera_info'}
+                    style={{ width: "200px" }}
+                    value={selectedObject.sensor.cameraInfoTopicName}
                     onChange={handleChange}
                 />
             </label>

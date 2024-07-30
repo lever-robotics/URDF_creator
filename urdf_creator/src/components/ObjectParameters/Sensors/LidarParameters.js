@@ -1,10 +1,9 @@
 import React from 'react';
-import { Lidar } from '../../../Models/SensorsClass';
 
-function LidarParameters({ selectedObject, sensorData, setSensor }) {
+function LidarParameters({ selectedObject, stateFunctions }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSensor(selectedObject, new Lidar({ ...sensorData, [name]: value }));
+        stateFunctions.updateSensor(selectedObject, name, value);
     };
 
     return (
@@ -14,7 +13,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="updateRate"
-                    value={sensorData.updateRate || 5}
+                    value={selectedObject.sensor.updateRate}
                     onChange={handleChange}
                 />
                 <span className="units">Hz</span>
@@ -24,7 +23,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                 <input
                     type="number"
                     name="samples"
-                    value={sensorData.samples || 360}
+                    value={selectedObject.sensor.samples}
                     onChange={handleChange}
                 />
             </label>
@@ -34,7 +33,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="resolution"
-                    value={sensorData.resolution || 1.000000}
+                    value={selectedObject.sensor.resolution}
                     onChange={handleChange}
                 />
                 <span className="units">&deg; degrees</span>
@@ -45,7 +44,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="minAngle"
-                    value={sensorData.minAngle || 0.000000}
+                    value={selectedObject.sensor.minAngle}
                     onChange={handleChange}
                 />
                 <span className="units">&deg; degrees</span>
@@ -56,7 +55,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="maxAngle"
-                    value={sensorData.maxAngle || 6.280000}
+                    value={selectedObject.sensor.maxAngle}
                     onChange={handleChange}
                 />
                 <span className="units">&deg; degrees</span>
@@ -67,7 +66,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="minRange"
-                    value={sensorData.minRange || 0.120000}
+                    value={selectedObject.sensor.minRange}
                     onChange={handleChange}
                 />
                 <span className="units">m</span>
@@ -78,7 +77,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="maxRange"
-                    value={sensorData.maxRange || 3.5}
+                    value={selectedObject.sensor.maxRange}
                     onChange={handleChange}
                 />
                 <span className="units">m</span>
@@ -89,7 +88,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="rangeResolution"
-                    value={sensorData.rangeResolution || 0.015000}
+                    value={selectedObject.sensor.rangeResolution}
                     onChange={handleChange}
                 />
                 <span className="units">&deg; degrees</span>
@@ -100,7 +99,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="mean"
-                    value={sensorData.mean || 0.0}
+                    value={selectedObject.sensor.mean}
                     onChange={handleChange}
                 />
             </label>
@@ -110,7 +109,7 @@ function LidarParameters({ selectedObject, sensorData, setSensor }) {
                     type="number"
                     step="0.000001"
                     name="stddev"
-                    value={sensorData.stddev || 0.01}
+                    value={selectedObject.sensor.stddev}
                     onChange={handleChange}
                 />
             </label>

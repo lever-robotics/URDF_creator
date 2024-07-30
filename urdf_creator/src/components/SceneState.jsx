@@ -30,6 +30,8 @@ export default function SceneState() {
         sphere: 0,
         cylinder: 0,
     });
+
+    const manager = new urdfObjectManager();
     // three objects contain all the objects needed for the threescene
     //This data is only used for threescene
     const threeObjects = useRef({
@@ -90,7 +92,6 @@ export default function SceneState() {
         const { current: obj } = threeObjects;
         if (!obj.scene) return;
 
-        const manager = new urdfObjectManager();
         const newUrdfObject = manager.createUrdfObject({
             shape: shape,
             name: shape + (numShapes[shape] + 1).toString(),
@@ -235,10 +236,15 @@ export default function SceneState() {
         forceSceneUpdate();
     };
 
-    const setSensor = (urdfObject, sensorObj) => {
-        urdfObject.setSensor(sensorObj);
+    const setSensor = (urdfObject, type) => {
+        manager.addSensor(urdfObject, type);
         forceSceneUpdate();
     };
+
+    const updateSensor = (urdfObject, name, value) => {
+        urdfObject.sensor.update(name, value);
+        forceSceneUpdate();
+    }
 
     const setJointType = (urdfObject, type) => {
         urdfObject.jointType = type;
@@ -346,6 +352,7 @@ export default function SceneState() {
         translateAlongJointAxis,
         rotateAroundJointAxis,
         setJointMinMax,
+        updateSensor,
         loadScene,
         getScene,
         transformObject,

@@ -2,10 +2,28 @@ import Link from "./Link";
 import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
+import { IMU, Camera, Lidar } from "./SensorsClass"
 
 export default class urdfObjectManager {
     constructor(){
 
+    }
+
+    addSensor(urdfObject, type){
+        switch (type) {
+            case "imu":
+                urdfObject.sensor = new IMU();
+                break;
+            case "camera":
+                urdfObject.sensor = new Camera();
+                break;
+            case "lidar":
+                urdfObject.sensor = new Lidar();
+                break;
+            // Add cases for other sensor types here
+            default:
+                throw Error("This type of sensor is not yet supported");
+        }
     }
 
     createUrdfObject(params){

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Joint from "./Joint";
 import Link from "./Link";
+
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { openDB } from "idb";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
@@ -142,7 +143,6 @@ export default class urdfObject extends THREE.Object3D {
     //     return duplicated;
     // }
 
-
     /*known bugs
     1. The blur effect that resets the position from the slider obviously will not work if you release hold of the slider and the mouse is no longer over that general element
     2. When releaseing the mouse after a change of origin or angle the joint is set just slightly off from the expected 0. Mayber because of old savedPosition/savedRotation values?
@@ -160,23 +160,25 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     distanceAlongJointAxis() {
-        if(this.joint.position.z <= this.joint.savedPosition.z){
-            return - this.joint.savedPosition.distanceTo(this.joint.position)
+        if (this.joint.position.z <= this.joint.savedPosition.z) {
+            return -this.joint.savedPosition.distanceTo(this.joint.position);
         }
         return this.joint.savedPosition.distanceTo(this.joint.position);
     }
 
     angleAroundJointAxis() {
         const rotation = new THREE.Vector3().setFromEuler(this.joint.rotation);
-        const savedRotation = new THREE.Vector3().setFromEuler(this.joint.savedRotation);
+        const savedRotation = new THREE.Vector3().setFromEuler(
+            this.joint.savedRotation
+        );
 
-        if(rotation.z <= savedRotation.z){
-            return - savedRotation.distanceTo(rotation);
+        if (rotation.z <= savedRotation.z) {
+            return -savedRotation.distanceTo(rotation);
         }
         return savedRotation.distanceTo(rotation);
     }
 
-    saveForDisplayChanges(){
+    saveForDisplayChanges() {
         this.joint.savedRotation.copy(this.joint.rotation);
         this.joint.savedPosition.copy(this.joint.position);
     }
@@ -217,10 +219,10 @@ export default class urdfObject extends THREE.Object3D {
         );
     }
 
-    // Set a sensor object in the userData object
-    setSensor = (sensorObj) => {
-        this.sensor = sensorObj;
-    };
+    get sensorType() {
+        return this?.sensor?.type ?? "";
+    }
+
 
     // Is the urdfObject selectable?
     isSelectable = () => {
@@ -441,12 +443,12 @@ export default class urdfObject extends THREE.Object3D {
         transformControls.attach(this.joint);
     }
 
-    moveJoint(transformControls){
+    moveJoint(transformControls) {
         this.attach(this.link);
         transformControls.attach(this.joint);
     }
 
-    reattachLink(){
+    reattachLink() {
         this.joint.attach(this.link);
         this.remove(this.link);
     }

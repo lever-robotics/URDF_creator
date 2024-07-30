@@ -62,7 +62,7 @@ function ObjectParameters({
             <ToggleSection title="Sensor Parameters">
                 <SensorsParameters
                     selectedObject={selectedObject}
-                    setSensor={setSensor}
+                    stateFunctions={stateFunctions}
                 />
             </ToggleSection>
             <ToggleSection title="Mesh Parameters">
