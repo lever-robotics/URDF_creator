@@ -18,6 +18,7 @@ export default function SceneState({ threeScene }) {
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
+    const [toolMode, setToolMode] = useState("translate");
     const manager = new urdfObjectManager();
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
@@ -161,18 +162,23 @@ export default function SceneState({ threeScene }) {
         console.log(threeScene.current.scene);
     };
 
-    const setTransformMode = (mode, currentlySelectedObject) => {
-        const three = threeScene.current;
+    const setTransformMode = (selectedObject, mode) => {
+        const { current: three } = threeScene;
         if (three.transformControls) {
             three.transformControls.setMode(mode);
+            setToolMode(mode);
         }
 
-        if (currentlySelectedObject) {
-            currentlySelectedObject.attachTransformControls(
+        if (selectedObject) {
+            selectedObject.attachTransformControls(
                 three.transformControls
             );
         }
     };
+
+    const getToolMode = () => {
+        return toolMode;
+    }
 
     const startRotateJoint = (urdfObject) => {
         const { current: three } = threeScene;
@@ -332,6 +338,7 @@ export default function SceneState({ threeScene }) {
         createUrdfObject,
         forceSceneUpdate,
         setTransformMode,
+        getToolMode,
         startRotateJoint,
         startMoveJoint,
         reattachLink,
@@ -389,8 +396,8 @@ export default function SceneState({ threeScene }) {
                         <InsertTool addObject={addObject} />
                     </Column>
                     <Toolbar
-                        setTransformMode={setTransformMode}
                         selectedObject={selectedObject}
+                        stateFunctions={stateFunctions}
                     />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters

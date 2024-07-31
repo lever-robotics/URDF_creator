@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+const Toolbar = ({ selectedObject, stateFunctions }) => {
 
-const Toolbar = ({ setTransformMode, selectedObject }) => {
-    // For keeping track of which tool is selected to highlight that button for the user
-    const [tool, setTool] = useState("translate");
+    const handleClick = (e) => {
+        const mode = e.target.innerText.toLowerCase();
+        stateFunctions.setTransformMode(selectedObject, mode);
+    }
+
+    const tool = stateFunctions.getToolMode();
 
     return (
         <div
@@ -11,26 +14,17 @@ const Toolbar = ({ setTransformMode, selectedObject }) => {
             <div className="row-spaced">
                 <button
                     className={tool === "translate" ? "button_selected" : ""}
-                    onClick={() => {
-                        setTransformMode("translate", selectedObject);
-                        setTool("translate");
-                    }}>
+                    onClick={handleClick}>
                     Translate
                 </button>
                 <button
-                    className={tool === "rotate" ? "button_selected" : ""}
-                    onClick={() => {
-                        setTransformMode("rotate", selectedObject);
-                        setTool("rotate");
-                    }}>
+                    className={stateFunctions.getToolMode() === "rotate" ? "button_selected" : ""}
+                    onClick={handleClick}>
                     Rotate
                 </button>
                 <button
-                    className={tool === "scale" ? "button_selected" : ""}
-                    onClick={() => {
-                        setTransformMode("scale", selectedObject);
-                        setTool("scale");
-                    }}>
+                    className={stateFunctions.getToolMode() === "scale" ? "button_selected" : ""}
+                    onClick={handleClick}>
                     Scale
                 </button>
             </div>

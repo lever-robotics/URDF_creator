@@ -5,10 +5,8 @@ import ScenetoText from "../../utils/ScenetoText";
 import "./CodeDisplay.css"; // Assuming you have a CSS file for this component
 
 /**
- * Displays buttons to determine with format the text representation of the scene should be displayed in as well as a text box containing the text
- * @param {Scene} scene The scene object
+ * @param {Scene} scene 
  * @param {string} projectTitle
- * @returns Format buttons and a text box
  */
 export default function CodeDisplay({ scene, projectTitle }) {
     const [selectedFormat, setSelectedFormat] = useState("URDF");
@@ -63,7 +61,6 @@ export default function CodeDisplay({ scene, projectTitle }) {
  * @param {Scene} scene
  * @param {string} projectTitle
  * @param {string} selectedFormat
- * @returns A text box with syntax highlighting and text representation of the scene
  */
 function CodeBox({ scene, projectTitle, selectedFormat }) {
     const style = {

@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function InsertTool({ addObject, addObjectToScene }) {
+function InsertTool({ addObject }) {
     return (
         <div style={{ marginTop: "10px" }} className="column-box">
             Add Objects
