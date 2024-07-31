@@ -1,6 +1,6 @@
 export class Mouse {
     constructor(mountRef) {
-        this.mountRef = mountRef.current;
+        this.mountRef = mountRef;
         this.eventFunctions = [
             { type: "pointerdown", func: this.onMouseDown.bind(this) },
             { type: "pointerup", func: this.onMouseUp.bind(this) },
@@ -11,12 +11,10 @@ export class Mouse {
 
         this.onClickFunctions = [];
         this.onDoubleClickFunctions = [];
-
-        
     }
 
-    addListeners(){
-        if(this.mountRef){
+    addListeners() {
+        if (this.mountRef) {
             this.eventFunctions.forEach((event) => {
                 this.mountRef.addEventListener(event.type, event.func);
             });
@@ -24,7 +22,7 @@ export class Mouse {
     }
 
     callback() {
-        if(this){
+        if (this) {
             if (this.mountRef) {
                 this.eventFunctions.forEach((event) => {
                     this.mountRef.removeEventListener(event.type, event.func);
@@ -34,14 +32,15 @@ export class Mouse {
     }
 
     onMouseDown(event) {
-        if(event.target.localName !== "canvas") return;
+        if (event.target.localName !== "canvas") return;
         event.preventDefault();
         this.currentDownTime = Date.now();
         this.startPos = [event.clientX, event.clientY];
     }
 
     onMouseUp(event) {
-        if(event.target.localName !== "canvas") return;
+        console.log("onmouseup", event);
+        if (event.target.localName !== "canvas") return;
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;
@@ -68,14 +67,14 @@ export class Mouse {
     onDoubleClick(event) {
         this.onDoubleClickFunctions.forEach((func) => {
             func(event);
-        })
+        });
     }
 
-    addOnDoubleClickFunctions(func){
+    addOnDoubleClickFunctions(func) {
         this.onDoubleClickFunctions.push(func);
     }
 
-    addOnClickFunctions(func){
+    addOnClickFunctions(func) {
         this.onClickFunctions.push(func);
     }
 
@@ -83,6 +82,6 @@ export class Mouse {
         console.log(this.onClickFunctions);
         this.onClickFunctions.forEach((func) => {
             func(event);
-        })
+        });
     }
 }

@@ -1,8 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import initScene from "./ThreeDisplay/InitScene.jsx";
-import setUpSceneMouse from "./ThreeDisplay/SetUpMouse.jsx";
-import ThreeDisplay from "./ThreeDisplay/ThreeDisplay.jsx";
 import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
 import Toolbar from "./Toolbar/ToolBar.jsx";
 import InsertTool from "./Insert/InsertTool.jsx";
@@ -18,7 +15,6 @@ import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
-
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
@@ -31,11 +27,10 @@ export default function SceneState({ threeScene }) {
     });
 
     useEffect(() => {
-        if(threeScene.current){
+        if (threeScene.current) {
             threeScene.current.mouse.addOnClickFunctions(clickObject);
         }
-    },[]);
-
+    }, []);
 
     function clickObject(event) {
         const three = threeScene.current;
@@ -47,7 +42,9 @@ export default function SceneState({ threeScene }) {
         three.mouse.y = -(y / rect.height) * 2 + 1;
 
         three.raycaster.setFromCamera(three.mouse, three.camera);
-        const intersects = three.raycaster.intersectObjects(three.scene.children);
+        const intersects = three.raycaster.intersectObjects(
+            three.scene.children
+        );
 
         const shapes = intersects.filter(
             (collision) => collision.object.isShape
@@ -64,10 +61,7 @@ export default function SceneState({ threeScene }) {
             selectObject(null);
         }
     }
-    
 
-
-    
     // Used by THREE.js
     // const threeObjects = useRef({
     //     scene: null,
@@ -85,10 +79,6 @@ export default function SceneState({ threeScene }) {
     //     composer: null,
     //     baseLink: null,
     // });
-
-    
-
-
 
     const addObject = (shape) => {
         console.log("addObject");
@@ -168,7 +158,7 @@ export default function SceneState({ threeScene }) {
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
-        console.log(threeScene.scene);
+        console.log(threeScene.current.scene);
     };
 
     const setTransformMode = (mode, currentlySelectedObject) => {
