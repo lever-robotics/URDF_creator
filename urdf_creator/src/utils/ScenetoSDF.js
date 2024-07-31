@@ -98,9 +98,9 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.getParent().link.position);
+                originInRelationToParentsJoint.add(node.parent.link.position);
 
-                if (node.getParent().isBaseLink) {
+                if (node.parent.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 

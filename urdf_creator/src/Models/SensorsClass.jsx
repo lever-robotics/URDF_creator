@@ -1,10 +1,14 @@
-class Sensor {
-    constructor(type){
+export class Sensor {
+    constructor(type = ""){
         this.type = type;
     }
 
     update(name, value){
         this[name] = value;
+    }
+
+    clone() {
+        return new Sensor();
     }
 }
 
@@ -30,10 +34,10 @@ export class IMU extends Sensor{
         this.stddev = stddev;
     }
 
-    duplicate() {
-        const duplicated = new IMU();
-        Object.assign(duplicated, this);
-        return duplicated;
+    clone() {
+        const clone = new IMU();
+        Object.assign(clone, this);
+        return clone;
     }
 }
 
@@ -76,10 +80,10 @@ export class Camera extends Sensor{
         this.stddev = stddev;
     }
 
-    duplicate() {
-        const duplicated = new Camera();
-        Object.assign(duplicated, this);
-        return duplicated;
+    clone() {
+        const clone = new Camera();
+        Object.assign(clone, this);
+        return clone;
     }
 }
 
@@ -114,9 +118,9 @@ export class Lidar extends Sensor{
         this.stddev = stddev;
     }
 
-    duplicate() {
-        const duplicated = new Lidar();
-        Object.assign(duplicated, this);
-        return duplicated;
+    clone() {
+        const clone = new Lidar();
+        Object.assign(clone, this);
+        return clone;
     }
 }

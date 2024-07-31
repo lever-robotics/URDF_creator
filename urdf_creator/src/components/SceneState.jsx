@@ -15,11 +15,11 @@ import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
+    //State
     const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
     const [toolMode, setToolMode] = useState("translate");
-    const manager = new urdfObjectManager();
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
         cube: 0,
@@ -28,11 +28,13 @@ export default function SceneState({ threeScene }) {
     });
 
     useEffect(() => {
-        if (threeScene.current) {
-            threeScene.current.mouse.addOnClickFunctions(clickObject);
+        const { current: three } = threeScene;
+        if (three) {
+            three.mouse.addOnClickFunctions(clickObject);
         }
     }, []);
 
+    // Function added to the Mouse object to allow clicking of meshes
     function clickObject(event) {
         const three = threeScene.current;
         const rect = three.mountRef.current.getBoundingClientRect();
@@ -63,51 +65,31 @@ export default function SceneState({ threeScene }) {
         }
     }
 
-    // Used by THREE.js
-    // const threeObjects = useRef({
-    //     scene: null,
-    //     camera: null,
-    //     renderer: null,
-    //     orbitControls: null,
-    //     transformControls: null,
-    //     ambientLight: null,
-    //     directionalLight1: null,
-    //     directionalLight2: null,
-    //     pointLight: null,
-    //     raycaster: new THREE.Raycaster(),
-    //     mouse: new THREE.Vector2(),
-    //     initialized: false,
-    //     composer: null,
-    //     baseLink: null,
-    // });
-
     const addObject = (shape) => {
-        console.log("addObject");
-        const three = threeScene.current;
+        const { current: three } = threeScene;
         if (!three.scene) return;
 
+        const manager = new urdfObjectManager();
         const newUrdfObject = manager.createUrdfObject({
             shape: shape,
             name: shape + (numShapes[shape] + 1).toString(),
         });
 
-        // const newUrdfObject = new urdfObject(shape, shape + (numShapes[shape] + 1).toString());
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newUrdfObject.setPosition([2.5, 2.5, 0.5]);
+        newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
             selectedObject.attach(newUrdfObject);
         } else if (three.baseLink !== null) {
             three.baseLink.attach(newUrdfObject);
         } else {
-            newUrdfObject.setPosition([0, 0, 0.5]);
-            newUrdfObject.setAsBaseLink(true);
+            newUrdfObject.position.set(0, 0, 0.5);
+            newUrdfObject.isBaseLink = true;
             newUrdfObject.name = "base_link";
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
-        // newUrdfObject.updateInertia();
         forceSceneUpdate();
     };
 
@@ -235,7 +217,8 @@ export default function SceneState({ threeScene }) {
     };
 
     const setSensor = (urdfObject, type) => {
-        manager.addSensor(urdfObject, type);
+        const manager = new urdfObjectManager();
+        manager.changeSensor(urdfObject, type);
         forceSceneUpdate();
     };
 
@@ -277,7 +260,8 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    // Loads a scene from gltf
+    // Loads a scene from gltf 
+    // Needs to be fixed
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
         const { current: three } = threeScene;
@@ -287,7 +271,7 @@ export default function SceneState({ threeScene }) {
         }
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
-        baseLink.setAsBaseLink = true;
+        baseLink.isBaseLink = true;
         forceSceneUpdate();
         // createNewLink(threeObjects.current.scene, base_link);
     };
@@ -303,14 +287,27 @@ export default function SceneState({ threeScene }) {
     };
 
     const duplicateObject = (urdfObject) => {
-        const clone = urdfObject.clone();
-        urdfObject.getParent().attach(clone);
+
+        const manager = new urdfObjectManager();
+        const clone = manager.cloneUrdfObject(urdfObject);
+
+        if(urdfObject.name === "base_link"){
+            clone.name = "base_link_copy"
+            urdfObject.attach(clone);
+        }else{
+            urdfObject.parent.attach(clone);
+        }
         setSelectedObject(null);
         forceSceneUpdate();
     };
 
     const deleteObject = (urdfObject) => {
-        setSelectedObject(null);
+        const { current: three } = threeScene;
+        
+        if(urdfObject.name === "base_link"){
+            three.baseLink = null;
+        }
+        selectObject();
         urdfObject.removeFromParent();
         forceSceneUpdate();
     };
@@ -356,6 +353,7 @@ export default function SceneState({ threeScene }) {
         translateAlongJointAxis,
         rotateAroundJointAxis,
         setJointMinMax,
+        setMesh,
         updateSensor,
         loadScene,
         getScene,

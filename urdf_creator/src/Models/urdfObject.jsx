@@ -1,26 +1,19 @@
 import * as THREE from "three";
-import Joint from "./Joint";
-import Link from "./Link";
-
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-import { openDB } from "idb";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class urdfObject extends THREE.Object3D {
-    constructor(origin, rotation, name) {
+    constructor(origin = [0, 0, 0], rotation = [0, 0, 0], name = "") {
         super();
 
-        this.urdfObject = true;
         this.position.set(...origin);
-
         this.rotation.set(...rotation);
 
         this.name = name;
+        this.urdfObject = true;
         this.isBaseLink = false;
         this.selectable = true;
-        this.sensor = null;
         this.stlfile = null;
-        this.material = null;
         this.mesh = "";
 
         Object.defineProperty(this, "scale", {
@@ -46,18 +39,7 @@ export default class urdfObject extends THREE.Object3D {
      **/
 
     getUrdfObjectChildren = () => {
-        return this.children.filter((child) => (child instanceof urdfObject));
-    };
-
-    // Set this urdfObject as the baseLink
-    setAsBaseLink = (flag) => {
-        this.isBaseLink = flag;
-    };
-
-    // Sets the inertia of the urdfObject in the userData Object in the Inertia object
-    setInertia = (inertia) => {
-        this.inertia = inertia;
-        this.inertia.customInertia = true;
+        return this.children.filter((child) => child instanceof urdfObject);
     };
 
     get parentName() {
@@ -120,28 +102,13 @@ export default class urdfObject extends THREE.Object3D {
         this.inertia.setCustomInertia(type, inertia);
     }
 
-    // Updates the inertia object in the userData
     updateInertia = () => {
         this.inertia.updateInertia(this);
     };
 
-    // update the mass stored in the object in the Inertia object
     updateMass = (mass) => {
         this.inertia.updateMass(mass, this);
     };
-
-    // duplicate() {
-    //     const duplicated = new UserData(this.shape);
-    //     duplicated.stlfile = this.stlfile;
-    //     duplicated.name = this.name + " copy";
-    //     duplicated.inertia = this.inertia.duplicate();
-    //     duplicated.isBaseLink = false;
-    //     if (this.sensor) {
-    //         duplicated.sensor = this.sensor.duplicate();
-    //     }
-
-    //     return duplicated;
-    // }
 
     /*known bugs
     1. The blur effect that resets the position from the slider obviously will not work if you release hold of the slider and the mouse is no longer over that general element
@@ -188,42 +155,10 @@ export default class urdfObject extends THREE.Object3D {
         this.joint.rotation.copy(this.joint.savedRotation);
     }
 
-    // Updates joint limits
-    setJointLimits = (min = null, max = null) => {
-        if (min !== null) {
-            this.joint.min = min;
-        }
-
-        if (max !== null) {
-            this.joint.max = max;
-        }
-        // this.clearShimmy();
-    };
-
-    // Get the parent urdfObject of this urdfObject. So not its direct THREE.js parent. That can be retrived by calling urdfObject.parent(). This function is to jump from urdfObject to urdfObject.
-    getParent = () => {
-        return this.parent;
-    };
-
-    // Get urdfObject's position
-    getPosition() {
-        return this.position;
-    }
-
-    // Set urdfObject's position
-    setPosition(positionVector) {
-        this.position.set(
-            positionVector[0],
-            positionVector[1],
-            positionVector[2]
-        );
-    }
-
     get sensorType() {
         return this?.sensor?.type ?? "";
     }
 
-    // Is the urdfObject selectable?
     isSelectable = () => {
         return this.selectable;
     };
@@ -259,8 +194,7 @@ export default class urdfObject extends THREE.Object3D {
                     url,
                     (geometry) => {
                         const material = new THREE.MeshPhongMaterial({
-                            color:
-                                this.link.color || Math.random() * 0xffffff,
+                            color: this.link.color || Math.random() * 0xffffff,
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
@@ -361,61 +295,6 @@ export default class urdfObject extends THREE.Object3D {
         delete this.link.customRenderBehaviors[behavior];
     };
 
-    // Clear's any shimmy position/rotation changes
-    // clearShimmy = () => {
-    //     this.shimmy.position.set(0,0,0);
-    //     this.shimmy.rotation.set(0,0,0);
-    // }
-
-    // Clones the urdfObject and everything that goes with it. Children included
-    // clone = () => {
-    //     const params = {
-    //         position: this.position,
-    //         rotation: this.rotation,
-    //         scale: this.mesh.scale,
-    //         offset: this.link.getOffset(),
-    //         jointAxis: {
-    //             type: this.joint.type,
-    //             axis: this.joint.axis,
-    //             origin: [0, 0, 0], // Not sure how to do this
-    //             name: this.joint.name,
-    //         },
-    //         jointOrigin: this.joint.position,
-    //         material: this.mesh.material,
-    //         shape: this.userData.shape,
-    //         userData: this.userData,
-    //         name: this.userData.name + "_copy",
-    //     }
-    //     return new urdfObject(params.shape, params.name, params);
-    // }
-
-    // Move the urdfObject exactly opposite the amount the link object moves in a direction to maintin the urdfObject origin.
-    setGlobalPosition = (offsetPosition) => {
-        // Get the current world matrix of the object
-        const worldMatrix = new THREE.Matrix4();
-        worldMatrix.copy(this.link.matrixWorld);
-
-        // Extract the position, rotation, and scale from the world matrix
-        const worldPosition = new THREE.Vector3();
-        const worldRotation = new THREE.Quaternion();
-        const worldScale = new THREE.Vector3();
-        worldMatrix.decompose(worldPosition, worldRotation, worldScale);
-
-        // Compute the difference between the new world position and the old world position
-        const offset = offsetPosition.clone().sub(worldPosition);
-
-        // Transform the offset by the inverse of the object's parent's world rotation
-        // if (this.shimmy) {
-        //     const parentWorldRotation = new THREE.Quaternion();
-        //     this.shimmy.getWorldQuaternion(parentWorldRotation);
-        //     parentWorldRotation.invert(); // Corrected method
-        //     offset.applyQuaternion(parentWorldRotation);
-        // }
-
-        // Add the transformed offset to the object's local position
-        this.link.addOffset(offset);
-    };
-
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
@@ -447,7 +326,6 @@ export default class urdfObject extends THREE.Object3D {
         }
     }
 
-    // Start rotating joint?
     rotateJoint(transformControls) {
         this.attach(this.link);
         transformControls.attach(this.joint);
@@ -461,6 +339,10 @@ export default class urdfObject extends THREE.Object3D {
     reattachLink() {
         this.joint.attach(this.link);
         this.remove(this.link);
+    }
+
+    clone() {
+        return new urdfObject(this.position, this.rotation, this.name);
     }
 
     //Add STL to the urdfObject

@@ -31,9 +31,9 @@ export const ScenetoXML = (scene, projectTitle) => {
             if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.getParent().isBaseLink) {
+            } else if (node.parent.isBaseLink) {
                 const quaternion = new THREE.Quaternion();
-                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.getParent().quaternion, node.quaternion));
+                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parent.quaternion, node.quaternion));
             }
 
             // Start link
@@ -103,9 +103,9 @@ export const ScenetoXML = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.getParent().link.position);
+                originInRelationToParentsJoint.add(node.parent.link.position);
 
-                if (node.getParent().isBaseLink) {
+                if (node.parent.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 

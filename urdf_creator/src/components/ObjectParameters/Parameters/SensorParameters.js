@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import ToggleSection from "../ToggleSection";
 import IMUParameters from "../Sensors/IMUParameters";
 import CameraParameters from "../Sensors/CameraParameters";

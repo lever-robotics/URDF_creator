@@ -50,9 +50,9 @@ export default class Inertia {
         }
     }
 
-    duplicate() {
-        const duplicated = new Inertia(this.mass, this.ixx, this.iyy, this.izz, this.ixy, this.ixz, this.iyz);
-        duplicated.customInertia = this.customInertia;
-        return duplicated;
+    clone() {
+        const clone = new Inertia(this.mass, this.ixx, this.iyy, this.izz, this.ixy, this.ixz, this.iyz);
+        clone.customInertia = this.customInertia;
+        return clone;
     }
 }

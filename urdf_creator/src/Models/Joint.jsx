@@ -1,19 +1,24 @@
 import * as THREE from "three";
 
 export default class Joint extends THREE.Line {
-    constructor(origin, ax, type, jointMin, jointMax) {
-        const point = new THREE.Vector3(...origin);
-        const axis = new THREE.Vector3(...ax);
+    constructor(
+        jointPosition = [0, 0, 0],
+        axis = [0, 0, 1],
+        type = "fixed",
+        jointMin = -1,
+        jointMax = 1
+    ) {
+        const originPoint = new THREE.Vector3(...jointPosition);
+        const lineAxis = new THREE.Vector3(...axis);
         const length = 10;
-        const startPoint = point
+        const startPoint = originPoint
             .clone()
-            .sub(axis.clone().multiplyScalar(length / 2));
-        const endPoint = point
+            .sub(lineAxis.clone().multiplyScalar(length / 2));
+        const endPoint = originPoint
             .clone()
-            .add(axis.clone().multiplyScalar(length / 2));
+            .add(lineAxis.clone().multiplyScalar(length / 2));
         const points = [];
-        points.push(startPoint);
-        points.push(endPoint);
+        points.push(startPoint, endPoint);
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
@@ -21,12 +26,12 @@ export default class Joint extends THREE.Line {
 
         super(geometry, material);
 
-        this.position.set(...origin);
-        this.savedPosition = new THREE.Vector3(...origin);
+        this.position.set(...jointPosition);
+        this.savedPosition = new THREE.Vector3(...jointPosition);
         this.savedRotation = new THREE.Euler().copy(this.rotation);
 
-        this._min = jointMin ?? -1;
-        this._max = jointMax ?? 1;
+        this._min = jointMin;
+        this._max = jointMax;
         this._type = type;
         this._axis = new THREE.Vector3(0, 0, 1);
         this._quaternion = new THREE.Quaternion();
@@ -65,17 +70,28 @@ export default class Joint extends THREE.Line {
         this._min = value;
     }
 
-    set max(value) {
-        this._max = value;
-    }
-
     get max() {
         return this._max;
     }
 
+    set max(value) {
+        this._max = value;
+    }
+
+    // Normalized Axis of the Joint
     get axis() {
         this._quaternion.setFromEuler(this.rotation);
         this._axis.set(0, 0, 1);
         return this._axis;
+    }
+
+    clone() {
+        return new Joint(
+            this.position,
+            this.axis,
+            this.type,
+            this.min,
+            this.max
+        );
     }
 }

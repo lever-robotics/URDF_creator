@@ -2,14 +2,14 @@ import Link from "./Link";
 import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
-import { IMU, Camera, Lidar } from "./SensorsClass"
+import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
 
 export default class urdfObjectManager {
     constructor(){
 
     }
 
-    addSensor(urdfObject, type){
+    changeSensor(urdfObject, type){
         switch (type) {
             case "imu":
                 urdfObject.sensor = new IMU();
@@ -19,6 +19,9 @@ export default class urdfObjectManager {
                 break;
             case "lidar":
                 urdfObject.sensor = new Lidar();
+                break;
+            case "":
+                urdfObject.sensor = new Sensor();
                 break;
             // Add cases for other sensor types here
             default:
@@ -48,22 +51,43 @@ export default class urdfObjectManager {
             name: params?.name ?? "",
         };
             
-        const link = new Link(ps.offset,ps.shape, ps.scale);
-        const joint = new Joint(ps.jointAxis.origin, ps.jointAxis.axis, ps.jointAxis.type, ps.jointMin, ps.jointMax);
+        const link = new Link();
+        const joint = new Joint();
+        const inertia = new Inertia();
+        const sensor = new Sensor();
+        const urdfobject = new urdfObject();
 
-        const urdfobject = new urdfObject(ps.position, ps.rotation, ps.name);
         joint.link = link;
         joint.add(link);
+
         urdfobject.joint = joint;
         urdfobject.link = link;
         urdfobject.add(joint);
 
-        const inertia = new Inertia();
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
 
-
+        urdfobject.sensor = sensor;
         return urdfobject;
+    }
+
+    cloneUrdfObject(urdfObject){
+        console.log(urdfObject);
+        const link = urdfObject.link.clone();
+        const joint = urdfObject.joint.clone();
+        const inertia = urdfObject.inertia.clone();
+        const sensor = urdfObject.sensor.clone();
+        const clone = urdfObject.clone();
+
+        clone.link = link;
+        clone.joint = joint;
+        clone.inertia = inertia;
+        clone.sensor = sensor;
+
+        joint.add(link);
+        urdfObject.add(joint);
+
+        return clone;
     }
 
     readScene(gltfObject){
