@@ -5,22 +5,22 @@ import MenuIcon from "@mui/icons-material/Menu";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import { handleDownload } from "../../utils/HandleDownload";
 import { handleUpload } from "../../utils/HandleUpload";
-import { openDB } from 'idb';
+import { openDB } from "idb";
 import { StyledMenu, StyledButton, StyledMenuItem } from "./StyledItems";
 import "./MenuModal.css";
 
-export default function MenuModal({
-    openProjectManager,
-    changeProjectTitle,
-    projectTitle,
-    getBaseLink,
-    getScene,
-    loadScene,
-}) {
+export default function MenuModal({ stateFunctions, projectTitle }) {
     const inputFile = useRef(null);
     const inputSTLFile = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
 
+    const {
+        openProjectManager,
+        changeProjectTitle,
+        getBaseLink,
+        getScene,
+        loadScene,
+    } = stateFunctions;
 
     /* Annoying File Upload Logic
       1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
@@ -39,18 +39,21 @@ export default function MenuModal({
     const handleSTLFileChange = async (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
-            const db = await openDB('stlFilesDB', 1, {
+            const db = await openDB("stlFilesDB", 1, {
                 upgrade(db) {
-                    if (!db.objectStoreNames.contains('files')) {
-                        db.createObjectStore('files', { keyPath: 'name' });
+                    if (!db.objectStoreNames.contains("files")) {
+                        db.createObjectStore("files", { keyPath: "name" });
                     }
-                }
+                },
             });
-          await db.put('files', { name: selectedFile.name, file: selectedFile });
+            await db.put("files", {
+                name: selectedFile.name,
+                file: selectedFile,
+            });
 
-          event.target.value = null; // Clear the input value after upload
+            event.target.value = null; // Clear the input value after upload
         }
-      };
+    };
 
     // Consider creating a menuItemFactory to map menuItems out. Then all the menu items can be defined above and implemented below. Could be a more extendable and easier to read approach
 
@@ -108,16 +111,14 @@ export default function MenuModal({
                             onClick={() => {
                                 onFileUpload();
                                 popupState.close();
-                            }}
-                        >
+                            }}>
                             Upload File
                         </StyledMenuItem>
                         <StyledMenuItem
                             onClick={() => {
                                 onSTLFileUpload();
                                 popupState.close();
-                            }}
-                        >
+                            }}>
                             Upload STL
                         </StyledMenuItem>
                     </StyledMenu>
@@ -127,7 +128,13 @@ export default function MenuModal({
                         style={{ display: "none" }}
                         onChange={handleFileChange}
                     />
-                    <input type="file" ref={inputSTLFile}  style={{ display: 'none' }} onChange={handleSTLFileChange} accept=".stl" />
+                    <input
+                        type="file"
+                        ref={inputSTLFile}
+                        style={{ display: "none" }}
+                        onChange={handleSTLFileChange}
+                        accept=".stl"
+                    />
                 </React.Fragment>
             )}
         </PopupState>

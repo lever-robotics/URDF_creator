@@ -378,12 +378,8 @@ export default function SceneState({ threeScene }) {
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
                         <MenuModal
-                            openProjectManager={openProjectManager}
-                            changeProjectTitle={changeProjectTitle}
+                            stateFunctions={stateFunctions}
                             projectTitle={projectTitle}
-                            getBaseLink={getBaseLink}
-                            loadScene={loadScene}
-                            getScene={getScene}
                         />
                         <LinkTree
                             scene={scene}
@@ -402,13 +398,7 @@ export default function SceneState({ threeScene }) {
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters
                             selectedObject={selectedObject}
-                            transformObject={transformObject}
-                            setMass={setMass}
-                            setJointType={setJointType}
-                            setInertia={setInertia}
-                            setSensor={setSensor}
                             stateFunctions={stateFunctions}
-                            setMesh={setMesh}
                         />
                         <CodeDisplay
                             scene={scene}
