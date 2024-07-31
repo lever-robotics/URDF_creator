@@ -1,78 +1,29 @@
-import findBaseLink from "../../utils/findBaseLink";
 import { ObjectContextMenu } from "./ObjectContextMenu";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 // RecursiveTreeView Component
-export const LinkTree = ({
-    scene,
-    selectObject,
-    selectedObject,
-    deleteObject,
-    duplicateObject,
-    getBaseLink,
-}) => {
-    const objectContextMenu = useRef(null);
-    const [objectContextMenuPosition, setUseObjectContextMenuPosition] =
-        useState({ left: -1000, top: -10000 });
-    const [lastButtonObjectSelected, setLastButtonObjectSelected] =
-        useState(null);
+export function LinkTree({ selectedObject, stateFunctions }) {
+    const [contextMenuPosition, setContextMenuPosition] = useState({
+        left: -1000,
+        top: -10000,
+    });
+    const [contextMenuVisible, setContextMenuVisible] = useState(false);
 
-    // this keeps the context menu from coming back on when a previously right clicked object that was unselected is selected again
-    if (
-        lastButtonObjectSelected !== selectedObject &&
-        lastButtonObjectSelected
-    ) {
-        setLastButtonObjectSelected(null);
-    }
-
-    // Function to render each node and its children
-    const renderNode = (node) => {
-        if (!node) {
-            return null;
-        }
-        // Display the current node's data and recursively render its children
-        return (
-            <div style={{ marginLeft: "20px" }}>
-                {
-                    <button
-                        className="tree-item"
-                        onClick={() => {
-                            selectObject(node);
-                        }}
-                        onContextMenu={(e) => {
-                            e.preventDefault();
-                            if (node.isBaseLink) {
-                                setLastButtonObjectSelected(null);
-                                return;
-                            }
-                            selectObject(node);
-                            setLastButtonObjectSelected(node);
-                            setUseObjectContextMenuPosition({
-                                left: e.clientX,
-                                top: e.clientY,
-                            });
-                        }}>
-                        {node.name}
-                    </button>
-                }
-                {node.getChildren() && node.getChildren().length > 0 && (
-                    <div>
-                        {node
-                            .getChildren()
-                            .filter((child) => child.urdfObject)
-                            .map((child) => renderNode(child))}
-                    </div>
-                )}
-            </div>
-        );
+    const handleContextMenu = (e, node) => {
+        e.preventDefault();
+        stateFunctions.selectObject(node);
+        setContextMenuVisible(true);
+        setContextMenuPosition({
+            left: e.clientX,
+            top: e.clientY,
+        });
     };
-
-    // let node = findBaseLink(scene);
-    let node = getBaseLink();
 
     const hideContextMenu = () => {
-        setLastButtonObjectSelected(null);
+        setContextMenuVisible(false);
     };
+
+    const baseLink = stateFunctions.getBaseLink();
 
     return (
         <div
@@ -80,16 +31,61 @@ export const LinkTree = ({
             onClick={hideContextMenu}
             onMouseLeave={hideContextMenu}>
             Object Tree
-            <div className="scroll-box">{node && renderNode(node)}</div>
-            {lastButtonObjectSelected === selectedObject && selectedObject && (
+            <div className="scroll-box">
+                {baseLink && (
+                    <Node
+                        node={baseLink}
+                        handleContextMenu={handleContextMenu}
+                        stateFunctions={stateFunctions}
+                    />
+                )}
+            </div>
+            {contextMenuVisible && (
                 <ObjectContextMenu
-                    objectContextMenu={objectContextMenu}
-                    objectContextMenuPosition={objectContextMenuPosition}
-                    deleteObject={deleteObject}
-                    duplicateObject={duplicateObject}
+                    // objectContextMenu={objectContextMenu}
+                    contextMenuPosition={contextMenuPosition}
                     selectedObject={selectedObject}
+                    stateFunctions={stateFunctions}
                 />
             )}
         </div>
     );
-};
+}
+
+function Node({ node, handleContextMenu, stateFunctions }) {
+    if (!node) {
+        return null;
+    }
+    console.log(node);
+    const children = node.getUrdfObjectChildren();
+    const name = node.name;
+
+    // Display the current node's data and render its children
+    return (
+        <div style={{ marginLeft: "20px" }}>
+            {
+                <button
+                    className="tree-item"
+                    onClick={() => {
+                        stateFunctions.selectObject(node);
+                    }}
+                    onContextMenu={(e) => {
+                        handleContextMenu(e, node);
+                    }}>
+                    {name}
+                </button>
+            }
+            {children && (
+                <>
+                    {children.map((child) => (
+                        <Node
+                            node={child}
+                            handleContextMenu={handleContextMenu}
+                            stateFunctions={stateFunctions}
+                        />
+                    ))}
+                </>
+            )}
+        </div>
+    );
+}

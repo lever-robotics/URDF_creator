@@ -123,7 +123,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             }
 
             // Recursively process children with the correct parent name
-            node.getChildren().forEach((child) => processNode(child, linkName));
+            node.getUrdfObjectChildren().forEach((child) => processNode(child, linkName));
         }
     };
 

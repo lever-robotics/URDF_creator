@@ -45,9 +45,8 @@ export default class urdfObject extends THREE.Object3D {
      *
      **/
 
-    // Returns children that are specifically Meshs
-    getChildren = () => {
-        return this.children.filter((child) => !(child instanceof Link));
+    getUrdfObjectChildren = () => {
+        return this.children.filter((child) => (child instanceof urdfObject));
     };
 
     // Set this urdfObject as the baseLink

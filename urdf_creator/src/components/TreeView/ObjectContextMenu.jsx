@@ -1,29 +1,27 @@
 import React from "react";
 
 export function ObjectContextMenu({
-    objectContextMenu,
-    objectContextMenuPosition,
-    duplicateObject,
-    deleteObject,
+    contextMenuPosition,
     selectedObject,
+    stateFunctions,
 }) {
-    const { left, top } = objectContextMenuPosition;
+    const { left, top } = contextMenuPosition;
 
     return (
         <div
             className="object-context-menu"
-            ref={objectContextMenu}
+            // ref={objectContextMenu}
             style={{ left: left, top: top }}>
             <button
                 onClick={() => {
-                    duplicateObject(selectedObject);
+                    stateFunctions.duplicateObject(selectedObject);
                 }}
                 className="duplicate-button">
                 Duplicate
             </button>
             <button
                 onClick={() => {
-                    deleteObject(selectedObject);
+                    stateFunctions.deleteObject(selectedObject);
                 }}
                 className="delete-button">
                 Delete

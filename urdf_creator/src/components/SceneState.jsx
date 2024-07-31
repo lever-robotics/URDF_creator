@@ -317,7 +317,9 @@ export default function SceneState({ threeScene }) {
 
     const getBaseLink = () => {
         const { current: three } = threeScene;
-        return three?.baseLink;
+        if(three){
+            return three.baseLink;
+        }
     };
 
     const openProjectManager = () => setIsProjectManagerOpen(true);
@@ -382,12 +384,8 @@ export default function SceneState({ threeScene }) {
                             projectTitle={projectTitle}
                         />
                         <LinkTree
-                            scene={scene}
-                            deleteObject={deleteObject}
-                            duplicateObject={duplicateObject}
                             selectedObject={selectedObject}
-                            selectObject={selectObject}
-                            getBaseLink={getBaseLink}
+                            stateFunctions={stateFunctions}
                         />
                         <InsertTool addObject={addObject} />
                     </Column>
