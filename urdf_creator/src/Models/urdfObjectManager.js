@@ -90,6 +90,7 @@ export default class urdfObjectManager {
         return clone;
     }
 
+    // Not yet functional
     readScene(gltfObject){
         // const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
         // const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];

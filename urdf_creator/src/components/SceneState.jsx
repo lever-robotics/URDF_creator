@@ -93,6 +93,7 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    // Ignore this function for now
     const createUrdfObject = (gltfObject) => {
         const shimmy =
             gltfObject.children[0] === THREE.Line
