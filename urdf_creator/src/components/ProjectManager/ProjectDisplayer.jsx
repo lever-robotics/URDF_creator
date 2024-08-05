@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Project from './Project';
+import './Project.css';
 
 const ProjectDisplayer = ({ handleProjectClick }) => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -10,10 +11,12 @@ const ProjectDisplayer = ({ handleProjectClick }) => {
     ]);
     
       return (
-        <div className="project-displayer">
+        <div className="modal-body">
+          <div className="project-displayer">
           <h1>Project Manager</h1>
           {projects.map((project, index) => (
             <Project key={index} project={project} handleProjectClick={handleProjectClick}/>))}
+        </div>
         </div>
       );
 };

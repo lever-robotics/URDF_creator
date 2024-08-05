@@ -8,7 +8,8 @@ import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
-import ProjectModal from "./ProjectManager/ProjectModal.jsx";
+import Modal from "../FunctionalComponents/Modal.jsx";
+import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
@@ -16,7 +17,8 @@ import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
     //State
-    const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
     const [toolMode, setToolMode] = useState("translate");
@@ -320,8 +322,11 @@ export default function SceneState({ threeScene }) {
         }
     };
 
-    const openProjectManager = () => setIsProjectManagerOpen(true);
-    const closeProjectManager = () => setIsProjectManagerOpen(false);
+    const openProjectManager = () => {
+        setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
+        setIsModalOpen(true);
+    };
+    const closeProjectManager = () => setIsModalOpen(false);
 
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
@@ -330,7 +335,7 @@ export default function SceneState({ threeScene }) {
         const base_link = group.scene.children[0];
         loadScene(base_link);
         setProjectTitle(title);
-        setIsProjectManagerOpen(false);
+        setIsModalOpen(false);
     };
 
     const stateFunctions = {
@@ -370,10 +375,12 @@ export default function SceneState({ threeScene }) {
 
     return (
         <div className="screen">
-            <ProjectModal
-                isOpen={isProjectManagerOpen}
+            <Modal
+                isOpen={isModalOpen}
                 onClose={closeProjectManager}
-                handleProjectClick={handleProjectClick}
+                modalContent={
+                    modalContent
+                }
             />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
