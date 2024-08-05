@@ -11,6 +11,7 @@ const ProjectDisplayer = ({ handleProjectClick }) => {
     
       return (
         <div className="project-displayer">
+          <h1>Project Manager</h1>
           {projects.map((project, index) => (
             <Project key={index} project={project} handleProjectClick={handleProjectClick}/>))}
         </div>

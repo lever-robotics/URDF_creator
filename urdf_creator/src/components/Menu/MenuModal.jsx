@@ -12,7 +12,6 @@ import "./MenuModal.css";
 export default function MenuModal({ stateFunctions, projectTitle }) {
     const inputFile = useRef(null);
     const inputSTLFile = useRef(null);
-    const [selectedFile, setSelectedFile] = useState(null);
 
     const {
         openProjectManager,
