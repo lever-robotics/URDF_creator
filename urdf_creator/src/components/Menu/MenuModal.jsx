@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { useState, useRef } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
+import HelpIcon from "../ApplicationHelp/HelpIcon.jsx";
 import { handleDownload } from "../../utils/HandleDownload";
 import { handleUpload } from "../../utils/HandleUpload";
 import { openDB } from "idb";
@@ -15,6 +16,7 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
 
     const {
         openProjectManager,
+        openOnboarding,
         changeProjectTitle,
         getBaseLink,
         getScene,
@@ -69,6 +71,7 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                             className="material-symbols-outlined">
                             <MenuIcon />
                         </StyledButton>
+                        <HelpIcon openOnboarding={openOnboarding}/>
                         <input
                             type="text"
                             value={projectTitle}

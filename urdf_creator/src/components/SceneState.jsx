@@ -9,6 +9,7 @@ import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
 import Modal from "../FunctionalComponents/Modal.jsx";
+import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
 import MenuModal from "./Menu/MenuModal.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
@@ -17,8 +18,7 @@ import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
     //State
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalContent, setModalContent] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
     const [toolMode, setToolMode] = useState("translate");
@@ -326,7 +326,20 @@ export default function SceneState({ threeScene }) {
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
         setIsModalOpen(true);
     };
-    const closeProjectManager = () => setIsModalOpen(false);
+    const closeModal = () => setIsModalOpen(false);
+
+    // Close the onboarding Modal and launch the project manager
+    const closeOnboarding = () => {
+        setIsModalOpen(false);
+        openProjectManager();
+    }
+
+    const openOnboarding = () => {
+        setModalContent(<Onboarding closeOnboarding={closeOnboarding} />);
+        setIsModalOpen(true);
+    };
+
+    const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
 
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
@@ -368,7 +381,8 @@ export default function SceneState({ threeScene }) {
         deleteObject,
         getBaseLink,
         openProjectManager,
-        closeProjectManager,
+        openOnboarding,
+        closeModal,
         changeProjectTitle,
         handleProjectClick,
     };
@@ -377,7 +391,7 @@ export default function SceneState({ threeScene }) {
         <div className="screen">
             <Modal
                 isOpen={isModalOpen}
-                onClose={closeProjectManager}
+                onClose={closeModal}
                 modalContent={
                     modalContent
                 }
