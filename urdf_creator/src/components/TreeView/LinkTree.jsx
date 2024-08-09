@@ -30,7 +30,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
             className="object-tree"
             onClick={hideContextMenu}
             onMouseLeave={hideContextMenu}>
-            Object Tree
+            Link Tree
             <div className="scroll-box">
                 {baseLink && (
                     <Node

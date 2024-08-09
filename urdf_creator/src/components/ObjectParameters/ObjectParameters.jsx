@@ -13,15 +13,15 @@ function ObjectParameters({ selectedObject, stateFunctions }) {
     if (!selectedObject) {
         return (
             <div className="object-parameters">
-                <h3>Object Parameters</h3>
-                No object selected
+                <h3>Link Parameters</h3>
+                No link selected
             </div>
         );
     }
 
     return (
         <div className="object-parameters">
-            <h3>Object Parameters</h3>
+            <h3>Link Parameters</h3>
             <BasicParameters
                 stateFunctions={stateFunctions}
                 selectedObject={selectedObject}

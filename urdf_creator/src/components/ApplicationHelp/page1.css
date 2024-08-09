@@ -1,0 +1,29 @@
+.page1-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.welcome-header {
+    margin-bottom: 20px;
+}
+
+.welcome-text {
+    color: #004aad;
+}
+
+.description {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.graphic-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.roboeverything-graphic {
+    max-width: 70%;
+    height: auto;
+}
