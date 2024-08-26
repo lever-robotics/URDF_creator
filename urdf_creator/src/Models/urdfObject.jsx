@@ -3,7 +3,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class urdfObject extends THREE.Object3D {
-    constructor(origin = [0, 0, 0], rotation = [0, 0, 0], name = "") {
+    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
         super();
 
         this.position.set(...origin);
