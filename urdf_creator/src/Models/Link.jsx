@@ -2,7 +2,7 @@ import * as THREE from "three";
 import ScaleVector from "./ScaleVector";
 
 export default class Link extends THREE.Mesh {
-    constructor(offset = [0, 0, 0], shape = "cube", scale = [1, 1, 1]) {
+    constructor(shape = "cube", offset = [0, 0, 0], scale = [1, 1, 1]) {
         super();
 
         this.position.set(...offset); // The offset from the joint
@@ -33,6 +33,7 @@ export default class Link extends THREE.Mesh {
                             this._scale.set(...newVector);
                         },
                     });
+
                     return new THREE.SphereGeometry(0.5, 32, 32);
                 case "cylinder":
                     Object.defineProperty(context, "scale", {
@@ -50,8 +51,10 @@ export default class Link extends THREE.Mesh {
                         32
                     );
                     cylinder.rotateX(Math.PI / 2);
+
                     return cylinder;
                 default:
+                    console.log("Here in default");
                     return;
             }
         }

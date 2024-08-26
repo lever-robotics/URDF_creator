@@ -30,32 +30,14 @@ export default class urdfObjectManager {
     }
 
     createUrdfObject(params){
-        const ps = {
-            position: params?.position ?? [0,0,0],
-            rotation: params?.rotation ?? [0,0,0],
-            scale: params?.scale ?? [1,1,1],
-            offset: params?.position ?? [0,0,0],
-            jointAxis: {
-                type: 'fixed',
-                axis: [0,0,1],
-                origin: [0, 0, 0], // Not sure how to do this
-                name: "",
-            },
-            jointMin: params?.jointMin ?? -1,
-            jointMax: params?.jointMax ?? 1,
-            // jointRotation: ,
-            // jointOrigin: ,
-            // material: ,
-            shape: params?.shape ?? "cube",
-            // userData: ,
-            name: params?.name ?? "",
-        };
+        const name = params.name;
+        const shape = params.shape;
             
-        const link = new Link();
+        const link = new Link(shape);
         const joint = new Joint();
         const inertia = new Inertia();
         const sensor = new Sensor();
-        const urdfobject = new urdfObject();
+        const urdfobject = new urdfObject(name);
 
         joint.link = link;
         joint.add(link);
