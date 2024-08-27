@@ -9,6 +9,7 @@ import { handleUpload } from "../../utils/HandleUpload";
 import { openDB } from "idb";
 import { StyledMenu, StyledButton, StyledMenuItem } from "./StyledItems";
 import "./MenuModal.css";
+import ReactGA from 'react-ga4';
 
 export default function MenuModal({ stateFunctions, projectTitle }) {
     const inputFile = useRef(null);
@@ -89,6 +90,11 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                         </StyledMenuItem>
                         <StyledMenuItem
                             onClick={() => {
+                                ReactGA.event({
+                                    category: 'Button', // Typically the object that was interacted with
+                                    action: 'Click', // The type of interaction
+                                    label: 'Downloads of URDF package' // Optional, can be used to identify specific buttons
+                                });
                                 handleDownload(
                                     getScene(),
                                     "urdf",
