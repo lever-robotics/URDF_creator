@@ -1,0 +1,195 @@
+.page-container {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* Page 1 CSS */
+.welcome-header {
+    margin-bottom: 40px;
+}
+
+.blue {
+    color: #004aad;
+}
+
+.bullet-container {
+    width: 60%; /* Adjust the width to your preference */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+.bullet-list {
+    padding-left: 0;
+    margin: 0;
+    column-count: 2; /* Number of columns */
+    column-gap: 20px; /* Gap between columns */
+    list-style-type: none; /* Remove default bullet points */
+    max-height: 300px; /* Set the maximum height of the list */
+    overflow: hidden; /* Hide overflow if items exceed max height */
+}
+
+.bullet-list li {
+    position: relative; /* Needed for absolute positioning of the icon */
+    display: flex;
+    align-items: center; /* Vertically align the icon and text */
+    justify-content: center; /* Horizontally center the text */
+    margin-bottom: 30px; /* Space between list items */
+    break-inside: avoid; /* Prevent items from breaking across columns */
+    text-align: center; /* Center the text */
+    padding-left: 30px; /* Space to the left for the icon */
+}
+
+.bullet-icon {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the icon */
+    margin-right: 10px; /* Space between the icon and the text */
+    font-size: 1.2em; /* Adjust the size of the icon if needed */
+}
+
+.graphic-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.roboeverything-graphic {
+    max-width: 70%;
+    height: auto;
+}
+
+/* Page 2 CSS */
+
+.section-header {
+    font-size: 3.0em;
+    margin-bottom: 15px;
+}
+
+.content-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%; /* Adjust to make the entire container smaller */
+    margin: 0 auto; /* Center the container horizontally on the page */
+    max-height: 300px;
+    margin-top: 10px;
+}
+
+.text-section {
+    width: 45%; /* Slightly reduce width to make the container smaller */
+    padding-right: 20px; /* Space between text and image */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center the description vertically */
+    align-items: center; /* Center the description horizontally */
+    text-align: center; /* Center text horizontally */
+}
+
+.subsection-header {
+    font-size: 1.5em; /* Make the header bigger */
+    color: #007bff;
+    margin-bottom: 10px;
+    align-self: flex-start; /* Align header at the top */
+    text-align: center;
+    width: 100%; /* Ensure the header is centered at the top */
+}
+
+.description {
+    font-size: 1.2em; /* Adjust the font size */
+    margin-bottom: 20px;
+    max-width: 800px;
+    text-align: center; /* Center the text within the description container */
+    margin-left: auto;
+    margin-right: auto; /* Center the description horizontally within the page-container */
+}
+
+.graphic-container-page2 {
+    width: 30%; /* Slightly reduce width to make the container smaller */
+    text-align: right; /* Align image to the right */
+}
+
+.graphic {
+    max-width: 100%; /* Ensure the image is responsive */
+    height: auto;
+}
+
+
+/* Page 3 CSS */
+
+.page3-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows the tool containers to wrap */
+    justify-content: space-between; /* Distributes space between tool containers */
+    align-items: flex-start; /* Align items to the top of the container */
+    margin-top: 20px;
+    width: 100%; /* Ensure the container takes the full width */
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 500px; /* Set the maximum height of the container */
+}
+
+/*Scrollbar style*/
+/* Hide the scrollbar background */
+::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+
+/* Style the scrollbar track (background) */
+::-webkit-scrollbar-track {
+    background: transparent; /* Make the background transparent */
+}
+
+/* Style the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background-color: #888; /* Set the color of the scrollbar thumb */
+    border-radius: 10px; /* Add rounded corners to the scrollbar thumb */
+}
+
+/* Style the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Change the color when hovered */
+}
+
+.tool-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 48%; /* Slightly less than 50% to allow for spacing */
+    margin: 1%; /* Add margin for spacing between the containers */
+    box-sizing: border-box; /* Ensure padding and border do not affect width */
+    padding: 10px; /* Optional: padding inside each tool-container */
+}
+
+.text-section {
+    width: 50%; /* Takes up half of the tool-container */
+    padding-right: 10px; /* Space between text and graphic */
+}
+
+.graphic-container-page3 {
+    width: 50%; /* Takes up the other half of the tool-container */
+    text-align: right; /* Aligns the image to the right */
+}
+
+.subsection-header-page3 {
+    font-size: 1em; /* Make the header bigger */
+    color: #007bff;
+    margin-bottom: 5px;
+    align-self: flex-start; /* Align header at the top */
+    text-align: center;
+    width: 100%; /* Ensure the header is centered at the top */
+}
+
+.page3-description {
+    font-size: 0.9em; /* Adjust the font size */
+    margin-bottom: 10px;
+    max-width: 300px;
+    text-align: center; /* Center the text within the description container */
+    margin-left: auto;
+    margin-right: auto; /* Center the description horizontally within the page-container */
+}
+
+.graphic-page3 {
+    width: 100%;
+    height: auto;
+}

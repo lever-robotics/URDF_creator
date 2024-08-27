@@ -11,7 +11,6 @@ const Onboarding = ({ closeOnboarding }) => {
     const totalPages = 3;
 
     const handleNextPage = () => {
-        debugger;
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         } else {

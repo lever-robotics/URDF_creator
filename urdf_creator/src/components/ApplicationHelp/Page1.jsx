@@ -1,5 +1,8 @@
 import React from 'react';
-import './page1.css';
+import './onboarding.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog, faRocket, faCubes, faCode, faSpaceShuttle, faHome  } from '@fortawesome/free-solid-svg-icons';
+
 /**
  * Page1 component that displays the welcome message and description for the URDF Creator tool.
  * 
@@ -7,19 +10,20 @@ import './page1.css';
  */
 const Page1 = () => {
     return (
-        <div className="page1-container">
+        <div className="page-container">
             <h1 className="welcome-header">
-                <span className="welcome-text">Welcome</span> to URDF Creator
+                <span className="blue">Welcome</span> to URDF Creator
             </h1>
-            <p className="description">
-                An free open-source tool for ROS2 developers. This tool assists in defining robots ready for high fidelity physics simulations.
-            </p>
-            <p className="description">
-                This tool helps to take models from CAD modeling software such as those seen below and more and help define the software model the robot will utilize.
-            </p>
-            <p className="description">
-                This tool is designed for ROS2 but the URDF model designed can be used to create a URDF on many platforms such as seen below.
-            </p>
+            <div className="bullet-container">
+                <ul className="bullet-list">
+                    <li><FontAwesomeIcon icon={faCode} className="bullet-icon" />Free and Open Source</li>
+                    <li><FontAwesomeIcon icon={faSpaceShuttle} className="bullet-icon" />Robot Developer Tool</li>
+                    <li><FontAwesomeIcon icon={faHome} className="bullet-icon" />Designed for ROS2</li>
+                    <li><FontAwesomeIcon icon={faCubes} className="bullet-icon" />Prepare CAD Robot Models</li>
+                    <li><FontAwesomeIcon icon={faRocket} className="bullet-icon" />Ready for Robot Physics Sims</li>
+                    <li><FontAwesomeIcon icon={faCog} className="bullet-icon" />Configure URDFs</li>
+                </ul>
+            </div>
             <div className="graphic-container">
                 <img src={process.env.PUBLIC_URL + '/statics/roboeverything.png'} alt="Robo Everything" className="roboeverything-graphic" />
             </div>

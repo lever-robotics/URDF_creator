@@ -1,5 +1,5 @@
 import React from 'react';
-import './page3.css';
+import './onboarding.css';
 
 /**
  * Page3 component that explains how to manipulate shapes in the URDF Creator tool.
@@ -8,39 +8,69 @@ import './page3.css';
  */
 const Page3 = () => {
     return (
-        <div className="page3-container">
-            <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/box.png'} alt="Add Cube" className="graphic"/>
-            </div>
+        <div className="page-container">
+            <h2 className="section-header">Tools</h2>
+            <div className="page3-container">
+                <div className="tool-container">
+                    <div className="text-section">
+                        <h3 className="subsection-header-page3">Add Link</h3>
+                        <p className="page3-description">
+                            Add a link by first using the insert panel in bottem left. Manipulate the link by clicking on it or selecting it in the link tree.
+                        </p>
+                    </div>
+                    <div className="graphic-container-page3">
+                        <img src={process.env.PUBLIC_URL + '/statics/box.png'} alt="Add Cube" className="graphic-page3"/>
+                    </div>
+                </div>
 
-            <h2 className="section-header">Manipulating Shapes</h2>
-            <p className="description">
-                Manipulate the cube by first selecting it either by selecting it or clicking on it in the Object Tree.
-            </p>
+                <div className="tool-container">
+                    <div className="text-section">
+                        <h3 className="subsection-header-page3">Translation</h3>
+                        <p className="page3-description">
+                            Move the link accordingly by dragging it on each of the three axis. Give exact position by setting position in link parameters.
+                        </p>
+                    </div>
+                    <div className="graphic-container-page3">
+                        <img src={process.env.PUBLIC_URL + '/statics/translate.png'} alt="Translation" className="graphic-page3"/>
+                    </div>
+                </div>
 
-            <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/translate.png'} alt="Translation" className="graphic"/>
-            </div>
-            <p className="description">
-                Move the cube accordingly to the shape of the base of the robot off the ground as high as the wheels will be.
-            </p>
+                <div className="tool-container">
+                    <div className="text-section">
+                        <h3 className="subsection-header-page3">Scale</h3>
+                        <p className="page3-description">
+                            To give specific scaling, positioning, or rotation of a link, use the parameters in the Object Parameters section.
+                        </p>
+                    </div>
+                    <div className="graphic-container-page3">
+                        <img src={process.env.PUBLIC_URL + '/statics/scale.png'} alt="Scale" className="graphic-page3"/>
+                    </div>
+                </div>
 
-            <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/scale.png'} alt="Scale" className="graphic"/>
-            </div>
-            <p className="description">
-                To give specific scaling, positioning, or rotation of a link, use the parameters in the Object Parameters section.
-            </p>
+                <div className="tool-container">
+                    <div className="text-section">
+                        <h3 className="subsection-header-page3">Link Parameters</h3>
+                        <p className="page3-description"> 
+                            Link Parameters is all the meta data you can specify about a link including is size, position, and rotation.
+                            Aswell as its color, name, inertia properties and a visual stl or dae file.
+                        </p>
+                    </div>
+                    <div className="graphic-container-page3">
+                        <img src={process.env.PUBLIC_URL + '/statics/params.png'} alt="Object Parameters" className="graphic-page3"/>
+                    </div>
+                </div>
 
-            <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/params.png'} alt="Object Parameters" className="graphic"/>
-            </div>
-            <p className="description">
-                We can use the duplicate function by right-clicking on the link in the Object Tree and selecting duplicate. This is also a way to delete links.
-            </p>
-
-            <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/duplicate.png'} alt="Duplicate" className="graphic"/>
+                <div className="tool-container">
+                    <div className="text-section">
+                        <h3 className="subsection-header-page3">Duplicate</h3>
+                        <p className="page3-description">
+                        You can use the duplicate function by right-clicking on the link in the Link Tree and selecting duplicate. This is also a way to delete a link.
+                        </p>
+                    </div>
+                    <div className="graphic-container-page3">
+                        <img src={process.env.PUBLIC_URL + '/statics/duplicate.png'} alt="Duplicate" className="graphic-page3"/>
+                    </div>
+                </div>
             </div>
         </div>
     );
