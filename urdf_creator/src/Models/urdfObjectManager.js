@@ -4,6 +4,7 @@ import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
 import Axis from "./Axis";
+import * as THREE from "three";
 
 export default class urdfObjectManager {
 
@@ -75,6 +76,33 @@ export default class urdfObjectManager {
 
         return clone;
     }
+
+    compressScene(baseLink){
+
+        const compressObject = (urdfObject) => {
+            const compressedObject = new THREE.Mesh();
+            const userData = {
+                position: urdfObject.position,
+                rotation: urdfObject.rotation,
+                scale: urdfObject.scale,
+                offset: urdfObject.link.position,
+                jointAxis: {
+                    jointType: joint.userData?.jointType ?? 'fixed',
+                    axis: joint.position,
+                    origin: [0, 0, 0], // Not sure how to do this
+                    name: joint.name,
+                },
+                jointMin: joint.userData?.min,
+                jointMax: joint.userData?.max,
+                jointRotation: joint.rotation,
+                jointOrigin: joint.position,
+                material: mesh.material,
+                shape: urdfObject.userData.shape,
+                name: urdfObject.userData.name,
+            }
+        }
+    }
+
 
     // Not yet functional
     readScene(gltfObject) {
