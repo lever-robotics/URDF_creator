@@ -11,7 +11,7 @@ import Row from "../utils/ScreenTools/Row.jsx";
 import Modal from "../FunctionalComponents/Modal.jsx";
 import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
-import MenuModal from "./Menu/MenuModal.jsx";
+import MenuBar from "./Menu/MenuBar.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
@@ -346,7 +346,7 @@ export default function SceneState({ threeScene }) {
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal
+                        <MenuBar
                             stateFunctions={stateFunctions}
                             projectTitle={projectTitle}
                         />
