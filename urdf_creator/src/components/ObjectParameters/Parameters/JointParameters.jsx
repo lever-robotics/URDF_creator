@@ -1,8 +1,12 @@
+import { useState } from "react";
 import Slider from "@mui/material/Slider";
 import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
 export default function JointParameters({ selectedObject, stateFunctions }) {
+    const [tempMin, setTempMin] = useState(selectedObject.min);
+    const [tempMax, setTempMax] = useState(selectedObject.max);
+
     const handleJointTypeChange = (e) => {
         stateFunctions.setJointType(selectedObject, e.target.value);
     };
@@ -47,9 +51,19 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
 
     const handleSetMinMax = (e) => {
         const type = e.target.title.toLowerCase().replace(":", "");
+        const value = e.target.value;
+        if(type === "min"){
+            setTempMin(value);
+        }else{
+            setTempMax(value);
+        }
+    };
+        
+    const handleMinMaxBlur = (e) => {
+        const type = e.target.title.toLowerCase().replace(":", "");
         const value = parseFloat(e.target.value);
         stateFunctions.setJointMinMax(selectedObject, type, value);
-    };
+    }
 
     const reattachLink = () => {
         stateFunctions.reattachLink(selectedObject);
@@ -91,14 +105,16 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                             <Parameter
                                 title="Min:"
                                 size="small"
-                                value={selectedObject.min}
+                                value={tempMin}
                                 onChange={handleSetMinMax}
+                                onBlur={handleMinMaxBlur}
                             />
                             <Parameter
                                 title="Max:"
                                 size="small"
-                                value={selectedObject.max}
+                                value={tempMax}
                                 onChange={handleSetMinMax}
+                                onBlur={handleMinMaxBlur}
                             />
                         </ul>
                     )}
