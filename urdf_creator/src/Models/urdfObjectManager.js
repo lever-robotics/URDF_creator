@@ -4,6 +4,7 @@ import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
 import Axis from "./Axis";
+import * as THREE from "three";
 
 export default class urdfObjectManager {
 
@@ -76,44 +77,77 @@ export default class urdfObjectManager {
         return clone;
     }
 
-    // Not yet functional
+    // Recursively compress each urdfObject into a single mesh to make project storing as a gltf easier
+    compressScene(urdfObject){
+
+        const compressedObject = new THREE.Mesh();
+        const userData = {
+            position: urdfObject.position,
+            rotation: urdfObject.rotation,
+            scale: urdfObject.link.scale,
+            offset: urdfObject.link.position,
+            jointType: urdfObject.jointType,
+            // jointAxis: joint.position,
+            jointMin: urdfObject.min,
+            jointMax: urdfObject.max,
+            jointRotation: urdfObject.joint.rotation,
+            jointOrigin: urdfObject.joint.position,
+            material: urdfObject.link.material,
+            shape: urdfObject.shape,
+            name: urdfObject.name,
+            mass: urdfObject.mass,
+            ixx: urdfObject.inertia.ixx,
+            ixy: urdfObject.inertia.ixy,
+            ixz: urdfObject.inertia.ixz,
+            iyy: urdfObject.inertia.yyx,
+            izz: urdfObject.inertia.izz,
+            iyz: urdfObject.inertia.iyz,
+        }
+        compressedObject.userData = userData;
+
+        urdfObject.getUrdfObjectChildren().forEach((object) => {
+            compressedObject.add(this.compressScene(object));
+        });
+
+        return compressedObject;
+    }
+
+    loadObject(gltfObject) {
+        const { position, rotation, scale, offset, jointType, jointMin, jointMax, jointRotation, jointOrigin, material, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
+
+        console.log(position);
+
+        const link = new Link(shape, Object.values(offset), Object.values(scale));
+        const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
+        const axis = new Axis();
+        const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
+        const sensor = new Sensor();
+        const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation));
+
+        joint.link = link;
+        joint.add(link);
+
+        urdfobject.joint = joint;
+        urdfobject.link = link;
+        urdfobject.axis = axis;
+        urdfobject.add(joint);
+        urdfobject.add(axis);
+
+        urdfobject.inertia = inertia;
+
+        urdfobject.sensor = sensor;
+        return urdfobject;
+    }
+
     readScene(gltfObject) {
-        // const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
-        // const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
-        // const link = shimmy.children[0];
-        // const linkChildren = link.children;
-        // const mesh = linkChildren.find((obj) => obj.type === "Mesh");
-        // const params = {
-        //     position: gltfObject.position,
-        //     rotation: gltfObject.rotation,
-        //     scale: mesh.scale,
-        //     offset: link.position,
-        //     jointAxis: {
-        //         type: joint.userData?.jointType ?? 'fixed',
-        //         axis: joint.position,
-        //         origin: [0, 0, 0], // Not sure how to do this
-        //         name: joint.name,
-        //     },
-        //     jointMin: joint.userData?.min,
-        //     jointMax: joint.userData?.max,
-        //     jointRotation: joint.rotation,
-        //     jointOrigin: joint.position,
-        //     material: mesh.material,
-        //     shape: gltfObject.userData.shape,
-        //     userData: gltfObject.userData,
-        //     name: gltfObject.userData.name,
-        // };
-        // const children = link.children.map((object) => {
-        //     if (object !== THREE.Mesh) {
-        //         return object;
-        //     }
-        // });
-        // const object = new urdfObject(params.shape, params.name, params);
-        // children.forEach((child) => {
-        //     if (child.type !== "Mesh") {
-        //         return object.link.add(createUrdfObject(child));
-        //     }
-        // });
-        // return object;
+        console.log(gltfObject);
+
+        const newObject = this.loadObject(gltfObject);
+
+        gltfObject.children.forEach((child) => {
+            return newObject.add(this.readScene(child));
+        });
+        
+        return newObject; 
     }
 }
