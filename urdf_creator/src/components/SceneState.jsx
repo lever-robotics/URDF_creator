@@ -95,53 +95,6 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    // Ignore this function for now
-    const createUrdfObject = (gltfObject) => {
-        const shimmy =
-            gltfObject.children[0] === THREE.Line
-                ? gltfObject.children[0]
-                : gltfObject.children[1];
-        const joint =
-            gltfObject.children[0] === THREE.Line
-                ? gltfObject.children[1]
-                : gltfObject.children[0];
-        const link = shimmy.children[0];
-        const linkChildren = link.children;
-        const mesh = linkChildren.find((obj) => obj.type === "Mesh");
-        const params = {
-            position: gltfObject.position,
-            rotation: gltfObject.rotation,
-            scale: mesh.scale,
-            offset: link.position,
-            jointAxis: {
-                type: joint.userData?.jointType ?? "fixed",
-                axis: joint.position,
-                origin: [0, 0, 0], // Not sure how to do this
-                name: joint.name,
-            },
-            jointMin: joint.userData?.min,
-            jointMax: joint.userData?.max,
-            jointRotation: joint.rotation,
-            jointOrigin: joint.position,
-            material: mesh.material,
-            shape: gltfObject.userData.shape,
-            userData: gltfObject.userData,
-            name: gltfObject.userData.name,
-        };
-        const children = link.children.map((object) => {
-            if (object !== THREE.Mesh) {
-                return object;
-            }
-        });
-        const object = new urdfObject(params.shape, params.name, params);
-        children.forEach((child) => {
-            if (child.type !== "Mesh") {
-                return object.link.add(createUrdfObject(child));
-            }
-        });
-        return object;
-    };
-
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
         console.log(threeScene.current.scene);
@@ -261,20 +214,17 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    // Loads a scene from gltf 
-    // Needs to be fixed
-    const loadScene = (base_link) => {
-        // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
+    const loadScene = (gltfScene) => {
         const { current: three } = threeScene;
-        const baseLink = createUrdfObject(base_link);
-        if (three.baseLink) {
-            three.baseLink.removeFromParent();
-        }
+        const manager = new urdfObjectManager();
+        const baseLink = manager.readScene(gltfScene);
+        // if (three.baseLink) {
+        //     three.baseLink.removeFromParent();
+        // }
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
         forceSceneUpdate();
-        // createNewLink(threeObjects.current.scene, base_link);
     };
 
     const getScene = () => {
@@ -351,7 +301,6 @@ export default function SceneState({ threeScene }) {
 
     const stateFunctions = {
         addObject,
-        createUrdfObject,
         forceSceneUpdate,
         setTransformMode,
         getToolMode,

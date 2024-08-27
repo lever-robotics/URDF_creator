@@ -113,11 +113,7 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                         </StyledMenuItem>
                         <StyledMenuItem
                             onClick={() => {
-                                handleDownload(
-                                    getBaseLink(),
-                                    "gltf",
-                                    projectTitle
-                                );
+                                handleGLTFExport();
                                 popupState.close();
                             }}>
                             Export GLTF
