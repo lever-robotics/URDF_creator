@@ -1,35 +1,72 @@
+import { useState } from "react";
 import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
 function ScaleParameters({ selectedObject, stateFunctions }) {
+    const [tempX, setTempX] = useState(selectedObject.scale.x);
+    const [tempY, setTempY] = useState(selectedObject.scale.y);
+    const [tempZ, setTempZ] = useState(selectedObject.scale.z);
+    const [tempRadius, setTempRadius] = useState(selectedObject.scale.x / 2);
 
     const handleScaleChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
+        const tempValue = e.target.value;
+        switch (axis) {
+            case "x":
+                setTempX(tempValue);
+                break;
+            case "y":
+                setTempY(tempValue);
+                break;
+            case "z":
+                setTempZ(tempValue);
+                break;
+            case "radius":
+                setTempRadius(tempValue);
+                break;
+        }
+    };
+
+    const handleScaleBlur = (e) => {
+        const axis = e.target.title.toLowerCase().replace(":", "");
         let newValue = parseFloat(e.target.value);
 
-        if(axis === 'radius'){
+        if (axis === "radius") {
             newValue = newValue * 2;
         }
 
-        if(newValue <= 0){
-            newValue = .001;
+        if (newValue <= 0) {
+            newValue = 0.001;
         }
 
         if (isNaN(newValue)) return;
-        console.log(newValue);
+        stateFunctions.transformObject(selectedObject, "scale", axis, newValue);
+    };
 
-        stateFunctions.transformObject(
-            selectedObject,
-            "scale",
-            axis,
-            newValue
-        );
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            const axis = e.target.title.toLowerCase().replace(":", "");
+            let newValue = parseFloat(e.target.value);
+
+            if (axis === "radius") {
+                newValue = newValue * 2;
+            }
+
+            if (newValue <= 0) {
+                newValue = 0.001;
+            }
+
+            if (isNaN(newValue)) return;
+            stateFunctions.transformObject(selectedObject, "scale", axis, newValue);
+        }
     };
 
     const props = {
         type: "number",
         unit: "m",
         onChange: handleScaleChange,
+        onBlur: handleScaleBlur,
+        onKeyDown: handleKeyDown
     };
 
     const determineParametersFromShape = (shape) => {
@@ -38,7 +75,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                 return (
                     <Parameter
                         title="Radius:"
-                        value={selectedObject.scale.x / 2}
+                        value={tempRadius}
                         {...props}
                     />
                 );
@@ -47,12 +84,12 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                     <>
                         <Parameter
                             title="Radius:"
-                            value={selectedObject.scale.x / 2}
+                            value={tempRadius}
                             {...props}
                         />
                         <Parameter
                             title="Height:"
-                            value={selectedObject.scale.z}
+                            value={tempZ}
                             {...props}
                         />
                     </>
@@ -62,17 +99,17 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                     <>
                         <Parameter
                             title="X:"
-                            value={selectedObject.scale.x}
+                            value={tempX}
                             {...props}
                         />
                         <Parameter
                             title="Y:"
-                            value={selectedObject.scale.y}
+                            value={tempY}
                             {...props}
                         />
                         <Parameter
                             title="Z:"
-                            value={selectedObject.scale.z}
+                            value={tempZ}
                             {...props}
                         />
                     </>
