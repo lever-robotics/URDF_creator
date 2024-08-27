@@ -5,11 +5,8 @@ import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
 
 export default class urdfObjectManager {
-    constructor(){
 
-    }
-
-    changeSensor(urdfObject, type){
+    changeSensor(urdfObject, type) {
         switch (type) {
             case "imu":
                 urdfObject.sensor = new IMU();
@@ -29,10 +26,10 @@ export default class urdfObjectManager {
         }
     }
 
-    createUrdfObject(params){
+    createUrdfObject(params) {
         const name = params.name;
         const shape = params.shape;
-            
+
         const link = new Link(shape);
         const joint = new Joint();
         const inertia = new Inertia();
@@ -53,7 +50,7 @@ export default class urdfObjectManager {
         return urdfobject;
     }
 
-    cloneUrdfObject(urdfObject){
+    cloneUrdfObject(urdfObject) {
         console.log(urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
@@ -73,7 +70,7 @@ export default class urdfObjectManager {
     }
 
     // Not yet functional
-    readScene(gltfObject){
+    readScene(gltfObject) {
         // const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
         // const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
         // const link = shimmy.children[0];

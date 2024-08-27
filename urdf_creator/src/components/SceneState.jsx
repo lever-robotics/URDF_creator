@@ -188,9 +188,7 @@ export default function SceneState({ threeScene }) {
         if (!urdfObject) {
             setSelectedObject(null);
             three.transformControls.detach();
-            return;
-        }
-        if (urdfObject.isSelectable()) {
+        } else if (urdfObject.isSelectable()) {
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {
@@ -294,10 +292,10 @@ export default function SceneState({ threeScene }) {
         const manager = new urdfObjectManager();
         const clone = manager.cloneUrdfObject(urdfObject);
 
-        if(urdfObject.name === "base_link"){
+        if (urdfObject.name === "base_link") {
             clone.name = "base_link_copy"
             urdfObject.attach(clone);
-        }else{
+        } else {
             urdfObject.parent.attach(clone);
         }
         setSelectedObject(null);
@@ -306,8 +304,8 @@ export default function SceneState({ threeScene }) {
 
     const deleteObject = (urdfObject) => {
         const { current: three } = threeScene;
-        
-        if(urdfObject.name === "base_link"){
+
+        if (urdfObject.name === "base_link") {
             three.baseLink = null;
         }
         selectObject();
@@ -317,7 +315,7 @@ export default function SceneState({ threeScene }) {
 
     const getBaseLink = () => {
         const { current: three } = threeScene;
-        if(three){
+        if (three) {
             return three.baseLink;
         }
     };
