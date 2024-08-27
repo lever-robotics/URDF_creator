@@ -77,30 +77,39 @@ export default class urdfObjectManager {
         return clone;
     }
 
-    compressScene(baseLink){
+    // Recursively compress each urdfObject into a single mesh to make project storing as a gltf easier
+    compressScene(urdfObject){
 
-        const compressObject = (urdfObject) => {
-            const compressedObject = new THREE.Mesh();
-            const userData = {
-                position: urdfObject.position,
-                rotation: urdfObject.rotation,
-                scale: urdfObject.scale,
-                offset: urdfObject.link.position,
-                jointAxis: {
-                    jointType: joint.userData?.jointType ?? 'fixed',
-                    axis: joint.position,
-                    origin: [0, 0, 0], // Not sure how to do this
-                    name: joint.name,
-                },
-                jointMin: joint.userData?.min,
-                jointMax: joint.userData?.max,
-                jointRotation: joint.rotation,
-                jointOrigin: joint.position,
-                material: mesh.material,
-                shape: urdfObject.userData.shape,
-                name: urdfObject.userData.name,
-            }
+        const compressedObject = new THREE.Mesh();
+        const userData = {
+            position: urdfObject.position,
+            rotation: urdfObject.rotation,
+            scale: urdfObject.link.scale,
+            offset: urdfObject.link.position,
+            jointType: urdfObject.jointType,
+            // jointAxis: joint.position,
+            jointMin: urdfObject.min,
+            jointMax: urdfObject.max,
+            jointRotation: urdfObject.joint.rotation,
+            jointOrigin: urdfObject.joint.position,
+            material: urdfObject.link.material,
+            shape: urdfObject.shape,
+            name: urdfObject.name,
+            mass: urdfObject.mass,
+            ixx: urdfObject.inertia.ixx,
+            ixy: urdfObject.inertia.ixy,
+            ixz: urdfObject.inertia.ixz,
+            iyy: urdfObject.inertia.yyx,
+            izz: urdfObject.inertia.izz,
+            iyz: urdfObject.inertia.iyz,
         }
+        compressedObject.userData = userData;
+
+        urdfObject.getUrdfObjectChildren().forEach((object) => {
+            compressedObject.add(this.compressScene(object));
+        });
+
+        return compressedObject;
     }
 
 

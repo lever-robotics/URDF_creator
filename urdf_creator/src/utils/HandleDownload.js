@@ -18,6 +18,7 @@ export async function handleDownload(scene, type, title) {
   } else if (type === "gltf") {
     const exporter = new GLTFExporter();
     exporter.parse(scene, (gltf) => {
+      console.log(gltf);
       otherFileDownload(JSON.stringify(gltf), type, title);
     });
     // const json = scene.toJSON();

@@ -9,7 +9,8 @@ import { handleUpload } from "../../utils/HandleUpload";
 import { openDB } from "idb";
 import { StyledMenu, StyledButton, StyledMenuItem } from "./StyledItems";
 import "./MenuModal.css";
-import ReactGA from 'react-ga4';
+import ReactGA from "react-ga4";
+import urdfObjectManager from "../../Models/urdfObjectManager.js";
 
 export default function MenuModal({ stateFunctions, projectTitle }) {
     const inputFile = useRef(null);
@@ -35,6 +36,12 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
         const group = await handleUpload(file, type);
         const base_link = group.children[0];
         loadScene(base_link);
+    };
+
+    const handleGLTFExport = () => {
+        const manager = new urdfObjectManager();
+        const compressedScene = manager.compressScene(getBaseLink());
+        handleDownload(compressedScene, "gltf", projectTitle);
     };
 
     const onSTLFileUpload = () => inputSTLFile.current.click();
@@ -72,7 +79,7 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                             className="material-symbols-outlined">
                             <MenuIcon />
                         </StyledButton>
-                        <HelpIcon openOnboarding={openOnboarding}/>
+                        <HelpIcon openOnboarding={openOnboarding} />
                         <input
                             type="text"
                             value={projectTitle}
@@ -91,9 +98,9 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                         <StyledMenuItem
                             onClick={() => {
                                 ReactGA.event({
-                                    category: 'Button', // Typically the object that was interacted with
-                                    action: 'Click', // The type of interaction
-                                    label: 'Downloads of URDF package' // Optional, can be used to identify specific buttons
+                                    category: "Button", // Typically the object that was interacted with
+                                    action: "Click", // The type of interaction
+                                    label: "Downloads of URDF package", // Optional, can be used to identify specific buttons
                                 });
                                 handleDownload(
                                     getScene(),
