@@ -11,6 +11,7 @@ const Onboarding = ({ closeOnboarding }) => {
     const totalPages = 3;
 
     const handleNextPage = () => {
+        debugger;
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         } else {
@@ -64,9 +65,8 @@ const Onboarding = ({ closeOnboarding }) => {
                     </button>
                     {renderDots()}
                     <button
-                        className={`next-button ${currentPage === totalPages ? 'hidden' : ''}`}
+                        className={`next-button`}
                         onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
                     >
                         <FontAwesomeIcon icon={faArrowRight} />
                     </button>

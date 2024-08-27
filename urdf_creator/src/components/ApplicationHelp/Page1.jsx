@@ -12,13 +12,13 @@ const Page1 = () => {
                 <span className="welcome-text">Welcome</span> to URDF Creator
             </h1>
             <p className="description">
-                An open-source tool for ROS2 developers. This tool assists in defining robots ready for high fidelity physics simulations.
+                An free open-source tool for ROS2 developers. This tool assists in defining robots ready for high fidelity physics simulations.
             </p>
             <p className="description">
                 This tool helps to take models from CAD modeling software such as those seen below and more and help define the software model the robot will utilize.
             </p>
             <p className="description">
-                This tool is designed for ROS2 but the URDF model designed can be used on many platforms such as seen below.
+                This tool is designed for ROS2 but the URDF model designed can be used to create a URDF on many platforms such as seen below.
             </p>
             <div className="graphic-container">
                 <img src={process.env.PUBLIC_URL + '/statics/roboeverything.png'} alt="Robo Everything" className="roboeverything-graphic" />

@@ -1,0 +1,37 @@
+.page2-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.section-header {
+    font-size: 3.0em;
+    color: #004aad;
+    margin-bottom: 15px;
+}
+
+.description {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.content-section {
+    margin-bottom: 30px;
+}
+
+.subsection-header {
+    font-size: 1.2em;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.graphic-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.graphic {
+    max-width: 30%;
+    height: auto;
+}
