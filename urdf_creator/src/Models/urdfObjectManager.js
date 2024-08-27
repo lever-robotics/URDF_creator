@@ -3,13 +3,11 @@ import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
+import Axis from "./Axis";
 
 export default class urdfObjectManager {
-    constructor(){
 
-    }
-
-    changeSensor(urdfObject, type){
+    changeSensor(urdfObject, type) {
         switch (type) {
             case "imu":
                 urdfObject.sensor = new IMU();
@@ -29,12 +27,13 @@ export default class urdfObjectManager {
         }
     }
 
-    createUrdfObject(params){
+    createUrdfObject(params) {
         const name = params.name;
         const shape = params.shape;
-            
+
         const link = new Link(shape);
         const joint = new Joint();
+        const axis = new Axis();
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
@@ -44,7 +43,9 @@ export default class urdfObjectManager {
 
         urdfobject.joint = joint;
         urdfobject.link = link;
+        urdfobject.axis = axis;
         urdfobject.add(joint);
+        urdfobject.add(axis);
 
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
@@ -53,27 +54,30 @@ export default class urdfObjectManager {
         return urdfobject;
     }
 
-    cloneUrdfObject(urdfObject){
+    cloneUrdfObject(urdfObject) {
         console.log(urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
+        const axis = urdfObject.axis.clone();
         const inertia = urdfObject.inertia.clone();
         const sensor = urdfObject.sensor.clone();
         const clone = urdfObject.clone();
 
         clone.link = link;
         clone.joint = joint;
+        clone.axis = axis;
         clone.inertia = inertia;
         clone.sensor = sensor;
 
         joint.add(link);
         urdfObject.add(joint);
+        urdfObject.add(axis);
 
         return clone;
     }
 
     // Not yet functional
-    readScene(gltfObject){
+    readScene(gltfObject) {
         // const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
         // const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
         // const link = shimmy.children[0];

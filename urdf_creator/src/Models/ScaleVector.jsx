@@ -38,6 +38,8 @@ export default class ScaleVector extends THREE.Vector3 {
         }
     }
 
+    // THREE.Vector3 has a function called multiply that is called if the vector 3 is a scene object's scale whenever the object is scaled by transform controls
+    // this function hijacks the normal scale function and ensures that spheres and cylinders scale uniformly
     multiply(vector) {
         // The multiply vector is provided as a <1,1,1>. If a axis has been scaled then only that component will be different. i.e. scale X then the multiply vector will be <x,1,1>
         switch (this.shape) {
@@ -49,11 +51,12 @@ export default class ScaleVector extends THREE.Vector3 {
                 const y = vector.getComponent(1);
                 const z = vector.getComponent(2);
 
+                // check to see if x, y, or z have changed, if so update the shape accordingly
                 if (x !== this.getComponent(0) && x !== 1) {
                     super.multiply(new THREE.Vector3(x, x, x));
-                } else if (y !== this.getComponent(1) && x !== 1) {
+                } else if (y !== this.getComponent(1) && y !== 1) {
                     super.multiply(new THREE.Vector3(y, y, y));
-                } else if (z !== this.getComponent(2) && x !== 1) {
+                } else if (z !== this.getComponent(2) && z !== 1) {
                     super.multiply(new THREE.Vector3(z, z, z));
                 }
                 return this;
@@ -62,9 +65,10 @@ export default class ScaleVector extends THREE.Vector3 {
                 const b = Math.abs(vector.getComponent(1));
                 const c = vector.getComponent(2);
 
-                if (a !== this.getComponent(0)) {
+                // check to see if x, y, or z have changed, if so update the shape accordingly
+                if (a !== this.getComponent(0) && a !== 1) {
                     super.multiply(new THREE.Vector3(a, a, c));
-                } else if (b !== this.getComponent(1)) {
+                } else if (b !== this.getComponent(1) && b !== 1) {
                     super.multiply(new THREE.Vector3(b, b, c));
                 } else if (c !== this.getComponent(2)) {
                     super.multiply(vector);

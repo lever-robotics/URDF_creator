@@ -15,15 +15,6 @@ export default class urdfObject extends THREE.Object3D {
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
-
-        Object.defineProperty(this, "scale", {
-            get() {
-                return this._scale;
-            },
-            set(newVector) {
-                this._scale.set(...newVector);
-            },
-        });
     }
 
     /**
@@ -76,14 +67,6 @@ export default class urdfObject extends THREE.Object3D {
 
     get mass() {
         return this.inertia.mass;
-    }
-
-    get _scale() {
-        return this.link.scale;
-    }
-
-    set _scale(newVector) {
-        this.link.scale = newVector;
     }
 
     get shape() {
