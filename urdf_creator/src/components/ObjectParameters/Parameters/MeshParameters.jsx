@@ -9,26 +9,41 @@ function MeshParameters({ selectedObject, stateFunctions }) {
         stateFunctions.setMesh(selectedObject, e.target.value);
     };
 
-    useEffect(() => {
-        const getFiles = async () => {
-            const db = await openDB("stlFilesDB", 1);
+    const loadFiles = async () => {
+        try {
+            // Open the database
+            const db = await openDB("stlFilesDB", 1, {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains("files")) {
+                        db.createObjectStore("files", { keyPath: "name" });
+                    }
+                }
+            });
+
+            // Get all files from the 'files' store
             const files = await db.getAll("files");
-            setFiles(files);
-        };
-        try{
-            // If I don't have the DB created then this crashes the program. Can we build some error checking into this so even if no STL files are uploaded the program works?
-            
-            // getFiles();
+
+            // Set the files if they exist, or return an empty array
+            setFiles(files || []);
+        } catch (error) {
+            console.error('Error retrieving files:', error);
+            setFiles([]); // Set an empty array on error to avoid breaking the UI
         }
-        catch (error) {
-            console.error(error);
-        }
+    };
+
+    useEffect(() => {
+        // Load files when the component is first rendered
+        loadFiles();
     }, []);
 
     return (
         <ToggleSection title="Mesh Parameters">
             <strong>Mesh (only for visual):</strong>
-            <select value={selectedObject.mesh} onChange={handleMeshChange}>
+            <select
+                value={selectedObject.userData.stlfile}
+                onChange={handleMeshChange}
+                onClick={loadFiles} // Load files when the selection bar is clicked
+            >
                 <option value="">No Mesh</option>
                 {files.map((file) => (
                     <option key={file.name} value={file.name}>
