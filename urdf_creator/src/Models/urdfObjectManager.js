@@ -3,6 +3,7 @@ import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
+import Axis from "./Axis";
 
 export default class urdfObjectManager {
 
@@ -32,6 +33,7 @@ export default class urdfObjectManager {
 
         const link = new Link(shape);
         const joint = new Joint();
+        const axis = new Axis();
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
@@ -41,7 +43,9 @@ export default class urdfObjectManager {
 
         urdfobject.joint = joint;
         urdfobject.link = link;
+        urdfobject.axis = axis;
         urdfobject.add(joint);
+        urdfobject.add(axis);
 
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
@@ -54,17 +58,20 @@ export default class urdfObjectManager {
         console.log(urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
+        const axis = urdfObject.axis.clone();
         const inertia = urdfObject.inertia.clone();
         const sensor = urdfObject.sensor.clone();
         const clone = urdfObject.clone();
 
         clone.link = link;
         clone.joint = joint;
+        clone.axis = axis;
         clone.inertia = inertia;
         clone.sensor = sensor;
 
         joint.add(link);
         urdfObject.add(joint);
+        urdfObject.add(axis);
 
         return clone;
     }
