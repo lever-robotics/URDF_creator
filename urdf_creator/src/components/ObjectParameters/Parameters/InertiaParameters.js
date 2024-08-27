@@ -5,9 +5,41 @@ import ToggleSection from "../ToggleSection";
 import { handleDownload } from "../../../utils/HandleDownload";
 
 function InertiaParameters({ selectedObject, stateFunctions }) {
-    const { mass, ixx, ixy, ixz, iyy, iyz, izz } = selectedObject.inertia;
+    const [tempMass, setTempMass] = useState(selectedObject.inertia.mass);
+    const [tempIxx, setTempIxx] = useState(selectedObject.inertia.ixx);
+    const [tempIxy, setTempIxy] = useState(selectedObject.inertia.ixy);
+    const [tempIxz, setTempIxz] = useState(selectedObject.inertia.ixz);
+    const [tempIyy, setTempIyy] = useState(selectedObject.inertia.iyy);
+    const [tempIyz, setTempIyz] = useState(selectedObject.inertia.iyz);
+    const [tempIzz, setTempIzz] = useState(selectedObject.inertia.izz);
 
     const handleInertiaChange = (e) => {
+        const type = e.target.title.toLowerCase().replace(":", "");
+        const tempValue = e.target.value;
+
+        switch (type) {
+            case "ixx":
+                setTempIxx(tempValue);
+                break;
+            case "ixy":
+                setTempIxy(tempValue);
+                break;
+            case "ixz":
+                setTempIxz(tempValue);
+                break;
+            case "iyy":
+                setTempIyy(tempValue);
+                break;
+            case "iyz":
+                setTempIyz(tempValue);
+                break;
+            case "izz":
+                setTempIzz(tempValue);
+                break;
+        }
+    };
+
+    const handleInertiaBlur = (e) => {
         const inertia = parseFloat(e.target.value);
         const type = e.target.title.toLowerCase().replace(":", "");
 
@@ -17,8 +49,22 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     };
 
     const handleMassChange = (e) => {
+        setTempMass(e.target.value);
+    };
+
+    const handleMassBlur = (e) => {
         if (isNaN(e.target.value)) return;
         stateFunctions.setMass(selectedObject, parseFloat(e.target.value));
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            if (e.target.title.toLowerCase().replace(":", "") === "mass") {
+                handleMassBlur(e);
+            } else {
+                handleInertiaBlur(e);
+            }
+        }
     };
 
     return (
@@ -27,8 +73,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Mass:"
                     type="number"
-                    value={mass}
+                    value={tempMass}
                     onChange={handleMassChange}
+                    onBlur={handleMassBlur}
+                    onKeyDown={handleKeyDown}
                     units="kg"
                 />
             </ul>
@@ -39,8 +87,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Ixx:"
                     type="number"
-                    value={ixx}
+                    value={tempIxx}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
@@ -50,8 +100,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Ixy:"
                     type="number"
-                    value={ixy}
+                    value={tempIxy}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
@@ -61,8 +113,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Ixz:"
                     type="number"
-                    value={ixz}
+                    value={tempIxz}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
@@ -72,8 +126,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Iyy:"
                     type="number"
-                    value={iyy}
+                    value={tempIyy}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
@@ -83,8 +139,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Iyz:"
                     type="number"
-                    value={iyz}
+                    value={tempIyz}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
@@ -94,8 +152,10 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 <Parameter
                     title="Izz:"
                     type="number"
-                    value={izz}
+                    value={tempIzz}
                     onChange={handleInertiaChange}
+                    onBlur={handleInertiaBlur}
+                    onKeyDown={handleKeyDown}
                     units={
                         <>
                             km<span className="large-dot">·</span>m<sup>2</sup>
