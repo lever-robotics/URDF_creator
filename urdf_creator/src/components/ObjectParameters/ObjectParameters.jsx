@@ -52,10 +52,11 @@ function ObjectParameters({ selectedObject, stateFunctions }) {
                 selectedObject={selectedObject}
                 stateFunctions={stateFunctions}
             />
-            <MeshParameters
+            {/* Disabling STL upload for now */}
+            {/* <MeshParameters
                 selectedObject={selectedObject}
                 stateFunctions={stateFunctions}
-            />
+            /> */}
         </div>
     );
 }

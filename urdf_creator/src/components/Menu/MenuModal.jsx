@@ -122,13 +122,14 @@ export default function MenuModal({ stateFunctions, projectTitle }) {
                             }}>
                             Upload File
                         </StyledMenuItem>
-                        <StyledMenuItem
+                        {/* Disabling STL upload for now */}
+                        {/* <StyledMenuItem
                             onClick={() => {
                                 onSTLFileUpload();
                                 popupState.close();
                             }}>
                             Upload STL
-                        </StyledMenuItem>
+                        </StyledMenuItem> */}
                     </StyledMenu>
                     <input
                         type="file"

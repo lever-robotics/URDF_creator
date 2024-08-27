@@ -148,14 +148,26 @@ export default class urdfObject extends THREE.Object3D {
 
     setMesh = async (meshFileName) => {
         if (meshFileName === "") {
-            this.shimmy.link.material.wireframe = false;
-            this.stlfile = null;
+            this.joint.link.material.wireframe = false;
+            this.userData.stlfile = null;
+            this.link.children = [];
             return;
         }
 
+        //check if object already has a mesh and if so remove it and add the new mesh
+        if (this.userData.stlfile === meshFileName) {
+            return;
+        }
+
+        // Remove the existing mesh from link childreen
+        if (this.joint.link.children.length > 0) {
+            this.joint.link.children = [];
+        }
+        
+        // Set the stlfile name to the userData
         this.userData.stlfile = meshFileName;
 
-        // Add the STL Mesh to the urdfObject as a child of urdfObject.shimmy.link.mesh and apply wireframe to Mesh
+        // Add the STL Mesh to the urdfObject as a child of urdfObject.joint.link.mesh and apply wireframe to link geometry
         //get stl file from openDB
         try {
             // Get the STL file from IndexedDB
@@ -225,7 +237,7 @@ export default class urdfObject extends THREE.Object3D {
                 );
 
                 // Make the mesh object a wireframe
-                this.link.mesh.material.wireframe = true;
+                this.joint.link.material.wireframe = true;
             } else {
                 console.error("File not found in database");
             }
