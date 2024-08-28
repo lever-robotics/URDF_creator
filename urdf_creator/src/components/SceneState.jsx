@@ -292,6 +292,73 @@ export default function SceneState({ threeScene }) {
         setIsModalOpen(false);
     };
 
+    const copyIntoPosition = (object, position) => {
+        object.position.copy(position);
+        return object.position;
+    };
+
+    const setPosition = (object, dimension, value) => {
+        switch (dimension) {
+            case "x":
+                object.position.x = value;
+                break;
+            case "y":
+                object.position.y = value;
+                break;
+            case "z":
+                object.position.z = value;
+                break;
+            default:
+                break;
+        }
+    };
+
+    const applyQuaternionToPosition = (object, quaternion) => {
+        object.position.applyQuaternion(quaternion);
+        return object.position;
+    };
+
+    const addToPosition = (object, position) => {
+        object.position.add(position);
+        return object.position;
+    };
+
+    const subtractFromPosition = (object, position) => {
+        object.position.sub(position);
+        return object.position;
+    };
+
+    const copyIntoScale = (object, scale) => {
+        object.scale.copy(scale);
+        return object.scale;
+    };
+
+    const setScale = (object, dimension, value) => {
+        switch (dimension) {
+            case "x":
+                object.scale.x = value;
+                break;
+            case "y":
+                object.scale.y = value;
+                break;
+            case "z":
+                object.scale.z = value;
+                break;
+            default:
+                break;
+        }
+    };
+
+    const copyIntoQuaternion = (object, quaternion) => {
+        object.quaternion.copy(quaternion);
+        return object.quaternion;
+    };
+
+    const multiplyIntoQuaternion = (object, quaternion) => {
+        object.quaternion.multiply(quaternion);
+        return object.quaternion;
+    };
+
     const stateFunctions = {
         addObject,
         forceSceneUpdate,
@@ -325,22 +392,25 @@ export default function SceneState({ threeScene }) {
         closeModal,
         changeProjectTitle,
         handleProjectClick,
+        copyIntoPosition,
+        setPosition,
+        applyQuaternionToPosition,
+        addToPosition,
+        subtractFromPosition,
+        copyIntoScale,
+        setScale,
+        copyIntoQuaternion,
+        multiplyIntoQuaternion,
     };
 
-    return (
+    return [
         <div className="screen">
             <Modal isOpen={isModalOpen} onClose={closeModal} modalContent={modalContent} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuBar
-                            stateFunctions={stateFunctions}
-                            projectTitle={projectTitle}
-                        />
-                        <LinkTree
-                            selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
-                        />
+                        <MenuBar stateFunctions={stateFunctions} projectTitle={projectTitle} />
+                        <LinkTree selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <InsertTool addObject={addObject} />
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
@@ -350,6 +420,7 @@ export default function SceneState({ threeScene }) {
                     </Column>
                 </Row>
             </AbsolutePosition>
-        </div>
-    );
+        </div>,
+        stateFunctions,
+    ];
 }
