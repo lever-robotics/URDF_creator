@@ -1,31 +1,17 @@
 import * as React from "react";
-import * as THREE from "three";
 import { useState, useRef } from "react";
 import MenuIcon from "./MenuIcon.jsx";
-import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import HelpIcon from "../ApplicationHelp/HelpIcon.jsx";
 import { handleDownload } from "../../utils/HandleDownload.js";
 import { handleUpload } from "../../utils/HandleUpload.js";
 import { openDB } from "idb";
-import { StyledMenu, StyledButton, StyledMenuItem } from "./StyledItems.jsx";
-import "./MenuModal.css";
+import "./MenuBar.css";
 import ReactGA from "react-ga4";
 import urdfObjectManager from "../../Models/urdfObjectManager.js";
-import MenuModal from "../../FunctionalComponents/MenuModal.jsx";
 
 export default function MenuBar({ stateFunctions, projectTitle }) {
     const inputFile = useRef(null);
     const inputSTLFile = useRef(null);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-    const buttonRef = useRef(null);
-
-    const menuItems = [
-        { label: "Profile", action: () => alert("Profile clicked!") },
-        { label: "Settings", action: () => alert("Settings clicked!") },
-        { label: "Logout", action: () => alert("Logout clicked!") },
-    ];
 
     const {
         openProjectManager,
@@ -75,22 +61,7 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
         }
     };
 
-    const openMainMenu = () => {
-        console.log("I am a button");
-    };
 
-    const openModal = () => {
-        const buttonRect = buttonRef.current.getBoundingClientRect();
-        setModalPosition({
-            top: buttonRect.bottom + window.scrollY, // Position below the button
-            left: buttonRect.left + window.scrollX, // Align left with the button
-        });
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
 
     // Consider creating a menuItemFactory to map menuItems out. Then all the menu items can be defined above and implemented below. Could be a more extendable and easier to read approach
 
@@ -98,13 +69,13 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
 
     return (
         <div className="menu">
-            <MenuIcon openMainMenu={openModal} ref={buttonRef} />
+            <MenuIcon />
             <HelpIcon openOnboarding={openOnboarding} />
-            <MenuModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                menuItems={menuItems}
-                position={modalPosition}
+            <input 
+                type="text"
+                value={projectTitle}
+                className="project-title-input"
+                onChange={changeProjectTitle}
             />
         </div>
         // <PopupState variant="popover" popupId="demo-popup-menu">
