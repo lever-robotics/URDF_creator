@@ -77,6 +77,6 @@ export default class Link extends THREE.Mesh {
     };
 
     onAfterRender = () => {
-        this.parent.parent.updateInertia();
+        this.urdfObject.updateInertia();
     };
 }

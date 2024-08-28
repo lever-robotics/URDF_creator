@@ -75,9 +75,11 @@ export default function SceneState({ threeScene }) {
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.attach(newUrdfObject);
+            selectedObject.bus.attach(newUrdfObject);
+            newUrdfObject.parentURDF = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.attach(newUrdfObject);
+            three.baseLink.bus.attach(newUrdfObject);
+            newUrdfObject.parentURDF = three.baseLink;
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.isBaseLink = true;
@@ -132,7 +134,7 @@ export default function SceneState({ threeScene }) {
         if (!urdfObject) {
             setSelectedObject(null);
             three.transformControls.detach();
-        } else if (urdfObject.isSelectable()) {
+        } else if (urdfObject.selectable) {
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {

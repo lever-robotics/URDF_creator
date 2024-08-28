@@ -37,6 +37,10 @@ export default class urdfObjectManager {
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
+        // bus is the object that holds all the decendant objects so that moving children around the tree is easy
+        const bus = new THREE.Object3D();
+
+        link.add(bus);
 
         joint.link = link;
         joint.add(link);
@@ -44,8 +48,14 @@ export default class urdfObjectManager {
         urdfobject.joint = joint;
         urdfobject.link = link;
         urdfobject.axis = axis;
+        urdfobject.bus = bus;
         urdfobject.add(joint);
         urdfobject.add(axis);
+
+        joint.urdfObject = urdfobject;
+        link.urdfObject = urdfobject;
+        axis.urdfObject = urdfobject;
+        bus.urdfObject = urdfobject;
 
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
@@ -76,8 +86,7 @@ export default class urdfObjectManager {
     }
 
     // Recursively compress each urdfObject into a single mesh to make project storing as a gltf easier
-    compressScene(urdfObject){
-
+    compressScene(urdfObject) {
         const compressedObject = new THREE.Mesh();
         const userData = {
             position: urdfObject.position,
@@ -100,7 +109,7 @@ export default class urdfObjectManager {
             iyy: urdfObject.inertia.yyx,
             izz: urdfObject.inertia.izz,
             iyz: urdfObject.inertia.iyz,
-        }
+        };
         compressedObject.userData = userData;
 
         urdfObject.getUrdfObjectChildren().forEach((object) => {
@@ -145,7 +154,7 @@ export default class urdfObjectManager {
         gltfObject.children.forEach((child) => {
             return newObject.add(this.readScene(child));
         });
-        
-        return newObject; 
+
+        return newObject;
     }
 }
