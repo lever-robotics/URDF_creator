@@ -16,6 +16,7 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
     const {
         openProjectManager,
         openOnboarding,
+        openExportDisplayer,
         changeProjectTitle,
         getBaseLink,
         getScene,
@@ -63,9 +64,12 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
 
     return (
         <div className="menu-bar">
-            <MenuIcon openProjectManager={openProjectManager}/>
+            <MenuIcon
+                openExportDisplayer={openExportDisplayer}
+                openProjectManager={openProjectManager}
+            />
             <HelpIcon openOnboarding={openOnboarding} />
-            <input 
+            <input
                 type="text"
                 value={projectTitle}
                 className="project-title-input"
