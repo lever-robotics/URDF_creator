@@ -75,10 +75,10 @@ export default function SceneState({ threeScene }) {
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.bus.attach(newUrdfObject);
+            selectedObject.link.attach(newUrdfObject);
             newUrdfObject.parentURDF = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.bus.attach(newUrdfObject);
+            three.baseLink.link.attach(newUrdfObject);
             newUrdfObject.parentURDF = three.baseLink;
         } else {
             newUrdfObject.position.set(0, 0, 0.5);

@@ -30,7 +30,7 @@ export default class urdfObject extends THREE.Object3D {
      **/
 
     getUrdfObjectChildren = () => {
-        return this.bus.children.filter((child) => child instanceof urdfObject);
+        return this.link.children.filter((child) => child instanceof urdfObject);
     };
 
     get parentName() {
@@ -94,10 +94,6 @@ export default class urdfObject extends THREE.Object3D {
         this.inertia.updateMass(mass, this);
     };
 
-    /*known bugs
-    1. The blur effect that resets the position from the slider obviously will not work if you release hold of the slider and the mouse is no longer over that general element
-    2. When releaseing the mouse after a change of origin or angle the joint is set just slightly off from the expected 0. Mayber because of old savedPosition/savedRotation values?
-    */
     // Angle must be in radians
     rotateAroundJointAxis(angle) {
         // a quaternion is basically how to get from one rotation to another
@@ -299,20 +295,16 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     rotateJoint(transformControls) {
-        this.attach(this.link);
         transformControls.attach(this.axis);
     }
 
     moveJoint(transformControls) {
-        this.attach(this.link);
-        this.joint.attach(this.axis);
-        this.attach(this.bus);
-        transformControls.attach(this.joint);
+        this.parent.attach(this.link);
+        transformControls.attach(this);
     }
 
     reattachLink() {
         this.joint.attach(this.link);
-        this.link.attach(this.bus);
         this.attach(this.axis);
     }
 
