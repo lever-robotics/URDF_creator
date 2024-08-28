@@ -85,6 +85,7 @@ export default function SceneState({ threeScene }) {
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
+        selectObject(newUrdfObject);
         forceSceneUpdate();
     };
 
