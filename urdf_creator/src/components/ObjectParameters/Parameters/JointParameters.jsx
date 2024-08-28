@@ -19,7 +19,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     //             return selectedObject.angleAroundJointAxis();
     //     }
     // };
-    const sliderValue = selectedObject.jointType === "prismatic" ? selectedObject.distanceAlongJointAxis() : selectedObject.angleAroundJointAxis();
 
     const handleSliderChange = (e) => {
         const value = parseFloat(e.target.value);
@@ -89,7 +88,9 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
             </div>
             {selectedObject.jointType !== "fixed" && (
                 <>
-                    <button onClick={handleChangeAxisAngle}>Change Axis Angle</button>
+                    <button onClick={handleChangeAxisAngle} onBlur={reattachLink}>
+                        Change Axis Angle
+                    </button>
                     <button onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
                         Change Axis Origin
                     </button>
@@ -101,7 +102,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                     )}
                     <Slider
                         step={0.01}
-                        value={sliderValue}
                         min={selectedObject.min}
                         max={selectedObject.max}
                         aria-label="Default"
