@@ -30,11 +30,12 @@ export default class urdfObject extends THREE.Object3D {
      **/
 
     getUrdfObjectChildren = () => {
-        return this.children.filter((child) => child instanceof urdfObject);
+        return this.bus.children.filter((child) => child instanceof urdfObject);
     };
 
     get parentName() {
-        return this.parent.name;
+        if (this.isBaseLink) return null;
+        return this.parentURDF.name;
     }
 
     get jointType() {
@@ -108,23 +109,6 @@ export default class urdfObject extends THREE.Object3D {
         this.joint.position.setZ(distance);
     }
 
-    distanceAlongJointAxis() {
-        if (this.joint.position.z <= this.joint.savedPosition.z) {
-            return -this.joint.savedPosition.distanceTo(this.joint.position);
-        }
-        return this.joint.savedPosition.distanceTo(this.joint.position);
-    }
-
-    angleAroundJointAxis() {
-        const rotation = new THREE.Vector3().setFromEuler(this.joint.rotation);
-        const savedRotation = new THREE.Vector3().setFromEuler(this.joint.savedRotation);
-
-        if (rotation.z <= savedRotation.z) {
-            return -savedRotation.distanceTo(rotation);
-        }
-        return savedRotation.distanceTo(rotation);
-    }
-
     saveForDisplayChanges() {
         this.joint.savedRotation.copy(this.joint.rotation);
         this.joint.savedPosition.copy(this.joint.position);
@@ -138,10 +122,6 @@ export default class urdfObject extends THREE.Object3D {
     get sensorType() {
         return this?.sensor?.type ?? "";
     }
-
-    isSelectable = () => {
-        return this.selectable;
-    };
 
     setMesh = async (meshFileName) => {
         if (meshFileName === "") {
@@ -290,17 +270,20 @@ export default class urdfObject extends THREE.Object3D {
 
     rotateJoint(transformControls) {
         this.attach(this.link);
-        transformControls.attach(this.joint);
+        transformControls.attach(this.axis);
     }
 
     moveJoint(transformControls) {
         this.attach(this.link);
+        this.joint.attach(this.axis);
+        this.attach(this.bus);
         transformControls.attach(this.joint);
     }
 
     reattachLink() {
         this.joint.attach(this.link);
-        this.remove(this.link);
+        this.link.attach(this.bus);
+        this.attach(this.axis);
     }
 
     clone() {

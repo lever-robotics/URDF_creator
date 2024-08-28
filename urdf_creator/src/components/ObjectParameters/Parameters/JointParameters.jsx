@@ -52,22 +52,22 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     const handleSetMinMax = (e) => {
         const type = e.target.title.toLowerCase().replace(":", "");
         const value = e.target.value;
-        if(type === "min"){
+        if (type === "min") {
             setTempMin(value);
-        }else{
+        } else {
             setTempMax(value);
         }
     };
-        
+
     const handleMinMaxBlur = (e) => {
         const type = e.target.title.toLowerCase().replace(":", "");
         const value = parseFloat(e.target.value);
         stateFunctions.setJointMinMax(selectedObject, type, value);
-    }
+    };
 
     const reattachLink = () => {
         stateFunctions.reattachLink(selectedObject);
-    }
+    };
 
     return (
         <ToggleSection title="Joint Parameters">
@@ -78,9 +78,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
             </div>
             <div>
                 <strong>Joint Type:</strong>
-                <select
-                    value={selectedObject.jointType}
-                    onChange={handleJointTypeChange}>
+                <select value={selectedObject.jointType} onChange={handleJointTypeChange}>
                     <option value="fixed">Fixed</option>
                     <option value="revolute">Revolute</option>
                     <option value="continuous">Continuous</option>
@@ -91,31 +89,14 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
             </div>
             {selectedObject.jointType !== "fixed" && (
                 <>
-                    <button onClick={handleChangeAxisAngle} onBlur={reattachLink}>
-                        Change Axis Angle
-                    </button>
-                    <button
-                        onClick={handleChangeAxisOrigin}
-                        onBlur={reattachLink}
-                    >
+                    <button onClick={handleChangeAxisAngle}>Change Axis Angle</button>
+                    <button onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
                         Change Axis Origin
                     </button>
                     {selectedObject.jointType !== "continuous" && (
                         <ul>
-                            <Parameter
-                                title="Min:"
-                                size="small"
-                                value={tempMin}
-                                onChange={handleSetMinMax}
-                                onBlur={handleMinMaxBlur}
-                            />
-                            <Parameter
-                                title="Max:"
-                                size="small"
-                                value={tempMax}
-                                onChange={handleSetMinMax}
-                                onBlur={handleMinMaxBlur}
-                            />
+                            <Parameter title="Min:" size="small" value={tempMin} onChange={handleSetMinMax} onBlur={handleMinMaxBlur} />
+                            <Parameter title="Max:" size="small" value={tempMax} onChange={handleSetMinMax} onBlur={handleMinMaxBlur} />
                         </ul>
                     )}
                     <Slider

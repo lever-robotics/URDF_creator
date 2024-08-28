@@ -4,6 +4,7 @@ import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass";
 import Axis from "./Axis";
+import { Object3D } from "three";
 
 export default class urdfObjectManager {
     changeSensor(urdfObject, type) {
@@ -36,6 +37,10 @@ export default class urdfObjectManager {
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
+        // bus is the object that holds all the decendant objects so that moving children around the tree is easy
+        const bus = new Object3D();
+
+        link.add(bus);
 
         joint.link = link;
         joint.add(link);
@@ -43,8 +48,14 @@ export default class urdfObjectManager {
         urdfobject.joint = joint;
         urdfobject.link = link;
         urdfobject.axis = axis;
+        urdfobject.bus = bus;
         urdfobject.add(joint);
         urdfobject.add(axis);
+
+        joint.urdfObject = urdfobject;
+        link.urdfObject = urdfobject;
+        axis.urdfObject = urdfobject;
+        bus.urdfObject = urdfobject;
 
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
