@@ -35,7 +35,6 @@ export const ScenetoSDF = (scene, projectTitle) => {
             //offset from parent to joint origin
             let offset = formatVector(node.link.position.clone().negate()); // offset from parent link to joint origin as sdf is link defined and not joint defined
             // position of link in relation to parent
-            debugger;
             let position = formatVector(node.position.clone().add(node.link.position));
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
@@ -134,7 +133,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
             }
 
             // Recursively process children with the correct parent name
-            node.getChildren().forEach((child) => processNode(child, linkName));
+            node.getUrdfObjectChildren().forEach((child) => processNode(child, linkName));
         }
     };
 
