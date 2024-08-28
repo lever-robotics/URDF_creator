@@ -71,15 +71,15 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     get shape() {
-        return this.link.shape;
+        return this.mesh.shape;
     }
 
     get color() {
-        return this.link.material.color;
+        return this.mesh.material.color;
     }
 
     set color(color) {
-        this.link.color = color;
+        this.mesh.color = color;
     }
 
     setCustomInertia(type, inertia) {
@@ -158,7 +158,7 @@ export default class urdfObject extends THREE.Object3D {
         if (this.joint.link.children.length > 0) {
             this.joint.link.children = [];
         }
-        
+
         // Set the stlfile name to the userData
         this.userData.stlfile = meshFileName;
 
@@ -260,7 +260,7 @@ export default class urdfObject extends THREE.Object3D {
                 break;
             // will attach to the link and scale nothing else
             case "scale":
-                transformControls.attach(this.link);
+                transformControls.attach(this.mesh);
                 break;
             default:
                 break;

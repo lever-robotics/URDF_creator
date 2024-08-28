@@ -5,6 +5,7 @@ import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass";
 import Axis from "./Axis";
 import * as THREE from "three";
+import Mesh from "./Mesh";
 
 export default class urdfObjectManager {
     changeSensor(urdfObject, type) {
@@ -31,9 +32,10 @@ export default class urdfObjectManager {
         const name = params.name;
         const shape = params.shape;
 
-        const link = new Link(shape);
+        const link = new Link();
         const joint = new Joint();
         const axis = new Axis();
+        const mesh = new Mesh(shape);
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
@@ -41,6 +43,7 @@ export default class urdfObjectManager {
         const bus = new THREE.Object3D();
 
         link.add(bus);
+        link.add(mesh);
 
         joint.link = link;
         joint.add(link);
@@ -49,6 +52,7 @@ export default class urdfObjectManager {
         urdfobject.link = link;
         urdfobject.axis = axis;
         urdfobject.bus = bus;
+        urdfobject.mesh = mesh;
         urdfobject.add(joint);
         urdfobject.add(axis);
 
@@ -56,6 +60,7 @@ export default class urdfObjectManager {
         link.urdfObject = urdfobject;
         axis.urdfObject = urdfobject;
         bus.urdfObject = urdfobject;
+        mesh.urdfObject = urdfobject;
 
         inertia.updateInertia(urdfobject);
         urdfobject.inertia = inertia;
