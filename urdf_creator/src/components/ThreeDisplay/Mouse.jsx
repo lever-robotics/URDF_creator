@@ -39,24 +39,15 @@ export class Mouse {
     }
 
     onMouseUp(event) {
-        console.log("onmouseup", event);
         if (event.target.localName !== "canvas") return;
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;
         const endPos = [event.clientX, event.clientY];
 
-        if (
-            Math.sqrt(
-                (endPos[0] - this.startPos[0]) ** 2 +
-                    (endPos[1] - this.startPos[1]) ** 2
-            ) > dragThreshold
-        ) {
+        if (Math.sqrt((endPos[0] - this.startPos[0]) ** 2 + (endPos[1] - this.startPos[1]) ** 2) > dragThreshold) {
             // Do nothing if dragged
-        } else if (
-            this.currentDownTime - this.previousUpTime < clickTime &&
-            Date.now() - this.currentDownTime < clickTime
-        ) {
+        } else if (this.currentDownTime - this.previousUpTime < clickTime && Date.now() - this.currentDownTime < clickTime) {
             this.onDoubleClick(event);
         } else if (Date.now() - this.currentDownTime < clickTime) {
             this.onClick(event);
@@ -79,7 +70,6 @@ export class Mouse {
     }
 
     onClick(event) {
-        console.log(this.onClickFunctions);
         this.onClickFunctions.forEach((func) => {
             func(event);
         });

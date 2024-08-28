@@ -2,11 +2,10 @@ import Link from "./Link";
 import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
-import { IMU, Camera, Lidar, Sensor } from "./SensorsClass"
+import { IMU, Camera, Lidar, Sensor } from "./SensorsClass";
 import Axis from "./Axis";
 
 export default class urdfObjectManager {
-
     changeSensor(urdfObject, type) {
         switch (type) {
             case "imu":
@@ -55,7 +54,6 @@ export default class urdfObjectManager {
     }
 
     cloneUrdfObject(urdfObject) {
-        console.log(urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
         const axis = urdfObject.axis.clone();

@@ -47,17 +47,10 @@ export default function SceneState({ threeScene }) {
         three.mouse.y = -(y / rect.height) * 2 + 1;
 
         three.raycaster.setFromCamera(three.mouse, three.camera);
-        const intersects = three.raycaster.intersectObjects(
-            three.scene.children
-        );
+        const intersects = three.raycaster.intersectObjects(three.scene.children);
 
-        const shapes = intersects.filter(
-            (collision) => collision.object.isShape
-        );
-        const meshes = intersects.filter(
-            (collision) => collision.object.type === "Mesh"
-        );
-        console.log(meshes, shapes);
+        const shapes = intersects.filter((collision) => collision.object.isShape);
+        const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
 
         if (shapes.length > 0) {
             const object = shapes[0].object.parent.parent;
@@ -97,14 +90,8 @@ export default function SceneState({ threeScene }) {
 
     // Ignore this function for now
     const createUrdfObject = (gltfObject) => {
-        const shimmy =
-            gltfObject.children[0] === THREE.Line
-                ? gltfObject.children[0]
-                : gltfObject.children[1];
-        const joint =
-            gltfObject.children[0] === THREE.Line
-                ? gltfObject.children[1]
-                : gltfObject.children[0];
+        const shimmy = gltfObject.children[0] === THREE.Line ? gltfObject.children[0] : gltfObject.children[1];
+        const joint = gltfObject.children[0] === THREE.Line ? gltfObject.children[1] : gltfObject.children[0];
         const link = shimmy.children[0];
         const linkChildren = link.children;
         const mesh = linkChildren.find((obj) => obj.type === "Mesh");
@@ -144,7 +131,6 @@ export default function SceneState({ threeScene }) {
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
-        console.log(threeScene.current.scene);
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -155,15 +141,13 @@ export default function SceneState({ threeScene }) {
         }
 
         if (selectedObject) {
-            selectedObject.attachTransformControls(
-                three.transformControls
-            );
+            selectedObject.attachTransformControls(three.transformControls);
         }
     };
 
     const getToolMode = () => {
         return toolMode;
-    }
+    };
 
     const startRotateJoint = (urdfObject) => {
         const { current: three } = threeScene;
@@ -261,7 +245,7 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    // Loads a scene from gltf 
+    // Loads a scene from gltf
     // Needs to be fixed
     const loadScene = (base_link) => {
         // threeObjects.current.scene.add(scene); // This Line NEEEEEEDS to
@@ -288,12 +272,11 @@ export default function SceneState({ threeScene }) {
     };
 
     const duplicateObject = (urdfObject) => {
-
         const manager = new urdfObjectManager();
         const clone = manager.cloneUrdfObject(urdfObject);
 
         if (urdfObject.name === "base_link") {
-            clone.name = "base_link_copy"
+            clone.name = "base_link_copy";
             urdfObject.attach(clone);
         } else {
             urdfObject.parent.attach(clone);
@@ -330,7 +313,7 @@ export default function SceneState({ threeScene }) {
     const closeOnboarding = () => {
         setIsModalOpen(false);
         openProjectManager();
-    }
+    };
 
     const openOnboarding = () => {
         setModalContent(<Onboarding closeOnboarding={closeOnboarding} />);
@@ -387,39 +370,18 @@ export default function SceneState({ threeScene }) {
 
     return (
         <div className="screen">
-            <Modal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                modalContent={
-                    modalContent
-                }
-            />
+            <Modal isOpen={isModalOpen} onClose={closeModal} modalContent={modalContent} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal
-                            stateFunctions={stateFunctions}
-                            projectTitle={projectTitle}
-                        />
-                        <LinkTree
-                            selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
-                        />
+                        <MenuModal stateFunctions={stateFunctions} projectTitle={projectTitle} />
+                        <LinkTree selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar
-                        selectedObject={selectedObject}
-                        stateFunctions={stateFunctions}
-                    />
+                    <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters
-                            selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
-                        />
-                        <CodeDisplay
-                            scene={scene}
-                            projectTitle={projectTitle}
-                        />
+                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
             </AbsolutePosition>

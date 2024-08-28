@@ -8,13 +8,11 @@ export default class ScaleVector extends THREE.Vector3 {
     }
 
     set(x, y, z) {
-        console.log("scale", x, y, z);
         switch (this.shape) {
             case "cube":
                 super.set(x, y, z);
                 return this;
             case "sphere":
-                console.log(this.x, this.y, this.z, x, y, z);
                 if (x !== this.getComponent(0)) {
                     super.set(x, x, x);
                 } else if (y !== this.getComponent(1)) {
@@ -33,7 +31,6 @@ export default class ScaleVector extends THREE.Vector3 {
                 }
                 return this;
             default:
-                console.log(this.shape);
                 throw Error("shape provided to scale vector is not supported");
         }
     }
@@ -75,7 +72,6 @@ export default class ScaleVector extends THREE.Vector3 {
                 }
                 return this;
             default:
-                console.log(this.shape);
                 throw Error("shape provided to scale vector is not supported");
         }
     }

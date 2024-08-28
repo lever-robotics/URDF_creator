@@ -1,22 +1,5 @@
 export class ThreeScene {
-    constructor(
-        mountRef,
-        scene,
-        camera,
-        renderer,
-        orbitControls,
-        transformControls,
-        lights,
-        gridHelper,
-        font,
-        axesHelper,
-        renderPass,
-        composer,
-        background,
-        raycaster,
-        mouse,
-        callback
-    ) {
+    constructor(mountRef, scene, camera, renderer, orbitControls, transformControls, lights, gridHelper, font, axesHelper, renderPass, composer, background, raycaster, mouse, callback) {
         this.mountRef = mountRef;
         this.scene = scene;
         this.camera = camera;
@@ -36,7 +19,6 @@ export class ThreeScene {
         this.baseLink = null;
     }
     addToScene(objects) {
-        console.log(this.scene);
         objects.forEach((object) => {
             this.scene.add(object);
         });
