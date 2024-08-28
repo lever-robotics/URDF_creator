@@ -3,9 +3,9 @@ import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
 function ScaleParameters({ selectedObject, stateFunctions }) {
-    const [tempX, setTempX] = useState(selectedObject.scale.x);
-    const [tempY, setTempY] = useState(selectedObject.scale.y);
-    const [tempZ, setTempZ] = useState(selectedObject.scale.z);
+    const [tempX, setTempX] = useState(selectedObject.objectScale.x);
+    const [tempY, setTempY] = useState(selectedObject.objectScale.y);
+    const [tempZ, setTempZ] = useState(selectedObject.objectScale.z);
     const [tempRadius, setTempRadius] = useState(selectedObject.scale.x / 2);
 
     const handleScaleChange = (e) => {
