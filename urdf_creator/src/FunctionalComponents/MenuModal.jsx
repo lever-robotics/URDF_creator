@@ -15,9 +15,6 @@ const MenuModal = ({ isOpen, onClose, menuItems, buttonRef }) => {
         <div
             className="menu-modal"
             style={{ top: position.top , left: position.left }}>
-            <button className="close-button" onClick={onClose}>
-                &times;
-            </button>
             <ul className="menu-list">
                 {menuItems.map((item, index) => (
                     <MenuItem index={index} action={item.action} label={item.label}/>

@@ -61,14 +61,8 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
         }
     };
 
-
-
-    // Consider creating a menuItemFactory to map menuItems out. Then all the menu items can be defined above and implemented below. Could be a more extendable and easier to read approach
-
-    // Unrelated to this class but consider creating a urdfBuilder class. This might make it more extendable in the future because we may add urdfObjects in lots of different ways and configurations. Instead of storing all that functionality in the urdfObject itself, the construction knowledge would be kept in the builder. I think this could be useful for "addUrdfObject" "loadScene" and for eventually handling different formats
-
     return (
-        <div className="menu">
+        <div className="menu-bar">
             <MenuIcon />
             <HelpIcon openOnboarding={openOnboarding} />
             <input 
@@ -78,86 +72,5 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
                 onChange={changeProjectTitle}
             />
         </div>
-        // <PopupState variant="popover" popupId="demo-popup-menu">
-        //     {(popupState) => (
-        //         <React.Fragment>
-        //             <div className="menu">
-        //                 <StyledButton
-        //                     variant="contained"
-        //                     {...bindTrigger(popupState)}
-        //                     className="material-symbols-outlined">
-        //                     <MenuIcon />
-        //                 </StyledButton>
-        //                 <HelpIcon openOnboarding={openOnboarding} />
-        //                 <input
-        //                     type="text"
-        //                     value={projectTitle}
-        //                     id="projectTitleInput"
-        //                     onChange={changeProjectTitle}
-        //                 />
-        //             </div>
-        //             <StyledMenu {...bindMenu(popupState)}>
-        //                 <StyledMenuItem
-        //                     onClick={() => {
-        //                         openProjectManager();
-        //                         popupState.close();
-        //                     }}>
-        //                     Project Manager
-        //                 </StyledMenuItem>
-        //                 <StyledMenuItem
-        //                     onClick={() => {
-        //                         ReactGA.event({
-        //                             category: "Button", // Typically the object that was interacted with
-        //                             action: "Click", // The type of interaction
-        //                             label: "Downloads of URDF package", // Optional, can be used to identify specific buttons
-        //                         });
-        //                         handleDownload(
-        //                             getScene(),
-        //                             "urdf",
-        //                             projectTitle
-        //                         );
-        //                         popupState.close();
-        //                     }}>
-        //                     Export URDF
-        //                 </StyledMenuItem>
-        //                 <StyledMenuItem
-        //                     onClick={() => {
-        //                         handleGLTFExport();
-        //                         popupState.close();
-        //                     }}>
-        //                     Export GLTF
-        //                 </StyledMenuItem>
-        //                 <StyledMenuItem
-        //                     onClick={() => {
-        //                         onFileUpload();
-        //                         popupState.close();
-        //                     }}>
-        //                     Upload File
-        //                 </StyledMenuItem>
-        //                 {/* Disabling STL upload for now */}
-        //                 {/* <StyledMenuItem
-        //                     onClick={() => {
-        //                         onSTLFileUpload();
-        //                         popupState.close();
-        //                     }}>
-        //                     Upload STL
-        //                 </StyledMenuItem> */}
-        //             </StyledMenu>
-        //             <input
-        //                 type="file"
-        //                 ref={inputFile}
-        //                 style={{ display: "none" }}
-        //                 onChange={handleFileChange}
-        //             />
-        //             <input
-        //                 type="file"
-        //                 ref={inputSTLFile}
-        //                 style={{ display: "none" }}
-        //                 onChange={handleSTLFileChange}
-        //                 accept=".stl"
-        //             />
-        //         </React.Fragment>
-        //     )}
-        // </PopupState>
     );
 }
