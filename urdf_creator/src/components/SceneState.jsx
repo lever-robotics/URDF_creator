@@ -47,20 +47,13 @@ export default function SceneState({ threeScene }) {
         three.mouse.y = -(y / rect.height) * 2 + 1;
 
         three.raycaster.setFromCamera(three.mouse, three.camera);
-        const intersects = three.raycaster.intersectObjects(
-            three.scene.children
-        );
+        const intersects = three.raycaster.intersectObjects(three.scene.children);
 
-        const shapes = intersects.filter(
-            (collision) => collision.object.isShape
-        );
-        const meshes = intersects.filter(
-            (collision) => collision.object.type === "Mesh"
-        );
-        console.log(meshes, shapes);
+        const shapes = intersects.filter((collision) => collision.object.isShape);
+        const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
 
         if (shapes.length > 0) {
-            const object = shapes[0].object.parent.parent;
+            const object = shapes[0].object.urdfObject;
             selectObject(object);
         } else if (meshes.length === 0) {
             selectObject(null);
@@ -82,9 +75,11 @@ export default function SceneState({ threeScene }) {
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.attach(newUrdfObject);
+            selectedObject.bus.attach(newUrdfObject);
+            newUrdfObject.parentURDF = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.attach(newUrdfObject);
+            three.baseLink.bus.attach(newUrdfObject);
+            newUrdfObject.parentURDF = three.baseLink;
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.isBaseLink = true;
@@ -92,12 +87,12 @@ export default function SceneState({ threeScene }) {
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
+        selectObject(newUrdfObject);
         forceSceneUpdate();
     };
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
-        console.log(threeScene.current.scene);
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -108,15 +103,13 @@ export default function SceneState({ threeScene }) {
         }
 
         if (selectedObject) {
-            selectedObject.attachTransformControls(
-                three.transformControls
-            );
+            selectedObject.attachTransformControls(three.transformControls);
         }
     };
 
     const getToolMode = () => {
         return toolMode;
-    }
+    };
 
     const startRotateJoint = (urdfObject) => {
         const { current: three } = threeScene;
@@ -141,7 +134,7 @@ export default function SceneState({ threeScene }) {
         if (!urdfObject) {
             setSelectedObject(null);
             three.transformControls.detach();
-        } else if (urdfObject.isSelectable()) {
+        } else if (urdfObject.selectable) {
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {
@@ -238,12 +231,11 @@ export default function SceneState({ threeScene }) {
     };
 
     const duplicateObject = (urdfObject) => {
-
         const manager = new urdfObjectManager();
         const clone = manager.cloneUrdfObject(urdfObject);
 
         if (urdfObject.name === "base_link") {
-            clone.name = "base_link_copy"
+            clone.name = "base_link_copy";
             urdfObject.attach(clone);
         } else {
             urdfObject.parent.attach(clone);
@@ -281,7 +273,7 @@ export default function SceneState({ threeScene }) {
     const closeOnboarding = () => {
         setIsModalOpen(false);
         openProjectManager();
-    }
+    };
 
     const openOnboarding = () => {
         setModalContent(<Onboarding closeOnboarding={closeOnboarding} />);
@@ -337,13 +329,7 @@ export default function SceneState({ threeScene }) {
 
     return (
         <div className="screen">
-            <Modal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                modalContent={
-                    modalContent
-                }
-            />
+            <Modal isOpen={isModalOpen} onClose={closeModal} modalContent={modalContent} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
@@ -357,19 +343,10 @@ export default function SceneState({ threeScene }) {
                         />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar
-                        selectedObject={selectedObject}
-                        stateFunctions={stateFunctions}
-                    />
+                    <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters
-                            selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
-                        />
-                        <CodeDisplay
-                            scene={scene}
-                            projectTitle={projectTitle}
-                        />
+                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
             </AbsolutePosition>

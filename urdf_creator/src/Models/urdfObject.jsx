@@ -30,11 +30,12 @@ export default class urdfObject extends THREE.Object3D {
      **/
 
     getUrdfObjectChildren = () => {
-        return this.children.filter((child) => child instanceof urdfObject);
+        return this.bus.children.filter((child) => child instanceof urdfObject);
     };
 
     get parentName() {
-        return this.parent.name;
+        if (this.isBaseLink) return null;
+        return this.parentURDF.name;
     }
 
     get jointType() {
@@ -70,15 +71,15 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     get shape() {
-        return this.link.shape;
+        return this.mesh.shape;
     }
 
     get color() {
-        return this.link.material.color;
+        return this.mesh.material.color;
     }
 
     set color(color) {
-        this.link.color = color;
+        this.mesh.color = color;
     }
 
     setCustomInertia(type, inertia) {
@@ -99,33 +100,31 @@ export default class urdfObject extends THREE.Object3D {
     */
     // Angle must be in radians
     rotateAroundJointAxis(angle) {
-        const newRotation = this.joint.rotation.toArray();
-        newRotation[2] = angle;
-        console.log(newRotation);
-        this.joint.rotation.set(...newRotation);
+        // a quaternion is basically how to get from one rotation to another
+        const quaternion = new THREE.Quaternion();
+
+        // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
+        quaternion.setFromEuler(this.axis.rotation);
+
+        // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+
+        // the joint's rotation is then set to be a rotation around the new axis by this angle
+        this.joint.setRotationFromAxisAngle(newAxis, angle);
     }
 
     translateAlongJointAxis(distance) {
-        this.joint.position.setZ(distance);
-    }
-
-    distanceAlongJointAxis() {
-        if (this.joint.position.z <= this.joint.savedPosition.z) {
-            return -this.joint.savedPosition.distanceTo(this.joint.position);
-        }
-        return this.joint.savedPosition.distanceTo(this.joint.position);
-    }
-
-    angleAroundJointAxis() {
-        const rotation = new THREE.Vector3().setFromEuler(this.joint.rotation);
-        const savedRotation = new THREE.Vector3().setFromEuler(
-            this.joint.savedRotation
-        );
-
-        if (rotation.z <= savedRotation.z) {
-            return -savedRotation.distanceTo(rotation);
-        }
-        return savedRotation.distanceTo(rotation);
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(this.axis.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+        this.joint.position.set(0, 0, 0);
+        this.joint.translateOnAxis(newAxis, distance);
     }
 
     saveForDisplayChanges() {
@@ -141,10 +140,6 @@ export default class urdfObject extends THREE.Object3D {
     get sensorType() {
         return this?.sensor?.type ?? "";
     }
-
-    isSelectable = () => {
-        return this.selectable;
-    };
 
     setMesh = async (meshFileName) => {
         if (meshFileName === "") {
@@ -163,7 +158,7 @@ export default class urdfObject extends THREE.Object3D {
         if (this.joint.link.children.length > 0) {
             this.joint.link.children = [];
         }
-        
+
         // Set the stlfile name to the userData
         this.userData.stlfile = meshFileName;
 
@@ -193,36 +188,24 @@ export default class urdfObject extends THREE.Object3D {
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(
-                            mesh
-                        );
-                        console.log("Bounding Box:", boundingBox);
-
+                        const boundingBox = new THREE.Box3().setFromObject(mesh);
                         // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(
-                            new THREE.Vector3(-0.5, -0.5, -0.5),
-                            new THREE.Vector3(0.5, 0.5, 0.5)
-                        );
-                        console.log("Desired Box:", desiredBox);
+                        const desiredBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
 
                         // Calculate the size of the bounding box and desired box
                         const boundingBoxSize = new THREE.Vector3();
                         boundingBox.getSize(boundingBoxSize);
                         const desiredBoxSize = new THREE.Vector3();
                         desiredBox.getSize(desiredBoxSize);
-                        console.log("Bounding Box Size:", boundingBoxSize);
-                        console.log("Desired Box Size:", desiredBoxSize);
 
                         // Calculate the scaling factor
                         const scaleX = desiredBoxSize.x / boundingBoxSize.x;
                         const scaleY = desiredBoxSize.y / boundingBoxSize.y;
                         const scaleZ = desiredBoxSize.z / boundingBoxSize.z;
                         const scale = Math.min(scaleX, scaleY, scaleZ);
-                        console.log("Scale Factor:", scale);
 
                         // Apply the scaling to the mesh
                         mesh.scale.set(scale, scale, scale);
-                        console.log("Scaled Mesh:", mesh);
 
                         // Add the mesh to the scene
                         this.link.add(mesh);
@@ -277,8 +260,7 @@ export default class urdfObject extends THREE.Object3D {
                 break;
             // will attach to the link and scale nothing else
             case "scale":
-                transformControls.attach(this.link);
-                console.log(this.scale);
+                transformControls.attach(this.mesh);
                 break;
             default:
                 break;
@@ -293,11 +275,8 @@ export default class urdfObject extends THREE.Object3D {
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
-        console.log(newValues);
         newValues[this.determineComponentIndex(axis)] = value;
-        console.log(value);
         this[type].set(...newValues);
-        console.log(newValues);
     };
 
     determineComponentIndex(axis) {
@@ -312,9 +291,7 @@ export default class urdfObject extends THREE.Object3D {
                 case "height":
                     return 2;
                 default:
-                    throw new Error(
-                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
-                    );
+                    throw new Error("Axis must be 'x', 'y', 'z', 'radius, or 'height'");
             }
         } catch (e) {
             console.error(e, "axis provided", axis);
@@ -323,17 +300,20 @@ export default class urdfObject extends THREE.Object3D {
 
     rotateJoint(transformControls) {
         this.attach(this.link);
-        transformControls.attach(this.joint);
+        transformControls.attach(this.axis);
     }
 
     moveJoint(transformControls) {
         this.attach(this.link);
+        this.joint.attach(this.axis);
+        this.attach(this.bus);
         transformControls.attach(this.joint);
     }
 
     reattachLink() {
         this.joint.attach(this.link);
-        this.remove(this.link);
+        this.link.attach(this.bus);
+        this.attach(this.axis);
     }
 
     clone() {

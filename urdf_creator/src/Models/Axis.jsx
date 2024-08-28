@@ -2,16 +2,11 @@ import * as THREE from "three";
 
 export default class Axis extends THREE.Line {
     constructor() {
-
         const originPoint = new THREE.Vector3();
         const lineAxis = new THREE.Vector3(0, 0, 1);
         const length = 10;
-        const startPoint = originPoint
-            .clone()
-            .sub(lineAxis.clone().multiplyScalar(length / 2));
-        const endPoint = originPoint
-            .clone()
-            .add(lineAxis.clone().multiplyScalar(length / 2));
+        const startPoint = originPoint.clone().sub(lineAxis.clone().multiplyScalar(length / 2));
+        const endPoint = originPoint.clone().add(lineAxis.clone().multiplyScalar(length / 2));
         const points = [];
         points.push(startPoint, endPoint);
 
