@@ -44,17 +44,11 @@ export default class Link extends THREE.Mesh {
                             this._scale.set(...newVector);
                         },
                     });
-                    const cylinder = new THREE.CylinderGeometry(
-                        0.5,
-                        0.5,
-                        1,
-                        32
-                    );
+                    const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
                     cylinder.rotateX(Math.PI / 2);
 
                     return cylinder;
                 default:
-                    console.log("Here in default");
                     return;
             }
         }
@@ -65,7 +59,6 @@ export default class Link extends THREE.Mesh {
     }
 
     get scale() {
-        console.log("basic getter");
         return this._scale;
     }
 
@@ -80,12 +73,10 @@ export default class Link extends THREE.Mesh {
     }
 
     onBeforeRender = () => {
-        Object.values(this.customRenderBehaviors).forEach((behavior) =>
-            behavior(this)
-        );
+        Object.values(this.customRenderBehaviors).forEach((behavior) => behavior(this));
     };
 
     onAfterRender = () => {
-        this.parent.parent.updateInertia();
+        this.urdfObject.updateInertia();
     };
 }

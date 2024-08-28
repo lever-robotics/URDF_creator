@@ -34,9 +34,9 @@ export const ScenetoXML = (scene, projectTitle) => {
             if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.parent.isBaseLink) {
+            } else if (node.parentURDF.isBaseLink) {
                 const quaternion = new THREE.Quaternion();
-                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parent.quaternion, node.quaternion));
+                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parentURDF.quaternion, node.quaternion));
             }
 
             // Start link
@@ -106,9 +106,9 @@ export const ScenetoXML = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parent.link.position);
+                originInRelationToParentsJoint.add(node.parentURDF.link.position);
 
-                if (node.parent.isBaseLink) {
+                if (node.parentURDF.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 
@@ -116,7 +116,7 @@ export const ScenetoXML = (scene, projectTitle) => {
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
-                    const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
                     if (node.joint.type !== "continuous") {
                         xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
