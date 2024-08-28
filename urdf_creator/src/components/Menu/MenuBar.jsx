@@ -63,7 +63,7 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
 
     return (
         <div className="menu-bar">
-            <MenuIcon />
+            <MenuIcon openProjectManager={openProjectManager}/>
             <HelpIcon openOnboarding={openOnboarding} />
             <input 
                 type="text"

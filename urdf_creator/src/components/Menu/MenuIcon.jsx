@@ -3,14 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import MenuModal from '../../FunctionalComponents/MenuModal';
 
-const MenuIcon = () => {
+const MenuIcon = ({ openProjectManager }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const buttonRef = useRef(null);
 
     const menuItems = [
-        { label: "Profile", action: () => alert("Profile clicked!") },
-        { label: "Settings", action: () => alert("Settings clicked!") },
-        { label: "Logout", action: () => alert("Logout clicked!") },
+        { label: "Project Manager", action: () => {
+            handleClick()
+            openProjectManager()
+        } },
+        { label: "Import", action: () => alert("Settings clicked!") },
+        { label: "Export", action: () => alert("Logout clicked!") },
+        // { label: "Settings", action: () => alert("Setting") }
     ];
 
     const handleClick = () => {
@@ -23,7 +27,7 @@ const MenuIcon = () => {
 
     return (
         <>
-            <button className="menu-icon-button" onClick={handleClick} onBlur={handleClick} ref={buttonRef}>
+            <button className="menu-icon-button" onClick={handleClick} ref={buttonRef}>
                 <FontAwesomeIcon icon={faBars} />
             </button>
             <MenuModal

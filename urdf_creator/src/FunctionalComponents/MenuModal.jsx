@@ -2,7 +2,7 @@ import React from "react";
 import "./MenuModal.css";
 import MenuItem from "./MenuItem";
 
-const MenuModal = ({ isOpen, onClose, menuItems, buttonRef }) => {
+const MenuModal = ({ isOpen, menuItems, buttonRef }) => {
     if (!isOpen) return null;
 
     const buttonRect = buttonRef.current.getBoundingClientRect();

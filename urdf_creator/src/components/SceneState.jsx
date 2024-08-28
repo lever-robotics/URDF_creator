@@ -271,6 +271,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openProjectManager = () => {
+        console.log("project Manager");
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
         setIsModalOpen(true);
     };
