@@ -7,7 +7,10 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene, projectTitle) => {
     let xml = `<sdf version="1.6">\n`;
-    if (scene === undefined) return xml;
+    if (scene === undefined) {
+        xml += `</sdf>`;
+        return xml;
+    }
 
     xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
     //put on static for debugging
