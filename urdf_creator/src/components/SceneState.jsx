@@ -296,16 +296,19 @@ export default function SceneState({ threeScene }) {
     };
 
     const setObjectPosition = (object, position) => {
-        object.position.copy(position)
-        console.log("position")
+        object.position.copy(position);
+        console.log("position");
+        forceSceneUpdate();
     }
 
     const setObjectScale = (object, scale) => {
-        object.scale.copy(scale)
+        object.scale.copy(scale);
+        forceSceneUpdate();
     }
 
     const setObjectQuaternion = (object, quaternion) => {
-        object.quaternion.copy(quaternion)
+        object.quaternion.copy(quaternion);
+        forceSceneUpdate();
     }
 
     const stateFunctions = {
