@@ -39,10 +39,7 @@ export default class urdfObjectManager {
         const inertia = new Inertia();
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name);
-        // bus is the object that holds all the decendant objects so that moving children around the tree is easy
-        const bus = new THREE.Object3D();
 
-        link.add(bus);
         link.add(mesh);
 
         joint.link = link;
@@ -51,7 +48,6 @@ export default class urdfObjectManager {
         urdfobject.joint = joint;
         urdfobject.link = link;
         urdfobject.axis = axis;
-        urdfobject.bus = bus;
         urdfobject.mesh = mesh;
         urdfobject.add(joint);
         urdfobject.add(axis);
@@ -59,7 +55,6 @@ export default class urdfObjectManager {
         joint.urdfObject = urdfobject;
         link.urdfObject = urdfobject;
         axis.urdfObject = urdfobject;
-        bus.urdfObject = urdfobject;
         mesh.urdfObject = urdfobject;
 
         inertia.updateInertia(urdfobject);

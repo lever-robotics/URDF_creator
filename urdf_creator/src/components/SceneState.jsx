@@ -11,13 +11,14 @@ import Row from "../utils/ScreenTools/Row.jsx";
 import Modal from "../FunctionalComponents/Modal.jsx";
 import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
-import MenuModal from "./Menu/MenuModal.jsx";
+import MenuBar from "./Menu/MenuBar.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
     //State
+    const [forcingKey, setForcingKey] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
@@ -75,10 +76,10 @@ export default function SceneState({ threeScene }) {
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.bus.attach(newUrdfObject);
+            selectedObject.link.attach(newUrdfObject);
             newUrdfObject.parentURDF = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.bus.attach(newUrdfObject);
+            three.baseLink.link.attach(newUrdfObject);
             newUrdfObject.parentURDF = three.baseLink;
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
@@ -93,6 +94,7 @@ export default function SceneState({ threeScene }) {
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
+        setForcingKey((prev) => prev + 1);
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -141,6 +143,7 @@ export default function SceneState({ threeScene }) {
             setSelectedObject(null);
             three.transformControls.detach();
         }
+        forceSceneUpdate();
     };
 
     const setLinkColor = (urdfObject, color) => {
@@ -263,6 +266,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openProjectManager = () => {
+        console.log("project Manager");
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
         setIsModalOpen(true);
     };
@@ -332,13 +336,19 @@ export default function SceneState({ threeScene }) {
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuModal stateFunctions={stateFunctions} projectTitle={projectTitle} />
-                        <LinkTree selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <MenuBar
+                            stateFunctions={stateFunctions}
+                            projectTitle={projectTitle}
+                        />
+                        <LinkTree
+                            selectedObject={selectedObject}
+                            stateFunctions={stateFunctions}
+                        />
                         <InsertTool addObject={addObject} />
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <ObjectParameters key={forcingKey} forcingKey={forcingKey} selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
