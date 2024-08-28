@@ -6,7 +6,6 @@ function ThreeDisplay() {
     const mountRef = useRef(null);
     const threeScene = useRef(null);
     const [sceneState, stateFunctions] = SceneState({ threeScene });
-    console.log(stateFunctions);
 
     // Set up the scene (initialization)
     useEffect(() => {

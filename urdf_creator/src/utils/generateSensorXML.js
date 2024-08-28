@@ -17,7 +17,7 @@ export const generateSensorXML = (selectedObject) => {
             break;
         // Add cases for other sensor types here
         default:
-            console.error(`Unknown sensor type: ${sensorType}`);
+            // console.error(`Unknown sensor type: ${sensorType}`);
             break;
     }
 
