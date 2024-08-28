@@ -38,6 +38,10 @@ export default class urdfObject extends THREE.Object3D {
         return this.parentURDF.name;
     }
 
+    get objectScale() {
+        return this.mesh.scale;
+    }
+
     get jointType() {
         return this.joint.type;
     }
@@ -274,9 +278,15 @@ export default class urdfObject extends THREE.Object3D {
 
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
-        const newValues = this[type].toArray();
-        newValues[this.determineComponentIndex(axis)] = value;
-        this[type].set(...newValues);
+        if(type === "scale"){
+            const newValues = this.objectScale.toArray();
+            newValues[this.determineComponentIndex(axis)] = value;
+            this.objectScale.set(...newValues);
+        }else{
+            const newValues = this[type].toArray();
+            newValues[this.determineComponentIndex(axis)] = value;
+            this[type].set(...newValues);
+        }
     };
 
     determineComponentIndex(axis) {
