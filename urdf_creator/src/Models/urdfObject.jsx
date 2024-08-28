@@ -101,7 +101,6 @@ export default class urdfObject extends THREE.Object3D {
     rotateAroundJointAxis(angle) {
         const newRotation = this.joint.rotation.toArray();
         newRotation[2] = angle;
-        console.log(newRotation);
         this.joint.rotation.set(...newRotation);
     }
 
@@ -118,9 +117,7 @@ export default class urdfObject extends THREE.Object3D {
 
     angleAroundJointAxis() {
         const rotation = new THREE.Vector3().setFromEuler(this.joint.rotation);
-        const savedRotation = new THREE.Vector3().setFromEuler(
-            this.joint.savedRotation
-        );
+        const savedRotation = new THREE.Vector3().setFromEuler(this.joint.savedRotation);
 
         if (rotation.z <= savedRotation.z) {
             return -savedRotation.distanceTo(rotation);
@@ -193,36 +190,24 @@ export default class urdfObject extends THREE.Object3D {
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(
-                            mesh
-                        );
-                        console.log("Bounding Box:", boundingBox);
-
+                        const boundingBox = new THREE.Box3().setFromObject(mesh);
                         // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(
-                            new THREE.Vector3(-0.5, -0.5, -0.5),
-                            new THREE.Vector3(0.5, 0.5, 0.5)
-                        );
-                        console.log("Desired Box:", desiredBox);
+                        const desiredBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
 
                         // Calculate the size of the bounding box and desired box
                         const boundingBoxSize = new THREE.Vector3();
                         boundingBox.getSize(boundingBoxSize);
                         const desiredBoxSize = new THREE.Vector3();
                         desiredBox.getSize(desiredBoxSize);
-                        console.log("Bounding Box Size:", boundingBoxSize);
-                        console.log("Desired Box Size:", desiredBoxSize);
 
                         // Calculate the scaling factor
                         const scaleX = desiredBoxSize.x / boundingBoxSize.x;
                         const scaleY = desiredBoxSize.y / boundingBoxSize.y;
                         const scaleZ = desiredBoxSize.z / boundingBoxSize.z;
                         const scale = Math.min(scaleX, scaleY, scaleZ);
-                        console.log("Scale Factor:", scale);
 
                         // Apply the scaling to the mesh
                         mesh.scale.set(scale, scale, scale);
-                        console.log("Scaled Mesh:", mesh);
 
                         // Add the mesh to the scene
                         this.link.add(mesh);
@@ -278,7 +263,6 @@ export default class urdfObject extends THREE.Object3D {
             // will attach to the link and scale nothing else
             case "scale":
                 transformControls.attach(this.link);
-                console.log(this.scale);
                 break;
             default:
                 break;
@@ -293,11 +277,8 @@ export default class urdfObject extends THREE.Object3D {
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
         const newValues = this[type].toArray();
-        console.log(newValues);
         newValues[this.determineComponentIndex(axis)] = value;
-        console.log(value);
         this[type].set(...newValues);
-        console.log(newValues);
     };
 
     determineComponentIndex(axis) {
@@ -312,9 +293,7 @@ export default class urdfObject extends THREE.Object3D {
                 case "height":
                     return 2;
                 default:
-                    throw new Error(
-                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
-                    );
+                    throw new Error("Axis must be 'x', 'y', 'z', 'radius, or 'height'");
             }
         } catch (e) {
             console.error(e, "axis provided", axis);

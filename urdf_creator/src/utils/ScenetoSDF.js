@@ -40,8 +40,8 @@ export const ScenetoSDF = (scene, projectTitle) => {
             if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } 
-            
+            }
+
             // Start link
             xml += `  <link name="${linkName}">\n`;
             if (node.isBaseLink) {
@@ -71,13 +71,19 @@ export const ScenetoSDF = (scene, projectTitle) => {
             // Material
             if (node.mesh.material && node.mesh.material.color) {
                 const color = node.mesh.material.color;
-                xml += `    <material>\n      <script>\n        <uri>file://media/materials/scripts/gazebo.material</uri>\n        <name>${node.mesh.material.name || "Gazebo/Red"}</name>\n      </script>\n      <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${color.b} 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
+                xml += `    <material>\n      <script>\n        <uri>file://media/materials/scripts/gazebo.material</uri>\n        <name>${
+                    node.mesh.material.name || "Gazebo/Red"
+                }</name>\n      </script>\n      <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${
+                    color.b
+                } 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
             }
 
             // Add inertial element
             const mass = node.inertia.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia;
-            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${ixx || 0}</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${ixz || 0}</ixz>\n        <iyy>${iyy || 0}</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
+            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${ixx || 0}</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${ixz || 0}</ixz>\n        <iyy>${
+                iyy || 0
+            }</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
             if (node.sensor) {
@@ -92,7 +98,6 @@ export const ScenetoSDF = (scene, projectTitle) => {
             if (parentName) {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.jointType}">\n`;
 
-                
                 // because urdf is dumb, children links are connected to parent joints, not parent meshes
                 // this code accounts for that and sets the joint origin in relation to the parent's joint origin
                 // ie it add the links position to its own since it isnt passed with
@@ -111,14 +116,14 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
-                    const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis>\n`;
                     xml += `        <xyz expressed_in='${linkName}'>${formatVector(newAxis)}</xyz>\n`;
                     if (node.joint.type !== "continuous") {
-                        xml += `        <limit>`
-                        xml += `            <lower>${node.joint.min}</lower>`
-                        xml += `            <upper>${node.joint.max}</upper>`
-                        xml += `        </limit>\n`
+                        xml += `        <limit>`;
+                        xml += `            <lower>${node.joint.min}</lower>`;
+                        xml += `            <upper>${node.joint.max}</upper>`;
+                        xml += `        </limit>\n`;
                     }
                     xml += `    </axis>\n`;
                 }

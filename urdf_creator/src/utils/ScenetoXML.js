@@ -113,7 +113,7 @@ export const ScenetoXML = (scene, projectTitle) => {
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
-                    const newAxis = new THREE.Vector3(...node.joint.axis).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
                     if (node.joint.type !== "continuous") {
                         xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
