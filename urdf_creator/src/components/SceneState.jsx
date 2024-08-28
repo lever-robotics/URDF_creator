@@ -53,7 +53,7 @@ export default function SceneState({ threeScene }) {
         const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
 
         if (shapes.length > 0) {
-            const object = shapes[0].object.parent.parent;
+            const object = shapes[0].object.urdfObject;
             selectObject(object);
         } else if (meshes.length === 0) {
             selectObject(null);
