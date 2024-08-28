@@ -18,6 +18,7 @@ import urdfObjectManager from "../Models/urdfObjectManager.js";
 
 export default function SceneState({ threeScene }) {
     //State
+    const [forcingKey, setForcingKey] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
@@ -93,6 +94,7 @@ export default function SceneState({ threeScene }) {
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
+        setForcingKey((prev) => prev + 1);
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -141,6 +143,7 @@ export default function SceneState({ threeScene }) {
             setSelectedObject(null);
             three.transformControls.detach();
         }
+        forceSceneUpdate();
     };
 
     const setLinkColor = (urdfObject, color) => {
@@ -355,7 +358,7 @@ export default function SceneState({ threeScene }) {
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <ObjectParameters key={forcingKey} forcingKey={forcingKey} selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
