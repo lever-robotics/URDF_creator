@@ -80,8 +80,8 @@ export class ThreeSceneManager {
         return new OrbitControls(camera, renderer.domElement);
     }
 
-    setupTransformControls(camera, renderer) {
-        return new TransformControls(camera, renderer.domElement);
+    setupTransformControls(camera, renderer, stateFunctions) {
+        return new TransformControls(camera, renderer.domElement, stateFunctions);
     }
 
     setupLights(color) {

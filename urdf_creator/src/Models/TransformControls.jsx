@@ -37,7 +37,7 @@ const _mouseUpEvent = { type: "mouseUp", mode: null };
 const _objectChangeEvent = { type: "objectChange" };
 
 class TransformControls extends Object3D {
-    constructor(camera, domElement) {
+    constructor(camera, domElement, stateFunctions) {
         super();
 
         if (domElement === undefined) {
@@ -46,6 +46,8 @@ class TransformControls extends Object3D {
         }
 
         this.isTransformControls = true;
+
+        this.stateFunctions = stateFunctions
 
         this.visible = false;
         this.domElement = domElement;
@@ -274,64 +276,58 @@ class TransformControls extends Object3D {
                 this._offset.applyQuaternion(this._parentQuaternionInv).divide(this._parentScale);
             }
 
-            console.log("success!!");
+            // this var holds the new position for the object, at the end of this scope it will be used to set the objects position via state functions
 
-            // object.position.copy(this._offset).add(this._positionStart);
-            stateFunctions.addToPosition(object, stateFunctions.copyIntoPosition(object, this._offset));
+            const newPosition = new Vector3();
+
+            newPosition.copy(this._offset).add(this._positionStart);
 
             // Apply translation snap
 
             if (this.translationSnap) {
                 if (space === "local") {
-                    // object.position.applyQuaternion(_tempQuaternion.copy(this._quaternionStart).invert());
-                    stateFunctions.applyQuaternionToPosition(object, _tempQuaternion.copy(this._quaternionStart).invert());
+                    newPosition.applyQuaternion(_tempQuaternion.copy(this._quaternionStart).invert());
 
                     if (axis.search("X") !== -1) {
-                        // object.position.x = Math.round(object.position.x / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "x", Math.round(object.position.x / this.translationSnap) * this.translationSnap);
+                        newPosition.x = Math.round(newPosition.x / this.translationSnap) * this.translationSnap;
                     }
 
                     if (axis.search("Y") !== -1) {
-                        // object.position.y = Math.round(object.position.y / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "y", Math.round(object.position.y / this.translationSnap) * this.translationSnap);
+                        newPosition.y = Math.round(newPosition.y / this.translationSnap) * this.translationSnap;
                     }
 
                     if (axis.search("Z") !== -1) {
-                        // object.position.z = Math.round(object.position.z / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "z", Math.round(object.position.z / this.translationSnap) * this.translationSnap);
+                        newPosition.z = Math.round(newPosition.z / this.translationSnap) * this.translationSnap;
                     }
 
-                    // object.position.applyQuaternion(this._quaternionStart);
-                    stateFunctions.applyQuaternionToPosition(object, this._quaternionStart);
+                    newPosition.applyQuaternion(this._quaternionStart);
                 }
 
                 if (space === "world") {
                     if (object.parent) {
-                        // object.position.add(_tempVector.setFromMatrixPosition(object.parent.matrixWorld));
-                        stateFunctions.addToPosition(object, _tempVector.setFromMatrixPosition(object.parent.matrixWorld));
+                        newPosition.add(_tempVector.setFromMatrixPosition(object.parent.matrixWorld));
                     }
 
                     if (axis.search("X") !== -1) {
-                        // object.position.x = Math.round(object.position.x / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "x", Math.round(object.position.x / this.translationSnap) * this.translationSnap);
+                        newPosition.x = Math.round(newPosition.x / this.translationSnap) * this.translationSnap;
                     }
 
                     if (axis.search("Y") !== -1) {
-                        // object.position.y = Math.round(object.position.y / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "y", Math.round(object.position.y / this.translationSnap) * this.translationSnap);
+                        newPosition.y = Math.round(newPosition.y / this.translationSnap) * this.translationSnap;
                     }
 
                     if (axis.search("Z") !== -1) {
-                        // object.position.z = Math.round(object.position.z / this.translationSnap) * this.translationSnap;
-                        stateFunctions.setPosition(object, "z", Math.round(object.position.z / this.translationSnap) * this.translationSnap);
+                        newPosition.z = Math.round(newPosition.z / this.translationSnap) * this.translationSnap;
                     }
 
                     if (object.parent) {
-                        // object.position.sub(_tempVector.setFromMatrixPosition(object.parent.matrixWorld));
-                        stateFunctions.subtractFromPosition(object, _tempVector.setFromMatrixPosition(object.parent.matrixWorld));
+                        newPosition.sub(_tempVector.setFromMatrixPosition(object.parent.matrixWorld));
                     }
                 }
             }
+
+            this.stateFunctions.setObjectPosition(object, newPosition);
+
         } else if (mode === "scale") {
             if (axis.search("XYZ") !== -1) {
                 let d = this.pointEnd.length() / this.pointStart.length();
@@ -363,21 +359,26 @@ class TransformControls extends Object3D {
 
             // Apply scale
 
-            object.scale.copy(this._scaleStart).multiply(_tempVector2);
+            const newScale = new Vector3();
+
+            newScale.copy(this._scaleStart).multiply(_tempVector2);
 
             if (this.scaleSnap) {
                 if (axis.search("X") !== -1) {
-                    object.scale.x = Math.round(object.scale.x / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
+                    newScale.x = Math.round(newScale.x / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
                 }
 
                 if (axis.search("Y") !== -1) {
-                    object.scale.y = Math.round(object.scale.y / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
+                    newScale.y = Math.round(newScale.y / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
                 }
 
                 if (axis.search("Z") !== -1) {
-                    object.scale.z = Math.round(object.scale.z / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
+                    newScale.z = Math.round(newScale.z / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
                 }
             }
+
+            this.stateFunctions.setObjectScale(object, newScale);
+
         } else if (mode === "rotate") {
             this._offset.copy(this.pointEnd).sub(this.pointStart);
 
@@ -422,14 +423,18 @@ class TransformControls extends Object3D {
             if (this.rotationSnap) this.rotationAngle = Math.round(this.rotationAngle / this.rotationSnap) * this.rotationSnap;
 
             // Apply rotate
+            const newQuaternion = new Quaternion();
+
             if (space === "local" && axis !== "E" && axis !== "XYZE") {
-                object.quaternion.copy(this._quaternionStart);
-                object.quaternion.multiply(_tempQuaternion.setFromAxisAngle(this.rotationAxis, this.rotationAngle)).normalize();
+                newQuaternion.copy(this._quaternionStart);
+                newQuaternion.multiply(_tempQuaternion.setFromAxisAngle(this.rotationAxis, this.rotationAngle)).normalize();
             } else {
                 this.rotationAxis.applyQuaternion(this._parentQuaternionInv);
-                object.quaternion.copy(_tempQuaternion.setFromAxisAngle(this.rotationAxis, this.rotationAngle));
-                object.quaternion.multiply(this._quaternionStart).normalize();
+                newQuaternion.copy(_tempQuaternion.setFromAxisAngle(this.rotationAxis, this.rotationAngle));
+                newQuaternion.multiply(this._quaternionStart).normalize();
             }
+
+            this.stateFunctions.setObjectQuaternion(object, newQuaternion);
         }
 
         this.dispatchEvent(_changeEvent);
@@ -836,7 +841,7 @@ class TransformControlsGizmo extends Object3D {
             const gizmo = new Object3D();
 
             for (const name in gizmoMap) {
-                for (let i = gizmoMap[name].length; i--; ) {
+                for (let i = gizmoMap[name].length; i--;) {
                     const object = gizmoMap[name][i][0].clone();
                     const position = gizmoMap[name][i][1];
                     const rotation = gizmoMap[name][i][2];
