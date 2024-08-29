@@ -21,7 +21,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
         setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
         setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedObject.rotation)]);
+    }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
 
     const handleRotationChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
@@ -66,7 +66,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Rotation">
+        <ToggleSection title="Rotation" open={stateFunctions.getToolMode() === "rotate"}>
             <ul>
                 <Parameter
                     title="X:"

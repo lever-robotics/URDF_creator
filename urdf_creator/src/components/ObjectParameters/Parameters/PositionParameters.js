@@ -12,6 +12,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
         setTempX(selectedObject.position.x);
         setTempY(selectedObject.position.y);
         setTempZ(selectedObject.position.z);
+
     }, [JSON.stringify(selectedObject.position)]);
 
     const handlePositionChange = (e) => {
@@ -59,7 +60,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
     }
 
     return (
-        <ToggleSection title="Position">
+        <ToggleSection title="Position" open={stateFunctions.getToolMode() === "translate"}>
             <ul>
                 <Parameter
                     title="X:"

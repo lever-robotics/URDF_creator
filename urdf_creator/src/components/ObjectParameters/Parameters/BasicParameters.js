@@ -21,7 +21,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
     };
 
     return (
-        <ToggleSection title="Basic Parameters">
+        <ToggleSection title="Basic Parameters" open={false}>
             <ul>
                 <Parameter
                     title={"Name:"}

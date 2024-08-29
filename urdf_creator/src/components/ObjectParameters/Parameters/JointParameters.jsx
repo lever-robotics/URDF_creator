@@ -69,7 +69,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Joint Parameters">
+        <ToggleSection title="Joint Parameters" open={false}>
             <strong>Joint Information:</strong>
             <div>
                 <strong>Parent Link:</strong>

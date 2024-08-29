@@ -78,7 +78,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Inertia Parameters">
+        <ToggleSection title="Inertia Parameters" open={false}>
             <ul>
                 <Parameter
                     title="Mass:"

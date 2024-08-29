@@ -37,7 +37,7 @@ function MeshParameters({ selectedObject, stateFunctions }) {
     }, []);
 
     return (
-        <ToggleSection title="Mesh Parameters">
+        <ToggleSection title="Mesh Parameters" open={false}>
             <strong>Mesh (only for visual):</strong>
             <select
                 value={selectedObject.userData.stlfile}

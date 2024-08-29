@@ -14,7 +14,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         setTempY(selectedObject.objectScale.y);
         setTempZ(selectedObject.objectScale.z);
         setTempRadius(selectedObject.objectScale.x / 2);
-    }, [JSON.stringify(selectedObject.objectScale)]);
+    }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
 
     const handleScaleChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
@@ -128,7 +128,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Scale">
+        <ToggleSection title="Scale" open={stateFunctions.getToolMode() === "scale"}>
             <ul>{determineParametersFromShape(selectedObject.shape)}</ul>
         </ToggleSection>
     );
