@@ -16,6 +16,7 @@ import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
+import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -287,7 +288,16 @@ export default function SceneState({ threeScene }) {
     }
 
     const openExportDisplayer = () => {
-        setModalContent(<ExportDisplayer onClose={closeExportDisplayer}/>);
+        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle}/>);
+        setIsModalOpen(true);
+    }
+
+    const closeImportDisplayer = () => {
+        setIsModalOpen(false);
+    }
+
+    const openImportDisplayer = () => {
+        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene}/>);
         setIsModalOpen(true);
     }
 
@@ -351,6 +361,8 @@ export default function SceneState({ threeScene }) {
         openOnboarding,
         openExportDisplayer,
         closeExportDisplayer,
+        openImportDisplayer,
+        closeImportDisplayer,
         closeModal,
         changeProjectTitle,
         handleProjectClick,

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import MenuModal from '../../FunctionalComponents/MenuModal';
 
-const MenuIcon = ({ openProjectManager, openExportDisplayer }) => {
+const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const buttonRef = useRef(null);
 
@@ -12,7 +12,10 @@ const MenuIcon = ({ openProjectManager, openExportDisplayer }) => {
             handleClick();
             openProjectManager();
         } },
-        { label: "Import", action: () => alert("Settings clicked!") },
+        { label: "Import", action: () => {
+            handleClick();
+            openImportDisplayer();
+        } },
         { label: "Export", action: () => {
             handleClick();
             openExportDisplayer();
