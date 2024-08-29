@@ -13,6 +13,16 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     const [tempIyz, setTempIyz] = useState(selectedObject.inertia.iyz);
     const [tempIzz, setTempIzz] = useState(selectedObject.inertia.izz);
 
+    useEffect(() => {
+        setTempMass(selectedObject.inertia.mass);
+        setTempIxx(selectedObject.inertia.ixx);
+        setTempIxy(selectedObject.inertia.ixy);
+        setTempIxz(selectedObject.inertia.ixz);
+        setTempIyy(selectedObject.inertia.iyy);
+        setTempIyz(selectedObject.inertia.iyz);
+        setTempIzz(selectedObject.inertia.izz);
+    }, [JSON.stringify(selectedObject.inertia)]);
+
     const handleInertiaChange = (e) => {
         const type = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -68,7 +78,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Inertia Parameters">
+        <ToggleSection title="Inertia Parameters" open={false}>
             <ul>
                 <Parameter
                     title="Mass:"

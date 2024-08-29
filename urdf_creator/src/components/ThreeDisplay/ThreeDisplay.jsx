@@ -5,12 +5,14 @@ import SceneState from "../SceneState";
 function ThreeDisplay() {
     const mountRef = useRef(null);
     const threeScene = useRef(null);
+    const [sceneState, stateFunctions] = SceneState({ threeScene });
+    console.log(stateFunctions);
 
     // Set up the scene (initialization)
     useEffect(() => {
         if (!mountRef.current) return;
         const tsm = new ThreeSceneManager();
-        const three = tsm.constructScene(mountRef);
+        const three = tsm.constructScene(mountRef, stateFunctions);
         threeScene.current = three;
 
         const sceneCallback = threeScene.current.callback;
@@ -31,11 +33,8 @@ function ThreeDisplay() {
     }, []);
 
     return (
-        <div
-            className="display"
-            ref={mountRef}
-            style={{ width: "100%", height: "100%" }}>
-            <SceneState threeScene={threeScene} />
+        <div className="display" ref={mountRef} style={{ width: "100%", height: "100%" }}>
+            {sceneState}
         </div>
     );
 }

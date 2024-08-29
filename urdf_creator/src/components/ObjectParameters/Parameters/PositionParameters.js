@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
@@ -6,6 +6,14 @@ function PositionParameters({ selectedObject, stateFunctions }) {
     const [tempX, setTempX] = useState(selectedObject.position.x);
     const [tempY, setTempY] = useState(selectedObject.position.y);
     const [tempZ, setTempZ] = useState(selectedObject.position.z);
+
+    //implement use effect to update when selected object changes
+    useEffect(() => {
+        setTempX(selectedObject.position.x);
+        setTempY(selectedObject.position.y);
+        setTempZ(selectedObject.position.z);
+
+    }, [JSON.stringify(selectedObject.position)]);
 
     const handlePositionChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
@@ -19,6 +27,8 @@ function PositionParameters({ selectedObject, stateFunctions }) {
                 break;
             case "z":
                 setTempZ(tempValue);
+                break;
+            default:
                 break;
         }
     };
@@ -50,7 +60,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
     }
 
     return (
-        <ToggleSection title="Position">
+        <ToggleSection title="Position" open={stateFunctions.getToolMode() === "translate"}>
             <ul>
                 <Parameter
                     title="X:"

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const ToggleSection = ({ title, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const ToggleSection = ({ title, children, open }) => {
+    const [isOpen, setIsOpen] = useState(open);
 
     return (
         <div className="toggle-section">

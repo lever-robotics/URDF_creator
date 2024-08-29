@@ -19,7 +19,6 @@ import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
-    const [forcingKey, setForcingKey] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
@@ -95,7 +94,6 @@ export default function SceneState({ threeScene }) {
 
     const forceSceneUpdate = () => {
         setScene({ ...threeScene.current.scene });
-        setForcingKey((prev) => prev + 1);
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -305,6 +303,22 @@ export default function SceneState({ threeScene }) {
         setIsModalOpen(false);
     };
 
+    const setObjectPosition = (object, position) => {
+        object.position.copy(position);
+        console.log("position");
+        forceSceneUpdate();
+    }
+
+    const setObjectScale = (object, scale) => {
+        object.scale.copy(scale);
+        forceSceneUpdate();
+    }
+
+    const setObjectQuaternion = (object, quaternion) => {
+        object.quaternion.copy(quaternion);
+        forceSceneUpdate();
+    }
+
     const stateFunctions = {
         addObject,
         forceSceneUpdate,
@@ -340,31 +354,29 @@ export default function SceneState({ threeScene }) {
         closeModal,
         changeProjectTitle,
         handleProjectClick,
+        setObjectPosition,
+        setObjectScale,
+        setObjectQuaternion,
     };
 
-    return (
+    return [
         <div className="screen">
             <Modal isOpen={isModalOpen} onClose={closeModal} modalContent={modalContent} />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuBar
-                            stateFunctions={stateFunctions}
-                            projectTitle={projectTitle}
-                        />
-                        <LinkTree
-                            selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
-                        />
+                        <MenuBar stateFunctions={stateFunctions} projectTitle={projectTitle} />
+                        <LinkTree selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <InsertTool addObject={addObject} />
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters key={forcingKey} forcingKey={forcingKey} selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
             </AbsolutePosition>
-        </div>
-    );
+        </div>,
+        stateFunctions,
+    ];
 }
