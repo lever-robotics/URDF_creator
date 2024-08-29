@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
@@ -15,6 +15,13 @@ function RotationParameters({ selectedObject, stateFunctions }) {
     const [tempZ, setTempZ] = useState(
         radToDeg(selectedObject.rotation.z).toFixed(2)
     );
+
+    //implement use effect to update when selected object changes
+    useEffect(() => {
+        setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
+        setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
+        setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
+    }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
 
     const handleRotationChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
@@ -59,7 +66,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Rotation">
+        <ToggleSection title="Rotation" open={stateFunctions.getToolMode() === "rotate"}>
             <ul>
                 <Parameter
                     title="X:"

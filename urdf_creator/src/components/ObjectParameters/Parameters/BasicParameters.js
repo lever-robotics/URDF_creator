@@ -9,7 +9,6 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
     const handleNameChange = (e) => {
         const newName = e.target.value;
         if (newName.includes(" ")) {
-            stateFunctions.setLinkName(selectedObject, newName);
             setError("Name must have no spaces");
         } else {
             stateFunctions.setLinkName(selectedObject, newName);
@@ -22,7 +21,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
     };
 
     return (
-        <ToggleSection title="Basic Parameters">
+        <ToggleSection title="Basic Parameters" open={false}>
             <ul>
                 <Parameter
                     title={"Name:"}
