@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
+import { TransformControls } from "../../Models/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { Mouse } from "./Mouse";
@@ -11,13 +11,12 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 
 export class ThreeSceneManager {
-
-    constructScene(mountRef) {
+    constructScene(mountRef, stateFunctions) {
         const scene = this.setupScene();
         const camera = this.setupCamera(mountRef.current);
         const renderer = this.setupRenderer(mountRef.current);
         const orbitControls = this.setupOrbitControls(camera, renderer);
-        const transformControls = this.setupTransformControls(camera, renderer);
+        const transformControls = this.setupTransformControls(camera, renderer, stateFunctions);
         const lights = this.setupLights();
         const gridHelper = this.setupGridHelper();
         const font = this.setupFont(scene, camera);
@@ -27,13 +26,7 @@ export class ThreeSceneManager {
         const background = this.setupBackground();
         const raycaster = this.setupRaycaster();
         const mouse = this.setupMouse(mountRef.current);
-        const callback = this.setupCallback(
-            orbitControls,
-            transformControls,
-            renderer,
-            scene,
-            mountRef
-        );
+        const callback = this.setupCallback(orbitControls, transformControls, renderer, scene, mountRef);
 
         const three = new ThreeScene(
             mountRef,
@@ -54,22 +47,11 @@ export class ThreeSceneManager {
             callback
         );
 
-        three.addToScene([
-            three.transformControls,
-            three.lights[0],
-            three.lights[1],
-            three.lights[2],
-            three.lights[3],
-            three.gridHelper,
-            three.axesHelper,
-        ]);
+        three.addToScene([three.transformControls, three.lights[0], three.lights[1], three.lights[2], three.lights[3], three.gridHelper, three.axesHelper]);
 
-        three.transformControls.addEventListener(
-            "dragging-changed",
-            (event) => {
-                three.orbitControls.enabled = !event.value;
-            }
-        );
+        three.transformControls.addEventListener("dragging-changed", (event) => {
+            three.orbitControls.enabled = !event.value;
+        });
 
         three.scene.background = three.background;
 
@@ -81,12 +63,7 @@ export class ThreeSceneManager {
     }
 
     setupCamera(mountRef) {
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            mountRef.clientWidth / mountRef.clientHeight,
-            0.1,
-            1000
-        );
+        const camera = new THREE.PerspectiveCamera(75, mountRef.clientWidth / mountRef.clientHeight, 0.1, 1000);
         camera.position.set(5, 5, 5);
         camera.up.set(0, 0, 1);
         return camera;
@@ -103,8 +80,8 @@ export class ThreeSceneManager {
         return new OrbitControls(camera, renderer.domElement);
     }
 
-    setupTransformControls(camera, renderer) {
-        return new TransformControls(camera, renderer.domElement);
+    setupTransformControls(camera, renderer, stateFunctions) {
+        return new TransformControls(camera, renderer.domElement, stateFunctions);
     }
 
     setupLights(color) {
@@ -126,46 +103,43 @@ export class ThreeSceneManager {
 
     setupFont(scene, camera) {
         const fontLoader = new FontLoader();
-        fontLoader.load(
-            process.env.PUBLIC_URL + "/fonts/helvetiker_regular.typeface.json",
-            (font) => {
-                const textMaterial = new THREE.MeshBasicMaterial({
-                    color: 0xffffff,
-                }); // Change color to blue
+        fontLoader.load(process.env.PUBLIC_URL + "/fonts/helvetiker_regular.typeface.json", (font) => {
+            const textMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+            }); // Change color to blue
 
-                const textGemetry = (title, position) => {
-                    const textGeo = new TextGeometry(title, {
-                        font: font,
-                        size: 0.1, // Make the text smaller
-                        height: 0.02,
-                        curveSegments: 12,
-                        bevelEnabled: false,
-                    });
-                    const textMesh = new THREE.Mesh(textGeo, textMaterial);
-                    textMesh.up.copy(new THREE.Vector3(0, 0, 1));
-                    textMesh.position.set(...position);
-                    textMesh.onBeforeRender = () => {
-                        textMesh.lookAt(camera.position);
-                    };
-                    return textMesh;
+            const textGemetry = (title, position) => {
+                const textGeo = new TextGeometry(title, {
+                    font: font,
+                    size: 0.1, // Make the text smaller
+                    height: 0.02,
+                    curveSegments: 12,
+                    bevelEnabled: false,
+                });
+                const textMesh = new THREE.Mesh(textGeo, textMaterial);
+                textMesh.up.copy(new THREE.Vector3(0, 0, 1));
+                textMesh.position.set(...position);
+                textMesh.onBeforeRender = () => {
+                    textMesh.lookAt(camera.position);
                 };
+                return textMesh;
+            };
 
-                const textMeshX = textGemetry("X", [5, 0, 0]);
-                const textMeshY = textGemetry("Y", [0, 5, 0]);
-                const textMeshZ = textGemetry("Z", [0, 0, 5]);
+            const textMeshX = textGemetry("X", [5, 0, 0]);
+            const textMeshY = textGemetry("Y", [0, 5, 0]);
+            const textMeshZ = textGemetry("Z", [0, 0, 5]);
 
-                scene.add(textMeshX);
-                scene.add(textMeshY);
-                scene.add(textMeshZ);
+            scene.add(textMeshX);
+            scene.add(textMeshY);
+            scene.add(textMeshZ);
 
-                // Make text always face the camera
-                // obj.updateTextRotation = () => {
-                //     textMeshX.lookAt(camera.position);
-                //     textMeshY.lookAt(camera.position);
-                //     textMeshZ.lookAt(camera.position);
-                // };
-            }
-        );
+            // Make text always face the camera
+            // obj.updateTextRotation = () => {
+            //     textMeshX.lookAt(camera.position);
+            //     textMeshY.lookAt(camera.position);
+            //     textMeshZ.lookAt(camera.position);
+            // };
+        });
     }
 
     setupAxesHelper() {

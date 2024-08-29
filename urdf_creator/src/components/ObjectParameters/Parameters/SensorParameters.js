@@ -13,7 +13,7 @@ function SensorsParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Sensor Parameters">
+        <ToggleSection title="Sensor Parameters" open={false}>
             <strong>Sensor Type:</strong>
             <select value={selectedObject.sensorType} onChange={handleSensorTypeChange}>
                 <option value="">Not a Sensor</option>

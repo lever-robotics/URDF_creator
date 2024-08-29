@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
@@ -6,7 +6,15 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
     const [tempX, setTempX] = useState(selectedObject.objectScale.x);
     const [tempY, setTempY] = useState(selectedObject.objectScale.y);
     const [tempZ, setTempZ] = useState(selectedObject.objectScale.z);
-    const [tempRadius, setTempRadius] = useState(selectedObject.scale.x / 2);
+    const [tempRadius, setTempRadius] = useState(selectedObject.objectScale.x / 2);
+
+    //implement use effect to update when selected object changes
+    useEffect(() => {
+        setTempX(selectedObject.objectScale.x);
+        setTempY(selectedObject.objectScale.y);
+        setTempZ(selectedObject.objectScale.z);
+        setTempRadius(selectedObject.objectScale.x / 2);
+    }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
 
     const handleScaleChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
@@ -120,7 +128,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Scale">
+        <ToggleSection title="Scale" open={stateFunctions.getToolMode() === "scale"}>
             <ul>{determineParametersFromShape(selectedObject.shape)}</ul>
         </ToggleSection>
     );
