@@ -1,6 +1,6 @@
 export const generateSensorSDF = (selectedObject) => {
 
-    const sensorType = selectedObject.sensor.sensorType;
+    const sensorType = selectedObject.sensor.type;
     let sensorXML = '';
     switch (sensorType) {
         case 'imu':
@@ -23,10 +23,10 @@ export const generateSensorSDF = (selectedObject) => {
 
 const generateIMUPluginXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, alwaysOn, updateRate, mean, stddev } = sensor;
+    const { type, alwaysOn, updateRate, mean, stddev } = sensor;
 
     return `
-    <sensor name="${sensorType}" type="imu">
+    <sensor name="${type}" type="imu">
         <always_on>${alwaysOn}</always_on>
         <update_rate>${updateRate}</update_rate>
         <imu>
@@ -82,10 +82,10 @@ const generateIMUPluginXML = (selectedObject) => {
 
 const generateCameraPluginXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, alwaysOn, updateRate, horizontal_fov, width, height, format, near, far, mean, stddev } = sensor;
+    const { cameraName, alwaysOn, updateRate, horizontal_fov, width, height, format, near, far, mean, stddev } = sensor;
 
     return `
-    <sensor name="${sensorType}" type="camera">
+    <sensor name="${cameraName}" type="camera">
         <always_on>${alwaysOn}</always_on>
         <visualize>true</visualize>
         <update_rate>${updateRate}</update_rate>
@@ -122,10 +122,10 @@ const generateCameraPluginXML = (selectedObject) => {
 
 const generateLidarPluginXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
+    const { type, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     return `
-    <sensor name="${sensorType}" type="ray">
+    <sensor name="${type}" type="ray">
         <always_on>${alwaysOn}</always_on>
         <visualize>true</visualize>
         <pose>${pose}</pose>

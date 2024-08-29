@@ -3,7 +3,7 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // generateSensorXML.js
 export const generateSensorXML = (selectedObject) => {
 
-    const sensorType = selectedObject.sensor.sensorType;
+    const sensorType = selectedObject.sensor.type;
     let sensorXML = '';
     switch (sensorType) {
         case 'imu':
@@ -26,7 +26,7 @@ export const generateSensorXML = (selectedObject) => {
 
 const generateIMUXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
+    const { type, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
 
     const { x, y, z } = selectedObject.mesh.position;
     const xyzOffsets_mesh = `${x} ${y} ${z}`;
@@ -35,7 +35,7 @@ const generateIMUXML = (selectedObject) => {
     //currently settinng the origin of the sensor to that of the mesh
 
     return `
-    <sensor type="${sensorType}" name="${sensor.sensorType}">
+    <sensor type="${type}" name="${type}">
         <always_on>${alwaysOn}</always_on>
         <update_rate>${updateRate}</update_rate>
         <origin>${xyzOffsets_mesh} ${rpyOffsets_mesh}</origin>
@@ -53,7 +53,7 @@ const generateIMUXML = (selectedObject) => {
 
 const generateCameraXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
+    const { type, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
 
     //currently settinng the origin of the sensor to that of the mesh
     const { x, y, z } = selectedObject.mesh.position;
@@ -61,7 +61,7 @@ const generateCameraXML = (selectedObject) => {
     const rpyOffsets_mesh = quaternionToRPY(selectedObject.mesh.quaternion);
 
     return `
-    <sensor type="${sensorType}" name="${cameraName}">
+    <sensor name="${cameraName}" type="${type}">
         <always_on>${alwaysOn}</always_on>
         <update_rate>${updateRate}</update_rate>
         <origin>${xyzOffsets_mesh} ${rpyOffsets_mesh}</origin>
@@ -87,7 +87,7 @@ const generateCameraXML = (selectedObject) => {
 
 const generateLidarXML = (selectedObject) => {
     const { sensor } = selectedObject;
-    const { sensorType, alwaysOn, updateRate, origin, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
+    const { type, alwaysOn, updateRate, origin, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     //currently settinng the origin of the sensor to that of the mesh
 
@@ -96,7 +96,7 @@ const generateLidarXML = (selectedObject) => {
     const rpyOffsets_mesh = quaternionToRPY(selectedObject.mesh.quaternion);
 
     return `
-    <sensor type="${sensorType}" name="${sensor.sensorType}">
+    <sensor type="${type}" name="${sensor.type}">
         <always_on>${alwaysOn}</always_on>
         <update_rate>${updateRate}</update_rate>
         <origin>${xyzOffsets_mesh} ${rpyOffsets_mesh}</origin>

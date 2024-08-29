@@ -15,6 +15,8 @@ import MenuBar from "./Menu/MenuBar.jsx";
 import urdfObject from "../Models/urdfObject.jsx";
 import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
+import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
+import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -283,6 +285,24 @@ export default function SceneState({ threeScene }) {
         setIsModalOpen(true);
     };
 
+    const closeExportDisplayer = () => {
+        setIsModalOpen(false);
+    }
+
+    const openExportDisplayer = () => {
+        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle}/>);
+        setIsModalOpen(true);
+    }
+
+    const closeImportDisplayer = () => {
+        setIsModalOpen(false);
+    }
+
+    const openImportDisplayer = () => {
+        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene}/>);
+        setIsModalOpen(true);
+    }
+
     const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
 
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
@@ -341,6 +361,10 @@ export default function SceneState({ threeScene }) {
         getBaseLink,
         openProjectManager,
         openOnboarding,
+        openExportDisplayer,
+        closeExportDisplayer,
+        openImportDisplayer,
+        closeImportDisplayer,
         closeModal,
         changeProjectTitle,
         handleProjectClick,
