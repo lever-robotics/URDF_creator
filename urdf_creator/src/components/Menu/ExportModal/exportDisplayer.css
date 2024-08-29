@@ -1,0 +1,45 @@
+.export-displayer{
+    height: 90%;
+    display: flex;
+}
+
+.title{
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.export-list{
+    list-style-type: none;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 300px;
+}
+
+.export-option{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.export-option:hover{
+    border: 1px solid #646cff;
+    border-bottom-right-radius: 32px;
+}
+
+.content{
+    width: 100%;
+    text-align: center;
+    align-content: center;
+    font-size: 1.5em;
+}
+
+.export-option-span{
+    cursor: default;
+}
+
