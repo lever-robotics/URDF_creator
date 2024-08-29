@@ -88,7 +88,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
             }</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.sensor) {
+            if (node.sensor.type) {
                 const sensorSDF = generateSensorSDF(node);
                 xml += sensorSDF;
             }
@@ -105,7 +105,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parent.link.position);
+                originInRelationToParentsJoint.add(node.parentURDF.position);
 
                 if (node.parent.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
