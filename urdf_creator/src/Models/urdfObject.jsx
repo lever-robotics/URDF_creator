@@ -274,11 +274,11 @@ export default class urdfObject extends THREE.Object3D {
 
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
-        if(type === "scale"){
+        if (type === "scale") {
             const newValues = this.objectScale.toArray();
             newValues[this.determineComponentIndex(axis)] = value;
             this.objectScale.set(...newValues);
-        }else{
+        } else {
             const newValues = this[type].toArray();
             newValues[this.determineComponentIndex(axis)] = value;
             this[type].set(...newValues);
@@ -319,7 +319,7 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     clone() {
-        return new urdfObject(this.position, this.rotation, this.name);
+        return new urdfObject(this.name, this.position, this.rotation);
     }
 
     //Add STL to the urdfObject

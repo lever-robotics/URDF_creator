@@ -77,8 +77,10 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         onKeyDown: handleKeyDown
     };
 
-    const determineParametersFromShape = (shape) => {
-        switch (shape) {
+    const determineParametersFromShape = (object) => {
+        console.log(object)
+        console.log("this is the shape " + object.shape)
+        switch (object.shape) {
             case "sphere":
                 return (
                     <Parameter
@@ -123,13 +125,13 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                     </>
                 );
             default:
-                throw Error("Shape not supported");
+                throw Error("Shape not supported: " + object.shape);
         }
     };
 
     return (
         <ToggleSection title="Scale" open={stateFunctions.getToolMode() === "scale"}>
-            <ul>{determineParametersFromShape(selectedObject.shape)}</ul>
+            <ul>{determineParametersFromShape(selectedObject)}</ul>
         </ToggleSection>
     );
 }

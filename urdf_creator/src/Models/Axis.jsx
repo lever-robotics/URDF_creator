@@ -48,8 +48,9 @@ export default class Axis extends THREE.Line {
     }
 
     clone() {
-        const axis = new Axis();
-        axis.rotation = this.rotation;
-        return axis;
+        const newAxis = new Axis();
+        newAxis.position.copy(this.position);
+        newAxis.quaternion.copy(this.quaternion);
+        return newAxis;
     }
 }

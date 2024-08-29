@@ -237,11 +237,13 @@ export default function SceneState({ threeScene }) {
 
         if (urdfObject.name === "base_link") {
             clone.name = "base_link_copy";
-            urdfObject.attach(clone);
+            clone.parentURDF = urdfObject;
+            urdfObject.link.attach(clone);
         } else {
-            urdfObject.parent.attach(clone);
+            clone.parentURDF = urdfObject.parentURDF;
+            urdfObject.parentURDF.link.attach(clone);
         }
-        setSelectedObject(null);
+        setSelectedObject(clone);
         forceSceneUpdate();
     };
 
