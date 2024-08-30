@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import urdfObjectManager from '../../../Models/urdfObjectManager';
 import { handleDownload } from '../../../utils/HandleDownload';
 import { handleUpload } from '../../../utils/HandleUpload';
+import GltfFilesGrid from '../Import/ImportSensor';
 import { openDB } from "idb";
 import ReactGA from "react-ga4";
 
@@ -48,7 +49,7 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
 
     const importOptions = [
         { label: "STL", action: () => {}, content: "A STL file"},
-        // { label: "Robot Package", action: () => {}, content: "Download the whole Robot Package necessary for ROS2"},
+        { label: "Robot Sensor", action: () => {}, content: {GltfFilesGrid}},
         { label: "GLTF", action: () => {onFileUpload(); onClose();}, content: "Upload a project"}
     ]
 
