@@ -137,6 +137,7 @@ export default function SceneState({ threeScene }) {
             setSelectedObject(null);
             three.transformControls.detach();
         } else if (urdfObject.selectable) {
+            console.log(urdfObject);
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {
@@ -184,6 +185,12 @@ export default function SceneState({ threeScene }) {
 
     const setJointMinMax = (urdfObject, type, value) => {
         urdfObject[type] = value;
+        forceSceneUpdate();
+    };
+
+    const setJointValue = (urdfObject, value) => {
+        urdfObject.jointValue = value;
+        forceSceneUpdate();
     };
 
     const rotateAroundJointAxis = (urdfObject, angle) => {
@@ -200,8 +207,8 @@ export default function SceneState({ threeScene }) {
         urdfObject.saveForDisplayChanges();
     };
 
-    const resetFromDisplayChanges = (urdfObject) => {
-        urdfObject.resetFromDisplayChanges();
+    const resetJointPosition = (urdfObject) => {
+        urdfObject.resetJointPosition();
         forceSceneUpdate();
     };
 
@@ -285,21 +292,21 @@ export default function SceneState({ threeScene }) {
 
     const closeExportDisplayer = () => {
         setIsModalOpen(false);
-    }
+    };
 
     const openExportDisplayer = () => {
-        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle}/>);
+        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle} />);
         setIsModalOpen(true);
-    }
+    };
 
     const closeImportDisplayer = () => {
         setIsModalOpen(false);
-    }
+    };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene}/>);
+        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene} />);
         setIsModalOpen(true);
-    }
+    };
 
     const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
 
@@ -317,17 +324,17 @@ export default function SceneState({ threeScene }) {
         object.position.copy(position);
         console.log("position");
         forceSceneUpdate();
-    }
+    };
 
     const setObjectScale = (object, scale) => {
         object.scale.copy(scale);
         forceSceneUpdate();
-    }
+    };
 
     const setObjectQuaternion = (object, quaternion) => {
         object.quaternion.copy(quaternion);
         forceSceneUpdate();
-    }
+    };
 
     const stateFunctions = {
         addObject,
@@ -345,10 +352,11 @@ export default function SceneState({ threeScene }) {
         setSensor,
         setJointType,
         saveForDisplayChanges,
-        resetFromDisplayChanges,
+        resetJointPosition,
         translateAlongJointAxis,
         rotateAroundJointAxis,
         setJointMinMax,
+        setJointValue,
         setMesh,
         updateSensor,
         loadScene,

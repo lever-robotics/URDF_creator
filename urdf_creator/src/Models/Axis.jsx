@@ -15,7 +15,6 @@ export default class Axis extends THREE.Line {
 
         super(geometry, material);
 
-        //this.savedRotation = new THREE.Euler().copy(this.rotation);
         this._axis = lineAxis;
     }
 

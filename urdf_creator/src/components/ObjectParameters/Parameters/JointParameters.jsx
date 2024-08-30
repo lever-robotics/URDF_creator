@@ -4,24 +4,44 @@ import ToggleSection from "../ToggleSection";
 import Parameter from "./Parameter";
 
 export default function JointParameters({ selectedObject, stateFunctions }) {
-    const [tempMin, setTempMin] = useState(selectedObject.min);
-    const [tempMax, setTempMax] = useState(selectedObject.max);
+    const [min, setMin] = useState(selectedObject.min);
+    const [max, setMax] = useState(selectedObject.max);
+    const [maxInput, setMaxInput] = useState(selectedObject.max);
+    const [minInput, setMinInput] = useState(selectedObject.min);
+    const [jointValue, setJointValue] = useState(selectedObject.jointValue);
+    const [jointInput, setJointInput] = useState(selectedObject.jointValue);
 
     const handleJointTypeChange = (e) => {
-        stateFunctions.setJointType(selectedObject, e.target.value);
+        const value = e.target.value;
+        // reset joint needs to go here, it changes e.target.value to 0 which isn't a joint type lol
+        resetJoint(e);
+        stateFunctions.setJointType(selectedObject, value);
+        if (value === "continuous") {
+            handleMinValueChange(-3.14);
+            handleMaxValueChange(3.14);
+        } else {
+            handleMinValueChange(-1);
+            handleMaxValueChange(1);
+        }
     };
 
-    // const handleSliderValue = () => {
-    //     switch (selectedObject.jointType) {
-    //         case "prismatic":
-    //             return selectedObject.distanceAlongJointAxis();
-    //         default:
-    //             return selectedObject.angleAroundJointAxis();
-    //     }
-    // };
+    const toFloat = (value) => {
+        let v = parseFloat(value);
+        if (isNaN(v)) {
+            v = 0;
+        }
+        return v;
+    };
 
-    const handleSliderChange = (e) => {
-        const value = parseFloat(e.target.value);
+    const handleJointValueChange = (value) => {
+        value = toFloat(value);
+        //clamp the value to the min and max
+        value = Math.min(Math.max(value, min), max);
+        console.log("This is the slider value");
+        console.log(value);
+        setJointValue(value);
+        setJointInput(value);
+        stateFunctions.setJointValue(selectedObject, value);
         switch (selectedObject.jointType) {
             case "prismatic":
                 stateFunctions.translateAlongJointAxis(selectedObject, value);
@@ -32,12 +52,8 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
         }
     };
 
-    const resetSlider = () => {
-        stateFunctions.resetFromDisplayChanges(selectedObject);
-    };
-
-    const saveSlider = () => {
-        stateFunctions.saveForDisplayChanges(selectedObject);
+    const resetJoint = () => {
+        handleJointValueChange(0);
     };
 
     const handleChangeAxisAngle = () => {
@@ -48,20 +64,18 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
         stateFunctions.startMoveJoint(selectedObject);
     };
 
-    const handleSetMinMax = (e) => {
-        const type = e.target.title.toLowerCase().replace(":", "");
-        const value = e.target.value;
-        if (type === "min") {
-            setTempMin(value);
-        } else {
-            setTempMax(value);
-        }
+    const handleMinValueChange = (value) => {
+        value = toFloat(value);
+        setMinInput(value);
+        setMin(value);
+        stateFunctions.setJointMinMax(selectedObject, "min", value);
     };
 
-    const handleMinMaxBlur = (e) => {
-        const type = e.target.title.toLowerCase().replace(":", "");
-        const value = parseFloat(e.target.value);
-        stateFunctions.setJointMinMax(selectedObject, type, value);
+    const handleMaxValueChange = (value) => {
+        value = toFloat(value);
+        setMaxInput(value);
+        setMax(value);
+        stateFunctions.setJointMinMax(selectedObject, "max", value);
     };
 
     const reattachLink = () => {
@@ -96,19 +110,61 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                     </button>
                     {selectedObject.jointType !== "continuous" && (
                         <ul>
-                            <Parameter title="Min:" size="small" value={tempMin} onChange={handleSetMinMax} onBlur={handleMinMaxBlur} />
-                            <Parameter title="Max:" size="small" value={tempMax} onChange={handleSetMinMax} onBlur={handleMinMaxBlur} />
+                            <Parameter
+                                title="Min:"
+                                size="small"
+                                value={minInput}
+                                onChange={(e) => {
+                                    setMinInput(e.target.value);
+                                }}
+                                onBlur={(e) => {
+                                    handleMinValueChange(e.target.value);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === "Enter") handleMinValueChange(e.target.value);
+                                }}
+                            />
+                            <Parameter
+                                title="Max:"
+                                size="small"
+                                value={maxInput}
+                                onChange={(e) => {
+                                    setMaxInput(e.target.value);
+                                }}
+                                onBlur={(e) => {
+                                    handleMaxValueChange(e.target.value);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === "Enter") handleMaxValueChange(e.target.value);
+                                }}
+                            />
+                            <Parameter
+                                title="Value:"
+                                size="small"
+                                value={jointInput}
+                                onChange={(e) => {
+                                    setJointInput(e.target.value);
+                                }}
+                                onBlur={(e) => {
+                                    handleJointValueChange(e.target.value);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === "Enter") handleJointValueChange(e.target.value);
+                                }}
+                            />
                         </ul>
                     )}
+                    <button onClick={resetJoint}>Reset</button>
                     <Slider
+                        value={jointValue}
                         step={0.01}
-                        min={selectedObject.min}
-                        max={selectedObject.max}
+                        min={min}
+                        max={max}
                         aria-label="Default"
                         valueLabelDisplay="auto"
-                        onChange={handleSliderChange}
-                        onMouseDown={saveSlider}
-                        onMouseUp={resetSlider}
+                        onChange={(e) => {
+                            handleJointValueChange(e.target.value);
+                        }}
                     />
                 </>
             )}
