@@ -28,7 +28,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
     return (
         <div className="object-tree" onClick={hideContextMenu} onMouseLeave={hideContextMenu}>
             Link Tree
-            <div className="scroll-box">{baseLink && <Node node={baseLink} handleContextMenu={handleContextMenu} stateFunctions={stateFunctions} />}</div>
+            <div className="scroll-box">{baseLink && <Node node={baseLink} selectedObject={selectedObject} handleContextMenu={handleContextMenu} stateFunctions={stateFunctions} />}</div>
             {contextMenuVisible && (
                 <ObjectContextMenu
                     // objectContextMenu={objectContextMenu}
@@ -41,19 +41,22 @@ export function LinkTree({ selectedObject, stateFunctions }) {
     );
 }
 
-function Node({ node, handleContextMenu, stateFunctions }) {
+function Node({ node, selectedObject, handleContextMenu, stateFunctions }) {
     if (!node) {
         return null;
     }
     const children = node.getUrdfObjectChildren();
     const name = node.name;
 
+    //check if the node is the selected object
+    const isSelected = selectedObject && (selectedObject.name === name) ? true : false;
+
     // Display the current node's data and render its children
     return (
         <div style={{ marginLeft: "20px" }}>
             {
                 <button
-                    className="tree-item"
+                    className={`tree-item ${isSelected ? "button_selected" : ""}`}
                     onClick={() => {
                         stateFunctions.selectObject(node);
                     }}
@@ -67,7 +70,7 @@ function Node({ node, handleContextMenu, stateFunctions }) {
             {children && (
                 <>
                     {children.map((child) => (
-                        <Node node={child} handleContextMenu={handleContextMenu} stateFunctions={stateFunctions} />
+                        <Node node={child} handleContextMenu={handleContextMenu} selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     ))}
                 </>
             )}

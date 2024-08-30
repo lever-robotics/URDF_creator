@@ -20,7 +20,7 @@ function SensorsParameters({ selectedObject, stateFunctions }) {
                 <option value="lidar">Lidar</option>
                 <option value="camera">Camera</option>
                 <option value="imu">IMU</option>
-                <option value="gps">GPS</option>
+                {/* <option value="gps">GPS</option> */}
             </select>
             <SensorParams
                 selectedObject={selectedObject}

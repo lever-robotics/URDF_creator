@@ -7,7 +7,10 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene, projectTitle) => {
     let xml = `<sdf version="1.6">\n`;
-    if (scene === undefined) return xml;
+    if (scene === undefined) {
+        xml += `</sdf>`;
+        return xml;
+    }
 
     xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
     //put on static for debugging
@@ -32,7 +35,6 @@ export const ScenetoSDF = (scene, projectTitle) => {
             //offset from parent to joint origin
             let offset = formatVector(node.link.position.clone().negate()); // offset from parent link to joint origin as sdf is link defined and not joint defined
             // position of link in relation to parent
-            debugger;
             let position = formatVector(node.position.clone().add(node.link.position));
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
@@ -86,7 +88,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
             }</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.sensor) {
+            if (node.sensor.type) {
                 const sensorSDF = generateSensorSDF(node);
                 xml += sensorSDF;
             }
@@ -103,7 +105,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parent.link.position);
+                originInRelationToParentsJoint.add(node.parentURDF.position);
 
                 if (node.parent.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
@@ -131,7 +133,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
             }
 
             // Recursively process children with the correct parent name
-            node.getChildren().forEach((child) => processNode(child, linkName));
+            node.getUrdfObjectChildren().forEach((child) => processNode(child, linkName));
         }
     };
 

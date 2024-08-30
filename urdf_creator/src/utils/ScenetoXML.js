@@ -7,7 +7,10 @@ import { quaternionToRPY } from "./quaternionToRPY.js";
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene, projectTitle) => {
     let xml = `<robot name="${projectTitle}">\n`;
-    if (scene === undefined) return xml;
+    if (scene === undefined) {
+        xml += `</robot>`;
+        return xml;
+    }
 
     // Helper to flip THREE xyz into urdf zxy
     const formatVector = (vec) => `${vec.x} ${vec.y} ${vec.z}`;
@@ -84,7 +87,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
-            if (node.sensor) {
+            if (node.sensor.type) {
                 const sensorXML = generateSensorXML(node);
                 xml += sensorXML;
             }

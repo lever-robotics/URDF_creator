@@ -91,7 +91,7 @@ export default class urdfObjectManager {
         const userData = {
             position: urdfObject.position,
             rotation: urdfObject.rotation,
-            scale: urdfObject.link.scale,
+            scale: urdfObject.mesh.scale,
             offset: urdfObject.link.position,
             jointType: urdfObject.jointType,
             // jointAxis: joint.position,
@@ -99,7 +99,7 @@ export default class urdfObjectManager {
             jointMax: urdfObject.max,
             jointRotation: urdfObject.joint.rotation,
             jointOrigin: urdfObject.joint.position,
-            material: urdfObject.link.material,
+            material: urdfObject.mesh.material,
             shape: urdfObject.shape,
             name: urdfObject.name,
             mass: urdfObject.mass,
@@ -124,12 +124,16 @@ export default class urdfObjectManager {
 
         console.log(position);
 
-        const link = new Link(shape, Object.values(offset), Object.values(scale));
+        const link = new Link(Object.values(offset));
+        const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
         const axis = new Axis();
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
         const sensor = new Sensor();
         const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation));
+
+        link.mesh = mesh;
+        link.add(mesh);
 
         joint.link = link;
         joint.add(link);
@@ -137,8 +141,14 @@ export default class urdfObjectManager {
         urdfobject.joint = joint;
         urdfobject.link = link;
         urdfobject.axis = axis;
+        urdfobject.mesh = mesh;
         urdfobject.add(joint);
         urdfobject.add(axis);
+
+        joint.urdfObject = urdfobject;
+        link.urdfObject = urdfobject;
+        axis.urdfObject = urdfobject;
+        mesh.urdfObject = urdfobject;
 
         urdfobject.inertia = inertia;
 
