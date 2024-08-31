@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import urdfObjectManager from '../../../Models/urdfObjectManager';
 import { handleDownload } from '../../../utils/HandleDownload';
+import STLImport from './STLImport';
 import { handleUpload } from '../../../utils/HandleUpload';
 import { openDB } from "idb";
 import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
+import '../../../FunctionalComponents/MenuModal.css';
 
 const ImportDisplayer = ({ onClose, loadScene }) => {
     const inputFile = useRef(null);
@@ -47,25 +49,21 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
       };
 
     const importOptions = [
-        { label: "STL", action: () => {}, content: "A STL file"},
+        { label: "STL", action: () => {}, content: <STLImport /> },
         // { label: "Robot Package", action: () => {}, content: "Download the whole Robot Package necessary for ROS2"},
-        { label: "GLTF", action: () => {onFileUpload(); onClose();}, content: "Upload a project"}
-    ]
-
-
+        { label: "GLTF", action: () => {}, content: "Upload a project"}
+    ];
 
     return (
         <>
             <h2 className="title">Import Options</h2>
             <div className="import-displayer">
-                <ul className="import-list">
+                <ul className="menu-list">
                     {importOptions.map((item, index) => (
                         <ImportOption index={index} item={item} setContent={setContent}/>
                     ))}
                 </ul>
-                <div className="content">
-                    {content}
-                </div>
+                {content}
             </div>
             <input
                 type="file"
@@ -88,10 +86,8 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
 const ImportOption = ({ item, setContent }) => {
 
     return (
-        <li className="import-option" onClick={item.action} onMouseEnter={() => setContent(item.content)} onMouseLeave={() => setContent("")}>
-            <span className="import-option-span">
-                {item.label}
-            </span>
+        <li className="menu-item" onClick={() => setContent(item.content)}>
+            {item.label}
         </li>
     )
 }

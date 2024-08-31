@@ -13,9 +13,6 @@ export default function MenuBar({ stateFunctions, projectTitle }) {
         openExportDisplayer,
         openImportDisplayer,
         changeProjectTitle,
-        getBaseLink,
-        getScene,
-        loadScene,
     } = stateFunctions;
 
 
