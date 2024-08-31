@@ -49,7 +49,7 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
 
     const importOptions = [
         { label: "STL", action: () => {}, content: "A STL file"},
-        { label: "Robot Sensor", action: () => {}, content: {GltfFilesGrid}},
+        { label: "Robot Sensor", action: () => {}, content: <GltfFilesGrid /> },
         { label: "GLTF", action: () => {onFileUpload(); onClose();}, content: "Upload a project"}
     ]
 
