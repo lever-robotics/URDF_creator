@@ -58,11 +58,13 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
         <>
             <h2 className="title">Import Options</h2>
             <div className="import-displayer">
-                <ul className="menu-list">
+                <div className='stl-menu-modal'>                
+                    <ul className="stl-menu-list">
                     {importOptions.map((item, index) => (
                         <ImportOption index={index} item={item} setContent={setContent}/>
                     ))}
-                </ul>
+                    </ul>
+                </div>
                 {content}
             </div>
             <input
@@ -86,7 +88,7 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
 const ImportOption = ({ item, setContent }) => {
 
     return (
-        <li className="menu-item" onClick={() => setContent(item.content)}>
+        <li className="stl-menu-item" onClick={() => setContent(item.content)}>
             {item.label}
         </li>
     )

@@ -42,3 +42,29 @@
 .import-option-span{
     cursor: default;
 }
+
+.stl-menu-modal {
+    width: 100%;
+    max-width: 200px;
+    z-index: 1000;
+    border-bottom-right-radius: 8px;
+  }
+  
+  .stl-menu-list {
+    background: #14252e;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-bottom-right-radius: 8px;
+  }
+  
+  .stl-menu-item {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  
+  .stl-menu-item:hover {
+    background-color: #646cff;
+    border-bottom-right-radius: 8px;
+}
