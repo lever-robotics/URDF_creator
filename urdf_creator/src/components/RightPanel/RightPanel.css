@@ -1,25 +1,5 @@
-.code-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.code-container:hover {
-    opacity: 0.8;
-}
-
-.tooltip {
-    position: fixed;
-    padding: 5px 10px;
-    background: black;
-    color: white;
-    border-radius: 5px;
-    pointer-events: none; /* So it doesn't interfere with other mouse events */
-    transform: translate(-50%, -50%);
-}
-
 .toolbar {
-    position: flex;
+    display: flex;
 }
 
 .toolbar-button{
@@ -29,4 +9,8 @@
 .selected{
     font-size: .8em;
     outline: 4px auto -webkit-focus-ring-color;
+}
+
+.right-panel{
+    display: flex;
 }

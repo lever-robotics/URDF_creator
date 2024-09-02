@@ -1,0 +1,20 @@
+.code-container {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    overflow: "auto";
+}
+
+.code-container:hover {
+    opacity: 0.8;
+}
+
+.tooltip {
+    position: fixed;
+    padding: 5px 10px;
+    background: black;
+    color: white;
+    border-radius: 5px;
+    pointer-events: none; /* So it doesn't interfere with other mouse events */
+    transform: translate(-50%, -50%);
+}
