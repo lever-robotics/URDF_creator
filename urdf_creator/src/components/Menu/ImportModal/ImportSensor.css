@@ -1,0 +1,43 @@
+/* ImportSensor.css */
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust gap between items as needed */
+    overflow-x: auto; /* Horizontal scrolling */
+    padding: 30px;
+    justify-content: flex-start;
+}
+
+.gltf-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* background-color: #f0f0f0; */
+    max-height: 150px;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    flex: 0 1 150px; /* Width of the box (adjustable) */
+    box-sizing: border-box;
+    transition: transform 0.2s ease;
+}
+
+.gltf-button:hover {
+    transform: scale(1.05);
+}
+
+.sensor-graphic {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.gltf-button span {
+    margin-top: 8px;
+    font-size: 14px;
+    /* color: #333; */
+    text-align: center;
+}

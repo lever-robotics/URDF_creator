@@ -2,20 +2,20 @@ import React, { useState, useRef } from 'react';
 import urdfObjectManager from '../../../Models/urdfObjectManager';
 import STLImport from './STLImport';
 import GLTFImport from './GLTFImport';
-import GltfFilesGrid from '../Import/ImportSensor';
+import GltfFilesGrid from './ImportSensor';
 import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
 import '../../../FunctionalComponents/MenuModal.css';
 
-const ImportDisplayer = ({ onImportClose, loadScene }) => {
+const ImportDisplayer = ({ loadSingleObject, onImportClose, loadScene }) => {
     const [content, setContent] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
         { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
-        { label: "Robot Sensor", content: <GltfFilesGrid /> },
+        { label: "Robot Sensor", content: <GltfFilesGrid loadSingleObject={loadSingleObject}/> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },
         // { label: "URDF", content: },

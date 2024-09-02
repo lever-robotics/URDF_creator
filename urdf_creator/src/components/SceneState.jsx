@@ -230,6 +230,13 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    const loadSingleObject = (gltfScene) => {
+        const manager = new urdfObjectManager();
+        const Link = manager.readScene(gltfScene);
+        selectedObject.attach(Link);
+        forceSceneUpdate();
+    };
+
     const getScene = () => {
         const { current: three } = threeScene;
         return three.scene;
@@ -300,12 +307,11 @@ export default function SceneState({ threeScene }) {
     };
 
     const closeImportDisplayer = () => {
-        console.log("closing");
         setIsModalOpen(false);
     };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer onImportClose={closeImportDisplayer} loadScene={loadScene} />);
+        setModalContent(<ImportDisplayer loadSingleObject={loadSingleObject} onImportClose={closeImportDisplayer} loadScene={loadScene} />);
         setIsModalOpen(true);
     };
 
@@ -361,6 +367,7 @@ export default function SceneState({ threeScene }) {
         setMesh,
         updateSensor,
         loadScene,
+        loadSingleObject,
         getScene,
         transformObject,
         duplicateObject,
