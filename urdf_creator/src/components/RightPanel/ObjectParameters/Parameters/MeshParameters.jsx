@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ToggleSection from "../ToggleSection";
+import Section from "../Section";
 import { openDB } from "idb";
 
 function MeshParameters({ selectedObject, stateFunctions }) {
@@ -37,7 +37,7 @@ function MeshParameters({ selectedObject, stateFunctions }) {
     }, []);
 
     return (
-        <ToggleSection title="Mesh Parameters" open={false}>
+        <Section title="Mesh Parameters">
             <strong>Mesh (only for visual):</strong>
             <select
                 value={selectedObject.userData.stlfile}
@@ -51,7 +51,7 @@ function MeshParameters({ selectedObject, stateFunctions }) {
                     </option>
                 ))}
             </select>
-        </ToggleSection>
+        </Section>
     );
 }
 

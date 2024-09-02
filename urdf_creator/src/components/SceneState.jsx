@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
+import ObjectParameters from "./RightPanel/ObjectParameters/ObjectParameters.jsx";
 import Toolbar from "./Toolbar/ToolBar.jsx";
 import InsertTool from "./Insert/InsertTool.jsx";
 import { LinkTree } from "./TreeView/LinkTree.jsx";
-import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
+import CodeDisplay from "./RightPanel/RightPanel.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
@@ -17,6 +17,7 @@ import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
+import RightPanel from "./RightPanel/RightPanel.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -413,8 +414,7 @@ export default function SceneState({ threeScene }) {
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
-                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
+                        <RightPanel scene={scene} projectTitle={projectTitle} selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     </Column>
                 </Row>
             </AbsolutePosition>

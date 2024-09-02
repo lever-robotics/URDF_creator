@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./parameters_style.css";
 import Parameter from "./Parameter";
 import ToggleSection from "../ToggleSection";
+import Section from "../Section";
+import PositionParameters from "./PositionParameters";
+import RotationParameters from "./RotationParameters";
+import ScaleParameters from "./ScaleParameters";
 
 export default function BasicParameters({ stateFunctions, selectedObject }) {
     const [error, setError] = useState("");
@@ -24,21 +28,21 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
 
     const handleNameBlur = (e) => {
         const newName = e.target.value;
-        if (newName === selectedObject.name) {
+        if(newName === selectedObject.name){
             setError("");
-        } else if (stateFunctions.doesLinkNameExist(newName)) {
+        }else if(stateFunctions.doesLinkNameExist(newName)){
             setError("Name must be unique");
-        } else {
+        }else{
             stateFunctions.setLinkName(selectedObject, newName);
             setError("");
         }
-    };
+    }
 
     const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
+        if(e.key === "Enter"){
             handleNameBlur(e);
         }
-    };
+    }
 
     const handleColorChange = (e) => {
         stateFunctions.setLinkColor(selectedObject, e.target.value);
@@ -49,7 +53,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
     };
 
     return (
-        <ToggleSection title="Basic Parameters" open={false}>
+        <Section title="Basic Parameters">
             <ul>
                 <Parameter
                     title={"Name:"}
@@ -58,12 +62,32 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
                     onChange={handleNameChange}
                     onBlur={handleNameBlur}
                     onKeyDown={handleKeyDown}
-                    readOnly={selectedObject.name === "base-link"}
+                    readOnly={selectedObject.name === "base_link"}
                     className={"name-input"}
                 />
-                <Parameter title={"Color:"} type="color" value={"#" + selectedObject.color.getHexString()} onChange={handleColorChange} onBlur={handleColorBlur} />
+                <Parameter
+                    title={"Color:"}
+                    type="color"
+                    value={"#"+ selectedObject.color.getHexString()}
+                    onChange={handleColorChange}
+                    onBlur={handleColorBlur}
+                />
             </ul>
-            {error && <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>}{" "}
-        </ToggleSection>
+            {error && (
+                <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
+            )}{" "}
+            <PositionParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <RotationParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <ScaleParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+        </Section>
     );
 }
