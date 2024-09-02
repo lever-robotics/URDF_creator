@@ -233,7 +233,14 @@ export default function SceneState({ threeScene }) {
     const loadSingleObject = (gltfScene) => {
         const manager = new urdfObjectManager();
         const Link = manager.readScene(gltfScene);
-        selectedObject.attach(Link);
+        if (selectedObject) {
+            selectedObject.attach(Link);
+        } else {
+            const { current: three } = threeScene;
+            three.scene.attach(Link);
+            three.baseLink = Link;
+            Link.isBaseLink = true;
+        }
         forceSceneUpdate();
     };
 
@@ -311,7 +318,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer loadSingleObject={loadSingleObject} onImportClose={closeImportDisplayer} loadScene={loadScene} />);
+        setModalContent(<ImportDisplayer handleSensorClick={handleSensorClick} onImportClose={closeImportDisplayer} loadScene={loadScene} />);
         setIsModalOpen(true);
     };
 
@@ -320,12 +327,19 @@ export default function SceneState({ threeScene }) {
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
     const handleProjectClick = async (projectPath, title) => {
-        const group = await handleProject(process.env.PUBLIC_URL + projectPath);
+        const fullPath = process.env.PUBLIC_URL + projectPath;
+        const group = await handleProject(fullPath);
         const base_link = group.scene.children[0];
         loadScene(base_link);
         setProjectTitle(title);
         setIsModalOpen(false);
     };
+
+    const handleSensorClick = async (gltfpath) => {
+        const group = await handleProject(gltfpath);
+        const link = group.scene.children[0];
+        loadSingleObject(link);
+    }
 
     const setObjectPosition = (object, position) => {
         object.position.copy(position);

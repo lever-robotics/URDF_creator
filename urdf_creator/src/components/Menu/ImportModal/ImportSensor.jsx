@@ -7,12 +7,12 @@ const fileNames = [
     // Add more file names as needed
 ];
 
-const GltfFile = ({ fileName, displayName, loadSingleObject }) => {
+const GltfFile = ({ fileName, displayName, handleSensorClick }) => {
     const gltfFilePath = `${process.env.PUBLIC_URL}/statics/GLTFFiles/${fileName}.gltf`;
     const imageFilePath = `${process.env.PUBLIC_URL}/statics/GLTFFilesImages/${fileName}.png`;
 
     const loadGltfFile = () => {
-        loadSingleObject(gltfFilePath);
+        handleSensorClick(gltfFilePath);
     };
 
     return (
@@ -23,9 +23,9 @@ const GltfFile = ({ fileName, displayName, loadSingleObject }) => {
     );
 };
 
-const GltfFilesGrid = ({loadSingleObject}) => {
+const GltfFilesGrid = ({handleSensorClick}) => {
     const gltfButtons = fileNames.map((file) => (
-        <GltfFile key={file.fileName} fileName={file.fileName} displayName={file.displayName} loadSingleObject={loadSingleObject} />
+        <GltfFile key={file.fileName} fileName={file.fileName} displayName={file.displayName} handleSensorClick={handleSensorClick} />
     ));
 
     return (

@@ -7,14 +7,14 @@ import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
 
-const ImportDisplayer = ({ loadSingleObject, onImportClose, loadScene }) => {
+const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
     const [content, setContent] = useState(<GLTFImport onClose={onImportClose} loadScene={loadScene} />);
     const [selectedIndex, setSelectedIndex] = useState(1);
 
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
         { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
-        { label: "Robot Sensor", content: <GltfFilesGrid loadSingleObject={loadSingleObject}/> },
+        { label: "Robot Sensor", content: <GltfFilesGrid handleSensorClick={handleSensorClick}/> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },
         // { label: "URDF", content: },
