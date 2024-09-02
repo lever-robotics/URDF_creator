@@ -113,7 +113,7 @@ export default class urdfObjectManager {
             // jointAxis: joint.position,
             jointMin: urdfObject.min,
             jointMax: urdfObject.max,
-            jointRotation: urdfObject.joint.rotation,
+            axisRotation: urdfObject.axis.rotation,
             jointOrigin: urdfObject.joint.position,
             material: urdfObject.mesh.material,
             color: urdfObject.color,
@@ -139,12 +139,14 @@ export default class urdfObjectManager {
     }
 
     loadObject(gltfObject) {
-        const { position, rotation, scale, offset, jointType, jointMin, jointMax, jointRotation, jointOrigin, material, sensor, color, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
+        const { position, rotation, scale, offset, jointType, jointMin, jointMax, axisRotation, jointOrigin, material, sensor, color, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
 
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
-        const axis = new Axis();
+        console.log(axisRotation);
+        const axis = new Axis(jointType, Object.values(axisRotation).slice(1,4));
+        axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
 
         const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation).slice(1, 4));

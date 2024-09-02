@@ -1,0 +1,79 @@
+<robot name="robot">
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.5" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.5" />
+      </geometry>
+      <material name="base_link-material">
+        <color rgba="0.0781874217970207 0.13286832154414627 0.04970656597728775 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.5" rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.5" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.5" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.4" ixy="0" ixz="0" iyy="0.4" iyz="0" izz="0.4" />
+    </inertial>
+  </link>
+  <link name="cube1">
+    <visual>
+      <origin xyz="-0.4505330988018632 0.4726205828069103 -0.022087484005055447" rpy="0 0 0" />
+      <geometry>
+        <box size="1 1 1" />
+      </geometry>
+      <material name="cube1-material">
+        <color rgba="0.0018211619011764706 0.12477181755144427 0.651405637412793 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.4505330988018632 0.4726205828069103 -0.022087484005055447" rpy="0 0 0" />
+      <geometry>
+        <box size="1 1 1" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.4505330988018632 0.4726205828069103 -0.022087484005055447" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666" />
+    </inertial>
+  </link>
+  <joint name="base_link_to_cube1" type="revolute">
+    <parent link="base_link" />
+    <child link="cube1" />
+    <origin xyz="2.950533098801863 2.0273794171930897 0.5220874840050554" rpy="0 0 0" />
+    <axis xyz="-0.7682225731619886 0 0.6401828473837557"/>
+    <limit effort="1000.0" lower="-1" upper="1" velocity="0.5"/>  </joint>
+  <link name="cylinder1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.5" length="1" />
+      </geometry>
+      <material name="cylinder1-material">
+        <color rgba="0.6583748172725346 0.05612849004241121 0.4452011945063733 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.5" length="1" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.3333333333333333" ixy="0" ixz="0" iyy="0.5" iyz="0" izz="0.3333333333333333" />
+    </inertial>
+  </link>
+  <joint name="cube1_to_cylinder1" type="fixed">
+    <parent link="cube1" />
+    <child link="cylinder1" />
+    <origin xyz="0.021765899111932274 -1.6206030017477278 1.5988371026359665" rpy="0 0 0" />
+  </joint>
+</robot>
