@@ -1,6 +1,6 @@
 import React from 'react';
 import './ImportSensor.css';
-import './STLImport.css';
+import './Import.css';
 // Define the list of .gltf file names (without extensions)
 const fileNames = [
     { fileName: 'realsense', displayName: 'RealSense' },
@@ -31,7 +31,7 @@ const GltfFilesGrid = ({loadSingleObject}) => {
     return (
         <div>
             <div className="header">
-                <div className="stl-import-title">
+                <div className="import-title">
             <h3>Add sensor to your project</h3>
         </div>
         </div>

@@ -6,7 +6,6 @@ import GltfFilesGrid from './ImportSensor';
 import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
-import '../../../FunctionalComponents/MenuModal.css';
 
 const ImportDisplayer = ({ loadSingleObject, onImportClose, loadScene }) => {
     const [content, setContent] = useState("");
@@ -25,8 +24,8 @@ const ImportDisplayer = ({ loadSingleObject, onImportClose, loadScene }) => {
         <>
             <h2 className="title">Import Options</h2>
             <div className="import-displayer">
-                <div className='stl-menu-modal'>                
-                    <ul className="stl-menu-list">
+                <div className='import-menu-modal'>                
+                    <ul className="menu-list">
                     {importOptions.map((item, index) => (
                         <ImportOption 
                         key={index}
@@ -55,7 +54,7 @@ const ImportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex
 
     return (
         <li 
-            className={`stl-menu-item ${selectedIndex === index ? 'stl-menu-selected' : ''}`} 
+            className={`menu-item ${selectedIndex === index ? 'menu-selected' : ''}`} 
             onClick={handleClick}
         >
             {item.label}

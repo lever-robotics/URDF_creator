@@ -1,4 +1,4 @@
-.stl-container {
+.des-container {
     padding: 5px;
     margin: 5px;
     /* background-color: #101010; */
@@ -13,26 +13,26 @@
     margin-bottom: 20px;
 }
 
-.stl-import-title {
+.export-title {
     flex: 0 0 60%;
     font-size: 24px;
     text-align: center;
 }
 
-.import-box {
+.export-box {
     flex: 0 0 40%;
     display: flex;
     justify-content: center;
 }
 
-.stl-import-button {
+.export-button {
     font-size: 20px;
     background-color: #646cff;
     border-width: 0;
     justify-content: center;
 }
 
-.stl-import-button:hover {
+.export-button:hover {
     background-color: #1d2a31;
 }
 

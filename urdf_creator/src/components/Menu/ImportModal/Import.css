@@ -1,4 +1,4 @@
-.gltf-container {
+.des-container {
     padding: 5px;
     margin: 5px;
     /* background-color: #101010; */
@@ -13,7 +13,7 @@
     margin-bottom: 20px;
 }
 
-.gltf-import-title {
+.import-title {
     flex: 0 0 60%;
     font-size: 24px;
     text-align: center;
@@ -25,14 +25,14 @@
     justify-content: center;
 }
 
-.gltf-import-button {
+.import-button {
     font-size: 20px;
     background-color: #646cff;
     border-width: 0;
     justify-content: center;
 }
 
-.gltf-import-button:hover {
+.import-button:hover {
     background-color: #1d2a31;
 }
 

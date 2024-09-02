@@ -1,5 +1,5 @@
 import React from 'react';
-import './GLTFImport.css';
+import './Import.css';
 import { useRef } from 'react';
 import { handleUpload } from '../../../utils/HandleUpload';
 
@@ -26,13 +26,13 @@ const GLTFImport = ({ onClose, loadScene }) => {
     };
 
     return (
-        <div className='gltf-container'>
+        <div className='des-container'>
             <div className="header">
-                <div className="gltf-import-title">
+                <div className="import-title">
                     <h3>Import a GLTF file</h3>
                 </div>
                 <div className="import-box">
-                    <button className='gltf-import-button' onClick={onClick}>Import GLTF</button>
+                    <button className='import-button' onClick={onClick}>Import GLTF</button>
                 </div>
             </div>
             <div className="description-container">

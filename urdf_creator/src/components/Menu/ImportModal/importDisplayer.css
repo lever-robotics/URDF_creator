@@ -33,7 +33,7 @@
     border-bottom-right-radius: 32px;
 }
 
-.stl-menu-selected {
+.menu-selected {
     background-color: #2b2f72;
     border-bottom-right-radius: 8px;
 }
@@ -49,14 +49,14 @@
     cursor: default;
 }
 
-.stl-menu-modal {
+.import-menu-modal {
     width: 100%;
     max-width: 200px;
     z-index: 1000;
     border-bottom-right-radius: 8px;
   }
   
-  .stl-menu-list {
+.menu-list {
     background: #14252e;
     list-style-type: none;
     padding: 0;
@@ -64,13 +64,13 @@
     border-bottom-right-radius: 8px;
   }
   
-  .stl-menu-item {
+.menu-item {
     padding: 10px;
     cursor: pointer;
     border: 1px solid transparent;
-  }
+}
   
-  .stl-menu-item:hover {
+.menu-item:hover {
     background-color: #646cff;
     border-bottom-right-radius: 8px;
 }

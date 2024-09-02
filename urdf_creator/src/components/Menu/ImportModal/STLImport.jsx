@@ -1,5 +1,5 @@
 import React from 'react';
-import './STLImport.css';
+import './Import.css';
 import { useRef } from 'react';
 import { openDB } from "idb";
 
@@ -33,13 +33,13 @@ const STLImport = ({ onClose }) => {
     };
 
     return (
-        <div className='stl-container'>
+        <div className='des-container'>
             <div className="header">
-                <div className="stl-import-title">
+                <div className="import-title">
                     <h3>Import an STL File</h3>
                 </div>
                 <div className="import-box">
-                    <button className='stl-import-button' onClick={onClick}>Import STL</button>
+                    <button className='import-button' onClick={onClick}>Import STL</button>
                 </div>
             </div>
             <div className="description-container">
