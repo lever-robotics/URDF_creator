@@ -29,6 +29,13 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
             <div className="toolbar">
                 <button
                     className={
+                        selectedFormat === "Parameters" ? "selected" : "toolbar-button"
+                    }
+                    onClick={handleClick}>
+                    Parameters
+                </button>
+                <button
+                    className={
                         selectedFormat === "URDF" ? "selected" : "toolbar-button"
                     }
                     onClick={handleClick}>
@@ -47,13 +54,6 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
                     }
                     onClick={handleClick}>
                     XACRO
-                </button>
-                <button
-                    className={
-                        selectedFormat === "Parameters" ? "selected" : "toolbar-button"
-                    }
-                    onClick={handleClick}>
-                    Parameters
                 </button>
             </div>
             <CodeBox
