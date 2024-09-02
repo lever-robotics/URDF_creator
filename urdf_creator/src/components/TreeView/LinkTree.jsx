@@ -49,14 +49,14 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions }) {
     const name = node.name;
 
     //check if the node is the selected object
-    const isSelected = selectedObject && (selectedObject.name === name) ? true : false;
+    const isSelected = selectedObject && selectedObject.name === name ? true : false;
 
     // Display the current node's data and render its children
     return (
         <div style={{ marginLeft: "20px" }}>
             {
                 <button
-                    className={`tree-item ${isSelected ? "button_selected" : ""}`}
+                    className={`tree-item ${isSelected ? "button_selected" : "button_unselected"}`}
                     onClick={() => {
                         stateFunctions.selectObject(node);
                     }}

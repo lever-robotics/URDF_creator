@@ -66,6 +66,14 @@ export default class urdfObject extends THREE.Object3D {
         this.joint.max = value;
     }
 
+    get jointValue() {
+        return this.joint.value;
+    }
+
+    set jointValue(value) {
+        this.joint.value = value;
+    }
+
     set mass(mass) {
         this.inertia.updateMass(mass, this);
     }
@@ -127,14 +135,9 @@ export default class urdfObject extends THREE.Object3D {
         this.joint.translateOnAxis(newAxis, distance);
     }
 
-    saveForDisplayChanges() {
-        this.joint.savedRotation.copy(this.joint.rotation);
-        this.joint.savedPosition.copy(this.joint.position);
-    }
-
-    resetFromDisplayChanges() {
-        this.joint.position.copy(this.joint.savedPosition);
-        this.joint.rotation.copy(this.joint.savedRotation);
+    resetJointPosition() {
+        this.joint.position.set(0, 0, 0);
+        this.joint.rotation.set(0, 0, 0);
     }
 
     get sensorType() {

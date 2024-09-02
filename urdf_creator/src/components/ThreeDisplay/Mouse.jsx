@@ -45,6 +45,9 @@ export class Mouse {
         const dragThreshold = 20;
         const endPos = [event.clientX, event.clientY];
 
+        // if the user clicks off of the three scene then drags in, return
+        if (!this.startPos) return;
+
         if (Math.sqrt((endPos[0] - this.startPos[0]) ** 2 + (endPos[1] - this.startPos[1]) ** 2) > dragThreshold) {
             // Do nothing if dragged
         } else if (this.currentDownTime - this.previousUpTime < clickTime && Date.now() - this.currentDownTime < clickTime) {
