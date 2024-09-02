@@ -8,8 +8,8 @@ import ReactGA from "react-ga4";
 import './importDisplayer.css';
 
 const ImportDisplayer = ({ loadSingleObject, onImportClose, loadScene }) => {
-    const [content, setContent] = useState("");
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [content, setContent] = useState(<GLTFImport onClose={onImportClose} loadScene={loadScene} />);
+    const [selectedIndex, setSelectedIndex] = useState(1);
 
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },

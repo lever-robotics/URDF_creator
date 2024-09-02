@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import ExportURDFPackage from './ExportURDFPackage';
+import ExportGLTF from './ExportGLTF';
+import ExportURDF from './ExportURDF';
 
 import './exportDisplayer.css';
 
-const ExportDisplayer = ({ onClose, getBaseLink, projectTitle }) => {
-    const [selectedIndex, setSelectedIndex] = useState(null);
-    const [content, setContent] = useState("");
+const ExportDisplayer = ({ onClose, getBaseLink, projectTitle, getScene }) => {
+    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [content, setContent] = useState(<ExportURDFPackage onClose={onClose}  getScene={getScene} projectTitle={projectTitle}/>);
 
     const exportOptions = [
-        { label: "URDF", content: "The URD"},
-        { label: "Robot Package", content: <ExportURDFPackage onClose={onClose} getBaseLink={getBaseLink} projectTitle={projectTitle} /> },
-        { label: "GLTF", content: "Save a current copy of this project to work on later in a GLTF file format"}
+        { label: "URDF", content: <ExportURDF onClose={onClose} getScene={getScene} projectTitle={projectTitle}/> },
+        { label: "Robot Package", content: <ExportURDFPackage onClose={onClose}  getScene={getScene} projectTitle={projectTitle}/> },
+        { label: "GLTF", content: <ExportGLTF onClose={onClose} getBaseLink={getBaseLink} projectTitle={projectTitle}/> },
     ]
 
     return (

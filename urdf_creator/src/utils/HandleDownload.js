@@ -10,12 +10,16 @@ import { GenerateLaunchFile } from "./CreatePackage/GenerateLaunchFile";
 import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/GenerateBuildFiles";
 
 export async function handleDownload(scene, type, title) {
-  if (type === "urdf") {
-    const urdf = ScenetoXML(scene);
+  if (type === "urdfpackage") {
+    const urdf = ScenetoXML(scene, title);
     const sdf = ScenetoSDF(scene);
     const projectProperties = LaunchPropertiesContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
     await generateZip(urdf, sdf, projectProperties, title);
-  } else if (type === "gltf") {
+  } else if (type === "urdf") {
+    const urdf = ScenetoXML(scene, title);
+    otherFileDownload(urdf, type, title);
+  }
+  else if (type === "gltf") {
     const exporter = new GLTFExporter();
     exporter.parse(scene, (gltf) => {
       console.log(gltf);

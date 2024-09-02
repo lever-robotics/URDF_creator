@@ -302,7 +302,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openExportDisplayer = () => {
-        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle} />);
+        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle} getScene={getScene}/>);
         setIsModalOpen(true);
     };
 

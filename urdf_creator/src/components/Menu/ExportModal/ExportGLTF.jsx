@@ -14,10 +14,10 @@ const ExportGLTF = ({ onClose, getBaseLink, projectTitle }) => {
         <div className='des-container'>
             <div className="header">
                 <div className="export-title">
-                    <h3>export a GLTF file</h3>
+                    <h3>Export a GLTF file</h3>
                 </div>
                 <div className="export-box">
-                    <button className='export-button' onClick={() => {handleGLTFExport(); onClose();}}>Export ROS2 Package</button>
+                    <button className='export-button' onClick={() => {handleGLTFExport(); onClose();}}>Export a GLTF file</button>
                 </div>
             </div>
             <div className="description-container">
