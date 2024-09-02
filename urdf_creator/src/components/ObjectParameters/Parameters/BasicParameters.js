@@ -24,21 +24,21 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
 
     const handleNameBlur = (e) => {
         const newName = e.target.value;
-        if(newName === selectedObject.name){
+        if (newName === selectedObject.name) {
             setError("");
-        }else if(stateFunctions.doesLinkNameExist(newName)){
+        } else if (stateFunctions.doesLinkNameExist(newName)) {
             setError("Name must be unique");
-        }else{
+        } else {
             stateFunctions.setLinkName(selectedObject, newName);
             setError("");
         }
-    }
+    };
 
     const handleKeyDown = (e) => {
-        if(e.key === "Enter"){
+        if (e.key === "Enter") {
             handleNameBlur(e);
         }
-    }
+    };
 
     const handleColorChange = (e) => {
         stateFunctions.setLinkColor(selectedObject, e.target.value);
@@ -54,19 +54,12 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
                     onChange={handleNameChange}
                     onBlur={handleNameBlur}
                     onKeyDown={handleKeyDown}
-                    readOnly={selectedObject.name === "base_link"}
+                    readOnly={selectedObject.name === "base-link"}
                     className={"name-input"}
                 />
-                <Parameter
-                    title={"Color:"}
-                    type="color"
-                    value={"#"+ selectedObject.color.getHexString()}
-                    onChange={handleColorChange}
-                />
+                <Parameter title={"Color:"} type="color" value={"#" + selectedObject.color.getHexString()} onChange={handleColorChange} />
             </ul>
-            {error && (
-                <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
-            )}{" "}
+            {error && <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>}{" "}
         </ToggleSection>
     );
 }

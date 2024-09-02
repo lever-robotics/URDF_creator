@@ -47,7 +47,7 @@ class TransformControls extends Object3D {
 
         this.isTransformControls = true;
 
-        this.stateFunctions = stateFunctions
+        this.stateFunctions = stateFunctions;
 
         this.visible = false;
         this.domElement = domElement;
@@ -327,7 +327,6 @@ class TransformControls extends Object3D {
             }
 
             this.stateFunctions.setObjectPosition(object, newPosition);
-
         } else if (mode === "scale") {
             if (axis.search("XYZ") !== -1) {
                 let d = this.pointEnd.length() / this.pointStart.length();
@@ -378,7 +377,6 @@ class TransformControls extends Object3D {
             }
 
             this.stateFunctions.setObjectScale(object, newScale);
-
         } else if (mode === "rotate") {
             this._offset.copy(this.pointEnd).sub(this.pointStart);
 
@@ -448,6 +446,8 @@ class TransformControls extends Object3D {
             _mouseUpEvent.mode = this.mode;
             this.dispatchEvent(_mouseUpEvent);
         }
+
+        //
 
         this.dragging = false;
         this.axis = null;
@@ -841,7 +841,7 @@ class TransformControlsGizmo extends Object3D {
             const gizmo = new Object3D();
 
             for (const name in gizmoMap) {
-                for (let i = gizmoMap[name].length; i--;) {
+                for (let i = gizmoMap[name].length; i--; ) {
                     const object = gizmoMap[name][i][0].clone();
                     const position = gizmoMap[name][i][1];
                     const rotation = gizmoMap[name][i][2];

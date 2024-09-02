@@ -18,7 +18,7 @@ export const ScenetoXML = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+        return node.name || (linkIndex === 0 ? "base-link" : `link${linkIndex}`);
     };
 
     // Function to process a single node
@@ -30,6 +30,9 @@ export const ScenetoXML = (scene, projectTitle) => {
             let offset = formatVector(node.link.position);
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
+
+            console.log("baske link stuff");
+            console.log(node);
 
             if (node.isBaseLink) {
                 offset = formatVector(node.position);

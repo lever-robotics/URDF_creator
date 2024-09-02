@@ -85,7 +85,7 @@ export default function SceneState({ threeScene }) {
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.isBaseLink = true;
-            newUrdfObject.name = "base_link";
+            newUrdfObject.name = "base-link";
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
@@ -266,8 +266,7 @@ export default function SceneState({ threeScene }) {
         const manager = new urdfObjectManager();
         const clone = manager.cloneUrdfObject(urdfObject);
 
-        if (urdfObject.name === "base_link") {
-            clone.name = "base_link_copy";
+        if (urdfObject.isBaseLink) {
             clone.parentURDF = urdfObject;
             urdfObject.link.attach(clone);
         } else {
@@ -281,7 +280,7 @@ export default function SceneState({ threeScene }) {
     const deleteObject = (urdfObject) => {
         const { current: three } = threeScene;
 
-        if (urdfObject.name === "base_link") {
+        if (urdfObject.name === "base-link") {
             three.baseLink = null;
         }
         selectObject();
@@ -337,8 +336,8 @@ export default function SceneState({ threeScene }) {
 
     const handleProjectClick = async (projectPath, title) => {
         const group = await handleProject(process.env.PUBLIC_URL + projectPath);
-        const base_link = group.scene.children[0];
-        loadScene(base_link);
+        const baseLink = group.scene.children[0];
+        loadScene(baseLink);
         setProjectTitle(title);
         setIsModalOpen(false);
     };
@@ -416,7 +415,7 @@ export default function SceneState({ threeScene }) {
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
-                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
+                        {/* <CodeDisplay scene={scene} projectTitle={projectTitle} /> */}
                     </Column>
                 </Row>
             </AbsolutePosition>

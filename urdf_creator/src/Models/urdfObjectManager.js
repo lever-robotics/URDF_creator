@@ -93,8 +93,9 @@ export default class urdfObjectManager {
         const children = urdfObject.getUrdfObjectChildren();
 
         for (const child of children) {
-            clone.link.add(this.cloneUrdfObject(child));
-            child.parentURDF = clone;
+            const cloneChild = this.cloneUrdfObject(child);
+            clone.link.add(cloneChild);
+            cloneChild.parentURDF = clone;
         }
 
         return clone;
