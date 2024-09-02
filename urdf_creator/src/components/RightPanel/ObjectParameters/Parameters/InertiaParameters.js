@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Inertia from "../../../Models/Inertia";
+import Inertia from "../../../../Models/Inertia";
 import Parameter from "./Parameter";
-import ToggleSection from "../ToggleSection";
-import { handleDownload } from "../../../utils/HandleDownload";
+import Section from "../Section";
+import { handleDownload } from "../../../../utils/HandleDownload";
 
 function InertiaParameters({ selectedObject, stateFunctions }) {
     const [tempMass, setTempMass] = useState(selectedObject.inertia.mass);
@@ -78,7 +78,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Inertia Parameters" open={false}>
+        <Section title="Inertia Parameters">
             <ul>
                 <Parameter
                     title="Mass:"
@@ -173,7 +173,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                     }
                 />
             </ul>
-        </ToggleSection>
+        </Section>
     );
 }
 

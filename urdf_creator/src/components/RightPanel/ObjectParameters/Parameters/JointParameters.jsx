@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Slider from "@mui/material/Slider";
-import ToggleSection from "../ToggleSection";
+import Section from "../Section";
 import Parameter from "./Parameter";
 
 export default function JointParameters({ selectedObject, stateFunctions }) {
@@ -83,7 +83,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Joint Parameters" open={false}>
+        <Section title="Joint Parameters">
             <strong>Joint Information:</strong>
             <div>
                 <strong>Parent Link:</strong>
@@ -168,6 +168,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                     />
                 </>
             )}
-        </ToggleSection>
+        </Section>
     );
 }

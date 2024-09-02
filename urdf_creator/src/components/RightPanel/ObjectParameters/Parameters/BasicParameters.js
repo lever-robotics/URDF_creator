@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./parameters_style.css";
 import Parameter from "./Parameter";
 import ToggleSection from "../ToggleSection";
+import Section from "../Section";
+import PositionParameters from "./PositionParameters";
+import RotationParameters from "./RotationParameters";
+import ScaleParameters from "./ScaleParameters";
 
 export default function BasicParameters({ stateFunctions, selectedObject }) {
     const [error, setError] = useState("");
@@ -49,7 +53,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
     };
 
     return (
-        <ToggleSection title="Basic Parameters" open={false}>
+        <Section title="Basic Parameters">
             <ul>
                 <Parameter
                     title={"Name:"}
@@ -72,6 +76,18 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
             {error && (
                 <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
             )}{" "}
-        </ToggleSection>
+            <PositionParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <RotationParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+            <ScaleParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+            />
+        </Section>
     );
 }

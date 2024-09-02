@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ToggleSection from "../ToggleSection";
+import Section from "../Section";
 import Parameter from "./Parameter";
 
 function ScaleParameters({ selectedObject, stateFunctions }) {
@@ -130,9 +130,9 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <ToggleSection title="Scale" open={stateFunctions.getToolMode() === "scale"}>
+        <Section title="Scale">
             <ul>{determineParametersFromShape(selectedObject)}</ul>
-        </ToggleSection>
+        </Section>
     );
 }
 
