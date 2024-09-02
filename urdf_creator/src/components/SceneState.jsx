@@ -148,7 +148,6 @@ export default function SceneState({ threeScene }) {
 
     const setLinkColor = (urdfObject, color) => {
         urdfObject.color = color;
-        forceSceneUpdate();
     };
 
     const doesLinkNameExist = (name) => {

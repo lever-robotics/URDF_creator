@@ -44,6 +44,10 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         stateFunctions.setLinkColor(selectedObject, e.target.value);
     };
 
+    const handleColorBlur = (e) => {
+        stateFunctions.forceSceneUpdate();
+    };
+
     return (
         <ToggleSection title="Basic Parameters" open={false}>
             <ul>
@@ -57,7 +61,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
                     readOnly={selectedObject.name === "base-link"}
                     className={"name-input"}
                 />
-                <Parameter title={"Color:"} type="color" value={"#" + selectedObject.color.getHexString()} onChange={handleColorChange} />
+                <Parameter title={"Color:"} type="color" value={"#" + selectedObject.color.getHexString()} onChange={handleColorChange} onBlur={handleColorBlur} />
             </ul>
             {error && <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>}{" "}
         </ToggleSection>
