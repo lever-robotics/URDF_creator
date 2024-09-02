@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import urdfObjectManager from '../../../Models/urdfObjectManager';
 import STLImport from './STLImport';
 import GLTFImport from './GLTFImport';
+import GltfFilesGrid from '../Import/ImportSensor';
 import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
@@ -14,6 +15,7 @@ const ImportDisplayer = ({ onImportClose, loadScene }) => {
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
         { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
+        { label: "Robot Sensor", action: () => {}, content: <GltfFilesGrid /> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },
         // { label: "URDF", content: },
