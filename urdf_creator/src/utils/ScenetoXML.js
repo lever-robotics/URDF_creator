@@ -66,7 +66,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             // Material
             if (node.mesh.material && node.mesh.material.color) {
                 const color = node.mesh.material.color;
-                xml += `      <material name="${node.mesh.material.name || "material"}">\n`;
+                xml += `      <material name="${node.mesh.material.name || node.name + "-material"}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -118,7 +118,7 @@ export const ScenetoXML = (scene, projectTitle) => {
                 xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
-                    quaternion.setFromEuler(node.joint.rotation);
+                    quaternion.setFromEuler(node.axis.rotation);
                     const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
                     if (node.joint.type !== "continuous") {

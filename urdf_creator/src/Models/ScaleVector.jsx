@@ -8,25 +8,26 @@ export default class ScaleVector extends THREE.Vector3 {
     }
 
     set(x, y, z) {
+        console.log("x: " + x + " y: " + y + " z: " + z);
         switch (this.shape) {
             case "cube":
                 super.set(x, y, z);
                 return this;
             case "sphere":
-                if (x !== this.getComponent(0)) {
+                if (x !== this.getComponent(0) && x !== 1) {
                     super.set(x, x, x);
-                } else if (y !== this.getComponent(1)) {
+                } else if (y !== this.getComponent(1) && y !== 1) {
                     super.set(y, y, y);
-                } else if (z !== this.getComponent(2)) {
+                } else if (z !== this.getComponent(2) && z !== 1) {
                     super.set(new THREE.Vector3(z, z, z));
                 }
                 return this;
             case "cylinder":
-                if (x !== this.getComponent(0)) {
+                if (x !== this.getComponent(0) && x !== 1) {
                     super.set(x, x, z);
-                } else if (y !== this.getComponent(1)) {
+                } else if (y !== this.getComponent(1) && y !== 1) {
                     super.set(y, y, z);
-                } else if (z !== this.getComponent(2)) {
+                } else if (z !== this.getComponent(2) && z !== 1) {
                     super.set(x, y, z);
                 }
                 return this;

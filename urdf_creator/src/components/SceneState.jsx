@@ -368,7 +368,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const setObjectScale = (object, scale) => {
-        object.scale.copy(scale);
+        object.scale.set(scale.x, scale.y, scale.z);
         forceSceneUpdate();
     };
 
