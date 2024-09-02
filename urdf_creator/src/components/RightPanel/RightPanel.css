@@ -17,3 +17,16 @@
     pointer-events: none; /* So it doesn't interfere with other mouse events */
     transform: translate(-50%, -50%);
 }
+
+.toolbar {
+    position: flex;
+}
+
+.toolbar-button{
+    font-size: .8em;
+}
+
+.selected{
+    font-size: .8em;
+    outline: 4px auto -webkit-focus-ring-color;
+}

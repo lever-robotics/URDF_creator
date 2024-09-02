@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ToggleSection from "../ToggleSection";
+import Section from "../Section";
 import Parameter from "./Parameter";
 
 function ScaleParameters({ selectedObject, stateFunctions }) {
@@ -74,63 +74,37 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         unit: "m",
         onChange: handleScaleChange,
         onBlur: handleScaleBlur,
-        onKeyDown: handleKeyDown
+        onKeyDown: handleKeyDown,
     };
 
-    const determineParametersFromShape = (shape) => {
-        switch (shape) {
+    const determineParametersFromShape = (object) => {
+        switch (object.shape) {
             case "sphere":
-                return (
-                    <Parameter
-                        title="Radius:"
-                        value={tempRadius}
-                        {...props}
-                    />
-                );
+                return <Parameter title="Radius:" value={tempRadius} {...props} />;
             case "cylinder":
                 return (
                     <>
-                        <Parameter
-                            title="Radius:"
-                            value={tempRadius}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Height:"
-                            value={tempZ}
-                            {...props}
-                        />
+                        <Parameter title="Radius:" value={tempRadius} {...props} />
+                        <Parameter title="Height:" value={tempZ} {...props} />
                     </>
                 );
             case "cube":
                 return (
                     <>
-                        <Parameter
-                            title="X:"
-                            value={tempX}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Y:"
-                            value={tempY}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Z:"
-                            value={tempZ}
-                            {...props}
-                        />
+                        <Parameter title="X:" value={tempX} {...props} />
+                        <Parameter title="Y:" value={tempY} {...props} />
+                        <Parameter title="Z:" value={tempZ} {...props} />
                     </>
                 );
             default:
-                throw Error("Shape not supported");
+                throw Error("Shape not supported: " + object.shape);
         }
     };
 
     return (
-        <ToggleSection title="Scale" open={stateFunctions.getToolMode() === "scale"}>
-            <ul>{determineParametersFromShape(selectedObject.shape)}</ul>
-        </ToggleSection>
+        <Section title="Scale">
+            <ul>{determineParametersFromShape(selectedObject)}</ul>
+        </Section>
     );
 }
 

@@ -5,7 +5,7 @@ import GLTFImport from './GLTFImport';
 import GltfFilesGrid from './ImportSensor';
 import ReactGA from "react-ga4";
 
-import './importDisplayer.css';
+import "./importDisplayer.css";
 
 const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
     const [content, setContent] = useState(<GLTFImport onClose={onImportClose} loadScene={loadScene} />);
@@ -41,7 +41,6 @@ const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
                 {content}
             </div>
         </>
-        
     );
 };
 
@@ -59,7 +58,7 @@ const ImportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex
         >
             {item.label}
         </li>
-    )
-}
+    );
+};
 
 export default ImportDisplayer;

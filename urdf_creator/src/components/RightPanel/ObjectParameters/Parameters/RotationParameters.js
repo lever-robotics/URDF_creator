@@ -1,21 +1,29 @@
 import { useState, useEffect } from "react";
-import ToggleSection from "../ToggleSection";
+import Section from "../Section";
 import Parameter from "./Parameter";
 
-function PositionParameters({ selectedObject, stateFunctions }) {
-    const [tempX, setTempX] = useState(selectedObject.position.x);
-    const [tempY, setTempY] = useState(selectedObject.position.y);
-    const [tempZ, setTempZ] = useState(selectedObject.position.z);
+function RotationParameters({ selectedObject, stateFunctions }) {
+    const radToDeg = (radians) => (radians * 180) / Math.PI;
+    const degToRad = (degrees) => (degrees * Math.PI) / 180;
+
+    const [tempX, setTempX] = useState(
+        radToDeg(selectedObject.rotation.x).toFixed(2)
+    );
+    const [tempY, setTempY] = useState(
+        radToDeg(selectedObject.rotation.y).toFixed(2)
+    );
+    const [tempZ, setTempZ] = useState(
+        radToDeg(selectedObject.rotation.z).toFixed(2)
+    );
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(selectedObject.position.x);
-        setTempY(selectedObject.position.y);
-        setTempZ(selectedObject.position.z);
+        setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
+        setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
+        setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
+    }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
 
-    }, [JSON.stringify(selectedObject.position)]);
-
-    const handlePositionChange = (e) => {
+    const handleRotationChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
         switch (axis) {
@@ -28,70 +36,68 @@ function PositionParameters({ selectedObject, stateFunctions }) {
             case "z":
                 setTempZ(tempValue);
                 break;
-            default:
-                break;
         }
     };
 
-    const handlePositionBlur = (e) => {
+    const handleRotationBlur = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const newValue = parseFloat(e.target.value);
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
-            "position",
+            "rotation",
             axis,
-            newValue
+            degToRad(newValue)
         );
     };
 
     const handleKeyDown = (e) => {
-        if(e.key === "Enter"){
+        if (e.key === "Enter") {
             const axis = e.target.title.toLowerCase().replace(":", "");
             const newValue = parseFloat(e.target.value);
             if (isNaN(newValue)) return;
             stateFunctions.transformObject(
                 selectedObject,
-                "position",
+                "rotation",
                 axis,
-                newValue
+                degToRad(newValue)
             );
         }
-    }
+    };
 
     return (
-        <ToggleSection title="Position" open={stateFunctions.getToolMode() === "translate"}>
+        <Section title="Rotation">
             <ul>
                 <Parameter
                     title="X:"
                     type="number"
-                    units="m"
+                    units="°degrees"
                     value={tempX}
-                    onChange={handlePositionChange}
-                    onBlur={handlePositionBlur}
+                    onChange={handleRotationChange}
+                    onBlur={handleRotationBlur}
                     onKeyDown={handleKeyDown}
                 />
                 <Parameter
                     title="Y:"
                     type="number"
-                    units="m"
+                    units="°degrees"
                     value={tempY}
-                    onChange={handlePositionChange}
-                    onBlur={handlePositionBlur}
+                    onChange={handleRotationChange}
+                    onBlur={handleRotationBlur}
                     onKeyDown={handleKeyDown}
                 />
                 <Parameter
                     title="Z:"
                     type="number"
-                    units="m"
+                    units="°degrees"
                     value={tempZ}
-                    onChange={handlePositionChange}
-                    onBlur={handlePositionBlur}
+                    onChange={handleRotationChange}
+                    onBlur={handleRotationBlur}
                     onKeyDown={handleKeyDown}
                 />
             </ul>
-        </ToggleSection>
+        </Section>
     );
 }
 
-export default PositionParameters;
+export default RotationParameters;

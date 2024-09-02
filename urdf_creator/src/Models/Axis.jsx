@@ -12,6 +12,7 @@ export default class Axis extends THREE.Line {
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
+        material.visible = false;
 
         super(geometry, material);
 
@@ -47,8 +48,10 @@ export default class Axis extends THREE.Line {
     }
 
     clone() {
-        const axis = new Axis();
-        axis.rotation = this.rotation;
-        return axis;
+        const newAxis = new Axis();
+        newAxis.position.copy(this.position);
+        newAxis.quaternion.copy(this.quaternion);
+        newAxis.type = this.type;
+        return newAxis;
     }
 }

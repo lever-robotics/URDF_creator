@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../utils/ScenetoText";
-import "./CodeDisplay.css"; // Assuming you have a CSS file for this component
+import "./RightPanel.css"; // Assuming you have a CSS file for this component
+import ObjectParameters from "./ObjectParameters/ObjectParameters";
 
 /**
  * @param {Scene} scene 
  * @param {string} projectTitle
  */
-export default function CodeDisplay({ scene, projectTitle }) {
-    const [selectedFormat, setSelectedFormat] = useState("URDF");
+export default function RightPanel({ scene, projectTitle, selectedObject, stateFunctions }) {
+    const [selectedFormat, setSelectedFormat] = useState("Parameters");
 
     const handleClick = (e) => {
         const format = e.target.innerText;
@@ -25,24 +26,31 @@ export default function CodeDisplay({ scene, projectTitle }) {
                 flexGrow: 1,
                 flexBasis: 0,
             }}>
-            <div>
+            <div className="toolbar">
                 <button
                     className={
-                        selectedFormat === "URDF" ? "button_selected" : ""
+                        selectedFormat === "Parameters" ? "selected" : "toolbar-button"
+                    }
+                    onClick={handleClick}>
+                    Parameters
+                </button>
+                <button
+                    className={
+                        selectedFormat === "URDF" ? "selected" : "toolbar-button"
                     }
                     onClick={handleClick}>
                     URDF
                 </button>
                 <button
                     className={
-                        selectedFormat === "SDF" ? "button_selected" : ""
+                        selectedFormat === "SDF" ? "selected" : "toolbar-button"
                     }
                     onClick={handleClick}>
                     SDF
                 </button>
                 <button
                     className={
-                        selectedFormat === "XACRO" ? "button_selected" : ""
+                        selectedFormat === "XACRO" ? "selected" : "toolbar-button"
                     }
                     onClick={handleClick}>
                     XACRO
@@ -53,6 +61,7 @@ export default function CodeDisplay({ scene, projectTitle }) {
                 projectTitle={projectTitle}
                 selectedFormat={selectedFormat}
             />
+            <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} selectedFormat={selectedFormat}/>
         </div>
     );
 }
@@ -63,10 +72,12 @@ export default function CodeDisplay({ scene, projectTitle }) {
  * @param {string} selectedFormat
  */
 function CodeBox({ scene, projectTitle, selectedFormat }) {
+    
     const style = {
         fontSize: "12px",
         overflow: "auto",
-        maxHeight: "50%",
+        height: "100%",
+        width: "100%",
         flexGrow: 1,
     };
     const [copied, setCopied] = useState(false);
@@ -96,6 +107,7 @@ function CodeBox({ scene, projectTitle, selectedFormat }) {
         copyToClipboard();
     };
 
+    if(selectedFormat === "Parameters"){ return null; }
     return (
         <div onClick={handleClick} className="code-container">
             <SyntaxHighlighter

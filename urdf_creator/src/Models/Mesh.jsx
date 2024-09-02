@@ -66,8 +66,8 @@ export default class Mesh extends THREE.Mesh {
     }
 
     clone() {
-        const clone = new Mesh(this.position, this.shape, this.scale);
-        clone.color.set(...this.color);
+        const clone = new Mesh(this.shape, this.scale);
+        clone.color.copy(this.color);
         return clone;
     }
 

@@ -68,6 +68,7 @@ export default class urdfObjectManager {
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
         const axis = urdfObject.axis.clone();
+        const mesh = urdfObject.mesh.clone();
         const inertia = urdfObject.inertia.clone();
         const sensor = urdfObject.sensor.clone();
         const clone = urdfObject.clone();
@@ -75,12 +76,27 @@ export default class urdfObjectManager {
         clone.link = link;
         clone.joint = joint;
         clone.axis = axis;
+        clone.mesh = mesh;
         clone.inertia = inertia;
         clone.sensor = sensor;
 
         joint.add(link);
-        urdfObject.add(joint);
-        urdfObject.add(axis);
+        link.add(mesh);
+        clone.add(joint);
+        clone.add(axis);
+
+        joint.urdfObject = clone;
+        link.urdfObject = clone;
+        axis.urdfObject = clone;
+        mesh.urdfObject = clone;
+
+        const children = urdfObject.getUrdfObjectChildren();
+
+        for (const child of children) {
+            const cloneChild = this.cloneUrdfObject(child);
+            clone.link.add(cloneChild);
+            cloneChild.parentURDF = clone;
+        }
 
         return clone;
     }
@@ -159,8 +175,6 @@ export default class urdfObjectManager {
     }
 
     readScene(gltfObject) {
-        console.log(gltfObject);
-
         const newObject = this.loadObject(gltfObject);
 
         gltfObject.children.forEach((child) => {

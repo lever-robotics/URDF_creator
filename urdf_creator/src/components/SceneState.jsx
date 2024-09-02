@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import ObjectParameters from "./ObjectParameters/ObjectParameters.jsx";
+import ObjectParameters from "./RightPanel/ObjectParameters/ObjectParameters.jsx";
 import Toolbar from "./Toolbar/ToolBar.jsx";
 import InsertTool from "./Insert/InsertTool.jsx";
 import { LinkTree } from "./TreeView/LinkTree.jsx";
-import CodeDisplay from "./CodeDisplay/CodeDisplay.jsx";
+import CodeDisplay from "./RightPanel/RightPanel.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
@@ -17,6 +17,7 @@ import { handleUpload, handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
+import RightPanel from "./RightPanel/RightPanel.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -137,7 +138,6 @@ export default function SceneState({ threeScene }) {
             setSelectedObject(null);
             three.transformControls.detach();
         } else if (urdfObject.selectable) {
-            console.log(urdfObject);
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {
@@ -149,7 +149,29 @@ export default function SceneState({ threeScene }) {
 
     const setLinkColor = (urdfObject, color) => {
         urdfObject.color = color;
-        forceSceneUpdate();
+    };
+
+    const doesLinkNameExist = (name) => {
+        const { current: three } = threeScene;
+        const val = isNameDuplicate(three.baseLink, name);
+        return val;
+    };
+
+    // Iterates through the tree and returns true if any object has the same provided name
+    const isNameDuplicate = (urdfObject, name) => {
+        if (urdfObject.name === name) {
+            return true;
+        } else {
+            // Uses the JS .reduce() function. It's a hard to understand function but basically it iterates through every value in the array and passes an "accumulated" value to the next iteration which then modifies it and passes it on. So if a single child in the array has the same name then it will return true. Otherwise it will return false.
+            return urdfObject.getUrdfObjectChildren().reduce((accumulator, currentChild) => {
+                if (accumulator === true) return true;
+                if (isNameDuplicate(currentChild, name)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }, false);
+        }
     };
 
     const setLinkName = (urdfObject, name) => {
@@ -258,20 +280,21 @@ export default function SceneState({ threeScene }) {
         const manager = new urdfObjectManager();
         const clone = manager.cloneUrdfObject(urdfObject);
 
-        if (urdfObject.name === "base_link") {
-            clone.name = "base_link_copy";
-            urdfObject.attach(clone);
+        if (urdfObject.isBaseLink) {
+            clone.parentURDF = urdfObject;
+            urdfObject.link.attach(clone);
         } else {
-            urdfObject.parent.attach(clone);
+            clone.parentURDF = urdfObject.parentURDF;
+            urdfObject.parentURDF.link.add(clone);
         }
-        setSelectedObject(null);
+        selectObject(clone);
         forceSceneUpdate();
     };
 
     const deleteObject = (urdfObject) => {
         const { current: three } = threeScene;
 
-        if (urdfObject.name === "base_link") {
+        if (urdfObject.isBaseLink) {
             three.baseLink = null;
         }
         selectObject();
@@ -287,7 +310,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const openProjectManager = () => {
-        console.log("project Manager");
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
         setIsModalOpen(true);
     };
@@ -327,10 +349,9 @@ export default function SceneState({ threeScene }) {
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
     const handleProjectClick = async (projectPath, title) => {
-        const fullPath = process.env.PUBLIC_URL + projectPath;
-        const group = await handleProject(fullPath);
-        const base_link = group.scene.children[0];
-        loadScene(base_link);
+        const group = await handleProject(process.env.PUBLIC_URL + projectPath);
+        const baseLink = group.scene.children[0];
+        loadScene(baseLink);
         setProjectTitle(title);
         setIsModalOpen(false);
     };
@@ -343,7 +364,6 @@ export default function SceneState({ threeScene }) {
 
     const setObjectPosition = (object, position) => {
         object.position.copy(position);
-        console.log("position");
         forceSceneUpdate();
     };
 
@@ -399,6 +419,8 @@ export default function SceneState({ threeScene }) {
         setObjectPosition,
         setObjectScale,
         setObjectQuaternion,
+        doesLinkNameExist,
+        isNameDuplicate,
     };
 
     return [
@@ -413,8 +435,7 @@ export default function SceneState({ threeScene }) {
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
-                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
+                        <RightPanel scene={scene} projectTitle={projectTitle} selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     </Column>
                 </Row>
             </AbsolutePosition>
