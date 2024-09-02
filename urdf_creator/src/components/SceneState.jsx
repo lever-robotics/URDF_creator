@@ -152,6 +152,32 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    const doesLinkNameExist = (name) => {
+        const { current: three } = threeScene;
+        const val = isNameDuplicate(three.baseLink, name);
+        console.log("here",val);
+        return val;
+    }
+
+    // Iterates through the tree and returns true if any object has the same provided name
+    const isNameDuplicate = (urdfObject, name) => {
+        if(urdfObject.name === name){
+            return true;
+        }else{
+            // Uses the JS .reduce() function. It's a hard to understand function but basically it iterates through every value in the array and passes an "accumulated" value to the next iteration which then modifies it and passes it on. So if a single child in the array has the same name then it will return true. Otherwise it will return false.
+            return urdfObject.getUrdfObjectChildren().reduce((accumulator, currentChild) => {
+                if(accumulator === true) return true;
+                if(isNameDuplicate(currentChild, name)){
+                    console.log(currentChild, name, "true");
+                    return true;
+                }else{
+                    console.log(currentChild, name);
+                    return false;
+                }
+            }, false);
+        }
+    }
+
     const setLinkName = (urdfObject, name) => {
         urdfObject.name = name;
         forceSceneUpdate();
@@ -379,6 +405,8 @@ export default function SceneState({ threeScene }) {
         setObjectPosition,
         setObjectScale,
         setObjectQuaternion,
+        doesLinkNameExist,
+        isNameDuplicate
     };
 
     return [
