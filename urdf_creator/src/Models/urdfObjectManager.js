@@ -178,9 +178,11 @@ export default class urdfObjectManager {
         const newObject = this.loadObject(gltfObject);
 
         gltfObject.children.forEach((child) => {
-            return newObject.add(this.readScene(child));
-        });
-
+            const newChild = this.readScene(child);
+            newChild.parentURDF = newObject;
+            newObject.link.add(newChild);
+            });
+            
         return newObject;
     }
 }

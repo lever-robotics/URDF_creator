@@ -22,12 +22,3 @@ export default function useClickOutside(ref, action) {
     }, [ref]);
   }
   
-  /**
-   * Component that alerts if you click outside of it
-   */
- function OutsideAlerter(props) {
-    const wrapperRef = useRef(null);
-    useClickOutside(wrapperRef);
-  
-    return <div ref={wrapperRef}>{props.children}</div>;
-  }
