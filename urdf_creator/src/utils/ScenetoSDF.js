@@ -12,7 +12,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
         return xml;
     }
 
-    xml += `<model name="${projectTitle}" canonical_link='base-link'>\n`;
+    xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
     //put on static for debugging
     xml += `  <static>false</static>\n`;
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
@@ -23,7 +23,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.name || (linkIndex === 0 ? "base-link" : `link${linkIndex}`);
+        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
     };
 
     // Function to process a single node

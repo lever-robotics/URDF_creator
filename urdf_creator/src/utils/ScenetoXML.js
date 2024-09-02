@@ -18,7 +18,7 @@ export const ScenetoXML = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.name || (linkIndex === 0 ? "base-link" : `link${linkIndex}`);
+        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
     };
 
     // Function to process a single node

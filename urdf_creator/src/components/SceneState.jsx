@@ -86,7 +86,7 @@ export default function SceneState({ threeScene }) {
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.isBaseLink = true;
-            newUrdfObject.name = "base-link";
+            newUrdfObject.name = "base_link";
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
@@ -280,7 +280,7 @@ export default function SceneState({ threeScene }) {
     const deleteObject = (urdfObject) => {
         const { current: three } = threeScene;
 
-        if (urdfObject.name === "base-link") {
+        if (urdfObject.isBaseLink) {
             three.baseLink = null;
         }
         selectObject();
