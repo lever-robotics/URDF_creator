@@ -48,6 +48,7 @@ export default class urdfObject extends THREE.Object3D {
 
     set jointType(type) {
         this.joint.type = type;
+        this.axis.type = type;
     }
 
     get min() {
