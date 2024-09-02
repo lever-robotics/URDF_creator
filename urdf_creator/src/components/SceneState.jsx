@@ -414,7 +414,7 @@ export default function SceneState({ threeScene }) {
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
-                        {/* <CodeDisplay scene={scene} projectTitle={projectTitle} /> */}
+                        <CodeDisplay scene={scene} projectTitle={projectTitle} />
                     </Column>
                 </Row>
             </AbsolutePosition>
