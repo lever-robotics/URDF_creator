@@ -74,54 +74,26 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         unit: "m",
         onChange: handleScaleChange,
         onBlur: handleScaleBlur,
-        onKeyDown: handleKeyDown
+        onKeyDown: handleKeyDown,
     };
 
     const determineParametersFromShape = (object) => {
-        console.log(object)
-        console.log("this is the shape " + object.shape)
         switch (object.shape) {
             case "sphere":
-                return (
-                    <Parameter
-                        title="Radius:"
-                        value={tempRadius}
-                        {...props}
-                    />
-                );
+                return <Parameter title="Radius:" value={tempRadius} {...props} />;
             case "cylinder":
                 return (
                     <>
-                        <Parameter
-                            title="Radius:"
-                            value={tempRadius}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Height:"
-                            value={tempZ}
-                            {...props}
-                        />
+                        <Parameter title="Radius:" value={tempRadius} {...props} />
+                        <Parameter title="Height:" value={tempZ} {...props} />
                     </>
                 );
             case "cube":
                 return (
                     <>
-                        <Parameter
-                            title="X:"
-                            value={tempX}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Y:"
-                            value={tempY}
-                            {...props}
-                        />
-                        <Parameter
-                            title="Z:"
-                            value={tempZ}
-                            {...props}
-                        />
+                        <Parameter title="X:" value={tempX} {...props} />
+                        <Parameter title="Y:" value={tempY} {...props} />
+                        <Parameter title="Z:" value={tempZ} {...props} />
                     </>
                 );
             default:

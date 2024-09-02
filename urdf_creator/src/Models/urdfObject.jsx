@@ -323,7 +323,6 @@ export default class urdfObject extends THREE.Object3D {
 
     clone() {
         let [name, suffix] = this._extractNumberFromString(this.name);
-        console.log("name: " + name + " suffix: " + suffix);
         const isCopy = name.endsWith("-copy");
         if (isCopy && suffix) {
             suffix = (parseInt(suffix) + 1).toString();

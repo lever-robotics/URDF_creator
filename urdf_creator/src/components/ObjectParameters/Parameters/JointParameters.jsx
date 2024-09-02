@@ -37,8 +37,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
         value = toFloat(value);
         //clamp the value to the min and max
         value = Math.min(Math.max(value, min), max);
-        console.log("This is the slider value");
-        console.log(value);
         setJointValue(value);
         setJointInput(value);
         stateFunctions.setJointValue(selectedObject, value);

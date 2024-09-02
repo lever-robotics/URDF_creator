@@ -137,7 +137,6 @@ export default function SceneState({ threeScene }) {
             setSelectedObject(null);
             three.transformControls.detach();
         } else if (urdfObject.selectable) {
-            console.log(urdfObject);
             setSelectedObject(urdfObject);
             urdfObject.attachTransformControls(three.transformControls);
         } else {
@@ -155,28 +154,25 @@ export default function SceneState({ threeScene }) {
     const doesLinkNameExist = (name) => {
         const { current: three } = threeScene;
         const val = isNameDuplicate(three.baseLink, name);
-        console.log("here",val);
         return val;
-    }
+    };
 
     // Iterates through the tree and returns true if any object has the same provided name
     const isNameDuplicate = (urdfObject, name) => {
-        if(urdfObject.name === name){
+        if (urdfObject.name === name) {
             return true;
-        }else{
+        } else {
             // Uses the JS .reduce() function. It's a hard to understand function but basically it iterates through every value in the array and passes an "accumulated" value to the next iteration which then modifies it and passes it on. So if a single child in the array has the same name then it will return true. Otherwise it will return false.
             return urdfObject.getUrdfObjectChildren().reduce((accumulator, currentChild) => {
-                if(accumulator === true) return true;
-                if(isNameDuplicate(currentChild, name)){
-                    console.log(currentChild, name, "true");
+                if (accumulator === true) return true;
+                if (isNameDuplicate(currentChild, name)) {
                     return true;
-                }else{
-                    console.log(currentChild, name);
+                } else {
                     return false;
                 }
             }, false);
         }
-    }
+    };
 
     const setLinkName = (urdfObject, name) => {
         urdfObject.name = name;
@@ -301,7 +297,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const openProjectManager = () => {
-        console.log("project Manager");
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
         setIsModalOpen(true);
     };
@@ -350,7 +345,6 @@ export default function SceneState({ threeScene }) {
 
     const setObjectPosition = (object, position) => {
         object.position.copy(position);
-        console.log("position");
         forceSceneUpdate();
     };
 
@@ -406,7 +400,7 @@ export default function SceneState({ threeScene }) {
         setObjectScale,
         setObjectQuaternion,
         doesLinkNameExist,
-        isNameDuplicate
+        isNameDuplicate,
     };
 
     return [

@@ -137,8 +137,6 @@ export default class urdfObjectManager {
     loadObject(gltfObject) {
         const { position, rotation, scale, offset, jointType, jointMin, jointMax, jointRotation, jointOrigin, material, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
 
-        console.log(position);
-
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
@@ -172,8 +170,6 @@ export default class urdfObjectManager {
     }
 
     readScene(gltfObject) {
-        console.log(gltfObject);
-
         const newObject = this.loadObject(gltfObject);
 
         gltfObject.children.forEach((child) => {
