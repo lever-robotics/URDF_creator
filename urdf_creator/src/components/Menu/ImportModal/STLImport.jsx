@@ -1,33 +1,67 @@
 import React from 'react';
 import './STLImport.css';
+import { useRef } from 'react';
+import { openDB } from "idb";
 
-const STLImport = () => {
+const STLImport = ({ onClose }) => {
+
+    const inputSTLFile = useRef(null);
+
+    const onSTLFileUpload = () => inputSTLFile.current.click();
+    const handleSTLFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            const db = await openDB("stlFilesDB", 1, {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains("files")) {
+                        db.createObjectStore("files", { keyPath: "name" });
+                    }
+                },
+            });
+            await db.put("files", {
+                name: selectedFile.name,
+                file: selectedFile,
+            });
+
+            event.target.value = null; // Clear the input value after upload
+        }
+    };
+
+    const onClick = () => {
+        onSTLFileUpload();
+        onClose();
+    };
+
     return (
         <div className='stl-container'>
             <div className="header">
                 <div className="stl-import-title">
-                    <h3>Import a STL File</h3>
+                    <h3>Import an STL File</h3>
                 </div>
                 <div className="import-box">
-                    <button className='stl-import-button'>Import STL</button>
+                    <button className='stl-import-button' onClick={onClick}>Import STL</button>
                 </div>
             </div>
             <div className="description-container">
                 <h3>Description: </h3>
-                <p>An STL (Stereolithography) file is a widely used file format for 3D printing and computer-aided design (CAD). 
-                   It represents the surface geometry of a 3D object using a series of triangles. 
-                   When you import an STL file, you are bringing in a 3D model that can be manipulated or used for various applications such as 3D printing, simulation, or analysis.</p>
-                <p>Click the button above to import an STL file. Once imported, you can view, edit, or utilize the 3D model in your project.</p>
+                <p>Am STL (Stereolithography) files represent the triangulated surface geometry of a 3D model using a mesh of triangles. In a URDF, STLs are typically used for the visual representation of links due to their detailed appearance, as they can be computationally expensive for simulations. While mainly used for visuals, STLs can also define collision properties if needed. Once imported, you can assign your STL as the visual geometry or collision geometry for any link in your URDF in the link parameters menu.</p>
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={process.env.PUBLIC_URL + '/statics/meshstl.png'} alt="STL Mesh" className="stlgraphic" />
+                    <img src={process.env.PUBLIC_URL + '/statics/STL_Description.png'} alt="STL Mesh" className="stlgraphic" />
                 </div>
-                <div className="image-description">Example of an STL File Representation</div>
+                <div className="image-description">STLs can be exported from most CAD Modeling software including but not limited to Solidworks, Blender, AutoCad, Onshape and several others. A public repository of them can also be found online, one place being <a href="https://www.thingiverse.com/">Thingiverse</a></div>
             </div>
             <div className="description-container">
-                <p>For converting 3D models to STL or DAE formats, refer to the <a href="https://roboeverything.com">documentation</a>.</p>
+                <p>For converting 3D models from CAD software to STL or DAE formats, refer to the <a href="https://roboeverything.com">documentation</a>.</p>
             </div>
+            <input
+                type="file"
+                ref={inputSTLFile}
+                style={{ display: "none" }}
+                onChange={handleSTLFileChange}
+                accept=".stl"
+            />
         </div>
     );
 }

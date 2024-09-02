@@ -1,57 +1,22 @@
 import React, { useState, useRef } from 'react';
 import urdfObjectManager from '../../../Models/urdfObjectManager';
-import { handleDownload } from '../../../utils/HandleDownload';
 import STLImport from './STLImport';
-import { handleUpload } from '../../../utils/HandleUpload';
-import { openDB } from "idb";
+import GLTFImport from './GLTFImport';
 import ReactGA from "react-ga4";
 
 import './importDisplayer.css';
 import '../../../FunctionalComponents/MenuModal.css';
 
-const ImportDisplayer = ({ onClose, loadScene }) => {
-    const inputFile = useRef(null);
-    const inputSTLFile = useRef(null);
-
+const ImportDisplayer = ({ onImportClose, loadScene }) => {
     const [content, setContent] = useState("");
-
-    /* Annoying File Upload Logic
-      1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
-      2. The input element has an onChange listener that uploads the file using the handleFileChange() function which calls handleUpload() 
-    */
-      const onFileUpload = () => inputFile.current.click();
-      const handleFileChange = async (e) => {
-          const file = e.target.files[0];
-          const type = file.name.split(".").pop();
-          const group = await handleUpload(file, type);
-          const base_link = group.children[0];
-          loadScene(base_link);
-      };
-  
-      const onSTLFileUpload = () => inputSTLFile.current.click();
-      const handleSTLFileChange = async (event) => {
-          const selectedFile = event.target.files[0];
-          if (selectedFile) {
-              const db = await openDB("stlFilesDB", 1, {
-                  upgrade(db) {
-                      if (!db.objectStoreNames.contains("files")) {
-                          db.createObjectStore("files", { keyPath: "name" });
-                      }
-                  },
-              });
-              await db.put("files", {
-                  name: selectedFile.name,
-                  file: selectedFile,
-              });
-  
-              event.target.value = null; // Clear the input value after upload
-          }
-      };
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const importOptions = [
-        { label: "STL", action: () => {}, content: <STLImport /> },
-        // { label: "Robot Package", action: () => {}, content: "Download the whole Robot Package necessary for ROS2"},
-        { label: "GLTF", action: () => {}, content: "Upload a project"}
+        { label: "STL", content: <STLImport onClose={onImportClose} /> },
+        { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
+        // { label: "Sensors", content: },
+        // { label: "Link", content: },
+        // { label: "URDF", content: },
     ];
 
     return (
@@ -61,34 +26,36 @@ const ImportDisplayer = ({ onClose, loadScene }) => {
                 <div className='stl-menu-modal'>                
                     <ul className="stl-menu-list">
                     {importOptions.map((item, index) => (
-                        <ImportOption index={index} item={item} setContent={setContent}/>
+                        <ImportOption 
+                        key={index}
+                        index={index} 
+                        item={item} 
+                        setContent={setContent} 
+                        selectedIndex={selectedIndex}
+                        setSelectedIndex={setSelectedIndex}
+                    />
                     ))}
                     </ul>
                 </div>
                 {content}
             </div>
-            <input
-                type="file"
-                ref={inputFile}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-            />
-            <input
-                type="file"
-                ref={inputSTLFile}
-                style={{ display: "none" }}
-                onChange={handleSTLFileChange}
-                accept=".stl"
-            />
         </>
         
     );
 };
 
-const ImportOption = ({ item, setContent }) => {
+const ImportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
+
+    const handleClick = () => {
+        setContent(item.content);
+        setSelectedIndex(index);
+    };
 
     return (
-        <li className="stl-menu-item" onClick={() => setContent(item.content)}>
+        <li 
+            className={`stl-menu-item ${selectedIndex === index ? 'stl-menu-selected' : ''}`} 
+            onClick={handleClick}
+        >
             {item.label}
         </li>
     )

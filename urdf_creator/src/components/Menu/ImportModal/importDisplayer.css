@@ -27,9 +27,15 @@
     align-items: center;
     justify-content: center;
 }
+
 .import-option:hover{
     border: 1px solid #646cff;
     border-bottom-right-radius: 32px;
+}
+
+.stl-menu-selected {
+    background-color: #2b2f72;
+    border-bottom-right-radius: 8px;
 }
 
 .content{

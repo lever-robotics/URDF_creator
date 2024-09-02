@@ -300,11 +300,12 @@ export default function SceneState({ threeScene }) {
     };
 
     const closeImportDisplayer = () => {
+        console.log("closing");
         setIsModalOpen(false);
     };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene} />);
+        setModalContent(<ImportDisplayer onImportClose={closeImportDisplayer} loadScene={loadScene} />);
         setIsModalOpen(true);
     };
 
