@@ -65,8 +65,6 @@ export default class urdfObjectManager {
     }
 
     cloneUrdfObject(urdfObject) {
-
-
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
         const axis = urdfObject.axis.clone();
@@ -95,7 +93,7 @@ export default class urdfObjectManager {
         const children = urdfObject.getUrdfObjectChildren();
 
         for (const child of children) {
-            clone.link.attach(this.cloneUrdfObject(child));
+            clone.link.add(this.cloneUrdfObject(child));
             child.parentURDF = clone;
         }
 

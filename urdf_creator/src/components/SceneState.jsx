@@ -250,7 +250,7 @@ export default function SceneState({ threeScene }) {
             urdfObject.link.attach(clone);
         } else {
             clone.parentURDF = urdfObject.parentURDF;
-            urdfObject.parentURDF.link.attach(clone);
+            urdfObject.parentURDF.link.add(clone);
         }
         setSelectedObject(clone);
         forceSceneUpdate();

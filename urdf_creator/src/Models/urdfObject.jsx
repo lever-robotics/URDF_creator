@@ -322,7 +322,27 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     clone() {
-        return new urdfObject(this.name, this.position, this.rotation);
+        let [name, suffix] = this._extractNumberFromString(this.name);
+        console.log("name: " + name + " suffix: " + suffix);
+        const isCopy = name.endsWith("-copy");
+        if (isCopy && suffix) {
+            suffix = (parseInt(suffix) + 1).toString();
+        } else if (isCopy) {
+            suffix = "0";
+        } else {
+            name = name + suffix + "-copy";
+            suffix = "";
+        }
+        return new urdfObject(name + suffix, this.position, this.rotation);
+    }
+
+    _extractNumberFromString(string, number = "") {
+        const ending = string.slice(-1);
+        // checks if it is a number
+        if (!isNaN(ending)) {
+            number = ending + number;
+            return this._extractNumberFromString(string.slice(0, string.length - 1), number);
+        } else return [string, number];
     }
 
     //Add STL to the urdfObject
