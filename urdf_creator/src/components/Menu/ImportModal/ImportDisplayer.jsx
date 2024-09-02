@@ -15,7 +15,7 @@ const ImportDisplayer = ({ onImportClose, loadScene }) => {
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
         { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
-        { label: "Robot Sensor", action: () => {}, content: <GltfFilesGrid /> },
+        { label: "Robot Sensor", content: <GltfFilesGrid /> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },
         // { label: "URDF", content: },
