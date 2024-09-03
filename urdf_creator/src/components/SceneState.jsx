@@ -31,7 +31,10 @@ export default function SceneState({ threeScene }) {
         cylinder: 0,
     });
     const [updateCode, setUpdateCode] = useState(0);
-    const undo = useRef([]);
+    const undo = useRef([{
+        scene: "",
+        selected: null
+    }]);
     const redo = useRef([]);
     const objectNames = useRef([]);
 
@@ -84,63 +87,90 @@ export default function SceneState({ threeScene }) {
         }
     }
 
+    // pushUndo gets called from forceCodeUpdate
     const pushUndo = async () => {
         const { current: undoArray } = undo;
-        if (getBaseLink() === null) return;
-        const compressedScene = urdfManager.compressScene(getBaseLink());
-        const gltfScene = await ScenetoGLTF(compressedScene);
+
         const currentScene = {
-            scene: JSON.stringify(gltfScene),
-            selected: selectedObject?.name,
-        };
+            scene: "",
+            selected: null
+        }
+        // If the baseLink is not null then it actually has objects so compress it
+        if (getBaseLink() !== null){
+            const compressedScene = urdfManager.compressScene(getBaseLink());
+            const gltfScene = await ScenetoGLTF(compressedScene);
+            currentScene.scene = JSON.stringify(gltfScene);
+            currentScene.selected = selectedObject?.name;
+        }
         undoArray.push(currentScene);
+        console.log("pushUndo", undo.current, redo.current);
     };
 
     const popUndo = async () => {
         const { current: three } = threeScene;
         const { current: undoArray } = undo;
         const { current: redoArray } = redo;
-        if (undoArray.length === 1) {
-            three.baseLink.removeFromParent();
-            three.baseLink = null;
-            redoArray.push(undoArray.pop());
-            forceSceneUpdate();
-        } else {
-            const { current: three } = threeScene;
-            const currentState = undoArray.pop();
 
-            const lastState = undoArray.pop();
+        // There should always be an empty state as the first element
+        if(undoArray.length === 1) return;
 
-            redoArray.push(currentState);
+        // Pop the current state and push to the redoArray
+        const currentState = undoArray.pop();
+        redoArray.push(currentState);
 
-            const lastScene = await loadFileToObject(lastState.scene, "gltf");
-            const lastSelectedName = currentState.selected;
-            const gltfScene = lastScene.scene;
-            const baseLink = urdfManager.readScene(gltfScene.children[0]);
+        // Get the last state but leave it in the redoArray
+        const lastState = undoArray[undoArray.length - 1];
+
+        // If the last state was empty then clear the scene 
+        if(lastState.scene === ""){
             clearScene();
-            three.scene.attach(baseLink);
-            three.baseLink = baseLink;
-            baseLink.isBaseLink = true;
-            const lastSelected = findUrdfObjectByName(getBaseLink(), lastSelectedName);
-            selectObject(lastSelected);
-            pushUndo();
+            return;
         }
-    };
 
-    const popRedo = async () => {
-        const { current: redoArray } = redo;
-        const { current: undoArray } = undo;
-        const { current: three } = threeScene;
-        if (redoArray.length === 0) return;
-        const lastState = redoArray.pop();
+        // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
+        
         clearScene();
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
+
+        // If the lastSelected name exists then select that Object
+        const lastSelectedName = currentState.selected;
+        const lastSelected = findUrdfObjectByName(baseLink, lastSelectedName);
+        selectObject(lastSelected);
+
+        console.log("popUndo", undo.current);
+    };
+
+    // Redo stack gets destroyed when forceCodeUpdate gets called
+    const popRedo = async () => {
+        const { current: redoArray } = redo;
+        const { current: three } = threeScene;
+
+        if (redoArray.length === 0) return;
+        
+        const lastState = redoArray.pop();
+        
+        // If the last state was empty then clear the scene
+        if(lastState.scene === ""){
+            clearScene();
+            return;
+        }
+
+        const lastScene = await loadFileToObject(lastState.scene, "gltf");
+        const gltfScene = lastScene.scene;
+        const baseLink = urdfManager.readScene(gltfScene.children[0]);
+        
+        clearScene();
+
+        three.scene.attach(baseLink);
+        three.baseLink = baseLink;
+        baseLink.isBaseLink = true;
         selectObject(null);
+
         pushUndo();
     };
 
@@ -149,6 +179,7 @@ export default function SceneState({ threeScene }) {
         if (three.baseLink === null) return;
         three.baseLink.removeFromParent();
         three.baseLink = null;
+        selectObject(null);
     };
 
     const addObject = (shape) => {
@@ -415,7 +446,6 @@ export default function SceneState({ threeScene }) {
         urdfObject.removeFromParent();
         urdfObject.onDelete();
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const getBaseLink = () => {
