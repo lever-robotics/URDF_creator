@@ -1,8 +1,9 @@
 /* CSS for ProjectDisplayer.jsx */
 .project-displayer{
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   align-content: space-around;
+  overflow: none;
   /* gap: 20px; */
 }
 
@@ -10,7 +11,7 @@
 .project{
   position: relative;
   margin: 16px;
-  border-radius: 8px;
+  border-bottom-right-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.259);
   transition: border-color 0.25s;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

@@ -10,6 +10,8 @@ const Modal = ({ isOpen, onClose, modalContent }) => {
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
+    }else{
+      setIsVisible(false);
     }
   }, [isOpen]);
 
