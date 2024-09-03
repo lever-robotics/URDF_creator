@@ -65,6 +65,7 @@ export default class urdfObjectManager {
     }
 
     cloneUrdfObject(urdfObject) {
+        console.log("clone", urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
         const axis = urdfObject.axis.clone();
@@ -151,6 +152,12 @@ export default class urdfObjectManager {
 
         const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation).slice(1, 4));
 
+        // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
+        const newSensor = new Sensor();
+        console.log("sensor clone");
+        newSensor.clone();
+        urdfobject.sensor = newSensor;
+
         link.mesh = mesh;
         link.add(mesh);
 
@@ -171,8 +178,6 @@ export default class urdfObjectManager {
         mesh.urdfObject = urdfobject;
 
         urdfobject.inertia = inertia;
-
-        urdfobject.sensor = sensor;
         return urdfobject;
     }
 
