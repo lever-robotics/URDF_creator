@@ -354,6 +354,14 @@ export default class urdfObject extends THREE.Object3D {
         } else return [string, number];
     }
 
+    // call this method when removing objects from the scene tree
+    onDelete() {
+        this.stateFunctions.deregisterName(this.name);
+        for (const child of this.getUrdfObjectChildren()) {
+            child.onDelete();
+        }
+    }
+
     //Add STL to the urdfObject
     // setSTL = (stlfile) => {
     //     const loader = new STLLoader();

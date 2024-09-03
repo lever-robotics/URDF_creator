@@ -251,6 +251,13 @@ export default function SceneState({ threeScene }) {
         return false;
     };
 
+    const deregisterName = (name) => {
+        const index = objectNames.current.indexOf(name);
+        console.log("name to remove: ", name, " removing: ", objectNames.current[index]);
+        console.log("names before splice", objectNames.current);
+        objectNames.current.splice(index, 1);
+    };
+
     const findUrdfObjectByName = (urdfObject, name) => {
         if (urdfObject.name === name) return urdfObject;
         let returnChild = null;
@@ -262,14 +269,10 @@ export default function SceneState({ threeScene }) {
 
     const setLinkName = (urdfObject, name) => {
         // remove name from registry
-        const index = objectNames.current.indexOf(urdfObject.name);
-        console.log("name to remove: ", urdfObject.name, " removing: ", objectNames.current[index]);
-        console.log("names before splice", objectNames.current);
-        objectNames.current.splice(index, 1);
+        deregisterName(urdfObject.name);
 
         //add the new name
-        objectNames.current.push(name);
-        console.log("names after push", objectNames.current);
+        registerName(name);
         urdfObject.name = name;
         forceSceneUpdate();
         forceUpdateCode();
@@ -346,6 +349,8 @@ export default function SceneState({ threeScene }) {
 
     const loadScene = (gltfScene) => {
         const { current: three } = threeScene;
+        objectNames.current.length = 0;
+        objectNames.current.empty();
         const baseLink = urdfManager.readScene(gltfScene);
         // if (three.baseLink) {
         //     three.baseLink.removeFromParent();
@@ -408,6 +413,7 @@ export default function SceneState({ threeScene }) {
         }
         selectObject();
         urdfObject.removeFromParent();
+        urdfObject.onDelete();
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -504,6 +510,7 @@ export default function SceneState({ threeScene }) {
         selectObject,
         setLinkColor,
         setLinkName,
+
         setMass,
         setInertia,
         setSensor,
@@ -537,6 +544,7 @@ export default function SceneState({ threeScene }) {
         setObjectQuaternion,
         doesLinkNameExist,
         registerName,
+        deregisterName,
         reparentObject,
         forceUpdateCode,
         popUndo,
