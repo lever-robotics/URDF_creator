@@ -456,9 +456,15 @@ export default function SceneState({ threeScene }) {
     };
 
     const openProjectManager = () => {
-        setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} />);
+        setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} onClose={closeProjectManager} />);
         setIsModalOpen(true);
     };
+
+    const closeProjectManager = () => {
+        console.log("here");
+        setIsModalOpen(false);
+    }
+
     const closeModal = () => setIsModalOpen(false);
 
     // Close the onboarding Modal and launch the project manager

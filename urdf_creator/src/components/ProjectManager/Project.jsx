@@ -1,9 +1,18 @@
 import React from 'react';
 
-const Project = ({ project, handleProjectClick }) => {
+const Project = ({ project, handleProjectClick, onClose }) => {
+
+  const handleClick = (e) => {
+    console.log(project?.path === undefined);
+    if(project?.path === undefined){
+        onClose();
+    }else{
+        handleProjectClick()
+    }
+  }
 
   return (
-    <div className="project" onClick={() => handleProjectClick(project.path, project.title)}>
+    <div className="project" onClick={handleClick}>
       <div className="project-info">
         <p className="project-description">{project.description}</p>
       </div>
