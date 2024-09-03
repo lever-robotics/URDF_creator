@@ -9,7 +9,7 @@ export async function handleUpload(file, type) {
     return object.scene;
 }
 
-function loadFileToObject(fileText, type) {
+export function loadFileToObject(fileText, type) {
     const whichLoader = (type) => {
         if (type === "xml") {
             //Unsupported
