@@ -27,6 +27,18 @@ function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }) {
             stateFunctions={stateFunctions}
             selectedObject={selectedObject}
         />
+        <PositionParameters
+                selectedObject={selectedObject}
+                stateFunctions={stateFunctions}
+        />
+        <RotationParameters
+            selectedObject={selectedObject}
+            stateFunctions={stateFunctions}
+        />
+        <ScaleParameters
+            selectedObject={selectedObject}
+            stateFunctions={stateFunctions}
+        />
         <InertiaParameters
             selectedObject={selectedObject}
             stateFunctions={stateFunctions}

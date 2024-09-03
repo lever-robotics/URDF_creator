@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./parameters_style.css";
+import "../ObjectParameters.css";
 import Parameter from "./Parameter";
 import ToggleSection from "../ToggleSection";
 import Section from "../Section";
@@ -76,18 +77,6 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
             {error && (
                 <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
             )}{" "}
-            <PositionParameters
-                selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
-            />
-            <RotationParameters
-                selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
-            />
-            <ScaleParameters
-                selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
-            />
         </Section>
     );
 }

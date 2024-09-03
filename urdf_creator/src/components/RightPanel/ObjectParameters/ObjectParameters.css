@@ -7,25 +7,49 @@
     flex-basis: 0;
     height: 100%;
     background-color: #24343f;
+    font-size: 12px;
+    /* background-color: #1d2a31; */
 }
 
 .object-parameters h3 {
     margin-top: 0;
+    font-size: 20px;
+
 }
 
-.object-parameters div,
+/* .object-parameters div,
 .object-parameters ul {
     margin-bottom: 10px;
-}
+} */
 
 .object-parameters ul {
     list-style-type: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .object-parameters li {
-    margin-bottom: 18px;
+    margin-bottom: 8px;
 }
+
+.section {
+    margin-left: 32px;
+}
+h4 {
+    font-size: 16px;
+    margin-top: 8px;
+    margin-bottom: 0;
+    padding: 4px;
+    border-top: 2px solid #141d22;
+}
+h4:hover {
+    border-top: 2px solid #141d22;
+}
+
+/* hr{
+    border-color: #1d2a31;
+} */
 
 .object-parameters input[type="text"],
 .object-parameters input[type="number"],
