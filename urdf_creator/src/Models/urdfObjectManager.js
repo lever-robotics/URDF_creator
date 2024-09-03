@@ -152,7 +152,8 @@ export default class urdfObjectManager {
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
-        const axis = new Axis(jointType, Object.values(axisRotation).slice(1, 4));
+        //Need to take out the nullish operator!
+        const axis = new Axis(jointType, Object.values(axisRotation ?? {}).slice(1, 4));
         axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
 

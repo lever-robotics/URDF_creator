@@ -381,7 +381,6 @@ export default function SceneState({ threeScene }) {
     const loadScene = (gltfScene) => {
         const { current: three } = threeScene;
         objectNames.current.length = 0;
-        objectNames.current.empty();
         const baseLink = urdfManager.readScene(gltfScene);
         // if (three.baseLink) {
         //     three.baseLink.removeFromParent();
@@ -501,6 +500,7 @@ export default function SceneState({ threeScene }) {
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
     const handleProjectClick = async (projectPath, title) => {
+        clearScene();
         const group = await handleProject(process.env.PUBLIC_URL + projectPath);
         const baseLink = group.scene.children[0];
         loadScene(baseLink);
@@ -512,6 +512,7 @@ export default function SceneState({ threeScene }) {
         const group = await handleProject(gltfpath);
         const link = group.scene.children[0];
         loadSingleObject(link);
+        closeImportDisplayer();
     };
 
     const setObjectPosition = (object, position) => {
