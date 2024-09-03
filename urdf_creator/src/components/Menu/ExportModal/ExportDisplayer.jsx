@@ -1,52 +1,58 @@
 import React, { useState } from 'react';
-import urdfObjectManager from '../../../Models/urdfObjectManager';
-import { handleDownload } from '../../../utils/HandleDownload';
+import ExportURDFPackage from './ExportURDFPackage';
+import ExportGLTF from './ExportGLTF';
+import ExportURDF from './ExportURDF';
 
 import './exportDisplayer.css';
 
-const ExportDisplayer = ({ onClose, getBaseLink, projectTitle }) => {
-
-    const [content, setContent] = useState("");
-
-    const handleGLTFExport = () => {
-        const manager = new urdfObjectManager();
-        const compressedScene = manager.compressScene(getBaseLink());
-        handleDownload(compressedScene, "gltf", projectTitle);
-    };
+const ExportDisplayer = ({ onClose, getBaseLink, projectTitle, getScene }) => {
+    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [content, setContent] = useState(<ExportURDFPackage onClose={onClose}  getScene={getScene} projectTitle={projectTitle}/>);
 
     const exportOptions = [
-        { label: "URDF", action: () => {}, content: "The URDF file"},
-        { label: "Robot Package", action: () => {}, content: "Download the whole Robot Package necessary for ROS2"},
-        { label: "GLTF", action: () => {handleGLTFExport(); onClose();}, content: "Save a current copy of this project to work on later in a GLTF file format"}
+        { label: "URDF", content: <ExportURDF onClose={onClose} getScene={getScene} projectTitle={projectTitle}/> },
+        { label: "Robot Package", content: <ExportURDFPackage onClose={onClose}  getScene={getScene} projectTitle={projectTitle}/> },
+        { label: "GLTF", content: <ExportGLTF onClose={onClose} getBaseLink={getBaseLink} projectTitle={projectTitle}/> },
     ]
-
-
 
     return (
         <>
             <h2 className="title">Export Options</h2>
-            <div className="export-displayer">
-                <ul className="export-list">
+            <div className="import-displayer">
+                <div className='import-menu-modal'>                
+                    <ul className="menu-list">
                     {exportOptions.map((item, index) => (
-                        <ExportOption index={index} item={item} setContent={setContent}/>
+                        <ExportOption 
+                        key={index}
+                        index={index} 
+                        item={item} 
+                        setContent={setContent} 
+                        selectedIndex={selectedIndex}
+                        setSelectedIndex={setSelectedIndex}
+                    />
                     ))}
-                </ul>
-                <div className="content">
-                    {content}
+                    </ul>
                 </div>
+                {content}
             </div>
         </>
         
     );
 };
 
-const ExportOption = ({ item, setContent }) => {
+const ExportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
+
+    const handleClick = () => {
+        setContent(item.content);
+        setSelectedIndex(index);
+    };
 
     return (
-        <li className="export-option" onClick={item.action} onMouseEnter={() => setContent(item.content)} onMouseLeave={() => setContent("")}>
-            <span className="export-option-span">
-                {item.label}
-            </span>
+        <li 
+            className={`menu-item ${selectedIndex === index ? 'menu-selected' : ''}`} 
+            onClick={handleClick}
+        >
+            {item.label}
         </li>
     )
 }

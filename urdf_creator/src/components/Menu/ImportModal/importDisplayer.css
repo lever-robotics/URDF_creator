@@ -27,9 +27,15 @@
     align-items: center;
     justify-content: center;
 }
+
 .import-option:hover{
     border: 1px solid #646cff;
     border-bottom-right-radius: 32px;
+}
+
+.menu-selected {
+    background-color: #2b2f72;
+    border-bottom-right-radius: 8px;
 }
 
 .content{
@@ -41,4 +47,30 @@
 
 .import-option-span{
     cursor: default;
+}
+
+.import-menu-modal {
+    width: 100%;
+    max-width: 200px;
+    z-index: 1000;
+    border-bottom-right-radius: 8px;
+  }
+  
+.menu-list {
+    background: #14252e;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-bottom-right-radius: 8px;
+  }
+  
+.menu-item {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+  
+.menu-item:hover {
+    background-color: #646cff;
+    border-bottom-right-radius: 8px;
 }

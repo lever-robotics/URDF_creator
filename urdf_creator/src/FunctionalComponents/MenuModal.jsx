@@ -1,9 +1,14 @@
 import React from "react";
+import { useRef } from "react";
 import "./MenuModal.css";
 import MenuItem from "./MenuItem";
+import useClickOutside from "./useClickOutside";
 
-const MenuModal = ({ isOpen, menuItems, buttonRef }) => {
-    if (!isOpen) return null;
+const MenuModal = ({ onClose, menuItems, buttonRef }) => {
+    
+
+    const wrapperRef = useRef();
+    useClickOutside(wrapperRef, onClose);
 
     const buttonRect = buttonRef.current.getBoundingClientRect();
     const position = {
@@ -14,6 +19,7 @@ const MenuModal = ({ isOpen, menuItems, buttonRef }) => {
     return (
         <div
             className="menu-modal"
+            ref={wrapperRef}
             style={{ top: position.top , left: position.left }}>
             <ul className="menu-list">
                 {menuItems.map((item, index) => (

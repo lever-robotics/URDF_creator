@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Axis extends THREE.Line {
-    constructor() {
+    constructor(jointType = "fixed", axisRotation = [0,0,0]) {
         const originPoint = new THREE.Vector3();
         const lineAxis = new THREE.Vector3(0, 0, 1);
         const length = 10;
@@ -17,6 +17,8 @@ export default class Axis extends THREE.Line {
         super(geometry, material);
 
         this._axis = lineAxis;
+        this.type = jointType;
+        this.rotation.set(...axisRotation);
     }
 
     get type() {

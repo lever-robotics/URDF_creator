@@ -113,9 +113,10 @@ export default class urdfObjectManager {
             // jointAxis: joint.position,
             jointMin: urdfObject.min,
             jointMax: urdfObject.max,
-            jointRotation: urdfObject.joint.rotation,
+            axisRotation: urdfObject.axis.rotation,
             jointOrigin: urdfObject.joint.position,
             material: urdfObject.mesh.material,
+            color: urdfObject.color,
             shape: urdfObject.shape,
             name: urdfObject.name,
             mass: urdfObject.mass,
@@ -125,6 +126,8 @@ export default class urdfObjectManager {
             iyy: urdfObject.inertia.yyx,
             izz: urdfObject.inertia.izz,
             iyz: urdfObject.inertia.iyz,
+
+            sensor: urdfObject.sensor,
         };
         compressedObject.userData = userData;
 
@@ -136,15 +139,17 @@ export default class urdfObjectManager {
     }
 
     loadObject(gltfObject) {
-        const { position, rotation, scale, offset, jointType, jointMin, jointMax, jointRotation, jointOrigin, material, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
+        const { position, rotation, scale, offset, jointType, jointMin, jointMax, axisRotation, jointOrigin, material, sensor, color, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
 
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
-        const axis = new Axis();
+        console.log(axisRotation);
+        const axis = new Axis(jointType, Object.values(axisRotation).slice(1,4));
+        axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
-        const sensor = new Sensor();
-        const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation));
+
+        const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation).slice(1, 4));
 
         link.mesh = mesh;
         link.add(mesh);
@@ -158,6 +163,7 @@ export default class urdfObjectManager {
         urdfobject.mesh = mesh;
         urdfobject.add(joint);
         urdfobject.add(axis);
+        urdfobject.color = color;
 
         joint.urdfObject = urdfobject;
         link.urdfObject = urdfobject;
@@ -174,9 +180,11 @@ export default class urdfObjectManager {
         const newObject = this.loadObject(gltfObject);
 
         gltfObject.children.forEach((child) => {
-            return newObject.add(this.readScene(child));
-        });
-
+            const newChild = this.readScene(child);
+            newChild.parentURDF = newObject;
+            newObject.link.add(newChild);
+            });
+            
         return newObject;
     }
 }

@@ -25,7 +25,7 @@ const Page1 = () => {
                 </ul>
             </div>
             <div className="graphic-container">
-                <img src={process.env.PUBLIC_URL + '/statics/roboeverything.png'} alt="Robo Everything" className="roboeverything-graphic" />
+                <img src={process.env.PUBLIC_URL + '/statics/roboeverything3.png'} alt="Robo Everything" className="roboeverything-graphic" />
             </div>
         </div>
     );

@@ -23,7 +23,7 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
         // { label: "Settings", action: () => alert("Setting") }
     ];
 
-    const handleClick = () => {
+    const handleClick = (e) => {
         if(isModalOpen){
             setIsModalOpen(false);
         }else{
@@ -36,12 +36,12 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
             <button className="menu-icon-button" onClick={handleClick} ref={buttonRef}>
                 <FontAwesomeIcon icon={faBars} />
             </button>
-            <MenuModal
+            {isModalOpen && <MenuModal
             isOpen={isModalOpen}
             onClose={handleClick}
             menuItems={menuItems}
             buttonRef={buttonRef}
-            />
+            />}
         </>
     );
 };

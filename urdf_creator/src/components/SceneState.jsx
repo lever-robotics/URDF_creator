@@ -31,6 +31,7 @@ export default function SceneState({ threeScene }) {
         sphere: 0,
         cylinder: 0,
     });
+    const [updateCode, setUpdateCode] = useState(0);
 
     useEffect(() => {
         const { current: three } = threeScene;
@@ -92,6 +93,7 @@ export default function SceneState({ threeScene }) {
         }
         selectObject(newUrdfObject);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const forceSceneUpdate = () => {
@@ -178,52 +180,62 @@ export default function SceneState({ threeScene }) {
     const setLinkName = (urdfObject, name) => {
         urdfObject.name = name;
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setMass = (urdfObject, mass) => {
         urdfObject.updateMass(mass);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setInertia = (urdfObject, type, inertia) => {
         urdfObject.setCustomInertia(type, inertia);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setSensor = (urdfObject, type) => {
         const manager = new urdfObjectManager();
         manager.changeSensor(urdfObject, type);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const updateSensor = (urdfObject, name, value) => {
         urdfObject.sensor.update(name, value);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setJointType = (urdfObject, type) => {
         urdfObject.jointType = type;
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setJointMinMax = (urdfObject, type, value) => {
         urdfObject[type] = value;
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const setJointValue = (urdfObject, value) => {
         urdfObject.jointValue = value;
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const rotateAroundJointAxis = (urdfObject, angle) => {
         urdfObject.rotateAroundJointAxis(angle);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const translateAlongJointAxis = (urdfObject, distance) => {
         urdfObject.translateAlongJointAxis(distance);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const saveForDisplayChanges = (urdfObject) => {
@@ -238,6 +250,7 @@ export default function SceneState({ threeScene }) {
     const setMesh = (urdfObject, meshFileName) => {
         urdfObject.setMesh(meshFileName);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const loadScene = (gltfScene) => {
@@ -253,9 +266,29 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    const loadSingleObject = (gltfScene) => {
+        const manager = new urdfObjectManager();
+        const Link = manager.readScene(gltfScene);
+        if (selectedObject) {
+            selectedObject.attach(Link);
+        } else {
+            const { current: three } = threeScene;
+            three.scene.attach(Link);
+            three.baseLink = Link;
+            Link.isBaseLink = true;
+        }
+        forceSceneUpdate();
+    };
+
     const getScene = () => {
         const { current: three } = threeScene;
         return three.scene;
+    };
+
+    const forceUpdateCode = () => {
+        console.log(updateCode);
+        // const update = updateCode + 1;
+        setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
     };
 
     const transformObject = (urdfObject, transformType, axis, value) => {
@@ -276,6 +309,7 @@ export default function SceneState({ threeScene }) {
         }
         selectObject(clone);
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const deleteObject = (urdfObject) => {
@@ -287,6 +321,7 @@ export default function SceneState({ threeScene }) {
         selectObject();
         urdfObject.removeFromParent();
         forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const getBaseLink = () => {
@@ -318,7 +353,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openExportDisplayer = () => {
-        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle} />);
+        setModalContent(<ExportDisplayer onClose={closeExportDisplayer} getBaseLink={getBaseLink} projectTitle={projectTitle} getScene={getScene} />);
         setIsModalOpen(true);
     };
 
@@ -327,7 +362,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer onClose={closeImportDisplayer} loadScene={loadScene} />);
+        setModalContent(<ImportDisplayer handleSensorClick={handleSensorClick} onImportClose={closeImportDisplayer} loadScene={loadScene} />);
         setIsModalOpen(true);
     };
 
@@ -341,6 +376,12 @@ export default function SceneState({ threeScene }) {
         loadScene(baseLink);
         setProjectTitle(title);
         setIsModalOpen(false);
+    };
+
+    const handleSensorClick = async (gltfpath) => {
+        const group = await handleProject(gltfpath);
+        const link = group.scene.children[0];
+        loadSingleObject(link);
     };
 
     const setObjectPosition = (object, position) => {
@@ -388,6 +429,7 @@ export default function SceneState({ threeScene }) {
         setMesh,
         updateSensor,
         loadScene,
+        loadSingleObject,
         getScene,
         transformObject,
         duplicateObject,
@@ -408,6 +450,7 @@ export default function SceneState({ threeScene }) {
         doesLinkNameExist,
         isNameDuplicate,
         reparentObject,
+        forceUpdateCode,
     };
 
     return [
@@ -422,7 +465,7 @@ export default function SceneState({ threeScene }) {
                     </Column>
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
                     <Column height="100%" width="25%" pointerEvents="auto">
-                        <RightPanel scene={scene} projectTitle={projectTitle} selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                        <RightPanel scene={scene} projectTitle={projectTitle} selectedObject={selectedObject} stateFunctions={stateFunctions} updateCode={updateCode} className={"right-panel"} />
                     </Column>
                 </Row>
             </AbsolutePosition>

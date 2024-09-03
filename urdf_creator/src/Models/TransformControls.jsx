@@ -447,6 +447,7 @@ class TransformControls extends Object3D {
             this.dispatchEvent(_mouseUpEvent);
         }
 
+        this.stateFunctions.forceUpdateCode();
         //
 
         this.dragging = false;
