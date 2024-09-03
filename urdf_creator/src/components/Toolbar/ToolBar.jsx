@@ -1,6 +1,6 @@
 import AllClickButton from "../../FunctionalComponents/AllClickButton";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateLeft, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRotateLeft, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 const Toolbar = ({ selectedObject, stateFunctions }) => {
     const handleClick = (e) => {
@@ -13,16 +13,13 @@ const Toolbar = ({ selectedObject, stateFunctions }) => {
     return (
         <div style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }} className="row-space-between">
             <div className="row-spaced">
-
                 <button onClick={stateFunctions.popUndo}>
-                    <FontAwesomeIcon icon={faRotateLeft}/>
+                    <FontAwesomeIcon icon={faRotateLeft} />
                 </button>
                 <button onClick={stateFunctions.popRedo}>
-                    <FontAwesomeIcon icon={faRotateRight}/>
+                    <FontAwesomeIcon icon={faRotateRight} />
                 </button>
-                <button
-                    className={tool === "translate" ? "button_selected" : ""}
-                    onClick={handleClick}>
+                <button className={tool === "translate" ? "button_selected" : ""} onClick={handleClick}>
                     Translate
                 </button>
                 <button className={stateFunctions.getToolMode() === "rotate" ? "button_selected" : ""} onClick={handleClick}>
@@ -31,7 +28,6 @@ const Toolbar = ({ selectedObject, stateFunctions }) => {
                 <button className={stateFunctions.getToolMode() === "scale" ? "button_selected" : ""} onClick={handleClick}>
                     Scale
                 </button>
-                <AllClickButton>CLick cliCK</AllClickButton>
             </div>
         </div>
     );

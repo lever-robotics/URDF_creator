@@ -112,7 +112,7 @@ export class ThreeSceneManager {
                 const textGeo = new TextGeometry(title, {
                     font: font,
                     size: 0.1, // Make the text smaller
-                    height: 0.02,
+                    depth: 0.02,
                     curveSegments: 12,
                     bevelEnabled: false,
                 });

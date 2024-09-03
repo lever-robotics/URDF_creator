@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../../utils/ScenetoText";
-import "./CodeBox.css"
+import "./CodeBox.css";
 
 /**
  * @param {Scene} scene
@@ -10,7 +10,6 @@ import "./CodeBox.css"
  * @param {string} selectedFormat
  */
 export default function CodeBox({ scene, projectTitle, selectedFormat, updateCode }) {
-    
     const style = {
         fontSize: "12px",
         overflow: "auto",
@@ -23,8 +22,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
     const [code, setCode] = useState();
 
     useEffect(() => {
-        console.log(scene, projectTitle);
-        if(selectedFormat !== "Parameters"){
+        if (selectedFormat !== "Parameters") {
             const text = ScenetoText(selectedFormat, scene, projectTitle);
             setCode(text);
         }
@@ -48,13 +46,12 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
         copyToClipboard();
     };
 
-    if(selectedFormat === "Parameters"){ return null; }
+    if (selectedFormat === "Parameters") {
+        return null;
+    }
     return (
         <div onClick={handleClick} className="code-container">
-            <SyntaxHighlighter
-                language={selectedFormat === "XACRO" ? "text" : "xml"}
-                style={atomDark}
-                customStyle={style}>
+            <SyntaxHighlighter language={selectedFormat === "XACRO" ? "text" : "xml"} style={atomDark} customStyle={style}>
                 {code}
             </SyntaxHighlighter>
             {copied && <Tooltip mousePosition={mousePosition} />}
@@ -68,9 +65,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
  */
 function Tooltip({ mousePosition }) {
     return (
-        <div
-            className="tooltip"
-            style={{ left: mousePosition.x, top: mousePosition.y }}>
+        <div className="tooltip" style={{ left: mousePosition.x, top: mousePosition.y }}>
             Copied!
         </div>
     );

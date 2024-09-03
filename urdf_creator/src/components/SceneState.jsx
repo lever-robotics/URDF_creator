@@ -1,10 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
-import * as THREE from "three";
-import ObjectParameters from "./RightPanel/ObjectParameters/ObjectParameters.jsx";
 import Toolbar from "./Toolbar/ToolBar.jsx";
 import InsertTool from "./Insert/InsertTool.jsx";
 import { LinkTree } from "./TreeView/LinkTree.jsx";
-import CodeDisplay from "./RightPanel/RightPanel.jsx";
 import Column from "../utils/ScreenTools/Column.jsx";
 import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
 import Row from "../utils/ScreenTools/Row.jsx";
@@ -12,14 +9,14 @@ import Modal from "../FunctionalComponents/Modal.jsx";
 import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
 import MenuBar from "./Menu/MenuBar.jsx";
-import urdfObject from "../Models/urdfObject.jsx";
-import { handleUpload, handleProject } from "../utils/HandleUpload.js";
+import { handleProject } from "../utils/HandleUpload.js";
 import urdfObjectManager from "../Models/urdfObjectManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 import RightPanel from "./RightPanel/RightPanel.jsx";
 import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";
+import urdfObject from "../Models/urdfObject.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -36,6 +33,7 @@ export default function SceneState({ threeScene }) {
     const [updateCode, setUpdateCode] = useState(0);
     const undo = useRef([]);
     const redo = useRef([]);
+    const objectNames = useRef([]);
 
     useEffect(() => {
         const { current: three } = threeScene;
@@ -46,7 +44,6 @@ export default function SceneState({ threeScene }) {
 
     useEffect(() => {
         const handleUndo = (e) => {
-            console.log((e.metaKey || e.ctrlKey) && e.key === "z" && e.shiftKey);
             if ((e.metaKey || e.ctrlKey) && e.key === "z" && !e.shiftKey) {
                 e.preventDefault(); // Prevent the default browser undo action
                 popUndo();
@@ -176,7 +173,7 @@ export default function SceneState({ threeScene }) {
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
             newUrdfObject.isBaseLink = true;
-            newUrdfObject.name = "base_link";
+            setLinkName(newUrdfObject, "base_link");
             three.baseLink = newUrdfObject;
             three.scene.attach(newUrdfObject);
         }
@@ -186,7 +183,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceSceneUpdate = () => {
-        console.log("forceSceneUpdate", undo.current);
         setScene({ ...threeScene.current.scene });
     };
 
@@ -225,7 +221,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const selectObject = (urdfObject) => {
-        console.log(urdfObject);
         const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
@@ -245,34 +240,36 @@ export default function SceneState({ threeScene }) {
     };
 
     const doesLinkNameExist = (name) => {
-        const { current: three } = threeScene;
-        return isNameDuplicate(three.baseLink, name);
+        return objectNames.current.includes(name);
     };
 
-    const isNameDuplicate = (urdfObject, name) => {
-        if (urdfObject.name === name) return true;
-
-        for (const child of urdfObject.getUrdfObjectChildren()) {
-            if (isNameDuplicate(child, name)) {
-                return true;
-            }
+    const registerName = (name) => {
+        if (!doesLinkNameExist(name)) {
+            objectNames.current.push(name);
+            return true;
         }
-
         return false;
     };
 
     const findUrdfObjectByName = (urdfObject, name) => {
         if (urdfObject.name === name) return urdfObject;
-        console.log(urdfObject, name);
         let returnChild = null;
         urdfObject.getUrdfObjectChildren().forEach((child) => {
-            console.log(child, name);
             returnChild = findUrdfObjectByName(child, name);
         });
         return returnChild;
     };
 
     const setLinkName = (urdfObject, name) => {
+        // remove name from registry
+        const index = objectNames.current.indexOf(urdfObject.name);
+        console.log("name to remove: ", urdfObject.name, " removing: ", objectNames.current[index]);
+        console.log("names before splice", objectNames.current);
+        objectNames.current.splice(index, 1);
+
+        //add the new name
+        objectNames.current.push(name);
+        console.log("names after push", objectNames.current);
         urdfObject.name = name;
         forceSceneUpdate();
         forceUpdateCode();
@@ -539,7 +536,7 @@ export default function SceneState({ threeScene }) {
         setObjectScale,
         setObjectQuaternion,
         doesLinkNameExist,
-        isNameDuplicate,
+        registerName,
         reparentObject,
         forceUpdateCode,
         popUndo,
