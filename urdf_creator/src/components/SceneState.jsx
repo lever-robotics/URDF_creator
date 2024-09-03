@@ -31,10 +31,12 @@ export default function SceneState({ threeScene }) {
         cylinder: 0,
     });
     const [updateCode, setUpdateCode] = useState(0);
-    const undo = useRef([{
-        scene: "",
-        selected: null
-    }]);
+    const undo = useRef([
+        {
+            scene: "",
+            selected: null,
+        },
+    ]);
     const redo = useRef([]);
     const objectNames = useRef([]);
 
@@ -93,17 +95,16 @@ export default function SceneState({ threeScene }) {
 
         const currentScene = {
             scene: "",
-            selected: null
-        }
+            selected: null,
+        };
         // If the baseLink is not null then it actually has objects so compress it
-        if (getBaseLink() !== null){
+        if (getBaseLink() !== null) {
             const compressedScene = urdfManager.compressScene(getBaseLink());
             const gltfScene = await ScenetoGLTF(compressedScene);
             currentScene.scene = JSON.stringify(gltfScene);
             currentScene.selected = selectedObject?.name;
         }
         undoArray.push(currentScene);
-        console.log("pushUndo", undo.current, redo.current);
     };
 
     const popUndo = async () => {
@@ -112,7 +113,7 @@ export default function SceneState({ threeScene }) {
         const { current: redoArray } = redo;
 
         // There should always be an empty state as the first element
-        if(undoArray.length === 1) return;
+        if (undoArray.length === 1) return;
 
         // Pop the current state and push to the redoArray
         const currentState = undoArray.pop();
@@ -121,8 +122,8 @@ export default function SceneState({ threeScene }) {
         // Get the last state but leave it in the redoArray
         const lastState = undoArray[undoArray.length - 1];
 
-        // If the last state was empty then clear the scene 
-        if(lastState.scene === ""){
+        // If the last state was empty then clear the scene
+        if (lastState.scene === "") {
             clearScene();
             return;
         }
@@ -131,7 +132,7 @@ export default function SceneState({ threeScene }) {
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
-        
+
         clearScene();
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
@@ -141,8 +142,6 @@ export default function SceneState({ threeScene }) {
         const lastSelectedName = currentState.selected;
         const lastSelected = findUrdfObjectByName(baseLink, lastSelectedName);
         selectObject(lastSelected);
-
-        console.log("popUndo", undo.current);
     };
 
     // Redo stack gets destroyed when forceCodeUpdate gets called
@@ -151,11 +150,11 @@ export default function SceneState({ threeScene }) {
         const { current: three } = threeScene;
 
         if (redoArray.length === 0) return;
-        
+
         const lastState = redoArray.pop();
-        
+
         // If the last state was empty then clear the scene
-        if(lastState.scene === ""){
+        if (lastState.scene === "") {
             clearScene();
             return;
         }
@@ -163,7 +162,7 @@ export default function SceneState({ threeScene }) {
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
-        
+
         clearScene();
 
         three.scene.attach(baseLink);
@@ -222,6 +221,7 @@ export default function SceneState({ threeScene }) {
         if (three.transformControls) {
             three.transformControls.setMode(mode);
             setToolMode(mode);
+            console.log("this is the new mode", mode);
         }
 
         if (selectedObject) {
@@ -284,8 +284,6 @@ export default function SceneState({ threeScene }) {
 
     const deregisterName = (name) => {
         const index = objectNames.current.indexOf(name);
-        console.log("name to remove: ", name, " removing: ", objectNames.current[index]);
-        console.log("names before splice", objectNames.current);
         objectNames.current.splice(index, 1);
     };
 
@@ -461,9 +459,8 @@ export default function SceneState({ threeScene }) {
     };
 
     const closeProjectManager = () => {
-        console.log("here");
         setIsModalOpen(false);
-    }
+    };
 
     const closeModal = () => setIsModalOpen(false);
 
@@ -598,7 +595,7 @@ export default function SceneState({ threeScene }) {
                         <LinkTree selectedObject={selectedObject} stateFunctions={stateFunctions} />
                         <InsertTool addObject={addObject} />
                     </Column>
-                    <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} />
+                    <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} toolMode={toolMode} />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <RightPanel scene={scene} projectTitle={projectTitle} selectedObject={selectedObject} stateFunctions={stateFunctions} updateCode={updateCode} className={"right-panel"} />
                     </Column>

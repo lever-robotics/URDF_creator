@@ -5,7 +5,6 @@ import React from "react";
  * @returns JSX component that displays text that can follow the mouse
  */
 export default function Tooltip({ mousePosition, anchorPosition = "center", children }) {
-    console.log(anchorPosition);
     return (
         <div
             className="tooltip"

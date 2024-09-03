@@ -34,8 +34,6 @@ export function LinkTree({ selectedObject, stateFunctions }) {
 
     // put the button that is dragged as the child of the hovered button
     const dropButton = (e) => {
-        console.log("dropping the button");
-        console.log(hoveredButton, draggedButton);
         if (hoveredButton && draggedButton) {
             if (draggedButton !== hoveredButton && !isAncestor(draggedButton, hoveredButton)) {
                 stateFunctions.reparentObject(hoveredButton, draggedButton);
@@ -106,12 +104,10 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                     }}
                     onDragEnter={() => {
                         setHoveredButton(node);
-                        console.log("being dragged over hehe");
                     }}
                     onDragLeave={(e) => {
                         if (hoveredButton.current === node && e.relatedTarget) {
                             setHoveredButton(null);
-                            console.log("drag leaving");
                         }
                     }}
                     onDragStart={() => {

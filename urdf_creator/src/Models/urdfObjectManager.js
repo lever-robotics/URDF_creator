@@ -160,7 +160,6 @@ export default class urdfObjectManager {
 
         // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
         urdfobject.sensor = sensorCreator(sensor);
-        console.log(urdfobject.sensor);
 
         link.mesh = mesh;
         link.add(mesh);
