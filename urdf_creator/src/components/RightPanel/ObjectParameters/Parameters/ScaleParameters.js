@@ -7,6 +7,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
     const [tempY, setTempY] = useState(selectedObject.objectScale.y);
     const [tempZ, setTempZ] = useState(selectedObject.objectScale.z);
     const [tempRadius, setTempRadius] = useState(selectedObject.objectScale.x / 2);
+    const [tempHeight, setTempHeight] = useState(selectedObject.objectScale.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
@@ -14,6 +15,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         setTempY(selectedObject.objectScale.y);
         setTempZ(selectedObject.objectScale.z);
         setTempRadius(selectedObject.objectScale.x / 2);
+        setTempHeight(selectedObject.objectScale.z);
     }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
 
     const handleScaleChange = (e) => {
@@ -31,6 +33,9 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                 break;
             case "radius":
                 setTempRadius(tempValue);
+                break;
+            case "height":
+                setTempHeight(tempValue);
                 break;
         }
     };
@@ -85,7 +90,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
                 return (
                     <>
                         <Parameter title="Radius:" value={tempRadius} {...props} />
-                        <Parameter title="Height:" value={tempZ} {...props} />
+                        <Parameter title="Height:" value={tempHeight} {...props} />
                     </>
                 );
             case "cube":
