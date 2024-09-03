@@ -8,6 +8,10 @@ import * as THREE from "three";
 import Mesh from "./Mesh";
 
 export default class urdfObjectManager {
+    constructor(stateFunctions) {
+        this.stateFunctions = stateFunctions;
+    }
+
     changeSensor(urdfObject, type) {
         switch (type) {
             case "imu":
@@ -38,7 +42,7 @@ export default class urdfObjectManager {
         const mesh = new Mesh(shape);
         const inertia = new Inertia();
         const sensor = new Sensor();
-        const urdfobject = new urdfObject(name);
+        const urdfobject = new urdfObject(this.stateFunctions, name);
 
         link.add(mesh);
 
@@ -80,6 +84,8 @@ export default class urdfObjectManager {
         clone.mesh = mesh;
         clone.inertia = inertia;
         clone.sensor = sensor;
+
+        clone.stateFunctions = urdfObject.stateFunctions;
 
         joint.add(link);
         link.add(mesh);
@@ -140,17 +146,18 @@ export default class urdfObjectManager {
     }
 
     loadObject(gltfObject) {
-        const { position, rotation, scale, offset, jointType, jointMin, jointMax, axisRotation, jointOrigin, material, sensor, color, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } = gltfObject.userData;
+        const { position, rotation, scale, offset, jointType, jointMin, jointMax, axisRotation, jointOrigin, material, sensor, color, shape, name, mass, ixx, ixy, ixz, iyy, izz, iyz } =
+            gltfObject.userData;
 
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
         console.log(axisRotation);
-        const axis = new Axis(jointType, Object.values(axisRotation).slice(1,4));
+        const axis = new Axis(jointType, Object.values(axisRotation).slice(1, 4));
         axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
 
-        const urdfobject = new urdfObject(name, Object.values(position), Object.values(rotation).slice(1, 4));
+        const urdfobject = new urdfObject(this.stateFunctions, name, Object.values(position), Object.values(rotation).slice(1, 4));
 
         // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
         const newSensor = new Sensor();
@@ -188,8 +195,8 @@ export default class urdfObjectManager {
             const newChild = this.readScene(child);
             newChild.parentURDF = newObject;
             newObject.link.add(newChild);
-            });
-            
+        });
+
         return newObject;
     }
 }

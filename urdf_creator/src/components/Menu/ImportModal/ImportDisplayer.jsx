@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
-import urdfObjectManager from '../../../Models/urdfObjectManager';
-import STLImport from './STLImport';
-import GLTFImport from './GLTFImport';
-import GltfFilesGrid from './ImportSensor';
+import React, { useState, useRef } from "react";
+import STLImport from "./STLImport";
+import GLTFImport from "./GLTFImport";
+import GltfFilesGrid from "./ImportSensor";
 import ReactGA from "react-ga4";
 
 import "./importDisplayer.css";
@@ -13,8 +12,8 @@ const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
 
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
-        { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} />},
-        { label: "Robot Sensor", content: <GltfFilesGrid handleSensorClick={handleSensorClick}/> },
+        { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} /> },
+        { label: "Robot Sensor", content: <GltfFilesGrid handleSensorClick={handleSensorClick} /> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },
         // { label: "URDF", content: },
@@ -24,18 +23,11 @@ const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
         <>
             <h2 className="title">Import Options</h2>
             <div className="import-displayer">
-                <div className='import-menu-modal'>                
+                <div className="import-menu-modal">
                     <ul className="menu-list">
-                    {importOptions.map((item, index) => (
-                        <ImportOption 
-                        key={index}
-                        index={index} 
-                        item={item} 
-                        setContent={setContent} 
-                        selectedIndex={selectedIndex}
-                        setSelectedIndex={setSelectedIndex}
-                    />
-                    ))}
+                        {importOptions.map((item, index) => (
+                            <ImportOption key={index} index={index} item={item} setContent={setContent} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
+                        ))}
                     </ul>
                 </div>
                 {content}
@@ -45,17 +37,13 @@ const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
 };
 
 const ImportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
-
     const handleClick = () => {
         setContent(item.content);
         setSelectedIndex(index);
     };
 
     return (
-        <li 
-            className={`menu-item ${selectedIndex === index ? 'menu-selected' : ''}`} 
-            onClick={handleClick}
-        >
+        <li className={`menu-item ${selectedIndex === index ? "menu-selected" : ""}`} onClick={handleClick}>
             {item.label}
         </li>
     );

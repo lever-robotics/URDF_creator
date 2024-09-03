@@ -3,7 +3,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class urdfObject extends THREE.Object3D {
-    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
+    constructor(stateFunctions, name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
         super();
 
         this.position.set(...origin);
@@ -15,6 +15,7 @@ export default class urdfObject extends THREE.Object3D {
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
+        this.stateFunctions = stateFunctions;
     }
 
     /**
@@ -323,7 +324,13 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     clone() {
-        let [name, suffix] = this._extractNumberFromString(this.name);
+        let [name, suffix] = this.extractNumberFromString(this.name);
+        [name, suffix] = this.incrementName(name, suffix);
+
+        return new urdfObject(this.stateFunctions, name + suffix, this.position, this.rotation);
+    }
+
+    incrementName(name, suffix) {
         const isCopy = name.endsWith("-copy");
         if (isCopy && suffix) {
             suffix = (parseInt(suffix) + 1).toString();
@@ -331,17 +338,19 @@ export default class urdfObject extends THREE.Object3D {
             suffix = "0";
         } else {
             name = name + suffix + "-copy";
-            suffix = "";
+            suffix = "0";
         }
-        return new urdfObject(name + suffix, this.position, this.rotation);
+        if (this.stateFunctions.doesLinkNameExist(name + suffix)) {
+            return this.incrementName(name, suffix);
+        } else return [name, suffix];
     }
 
-    _extractNumberFromString(string, number = "") {
+    extractNumberFromString(string, number = "") {
         const ending = string.slice(-1);
         // checks if it is a number
         if (!isNaN(ending)) {
             number = ending + number;
-            return this._extractNumberFromString(string.slice(0, string.length - 1), number);
+            return this.extractNumberFromString(string.slice(0, string.length - 1), number);
         } else return [string, number];
     }
 
