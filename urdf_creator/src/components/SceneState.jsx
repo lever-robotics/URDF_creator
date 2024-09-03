@@ -18,6 +18,8 @@ import urdfObjectManager from "../Models/urdfObjectManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 import RightPanel from "./RightPanel/RightPanel.jsx";
+import ScenetoGLTF from "../utils/ScenetoGLTF.js";
+import { loadFileToObject } from "../utils/HandleUpload.js";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -32,6 +34,8 @@ export default function SceneState({ threeScene }) {
         cylinder: 0,
     });
     const [updateCode, setUpdateCode] = useState(0);
+    const undo = useRef([]);
+    const redo = useRef([]);
 
     useEffect(() => {
         const { current: three } = threeScene;
@@ -39,6 +43,25 @@ export default function SceneState({ threeScene }) {
             three.mouse.addOnClickFunctions(clickObject);
         }
     }, []);
+
+    useEffect(() => {
+        const handleUndo = (e) => {
+            console.log((e.metaKey || e.ctrlKey) && (e.key === 'z') && (e.shiftKey));
+          if ((e.metaKey || e.ctrlKey) && e.key === 'z' && (!e.shiftKey)) {
+            e.preventDefault(); // Prevent the default browser undo action
+            popUndo();
+          }else if((e.metaKey || e.ctrlKey) && (e.key === 'z') && (e.shiftKey)){
+            e.preventDefault();
+            popRedo();
+          }
+        };
+    
+        window.addEventListener('keydown', handleUndo);
+    
+        return () => {
+          window.removeEventListener('keydown', handleUndo);
+        };
+      }, [updateCode]);
 
     // Function added to the Mouse object to allow clicking of meshes
     function clickObject(event) {
@@ -62,6 +85,77 @@ export default function SceneState({ threeScene }) {
         } else if (meshes.length === 0) {
             selectObject(null);
         }
+    }
+
+    const pushUndo = async () => {
+        const { current: undoArray } = undo;
+        if(getBaseLink() === null) return;
+        const manager = new urdfObjectManager();
+        const compressedScene = manager.compressScene(getBaseLink());
+        const gltfScene = await ScenetoGLTF(compressedScene);
+        const currentScene = {
+            scene: JSON.stringify(gltfScene),
+            selected: selectedObject?.name
+        }
+        undoArray.push(currentScene);
+    }
+
+    const popUndo = async () => {
+        const { current: three } = threeScene;
+        const { current: undoArray } = undo;
+        const { current: redoArray } = redo;
+        if(undoArray.length === 1){
+            three.baseLink.removeFromParent();
+            three.baseLink = null;
+            redoArray.push(undoArray.pop());
+            forceSceneUpdate();
+        }else{
+            const { current: three } = threeScene;
+            const currentState = undoArray.pop();
+            
+            
+            const lastState = undoArray.pop();
+
+            redoArray.push(currentState);
+
+            const lastScene = await loadFileToObject(lastState.scene, "gltf");
+            const lastSelectedName = currentState.selected;
+            const gltfScene= lastScene.scene;
+            const manager = new urdfObjectManager();
+            const baseLink = manager.readScene(gltfScene.children[0]);
+            clearScene();
+            three.scene.attach(baseLink);
+            three.baseLink = baseLink;
+            baseLink.isBaseLink = true;
+            const lastSelected = findUrdfObjectByName(getBaseLink(), lastSelectedName);
+            selectObject(lastSelected);
+            pushUndo();
+        }
+    }
+
+    const popRedo = async () => {
+        const { current: redoArray } = redo;
+        const { current: undoArray } = undo;
+        const { current: three } = threeScene;
+        if(redoArray.length === 0)return;
+        const lastState = redoArray.pop()
+        const lastScene = await loadFileToObject(lastState.scene, "gltf");
+        const gltfScene= lastScene.scene;
+        const manager = new urdfObjectManager();
+        const baseLink = manager.readScene(gltfScene.children[0]);
+        clearScene();
+        three.scene.attach(baseLink);
+        three.baseLink = baseLink;
+        baseLink.isBaseLink = true;
+        selectObject(null);
+        pushUndo();
+    }
+
+    const clearScene = () => {
+        const { current: three } = threeScene;
+        if(three.baseLink === null) return;
+        three.baseLink.removeFromParent();
+        three.baseLink = null;
     }
 
     const addObject = (shape) => {
@@ -92,11 +186,12 @@ export default function SceneState({ threeScene }) {
             three.scene.attach(newUrdfObject);
         }
         selectObject(newUrdfObject);
-        forceSceneUpdate();
         forceUpdateCode();
+        forceSceneUpdate();
     };
 
     const forceSceneUpdate = () => {
+        console.log("forceSceneUpdate", undo.current);
         setScene({ ...threeScene.current.scene });
     };
 
@@ -176,6 +271,17 @@ export default function SceneState({ threeScene }) {
             }, false);
         }
     };
+
+    const findUrdfObjectByName = (urdfObject, name) => {
+        if(urdfObject.name === name) return urdfObject;
+        console.log(urdfObject, name);
+        let returnChild = null;
+        urdfObject.getUrdfObjectChildren().forEach((child) => {
+            console.log(child, name);
+            returnChild = findUrdfObjectByName(child, name);
+        });
+        return returnChild;
+    }
 
     const setLinkName = (urdfObject, name) => {
         urdfObject.name = name;
@@ -286,8 +392,8 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceUpdateCode = () => {
-        console.log(updateCode);
-        // const update = updateCode + 1;
+        pushUndo();
+        redo.current = [];
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
     };
 
@@ -451,6 +557,8 @@ export default function SceneState({ threeScene }) {
         isNameDuplicate,
         reparentObject,
         forceUpdateCode,
+        popUndo,
+        popRedo,
     };
 
     return [
