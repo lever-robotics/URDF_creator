@@ -5,7 +5,7 @@ const Project = ({ project, handleProjectClick, onClose }) => {
         if (project?.path === undefined) {
             onClose();
         } else {
-            handleProjectClick();
+            handleProjectClick(project.path, project.title);
         }
     };
 

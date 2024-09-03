@@ -29,7 +29,7 @@ const STLImport = ({ onClose }) => {
 
     const onClick = () => {
         onSTLFileUpload();
-        onClose();
+        // onClose();
     };
 
     return (

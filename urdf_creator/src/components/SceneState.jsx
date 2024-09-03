@@ -386,6 +386,7 @@ export default function SceneState({ threeScene }) {
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
+        closeModal();
         forceSceneUpdate();
     };
 
@@ -498,6 +499,7 @@ export default function SceneState({ threeScene }) {
 
     const handleProjectClick = async (projectPath, title) => {
         clearScene();
+        console.log("handle project")
         const group = await handleProject(process.env.PUBLIC_URL + projectPath);
         const baseLink = group.scene.children[0];
         loadScene(baseLink);

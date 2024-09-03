@@ -13,6 +13,7 @@ const GLTFImport = ({ onClose, loadScene }) => {
     */
       const onFileUpload = () => inputGTLFFile.current.click();
       const handleFileChange = async (e) => {
+          console.log("file Upload")
           const file = e.target.files[0];
           const type = file.name.split(".").pop();
           const group = await handleUpload(file, type);
@@ -22,7 +23,7 @@ const GLTFImport = ({ onClose, loadScene }) => {
 
     const onClick = () => {
         onFileUpload();
-        onClose();
+        // onClose();
     };
 
     return (
