@@ -8,7 +8,6 @@ export default class ScaleVector extends THREE.Vector3 {
     }
 
     set(x, y, z) {
-        console.log("x: " + x + " y: " + y + " z: " + z);
         switch (this.shape) {
             case "cube":
                 super.set(x, y, z);

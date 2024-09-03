@@ -22,11 +22,11 @@
     position: flex;
 }
 
-.toolbar-button{
-    font-size: .8em;
+.toolbar-button {
+    font-size: 0.8em;
 }
 
-.selected{
-    font-size: .8em;
+.selected {
+    font-size: 0.8em;
     outline: 4px auto -webkit-focus-ring-color;
 }

@@ -133,6 +133,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const selectObject = (urdfObject) => {
+        console.log(urdfObject);
         const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
@@ -357,6 +358,12 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    const reparentObject = (parent, child) => {
+        parent.link.attach(child);
+        child.parentURDF = parent;
+        forceSceneUpdate();
+    };
+
     const stateFunctions = {
         addObject,
         forceSceneUpdate,
@@ -400,6 +407,7 @@ export default function SceneState({ threeScene }) {
         setObjectQuaternion,
         doesLinkNameExist,
         isNameDuplicate,
+        reparentObject,
     };
 
     return [

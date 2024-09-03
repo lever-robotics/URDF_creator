@@ -4,9 +4,10 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../utils/ScenetoText";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
+import Tooltip from "../../FunctionalComponents/Tooltip";
 
 /**
- * @param {Scene} scene 
+ * @param {Scene} scene
  * @param {string} projectTitle
  */
 export default function RightPanel({ scene, projectTitle, selectedObject, stateFunctions }) {
@@ -25,43 +26,24 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
                 maxHeight: "100%",
                 flexGrow: 1,
                 flexBasis: 0,
-            }}>
+            }}
+        >
             <div className="toolbar">
-                <button
-                    className={
-                        selectedFormat === "Parameters" ? "selected" : "toolbar-button"
-                    }
-                    onClick={handleClick}>
+                <button className={selectedFormat === "Parameters" ? "selected" : "toolbar-button"} onClick={handleClick}>
                     Parameters
                 </button>
-                <button
-                    className={
-                        selectedFormat === "URDF" ? "selected" : "toolbar-button"
-                    }
-                    onClick={handleClick}>
+                <button className={selectedFormat === "URDF" ? "selected" : "toolbar-button"} onClick={handleClick}>
                     URDF
                 </button>
-                <button
-                    className={
-                        selectedFormat === "SDF" ? "selected" : "toolbar-button"
-                    }
-                    onClick={handleClick}>
+                <button className={selectedFormat === "SDF" ? "selected" : "toolbar-button"} onClick={handleClick}>
                     SDF
                 </button>
-                <button
-                    className={
-                        selectedFormat === "XACRO" ? "selected" : "toolbar-button"
-                    }
-                    onClick={handleClick}>
+                <button className={selectedFormat === "XACRO" ? "selected" : "toolbar-button"} onClick={handleClick}>
                     XACRO
                 </button>
             </div>
-            <CodeBox
-                scene={scene}
-                projectTitle={projectTitle}
-                selectedFormat={selectedFormat}
-            />
-            <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} selectedFormat={selectedFormat}/>
+            <CodeBox scene={scene} projectTitle={projectTitle} selectedFormat={selectedFormat} />
+            <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} selectedFormat={selectedFormat} />
         </div>
     );
 }
@@ -72,7 +54,6 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
  * @param {string} selectedFormat
  */
 function CodeBox({ scene, projectTitle, selectedFormat }) {
-    
     const style = {
         fontSize: "12px",
         overflow: "auto",
@@ -107,30 +88,15 @@ function CodeBox({ scene, projectTitle, selectedFormat }) {
         copyToClipboard();
     };
 
-    if(selectedFormat === "Parameters"){ return null; }
+    if (selectedFormat === "Parameters") {
+        return null;
+    }
     return (
         <div onClick={handleClick} className="code-container">
-            <SyntaxHighlighter
-                language={selectedFormat === "XACRO" ? "text" : "xml"}
-                style={atomDark}
-                customStyle={style}>
+            <SyntaxHighlighter language={selectedFormat === "XACRO" ? "text" : "xml"} style={atomDark} customStyle={style}>
                 {code}
             </SyntaxHighlighter>
-            {copied && <Tooltip mousePosition={mousePosition} />}
-        </div>
-    );
-}
-
-/**
- * @param {*} mousePosition
- * @returns JSX component that displays the text 'Copied!'
- */
-function Tooltip({ mousePosition }) {
-    return (
-        <div
-            className="tooltip"
-            style={{ left: mousePosition.x, top: mousePosition.y }}>
-            Copied!
+            {copied && <Tooltip mousePosition={mousePosition}>Copied!</Tooltip>}
         </div>
     );
 }

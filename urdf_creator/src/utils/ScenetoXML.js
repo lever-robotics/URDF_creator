@@ -31,9 +31,6 @@ export const ScenetoXML = (scene, projectTitle) => {
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
-            console.log("baske link stuff");
-            console.log(node);
-
             if (node.isBaseLink) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
