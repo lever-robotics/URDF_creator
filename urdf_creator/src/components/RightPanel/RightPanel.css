@@ -1,14 +1,35 @@
 .toolbar {
     display: flex;
+    justify-content: stretch;
+    background-color: #1d2a31;
+    /* padding: 8px; */
 }
 
 .toolbar-button {
     font-size: 0.8em;
+    border-radius: 0;
+    transition: border-color 0.25s;
+    flex:auto;
 }
 
 .selected {
     font-size: 0.8em;
-    outline: 4px auto -webkit-focus-ring-color;
+    border-radius: 0;
+    border-bottom-right-radius: 8px;
+    border-color: #646cff;
+    background-color: #646cff;
+    flex:auto
+}
+
+button:focus,
+button:focus-visible {
+    border-bottom-right-radius: 8px;
+    outline: #646cff;
+}
+
+.selected:hover{
+    border-bottom-right-radius: 8px;
+    outline: #646cff
 }
 
 .right-panel {

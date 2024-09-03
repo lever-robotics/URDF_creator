@@ -1,7 +1,6 @@
 .object-parameters {
     font-family: Arial, sans-serif;
     padding: 10px;
-    border-radius: 4px;
     /* Make box scrollable */
     overflow: auto;
     flex-grow: 1;

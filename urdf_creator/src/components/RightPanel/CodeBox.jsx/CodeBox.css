@@ -3,7 +3,6 @@
     overflow: auto;
     height: 100%;
     overflow: hidden;
-    border: solid white 4px;
 }
 
 .code-container:hover {
