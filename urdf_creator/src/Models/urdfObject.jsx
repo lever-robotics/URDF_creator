@@ -16,6 +16,7 @@ export default class urdfObject extends THREE.Object3D {
         this.stlfile = null;
         this.mesh = "";
         this.stateFunctions = stateFunctions;
+        console.log(name, "registered: ", stateFunctions.registerName(name));
     }
 
     /**
@@ -326,7 +327,6 @@ export default class urdfObject extends THREE.Object3D {
     clone() {
         let [name, suffix] = this.extractNumberFromString(this.name);
         [name, suffix] = this.incrementName(name, suffix);
-
         return new urdfObject(this.stateFunctions, name + suffix, this.position, this.rotation);
     }
 
@@ -352,6 +352,14 @@ export default class urdfObject extends THREE.Object3D {
             number = ending + number;
             return this.extractNumberFromString(string.slice(0, string.length - 1), number);
         } else return [string, number];
+    }
+
+    // call this method when removing objects from the scene tree
+    onDelete() {
+        this.stateFunctions.deregisterName(this.name);
+        for (const child of this.getUrdfObjectChildren()) {
+            child.onDelete();
+        }
     }
 
     //Add STL to the urdfObject

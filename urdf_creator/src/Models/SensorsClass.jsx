@@ -12,6 +12,25 @@ export class Sensor {
     }
 }
 
+export function sensorCreator(sensor) {
+    let newSensor;
+    switch (sensor.type) {
+        case "imu":
+            newSensor = new IMU(sensor);
+            break;
+        case "camera":
+            newSensor = new Camera(sensor);
+            break;
+        case "lidar":
+            newSensor = new Lidar(sensor);
+            break;
+        default:
+            newSensor = new Sensor(sensor.type);
+            break;
+    }
+    return newSensor;
+}
+
 
 export class IMU extends Sensor{
     constructor({

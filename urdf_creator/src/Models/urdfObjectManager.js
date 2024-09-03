@@ -3,6 +3,7 @@ import Joint from "./Joint";
 import urdfObject from "./urdfObject";
 import Inertia from "./Inertia";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass";
+import { sensorCreator } from "./SensorsClass";
 import Axis from "./Axis";
 import * as THREE from "three";
 import Mesh from "./Mesh";
@@ -69,7 +70,6 @@ export default class urdfObjectManager {
     }
 
     cloneUrdfObject(urdfObject) {
-        console.log("clone", urdfObject);
         const link = urdfObject.link.clone();
         const joint = urdfObject.joint.clone();
         const axis = urdfObject.axis.clone();
@@ -152,7 +152,6 @@ export default class urdfObjectManager {
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
         const joint = new Joint(Object.values(jointOrigin), jointType, jointMin, jointMax);
-        console.log(axisRotation);
         const axis = new Axis(jointType, Object.values(axisRotation).slice(1, 4));
         axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
@@ -160,10 +159,8 @@ export default class urdfObjectManager {
         const urdfobject = new urdfObject(this.stateFunctions, name, Object.values(position), Object.values(rotation).slice(1, 4));
 
         // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
-        const newSensor = new Sensor();
-        console.log("sensor clone");
-        newSensor.clone();
-        urdfobject.sensor = newSensor;
+        urdfobject.sensor = sensorCreator(sensor);
+        console.log(urdfobject.sensor);
 
         link.mesh = mesh;
         link.add(mesh);
