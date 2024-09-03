@@ -6,7 +6,8 @@ const ProjectDisplayer = ({ handleProjectClick, onClose }) => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [projects, setProjects] = useState([
       { title: 'New Project', description: 'Create a new URDF Project', image:'/statics/PlusIcon.jpg', width: '200', height: '200' },
-      { title: 'R2D2', description: 'A legend among bots', path: '/statics/R2D2.gltf', image: '/statics/r2d2.png', width: '200', height: '200' },
+      { title: 'Turtlebot3 Burger', description: 'Turtlebot Designed by ROBOTIS', path: '/statics/turtlebot3_burger.gltf', image: '/statics/turtlebot3_burger.png', width: '200', height: '200' },
+      { title: 'Fun Robot', description: 'Test out the functionality of ROS2', path: '/statics/green_robot.gltf', image: '/statics/green_robot.png', width: '200', height: '200' },
       { title: 'OldMain', description: 'Haha we go to college here', image:'/statics/oldmain.jpg', width: '200', height: '200' },
       // Add more projects
     ]);
