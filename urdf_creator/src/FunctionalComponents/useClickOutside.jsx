@@ -10,7 +10,7 @@ export default function useClickOutside(ref, action) {
        */
       function handleClickOutside(event) {
         if (ref.current && !ref.current.contains(event.target)) {
-          action();
+          action(event);
         }
       }
       // Bind the event listener
