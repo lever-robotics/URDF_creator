@@ -16,6 +16,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
         height: "100%",
         width: "100%",
         flexGrow: 1,
+
     };
     const [copied, setCopied] = useState(false);
     const [mousePosition, setMousePosition] = useState({});

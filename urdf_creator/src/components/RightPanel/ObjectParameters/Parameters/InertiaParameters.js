@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Inertia from "../../../../Models/Inertia";
 import Parameter from "./Parameter";
 import Section from "../Section";
+import "../ObjectParameters.css"
 import { handleDownload } from "../../../../utils/HandleDownload";
 
 function InertiaParameters({ selectedObject, stateFunctions }) {

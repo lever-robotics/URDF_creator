@@ -31,6 +31,12 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
         }
     };
 
+    const closeModal = (e) => {
+        if ((buttonRef.current && !buttonRef.current.contains(e.target))) {
+            setIsModalOpen(false);
+        }
+    }
+
     return (
         <>
             <button className="menu-icon-button" onClick={handleClick} ref={buttonRef}>
@@ -38,7 +44,7 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
             </button>
             {isModalOpen && <MenuModal
             isOpen={isModalOpen}
-            onClose={handleClick}
+            onClose={closeModal}
             menuItems={menuItems}
             buttonRef={buttonRef}
             />}
