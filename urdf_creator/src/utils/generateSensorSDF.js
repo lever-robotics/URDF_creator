@@ -121,7 +121,7 @@ const generateCameraPluginXML = (selectedObject) => {
 };
 
 const generateLidarPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject;
+    const { sensor, name } = selectedObject;
     const { type, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     return `
@@ -155,7 +155,7 @@ const generateLidarPluginXML = (selectedObject) => {
                 <remapping>~/out:=scan</remapping>
             </ros>
             <output_type>sensor_msgs/LaserScan</output_type>
-            <frame_name>base_scan</frame_name>
+            <frame_name>${name}</frame_name>
         </plugin>
     </sensor>
 `;

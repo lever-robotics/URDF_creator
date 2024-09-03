@@ -7,6 +7,12 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene, projectTitle) => {
     let xml = `<sdf version="1.6">\n`;
+    let pub_joint_states = `    <plugin name="turtlebot3_joint_state" filename="libgazebo_ros_joint_state_publisher.so">\n`;
+    // plugin for publishing joint states from gazebo
+    pub_joint_states += `        <ros>\n`;
+    pub_joint_states += `            <remapping>~/out:=/joint_states</remapping>\n`;
+    pub_joint_states += `        </ros>\n`;
+    pub_joint_states += `        <update_rate>5</update_rate>\n`;
     if (scene === undefined) {
         xml += `</sdf>`;
         return xml;
@@ -55,7 +61,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${node.mesh.scale.x} ${node.mesh.scale.z} ${node.mesh.scale.y}`;
+                const size = `${node.mesh.scale.x} ${node.mesh.scale.y} ${node.mesh.scale.z}`;
                 geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
                 geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "SphereGeometry") {
@@ -64,7 +70,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.mesh.scale.y;
+                const height = node.mesh.scale.z;
                 geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
                 geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
             }
@@ -98,7 +104,15 @@ export const ScenetoSDF = (scene, projectTitle) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.jointType}">\n`;
+                let jointType = node.jointType;
+                if (jointType === "continuous") {
+                    jointType = "revolute";
+                }
+                if (geometryType === "SphereGeometry") {
+                    jointType = "ball";
+                }
+
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${jointType}">\n`;
 
                 // because urdf is dumb, children links are connected to parent joints, not parent meshes
                 // this code accounts for that and sets the joint origin in relation to the parent's joint origin
@@ -115,13 +129,13 @@ export const ScenetoSDF = (scene, projectTitle) => {
 
                 xml += `    <parent>${parentName}</parent>\n`;
                 xml += `    <child>${linkName}</child>\n`;
-                if (node.joint.type !== "fixed") {
+                if (node.jointType !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
                     const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis>\n`;
                     xml += `        <xyz expressed_in='${linkName}'>${formatVector(newAxis)}</xyz>\n`;
-                    if (node.joint.type !== "continuous") {
+                    if (node.jointType === "revolute") {
                         xml += `        <limit>`;
                         xml += `            <lower>${node.joint.min}</lower>`;
                         xml += `            <upper>${node.joint.max}</upper>`;
@@ -132,6 +146,10 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 xml += `  </joint>\n`;
             }
 
+            // create code to add the joint states that should be published by Gazebo
+            if (node.jointType !== "fixed")
+                pub_joint_states += `       <joint_name>${parentName}_to_${linkName}</joint_name>\n`;
+
             // Recursively process children with the correct parent name
             node.getUrdfObjectChildren().forEach((child) => processNode(child, linkName));
         }
@@ -140,6 +158,9 @@ export const ScenetoSDF = (scene, projectTitle) => {
     // Find the base node and start processing
     const baseLink = findBaseLink(scene);
     if (baseLink) processNode(baseLink);
+
+    pub_joint_states += `    </plugin>\n`;
+    xml += pub_joint_states;
 
     // Close model and sdf tags
     xml += `</model>\n`;
