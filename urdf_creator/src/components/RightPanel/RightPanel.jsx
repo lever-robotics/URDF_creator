@@ -17,15 +17,7 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
     };
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                maxHeight: "100%",
-                flexGrow: 1,
-                flexBasis: 0,
-            }}
-        >
+        <div className="right-panel">
             <div className="toolbar">
                 <button className={selectedFormat === "Parameters" ? "selected" : "toolbar-button"} onClick={handleClick}>
                     Parameters

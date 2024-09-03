@@ -1,8 +1,9 @@
 .code-container {
     position: relative;
-    width: 90%;
-    height: 90%;
-    overflow: "auto";
+    overflow: auto;
+    height: 100%;
+    overflow: hidden;
+    border: solid white 4px;
 }
 
 .code-container:hover {

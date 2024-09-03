@@ -6,7 +6,7 @@
     overflow: auto;
     flex-grow: 1;
     flex-basis: 0;
-    min-height: 40vh;
+    height: 100%;
     background-color: #24343f;
 }
 
