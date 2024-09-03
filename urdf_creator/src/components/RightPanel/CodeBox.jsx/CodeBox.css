@@ -16,5 +16,4 @@
     color: white;
     border-radius: 5px;
     pointer-events: none; /* So it doesn't interfere with other mouse events */
-    transform: translate(-50%, -50%);
 }
