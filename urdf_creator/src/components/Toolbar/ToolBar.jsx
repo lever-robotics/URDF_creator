@@ -1,3 +1,6 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRotateLeft, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+
 const Toolbar = ({ selectedObject, stateFunctions }) => {
 
     const handleClick = (e) => {
@@ -12,6 +15,12 @@ const Toolbar = ({ selectedObject, stateFunctions }) => {
             style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }}
             className="row-space-between">
             <div className="row-spaced">
+                <button onClick={stateFunctions.popUndo}>
+                    <FontAwesomeIcon icon={faRotateLeft}/>
+                </button>
+                <button onClick={stateFunctions.popRedo}>
+                    <FontAwesomeIcon icon={faRotateRight}/>
+                </button>
                 <button
                     className={tool === "translate" ? "button_selected" : ""}
                     onClick={handleClick}>
