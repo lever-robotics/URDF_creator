@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CodeBox from "./CodeBox.jsx/CodeBox";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
-import Tooltip from "../../FunctionalComponents/Tooltip";
 
 /**
  * @param {Scene} scene
