@@ -58,6 +58,7 @@ button {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+button.hover,
 button:hover {
     border-color: #646cff;
 }

@@ -10,6 +10,12 @@ export default function AllClickButton({
     onMouseEnter = () => {},
     onMouseLeave = () => {},
     onMouseUp = () => {},
+    onDrag = () => {},
+    onDragStart = () => {},
+    onDragEnd = () => {},
+    onDragEnter = () => {},
+    onDragLeave = () => {},
+    draggable = false,
     children,
 }) {
     let clicks = useRef(0);
@@ -55,7 +61,20 @@ export default function AllClickButton({
     }
 
     return (
-        <button onMouseDown={handleDown} onMouseUp={handleUp} onContextMenu={onContextMenu} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={className}>
+        <button
+            className={className}
+            onMouseDown={handleDown}
+            onMouseUp={handleUp}
+            onContextMenu={onContextMenu}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            draggable={draggable}
+            onDrag={onDrag}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onDragEnter={onDragEnter}
+            onDragLeave={onDragLeave}
+        >
             {children}
         </button>
     );

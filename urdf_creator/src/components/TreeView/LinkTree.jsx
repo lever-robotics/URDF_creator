@@ -1,7 +1,6 @@
 import AllClickButton from "../../FunctionalComponents/AllClickButton";
-import Tooltip from "../../FunctionalComponents/Tooltip";
 import { ObjectContextMenu } from "./ObjectContextMenu";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 // RecursiveTreeView Component
 export function LinkTree({ selectedObject, stateFunctions }) {
@@ -11,9 +10,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
     });
     const [contextMenuVisible, setContextMenuVisible] = useState(false);
     const [draggedButton, setDraggedButton] = useState(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-    const hoveredButton = useRef(null);
+    const [hoveredButton, setHoveredButton] = useState(null);
 
     const handleContextMenu = (e, node) => {
         e.preventDefault();
@@ -27,7 +24,6 @@ export function LinkTree({ selectedObject, stateFunctions }) {
 
     const onMouseLeave = () => {
         setContextMenuVisible(false);
-        setDraggedButton(null);
     };
 
     const onClick = () => {
@@ -36,16 +32,15 @@ export function LinkTree({ selectedObject, stateFunctions }) {
 
     const baseLink = stateFunctions.getBaseLink();
 
-    const handleMouseMove = (e) => {
-        setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
     // put the button that is dragged as the child of the hovered button
-    const handleMouseUp = (e) => {
-        if (hoveredButton.current && draggedButton) {
-            if (draggedButton !== hoveredButton.current && !isAncestor(draggedButton, hoveredButton.current)) {
-                stateFunctions.reparentObject(hoveredButton.current, draggedButton);
+    const dropButton = (e) => {
+        console.log("dropping the button");
+        console.log(hoveredButton, draggedButton);
+        if (hoveredButton && draggedButton) {
+            if (draggedButton !== hoveredButton && !isAncestor(draggedButton, hoveredButton)) {
+                stateFunctions.reparentObject(hoveredButton, draggedButton);
                 stateFunctions.selectObject(draggedButton);
+                setHoveredButton(null);
             }
         }
         setDraggedButton(null);
@@ -58,7 +53,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
     };
 
     return (
-        <div className="object-tree" onClick={onClick} onMouseLeave={onMouseLeave} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+        <div className="object-tree" onClick={onClick} onMouseLeave={onMouseLeave}>
             Link Tree
             <div className="scroll-box">
                 {baseLink && (
@@ -69,6 +64,8 @@ export function LinkTree({ selectedObject, stateFunctions }) {
                         stateFunctions={stateFunctions}
                         setDraggedButton={setDraggedButton}
                         hoveredButton={hoveredButton}
+                        setHoveredButton={setHoveredButton}
+                        dropButton={dropButton}
                     />
                 )}
             </div>
@@ -80,12 +77,11 @@ export function LinkTree({ selectedObject, stateFunctions }) {
                     stateFunctions={stateFunctions}
                 />
             )}
-            {draggedButton && <Tooltip mousePosition={mousePos}>{draggedButton.name}</Tooltip>}
         </div>
     );
 }
 
-function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDraggedButton, hoveredButton }) {
+function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDraggedButton, hoveredButton, setHoveredButton, dropButton }) {
     if (!node) {
         return null;
     }
@@ -100,7 +96,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
         <div style={{ marginLeft: "20px" }}>
             {
                 <AllClickButton
-                    className={`tree-item ${isSelected ? "button_selected" : "button_unselected"}`}
+                    className={`tree-item ${isSelected ? "button_selected" : "button_unselected"} ${hoveredButton === node ? "hover" : ""}`}
                     onClick={() => {
                         stateFunctions.selectObject(node);
                     }}
@@ -108,20 +104,24 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                         //put renaming functionality here
                         stateFunctions.selectObject(node);
                     }}
-                    onMouseEnter={() => {
-                        hoveredButton.current = node;
+                    onDragEnter={() => {
+                        setHoveredButton(node);
+                        console.log("being dragged over hehe");
                     }}
-                    onMouseLeave={() => {
-                        if (hoveredButton.current === node) {
-                            hoveredButton.current = null;
+                    onDragLeave={(e) => {
+                        if (hoveredButton.current === node && e.relatedTarget) {
+                            setHoveredButton(null);
+                            console.log("drag leaving");
                         }
                     }}
-                    onLongClick={() => {
+                    onDragStart={() => {
                         if (!node.isBaseLink) setDraggedButton(node);
                     }}
+                    onDragEnd={dropButton}
                     onContextMenu={(e) => {
                         handleContextMenu(e, node);
                     }}
+                    draggable={true}
                 >
                     {name}
                 </AllClickButton>
@@ -136,6 +136,8 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                             stateFunctions={stateFunctions}
                             setDraggedButton={setDraggedButton}
                             hoveredButton={hoveredButton}
+                            setHoveredButton={setHoveredButton}
+                            dropButton={dropButton}
                         />
                     ))}
                 </>
