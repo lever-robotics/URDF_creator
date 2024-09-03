@@ -402,7 +402,7 @@ export default function SceneState({ threeScene }) {
     const reparentObject = (parent, child) => {
         parent.link.attach(child);
         child.parentURDF = parent;
-        forceSceneUpdate();
+        forceUpdateCode();
     };
 
     const stateFunctions = {
