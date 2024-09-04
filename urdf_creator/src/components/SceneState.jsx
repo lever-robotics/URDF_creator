@@ -236,12 +236,14 @@ export default function SceneState({ threeScene }) {
 
     const startRotateJoint = (urdfObject) => {
         const { current: three } = threeScene;
+        setToolMode("rotate");
         three.transformControls.setMode("rotate");
         urdfObject.rotateJoint(three.transformControls);
     };
 
     const startMoveJoint = (urdfObject) => {
         const { current: three } = threeScene;
+        setToolMode("translate");
         three.transformControls.setMode("translate");
         urdfObject.moveJoint(three.transformControls);
     };
