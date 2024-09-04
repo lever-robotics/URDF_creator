@@ -197,10 +197,10 @@ export default function SceneState({ threeScene }) {
         newUrdfObject.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.link.attach(newUrdfObject);
+            selectedObject.joint.attach(newUrdfObject);
             newUrdfObject.parentURDF = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.link.attach(newUrdfObject);
+            three.baseLink.joint.attach(newUrdfObject);
             newUrdfObject.parentURDF = three.baseLink;
         } else {
             newUrdfObject.position.set(0, 0, 0.5);
@@ -399,10 +399,10 @@ export default function SceneState({ threeScene }) {
     const loadSingleObject = (gltfScene) => {
         const Link = urdfManager.readScene(gltfScene);
         if (selectedObject) {
-            selectedObject.link.attach(Link);
+            selectedObject.joint.attach(Link);
             Link.parentURDF = selectedObject;
         } else if (threeScene.current.baseLink){
-            threeScene.current.baseLink.link.attach(Link);
+            threeScene.current.baseLink.joint.attach(Link);
             Link.parentURDF = threeScene.current.baseLink;
         }
         else {
@@ -436,10 +436,10 @@ export default function SceneState({ threeScene }) {
 
         if (urdfObject.isBaseLink) {
             clone.parentURDF = urdfObject;
-            urdfObject.link.attach(clone);
+            urdfObject.joint.attach(clone);
         } else {
             clone.parentURDF = urdfObject.parentURDF;
-            urdfObject.parentURDF.link.add(clone);
+            urdfObject.parentURDF.joint.add(clone);
         }
         selectObject(clone);
         forceSceneUpdate();
@@ -541,7 +541,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const reparentObject = (parent, child) => {
-        parent.link.attach(child);
+        parent.joint.attach(child);
         child.parentURDF = parent;
         forceUpdateCode();
     };

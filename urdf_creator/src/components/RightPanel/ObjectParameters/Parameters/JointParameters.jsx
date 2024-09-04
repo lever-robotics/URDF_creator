@@ -100,7 +100,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                             Change Axis Angle
                         </button>
                         <button onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
-                            Change Axis Origin
+                            Change Link Offset
                         </button>
                         <ul>
                             <Parameter

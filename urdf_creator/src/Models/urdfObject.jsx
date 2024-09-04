@@ -46,7 +46,7 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     getUrdfObjectChildren = () => {
-        return this.link.children.filter((child) => child instanceof urdfObject);
+        return this.joint.children.filter((child) => child instanceof urdfObject);
     };
 
     get parentName() {
@@ -337,12 +337,12 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     moveJoint(transformControls) {
-        this.parent.attach(this.link);
-        transformControls.attach(this);
+        // this.parent.attach(this.link);
+        transformControls.attach(this.link);
     }
 
     reattachLink() {
-        this.joint.attach(this.link);
+        // this.joint.attach(this.link);
         this.attach(this.axis);
     }
 

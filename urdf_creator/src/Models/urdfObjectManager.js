@@ -103,7 +103,7 @@ export default class urdfObjectManager {
 
         for (const child of children) {
             const cloneChild = this.cloneUrdfObject(child);
-            clone.link.add(cloneChild);
+            clone.joint.add(cloneChild);
             cloneChild.parentURDF = clone;
         }
 
@@ -195,7 +195,7 @@ export default class urdfObjectManager {
         gltfObject.children.forEach((child) => {
             const newChild = this.readScene(child);
             newChild.parentURDF = newObject;
-            newObject.link.add(newChild);
+            newObject.joint.add(newChild);
         });
 
         return newObject;
