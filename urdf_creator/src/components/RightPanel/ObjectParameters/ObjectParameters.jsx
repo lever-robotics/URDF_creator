@@ -43,12 +43,10 @@ function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }) {
             selectedObject={selectedObject}
             stateFunctions={stateFunctions}
         />
-        {!selectedObject.isBaseLink && (
-            <JointParameters
-                selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
-            />
-        )}
+        <JointParameters
+            selectedObject={selectedObject}
+            stateFunctions={stateFunctions}
+        />
         <SensorsParameters
             selectedObject={selectedObject}
             stateFunctions={stateFunctions}

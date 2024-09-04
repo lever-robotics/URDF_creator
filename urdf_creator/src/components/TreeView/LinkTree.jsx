@@ -94,6 +94,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
         <div style={{ marginLeft: "20px" }}>
             {
                 <AllClickButton
+                    key={node.id}
                     className={`tree-item ${isSelected ? "button_selected" : "button_unselected"} ${hoveredButton === node ? "hover" : ""}`}
                     onClick={() => {
                         stateFunctions.selectObject(node);
@@ -126,6 +127,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                 <>
                     {children.map((child) => (
                         <Node
+                            key={child.id} 
                             node={child}
                             handleContextMenu={handleContextMenu}
                             selectedObject={selectedObject}

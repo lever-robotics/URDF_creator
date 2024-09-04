@@ -128,12 +128,12 @@ export default function SceneState({ threeScene }) {
             return;
         }
 
+        clearScene();
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
 
-        clearScene();
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
@@ -159,11 +159,12 @@ export default function SceneState({ threeScene }) {
             return;
         }
 
+        clearScene();
+
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
 
-        clearScene();
 
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
@@ -178,6 +179,7 @@ export default function SceneState({ threeScene }) {
         if (three.baseLink === null) return;
         three.baseLink.removeFromParent();
         three.baseLink = null;
+        objectNames.current.length = 0;
         selectObject(null);
     };
 
@@ -221,7 +223,6 @@ export default function SceneState({ threeScene }) {
         if (three.transformControls) {
             three.transformControls.setMode(mode);
             setToolMode(mode);
-            console.log("this is the new mode", mode);
         }
 
         if (selectedObject) {
@@ -235,12 +236,14 @@ export default function SceneState({ threeScene }) {
 
     const startRotateJoint = (urdfObject) => {
         const { current: three } = threeScene;
+        setToolMode("rotate");
         three.transformControls.setMode("rotate");
         urdfObject.rotateJoint(three.transformControls);
     };
 
     const startMoveJoint = (urdfObject) => {
         const { current: three } = threeScene;
+        setToolMode("translate");
         three.transformControls.setMode("translate");
         urdfObject.moveJoint(three.transformControls);
     };
@@ -252,7 +255,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const selectObject = (urdfObject) => {
-        console.log(urdfObject)
         const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
@@ -298,12 +300,12 @@ export default function SceneState({ threeScene }) {
     };
 
     const setLinkName = (urdfObject, name) => {
-        // remove name from registry
+        // remove old name from registry
         deregisterName(urdfObject.name);
 
         //add the new name
-        registerName(name);
         urdfObject.name = name;
+        urdfManager.registerName(urdfObject);
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -339,7 +341,13 @@ export default function SceneState({ threeScene }) {
     };
 
     const setJointMinMax = (urdfObject, type, value) => {
-        urdfObject[type] = value;
+        if(type === "both"){
+            console.log(value);
+            urdfObject.min = - value;
+            urdfObject.max = value;
+        }else{
+            urdfObject[type] = value;
+        }
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -347,19 +355,16 @@ export default function SceneState({ threeScene }) {
     const setJointValue = (urdfObject, value) => {
         urdfObject.jointValue = value;
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const rotateAroundJointAxis = (urdfObject, angle) => {
         urdfObject.rotateAroundJointAxis(angle);
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const translateAlongJointAxis = (urdfObject, distance) => {
         urdfObject.translateAlongJointAxis(distance);
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const saveForDisplayChanges = (urdfObject) => {
@@ -415,6 +420,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceUpdateCode = () => {
+        console.log("force update code");
         pushUndo();
         redo.current = [];
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
@@ -448,7 +454,7 @@ export default function SceneState({ threeScene }) {
         }
         selectObject();
         urdfObject.removeFromParent();
-        urdfObject.onDelete();
+        deregisterName(urdfObject.name);
         forceSceneUpdate();
     };
 
@@ -505,7 +511,6 @@ export default function SceneState({ threeScene }) {
 
     const handleProjectClick = async (projectPath, title) => {
         clearScene();
-        console.log("handle project")
         const group = await handleProject(process.env.PUBLIC_URL + projectPath);
         const baseLink = group.scene.children[0];
         loadScene(baseLink);

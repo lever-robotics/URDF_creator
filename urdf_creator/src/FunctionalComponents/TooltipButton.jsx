@@ -33,7 +33,7 @@ export default function TooltipButton({ active = false, content = "", anchorPosi
 
     return (
         <>
-            <button className={active ? "active" : ""} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} Id={label}>
+            <button className={active ? "active" : ""} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} id={label}>
                 {children}
             </button>
             {showTooltip && content && (
