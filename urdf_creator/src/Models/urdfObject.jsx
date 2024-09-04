@@ -10,6 +10,7 @@ export default class urdfObject extends THREE.Object3D {
         this.rotation.set(...rotation);
         
         this.urdfObject = true;
+        this.isUrdfObject = true;
         this.isBaseLink = false;
         this.selectable = true;
         this.stlfile = null;
