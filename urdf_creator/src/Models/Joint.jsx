@@ -24,14 +24,16 @@ export default class Joint extends THREE.Object3D {
         switch (type) {
             case "fixed":
                 break;
+            case "revolute":
             case "prismatic":
                 this._min = -1;
                 this._max = 1;
+                this.value = 0;
                 break;
-            case "revolute":
             case "continuous":
                 this._min = -3.14;
                 this._max = 3.14;
+                this.value = 0;
                 break;
             default:
                 break;

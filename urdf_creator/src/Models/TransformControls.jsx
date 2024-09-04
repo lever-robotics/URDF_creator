@@ -446,7 +446,9 @@ class TransformControls extends Object3D {
             _mouseUpEvent.mode = this.mode;
             this.dispatchEvent(_mouseUpEvent);
         }
-
+        if(this.object){
+            this.stateFunctions.reattachLink(this.object);
+        }
         this.stateFunctions.forceUpdateCode();
         //
 

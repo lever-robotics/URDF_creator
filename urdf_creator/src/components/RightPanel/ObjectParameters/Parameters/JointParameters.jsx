@@ -13,16 +13,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
 
     const handleJointTypeChange = (e) => {
         const value = e.target.value;
-        // reset joint needs to go here, it changes e.target.value to 0 which isn't a joint type lol
-        resetJoint(e);
         stateFunctions.setJointType(selectedObject, value);
-        if (value === "continuous") {
-            handleMinValueChange(-3.14);
-            handleMaxValueChange(3.14);
-        } else {
-            handleMinValueChange(-1);
-            handleMaxValueChange(1);
-        }
     };
 
     const toFloat = (value) => {
@@ -106,52 +97,50 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                     <button onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
                         Change Axis Origin
                     </button>
-                    {selectedObject.jointType !== "continuous" && (
-                        <ul>
-                            <Parameter
-                                title="Min:"
-                                size="small"
-                                value={minInput}
-                                onChange={(e) => {
-                                    setMinInput(e.target.value);
-                                }}
-                                onBlur={(e) => {
-                                    handleMinValueChange(e.target.value);
-                                }}
-                                onKeyPress={(e) => {
-                                    if (e.key === "Enter") handleMinValueChange(e.target.value);
-                                }}
-                            />
-                            <Parameter
-                                title="Max:"
-                                size="small"
-                                value={maxInput}
-                                onChange={(e) => {
-                                    setMaxInput(e.target.value);
-                                }}
-                                onBlur={(e) => {
-                                    handleMaxValueChange(e.target.value);
-                                }}
-                                onKeyPress={(e) => {
-                                    if (e.key === "Enter") handleMaxValueChange(e.target.value);
-                                }}
-                            />
-                            <Parameter
-                                title="Value:"
-                                size="small"
-                                value={jointInput}
-                                onChange={(e) => {
-                                    setJointInput(e.target.value);
-                                }}
-                                onBlur={(e) => {
-                                    handleJointValueChange(e.target.value);
-                                }}
-                                onKeyPress={(e) => {
-                                    if (e.key === "Enter") handleJointValueChange(e.target.value);
-                                }}
-                            />
-                        </ul>
-                    )}
+                    <ul>
+                        <Parameter
+                            title="Min:"
+                            size="small"
+                            value={minInput}
+                            onChange={(e) => {
+                                setMinInput(e.target.value);
+                            }}
+                            onBlur={(e) => {
+                                handleMinValueChange(e.target.value);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") handleMinValueChange(e.target.value);
+                            }}
+                        />
+                        <Parameter
+                            title="Max:"
+                            size="small"
+                            value={maxInput}
+                            onChange={(e) => {
+                                setMaxInput(e.target.value);
+                            }}
+                            onBlur={(e) => {
+                                handleMaxValueChange(e.target.value);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") handleMaxValueChange(e.target.value);
+                            }}
+                        />
+                        <Parameter
+                            title="Value:"
+                            size="small"
+                            value={jointInput}
+                            onChange={(e) => {
+                                setJointInput(e.target.value);
+                            }}
+                            onBlur={(e) => {
+                                handleJointValueChange(e.target.value);
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") handleJointValueChange(e.target.value);
+                            }}
+                        />
+                    </ul>
                     <button onClick={resetJoint}>Reset</button>
                     <Slider
                         value={jointValue}
@@ -163,6 +152,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                         onChange={(e) => {
                             handleJointValueChange(e.target.value);
                         }}
+                        onBlur={stateFunctions.forceUpdateCode}
                     />
                 </>
             )}

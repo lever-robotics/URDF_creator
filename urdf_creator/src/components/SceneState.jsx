@@ -128,12 +128,12 @@ export default function SceneState({ threeScene }) {
             return;
         }
 
+        clearScene();
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
 
-        clearScene();
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
@@ -159,11 +159,12 @@ export default function SceneState({ threeScene }) {
             return;
         }
 
+        clearScene();
+
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
 
-        clearScene();
 
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
@@ -338,7 +339,13 @@ export default function SceneState({ threeScene }) {
     };
 
     const setJointMinMax = (urdfObject, type, value) => {
-        urdfObject[type] = value;
+        if(type === "both"){
+            console.log(value);
+            urdfObject.min = - value;
+            urdfObject.max = value;
+        }else{
+            urdfObject[type] = value;
+        }
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -346,19 +353,16 @@ export default function SceneState({ threeScene }) {
     const setJointValue = (urdfObject, value) => {
         urdfObject.jointValue = value;
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const rotateAroundJointAxis = (urdfObject, angle) => {
         urdfObject.rotateAroundJointAxis(angle);
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const translateAlongJointAxis = (urdfObject, distance) => {
         urdfObject.translateAlongJointAxis(distance);
         forceSceneUpdate();
-        forceUpdateCode();
     };
 
     const saveForDisplayChanges = (urdfObject) => {
@@ -414,6 +418,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceUpdateCode = () => {
+        console.log("force update code");
         pushUndo();
         redo.current = [];
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
