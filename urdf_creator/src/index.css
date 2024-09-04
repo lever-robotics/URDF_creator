@@ -55,7 +55,7 @@ button {
 
 /* For when the button is the currently used item */
 .button_selected {
-    outline: 4px auto -webkit-focus-ring-color;
+    outline: 4px auto -webkit-focus-ring-color !important;
 }
 
 button.hover,

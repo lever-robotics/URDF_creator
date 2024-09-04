@@ -8,14 +8,17 @@ export default class urdfObject extends THREE.Object3D {
 
         this.position.set(...origin);
         this.rotation.set(...rotation);
-
-        this.name = name;
+        
         this.urdfObject = true;
         this.isBaseLink = false;
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
         this.stateFunctions = stateFunctions;
+        if (stateFunctions.doesLinkNameExist(name)) {
+            name += this.makeid(4)
+        }
+        this.name = name;
     }
 
     /**
@@ -29,6 +32,18 @@ export default class urdfObject extends THREE.Object3D {
      *
      *
      **/
+
+     makeid(length) {
+        let result = '';
+        const characters = '0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        return result;
+    }
 
     getUrdfObjectChildren = () => {
         return this.link.children.filter((child) => child instanceof urdfObject);

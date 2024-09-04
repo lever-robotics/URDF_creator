@@ -252,6 +252,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const selectObject = (urdfObject) => {
+        console.log(urdfObject)
         const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
@@ -393,8 +394,13 @@ export default function SceneState({ threeScene }) {
     const loadSingleObject = (gltfScene) => {
         const Link = urdfManager.readScene(gltfScene);
         if (selectedObject) {
-            selectedObject.attach(Link);
-        } else {
+            selectedObject.link.attach(Link);
+            Link.parentURDF = selectedObject;
+        } else if (threeScene.current.baseLink){
+            threeScene.current.baseLink.link.attach(Link);
+            Link.parentURDF = threeScene.current.baseLink;
+        }
+        else {
             const { current: three } = threeScene;
             three.scene.attach(Link);
             three.baseLink = Link;
