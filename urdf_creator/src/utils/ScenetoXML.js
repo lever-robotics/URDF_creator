@@ -26,23 +26,25 @@ export const ScenetoXML = (scene, projectTitle) => {
         if (node instanceof urdfObject) {
             const linkName = generateLinkName(node);
             linkIndex += 1;
-            // debugger;
-            let offset = formatVector(node.link.position);
-            let rotation = quaternionToRPY(node.quaternion);
-            let linkRotation = "0 0 0";
-
-            if (node.isBaseLink) {
-                offset = formatVector(node.position);
-                linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.parentURDF.isBaseLink) {
-                const quaternion = new THREE.Quaternion();
-                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parentURDF.quaternion, node.quaternion));
-            }
+            let offset = formatVector(node.offset);
+            let rotation = quaternionToRPY(node.jointAxisQuaternion);
+            const joint_position = formatVector(node.position.clone().sub(node.offset)); // position of the link minus the offset
+            const joint_rotation = quaternionToRPY(new THREE.Quaternion().multiplyQuaternions(node.jointAxisQuaternion, node.quaternion)); // rotation of the link minus the offset
+            
+            const link_position = formatVector(node.offset.clone());
+            const jointAxisQuaternion = new THREE.Quaternion().copy(node.jointAxisQuaternion);
+            const inverseJointAxisQuaternion = jointAxisQuaternion.invert();
+            const link_rotation = quaternionToRPY(inverseJointAxisQuaternion);
+            debugger;
+            // if (node.parentURDF.isBaseLink) {
+            //     const quaternion = new THREE.Quaternion();
+            //     rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parentURDF.quaternion, node.quaternion));
+            // }
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
             xml += `    <visual>\n`;
-            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
+            xml += `      <origin xyz="${link_position}" rpy="${link_rotation}" />\n`;
 
             // Geometry
             const geometryType = node.mesh.geometry.type;
@@ -73,7 +75,7 @@ export const ScenetoXML = (scene, projectTitle) => {
 
             // Add collision element with the same geometry
             xml += `    <collision>\n`;
-            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
+            xml += `      <origin xyz="${link_position}" rpy="${link_rotation}" />\n`;
             xml += geometryXML;
             xml += `    </collision>\n`;
 
@@ -81,7 +83,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             const mass = node.inertia.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia;
             xml += `    <inertial>\n`;
-            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
+            xml += `      <origin xyz="${link_position}" rpy="${link_rotation}" />\n`;
             xml += `      <mass value="${mass}" />\n`;
             xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
@@ -96,7 +98,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `  </link>\n`;
 
             // Add joint if there's a parent link
-            if (parentName) {
+            if (parentName !== "base_footprint") {
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
@@ -106,13 +108,13 @@ export const ScenetoXML = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parentURDF.link.position);
+                originInRelationToParentsJoint.add(node.parentURDF.position);
 
                 if (node.parentURDF.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 
-                xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
+                xml += `    <origin xyz="${joint_position}" rpy="${joint_rotation}" />\n`;
                 if (node.joint.type !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.axis.rotation);
@@ -132,7 +134,20 @@ export const ScenetoXML = (scene, projectTitle) => {
 
     // Find the base node and start processing
     const baseLink = findBaseLink(scene);
-    if (baseLink) processNode(baseLink);
+
+    debugger;
+    const base_joint_position = formatVector(baseLink.position);
+    const base_joint_rotation = quaternionToRPY(baseLink.quaternion); // rotation of the base link minus the offset
+
+    xml += `  <link name="base_footprint"/>\n`;
+
+    xml += `  <joint name="base_joint" type="fixed">\n`;
+    xml += `    <parent link="base_footprint"/>\n`;
+    xml += `    <child link="base_link"/>\n`;
+    xml += `    <origin xyz="${base_joint_position}" rpy="${base_joint_rotation}" />\n`;
+    xml += `  </joint>\n`;
+
+    if (baseLink) processNode(baseLink, "base_footprint");
 
     // Close robot tag
     xml += `</robot>`;

@@ -99,6 +99,14 @@ export default class urdfObject extends THREE.Object3D {
         this.link.position.set(...values);
     }
 
+    get jointAxisRotation() {
+        return this.axis.rotation;
+    }
+
+    get jointAxisQuaternion() {
+        return this.axis.quaternion;
+    }
+
     set mass(mass) {
         this.inertia.updateMass(mass, this);
     }
