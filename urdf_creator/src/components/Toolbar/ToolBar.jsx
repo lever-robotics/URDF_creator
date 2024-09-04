@@ -9,7 +9,6 @@ const Toolbar = ({ selectedObject, stateFunctions, toolMode }) => {
         stateFunctions.setTransformMode(selectedObject, mode);
     };
 
-    console.log(toolMode);
 
     return (
         <div style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }} className="row-space-between">
