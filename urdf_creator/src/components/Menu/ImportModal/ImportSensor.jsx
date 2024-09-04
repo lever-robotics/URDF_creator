@@ -4,6 +4,8 @@ import './Import.css';
 // Define the list of .gltf file names (without extensions)
 const fileNames = [
     { fileName: 'realsense', displayName: 'RealSense' },
+    { fileName: 'rsplidar', displayName: 'RPLidar' },
+    { fileName: 'imu_sensor', displayName: 'IMU Sensor' },
     // Add more file names as needed
 ];
 
