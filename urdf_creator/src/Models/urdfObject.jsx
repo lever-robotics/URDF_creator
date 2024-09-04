@@ -91,6 +91,14 @@ export default class urdfObject extends THREE.Object3D {
         this.joint.value = value;
     }
 
+    get offset() {
+        return this.link.position;
+    }
+
+    set offset(values) {
+        this.link.position.set(...values);
+    }
+
     set mass(mass) {
         this.inertia.updateMass(mass, this);
     }
