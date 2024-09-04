@@ -3,7 +3,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class urdfObject extends THREE.Object3D {
-    constructor(stateFunctions, name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
+    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
         super();
 
         this.position.set(...origin);
@@ -14,10 +14,9 @@ export default class urdfObject extends THREE.Object3D {
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
-        this.stateFunctions = stateFunctions;
-        if (stateFunctions.doesLinkNameExist(name)) {
-            name += this.makeid(4)
-        }
+        // if (stateFunctions.doesLinkNameExist(name)) {
+        //     name += this.makeid(4)
+        // }
         this.name = name;
     }
 
@@ -339,41 +338,7 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     clone() {
-        let [name, suffix] = this.extractNumberFromString(this.name);
-        [name, suffix] = this.incrementName(name, suffix);
-        return new urdfObject(this.stateFunctions, name + suffix, this.position, this.rotation);
-    }
-
-    incrementName(name, suffix) {
-        const isCopy = name.endsWith("-copy");
-        if (isCopy && suffix) {
-            suffix = (parseInt(suffix) + 1).toString();
-        } else if (isCopy) {
-            suffix = "0";
-        } else {
-            name = name + suffix + "-copy";
-            suffix = "0";
-        }
-        if (this.stateFunctions.doesLinkNameExist(name + suffix)) {
-            return this.incrementName(name, suffix);
-        } else return [name, suffix];
-    }
-
-    extractNumberFromString(string, number = "") {
-        const ending = string.slice(-1);
-        // checks if it is a number
-        if (!isNaN(ending)) {
-            number = ending + number;
-            return this.extractNumberFromString(string.slice(0, string.length - 1), number);
-        } else return [string, number];
-    }
-
-    // call this method when removing objects from the scene tree
-    onDelete() {
-        this.stateFunctions.deregisterName(this.name);
-        for (const child of this.getUrdfObjectChildren()) {
-            child.onDelete();
-        }
+        return new urdfObject(this.name, this.position, this.rotation);
     }
 
     //Add STL to the urdfObject

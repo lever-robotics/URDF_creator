@@ -43,7 +43,9 @@ export default class urdfObjectManager {
         const mesh = new Mesh(shape);
         const inertia = new Inertia();
         const sensor = new Sensor();
-        const urdfobject = new urdfObject(this.stateFunctions, name);
+        const unnamedUrdfobject = new urdfObject(name);
+        const urdfobject = this.registerName(unnamedUrdfobject);
+
 
         link.add(mesh);
 
@@ -76,7 +78,9 @@ export default class urdfObjectManager {
         const mesh = urdfObject.mesh.clone();
         const inertia = urdfObject.inertia.clone();
         const sensor = urdfObject.sensor.clone();
-        const clone = urdfObject.clone();
+
+        const unnamedClone = urdfObject.clone();
+        const clone = this.registerName(unnamedClone);
 
         clone.link = link;
         clone.joint = joint;
@@ -84,8 +88,6 @@ export default class urdfObjectManager {
         clone.mesh = mesh;
         clone.inertia = inertia;
         clone.sensor = sensor;
-
-        clone.stateFunctions = urdfObject.stateFunctions;
 
         joint.add(link);
         link.add(mesh);
@@ -157,7 +159,9 @@ export default class urdfObjectManager {
         axis.type = jointType;
         const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
 
-        const urdfobject = new urdfObject(this.stateFunctions, name, Object.values(position), Object.values(rotation).slice(1, 4));
+        const unnamedUrdfobject = new urdfObject(name, Object.values(position), Object.values(rotation).slice(1, 4));
+        const urdfobject = this.registerName(unnamedUrdfobject);
+
 
         // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
         urdfobject.sensor = sensorCreator(sensor);
@@ -196,4 +200,42 @@ export default class urdfObjectManager {
 
         return newObject;
     }
+
+    registerName(urdfObject){
+        // If the name is not in the array
+        if(this.stateFunctions.registerName(urdfObject.name)){
+            return urdfObject;
+        }else{ //If it's in the array recursivly try to register the name
+            let [name, suffix] = this.extractNumberFromString(urdfObject.name);
+            [name, suffix] = this.incrementName(name, suffix);
+            urdfObject.name = name + suffix;
+            return this.registerName(urdfObject);
+        }
+    }
+
+    incrementName(name, suffix) {
+        const isCopy = name.endsWith("-copy");
+        if (isCopy && suffix) {
+            suffix = (parseInt(suffix) + 1).toString();
+        } else if (isCopy) {
+            suffix = "0";
+        } else {
+            name = name + suffix + "-copy";
+            suffix = "0";
+        }
+        if (this.stateFunctions.doesLinkNameExist(name + suffix)) {
+            return this.incrementName(name, suffix);
+        } else return [name, suffix];
+    }
+
+    extractNumberFromString(string, number = "") {
+        const ending = string.slice(-1);
+        // checks if it is a number
+        if (!isNaN(ending)) {
+            number = ending + number;
+            return this.extractNumberFromString(string.slice(0, string.length - 1), number);
+        } else return [string, number];
+    }
+
+
 }

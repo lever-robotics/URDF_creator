@@ -178,6 +178,7 @@ export default function SceneState({ threeScene }) {
         if (three.baseLink === null) return;
         three.baseLink.removeFromParent();
         three.baseLink = null;
+        objectNames.current.length = 0;
         selectObject(null);
     };
 
@@ -221,7 +222,6 @@ export default function SceneState({ threeScene }) {
         if (three.transformControls) {
             three.transformControls.setMode(mode);
             setToolMode(mode);
-            console.log("this is the new mode", mode);
         }
 
         if (selectedObject) {
@@ -252,7 +252,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const selectObject = (urdfObject) => {
-        console.log(urdfObject)
         const { current: three } = threeScene;
         if (!urdfObject) {
             setSelectedObject(null);
@@ -298,12 +297,12 @@ export default function SceneState({ threeScene }) {
     };
 
     const setLinkName = (urdfObject, name) => {
-        // remove name from registry
+        // remove old name from registry
         deregisterName(urdfObject.name);
 
         //add the new name
-        registerName(name);
         urdfObject.name = name;
+        urdfManager.registerName(urdfObject);
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -448,7 +447,7 @@ export default function SceneState({ threeScene }) {
         }
         selectObject();
         urdfObject.removeFromParent();
-        urdfObject.onDelete();
+        deregisterName(urdfObject.name);
         forceSceneUpdate();
     };
 
@@ -505,7 +504,6 @@ export default function SceneState({ threeScene }) {
 
     const handleProjectClick = async (projectPath, title) => {
         clearScene();
-        console.log("handle project")
         const group = await handleProject(process.env.PUBLIC_URL + projectPath);
         const baseLink = group.scene.children[0];
         loadScene(baseLink);
