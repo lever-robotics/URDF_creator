@@ -452,10 +452,19 @@ export default function SceneState({ threeScene }) {
     const deleteObject = (urdfObject) => {
         const { current: three } = threeScene;
 
+        const deleteChildren = (object) => {
+            object.getUrdfObjectChildren().forEach((child) => {
+                deleteChildren(child);
+                child.removeFromParent();
+                deregisterName(child.name);
+            });
+        };
+
         if (urdfObject.isBaseLink) {
             three.baseLink = null;
         }
         selectObject();
+        deleteChildren(urdfObject);
         urdfObject.removeFromParent();
         deregisterName(urdfObject.name);
         forceSceneUpdate();

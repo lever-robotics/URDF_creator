@@ -7,7 +7,7 @@ import { quaternionToRPY } from "./quaternionToRPY";
 // Helper function to convert Scene to SDF-compatible XML
 export const ScenetoSDF = (scene, projectTitle) => {
     let xml = `<sdf version="1.6">\n`;
-    let pub_joint_states = `    <plugin name="turtlebot3_joint_state" filename="libgazebo_ros_joint_state_publisher.so">\n`;
+    let pub_joint_states = `    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">\n`;
     // plugin for publishing joint states from gazebo
     pub_joint_states += `        <ros>\n`;
     pub_joint_states += `            <remapping>~/out:=/joint_states</remapping>\n`;

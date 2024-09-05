@@ -9,9 +9,9 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(selectedObject.offset.x);
-        setTempY(selectedObject.offset.y);
-        setTempZ(selectedObject.offset.z);
+        setTempX(Math.abs(selectedObject.offset.x) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.x.toFixed(4)));
+        setTempY(Math.abs(selectedObject.offset.y) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.y.toFixed(4)));
+        setTempZ(Math.abs(selectedObject.offset.z) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.z.toFixed(4)));
 
     }, [JSON.stringify(selectedObject.offset)]);
 

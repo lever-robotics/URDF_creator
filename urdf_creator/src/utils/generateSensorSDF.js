@@ -22,7 +22,7 @@ export const generateSensorSDF = (selectedObject) => {
 };
 
 const generateIMUPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject;
+    const { sensor, name } = selectedObject;
     const { type, alwaysOn, updateRate, mean, stddev } = sensor;
 
     return `
@@ -71,9 +71,9 @@ const generateIMUPluginXML = (selectedObject) => {
                 </z>
             </linear_acceleration>
         </imu>
-        <plugin name="turtlebot3_imu" filename="libgazebo_ros_imu_sensor.so">
+        <plugin name="imu_plugin_for_${name.replace("-", "_")}" filename="libgazebo_ros_imu_sensor.so">
             <ros>
-                <remapping>~/out:=imu</remapping>
+                <remapping>~/out:=${name.replace("-", "_")}/imu</remapping>
             </ros>
         </plugin>
     </sensor>
@@ -81,15 +81,15 @@ const generateIMUPluginXML = (selectedObject) => {
 };
 
 const generateCameraPluginXML = (selectedObject) => {
-    const { sensor } = selectedObject;
+    const { sensor, name } = selectedObject;
     const { cameraName, alwaysOn, updateRate, horizontal_fov, width, height, format, near, far, mean, stddev } = sensor;
 
     return `
-    <sensor name="${cameraName}" type="camera">
+    <sensor name="${name.replace("-", "_")}_${cameraName}" type="camera">
         <always_on>${alwaysOn}</always_on>
         <visualize>true</visualize>
         <update_rate>${updateRate}</update_rate>
-        <camera name="picam">
+        <camera name="${name.replace("-", "_")}_camera">
             <horizontal_fov>${horizontal_fov}</horizontal_fov>
             <image>
                 <width>${width}</width>
@@ -106,7 +106,7 @@ const generateCameraPluginXML = (selectedObject) => {
                 <stddev>${stddev}</stddev>
             </noise>
         </camera>
-        <plugin name="camera_driver" filename="libgazebo_ros_camera.so">
+        <plugin name="camera_driver_for_${name.replace("-", "_")}" filename="libgazebo_ros_camera.so">
             <ros>
                 <!-- <namespace>test_cam</namespace> -->
                 <!-- <remapping>image_raw:=image_demo</remapping> -->
@@ -125,7 +125,7 @@ const generateLidarPluginXML = (selectedObject) => {
     const { type, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
 
     return `
-    <sensor name="${type}" type="ray">
+    <sensor name="${name.replace("-", "_")}_${type}" type="ray">
         <always_on>${alwaysOn}</always_on>
         <visualize>true</visualize>
         <pose>${pose}</pose>
@@ -150,9 +150,9 @@ const generateLidarPluginXML = (selectedObject) => {
                 <stddev>${stddev}</stddev>
             </noise>
         </ray>
-        <plugin name="turtlebot3_laserscan" filename="libgazebo_ros_ray_sensor.so">
+        <plugin name="laserscan_for_${name.replace("-", "_")}" filename="libgazebo_ros_ray_sensor.so">
             <ros>
-                <remapping>~/out:=scan</remapping>
+                <remapping>~/out:=${name.replace("-", "_")}/scan</remapping>
             </ros>
             <output_type>sensor_msgs/LaserScan</output_type>
             <frame_name>${name}</frame_name>
