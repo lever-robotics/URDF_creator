@@ -376,7 +376,7 @@ class TransformControls extends Object3D {
                 }
             }
 
-            this.stateFunctions.setObjectScale(object, newScale);
+            this.stateFunctions.copyObjectScale(object, newScale);
         } else if (mode === "rotate") {
             this._offset.copy(this.pointEnd).sub(this.pointStart);
 

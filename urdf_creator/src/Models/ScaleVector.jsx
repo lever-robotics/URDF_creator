@@ -13,11 +13,11 @@ export default class ScaleVector extends THREE.Vector3 {
                 super.set(x, y, z);
                 return this;
             case "sphere":
-                if (x !== this.getComponent(0) && x !== 1) {
+                if (x !== this.getComponent(0)) {
                     super.set(x, x, x);
-                } else if (y !== this.getComponent(1) && y !== 1) {
+                } else if (y !== this.getComponent(1)) {
                     super.set(y, y, y);
-                } else if (z !== this.getComponent(2) && z !== 1) {
+                } else if (z !== this.getComponent(2)) {
                     super.set(new THREE.Vector3(z, z, z));
                 }
                 return this;
@@ -29,6 +29,28 @@ export default class ScaleVector extends THREE.Vector3 {
                 } else if (z !== this.getComponent(2) && z !== 1) {
                     super.set(x, y, z);
                 }
+                return this;
+            default:
+                throw Error("shape provided to scale vector is not supported");
+        }
+    }
+
+    copy(scale) {
+        const x = scale.x;
+        const y = scale.y;
+        const z = scale.z;
+
+        switch (this.shape) {
+            case "cube":
+                super.set(x, y, z);
+                return this;
+            case "sphere":
+                const averageSphere = (x + y + z) / 3;
+                super.set(averageSphere, averageSphere, averageSphere);
+                return this;
+            case "cylinder":
+                const averageCylinder = (x + y) / 2;
+                super.set(averageCylinder, averageCylinder, z);
                 return this;
             default:
                 throw Error("shape provided to scale vector is not supported");

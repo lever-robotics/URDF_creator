@@ -16,7 +16,6 @@ import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 import RightPanel from "./RightPanel/RightPanel.jsx";
 import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";
-import urdfObject from "../Models/urdfObject.jsx";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -24,7 +23,6 @@ export default function SceneState({ threeScene }) {
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
     const lastSelectedObject = useRef(null);
-    console.log("up top ", lastSelectedObject.current);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
@@ -258,16 +256,12 @@ export default function SceneState({ threeScene }) {
     const selectObject = (urdfObject) => {
         const { current: three } = threeScene;
 
-        console.log("last selection ", lastSelectedObject.current);
-        console.log("setting to ", urdfObject);
         // the link may not be attached correctly, this checks for that case
         if (lastSelectedObject.current?.linkDetached) {
             reattachLink(lastSelectedObject.current);
-            console.log("reattaching");
         }
 
         if (!urdfObject) {
-            console.log("setting to null 1");
             setSelectedObject(null);
             three.transformControls.detach();
         } else if (urdfObject.selectable) {
@@ -275,7 +269,6 @@ export default function SceneState({ threeScene }) {
             lastSelectedObject.current = urdfObject;
             urdfObject.attachTransformControls(three.transformControls);
         } else {
-            console.log("setting to null 2");
             setSelectedObject(null);
             three.transformControls.detach();
         }
@@ -545,6 +538,11 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
+    const copyObjectScale = (object, scale) => {
+        object.scale.copy(scale);
+        forceSceneUpdate();
+    };
+
     const setObjectQuaternion = (object, quaternion) => {
         object.quaternion.copy(quaternion);
         forceSceneUpdate();
@@ -598,6 +596,7 @@ export default function SceneState({ threeScene }) {
         handleProjectClick,
         setObjectPosition,
         setObjectScale,
+        copyObjectScale,
         setObjectQuaternion,
         doesLinkNameExist,
         registerName,
