@@ -447,11 +447,10 @@ class TransformControls extends Object3D {
             this.dispatchEvent(_mouseUpEvent);
         }
 
-        if(this.object && this.object?.isUrdfObject){
-            this.stateFunctions.reattachLink(this.object);
-        }
+        // if (this.object && this.object?.linkDetached) {
+        //     this.stateFunctions.reattachLink(this.object);
+        // }
         this.stateFunctions.forceUpdateCode();
-        //
 
         this.dragging = false;
         this.axis = null;

@@ -23,6 +23,8 @@ export default function SceneState({ threeScene }) {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
     const [selectedObject, setSelectedObject] = useState(null);
+    const lastSelectedObject = useRef(null);
+    console.log("up top ", lastSelectedObject.current);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
@@ -165,7 +167,6 @@ export default function SceneState({ threeScene }) {
         const gltfScene = lastScene.scene;
         const baseLink = urdfManager.readScene(gltfScene.children[0]);
 
-
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
         baseLink.isBaseLink = true;
@@ -256,13 +257,25 @@ export default function SceneState({ threeScene }) {
 
     const selectObject = (urdfObject) => {
         const { current: three } = threeScene;
+
+        console.log("last selection ", lastSelectedObject.current);
+        console.log("setting to ", urdfObject);
+        // the link may not be attached correctly, this checks for that case
+        if (lastSelectedObject.current?.linkDetached) {
+            reattachLink(lastSelectedObject.current);
+            console.log("reattaching");
+        }
+
         if (!urdfObject) {
+            console.log("setting to null 1");
             setSelectedObject(null);
             three.transformControls.detach();
         } else if (urdfObject.selectable) {
             setSelectedObject(urdfObject);
+            lastSelectedObject.current = urdfObject;
             urdfObject.attachTransformControls(three.transformControls);
         } else {
+            console.log("setting to null 2");
             setSelectedObject(null);
             three.transformControls.detach();
         }
@@ -341,11 +354,10 @@ export default function SceneState({ threeScene }) {
     };
 
     const setJointMinMax = (urdfObject, type, value) => {
-        if(type === "both"){
-            console.log(value);
-            urdfObject.min = - value;
+        if (type === "both") {
+            urdfObject.min = -value;
             urdfObject.max = value;
-        }else{
+        } else {
             urdfObject[type] = value;
         }
         forceSceneUpdate();
@@ -401,11 +413,10 @@ export default function SceneState({ threeScene }) {
         if (selectedObject) {
             selectedObject.link.attach(Link);
             Link.parentURDF = selectedObject;
-        } else if (threeScene.current.baseLink){
+        } else if (threeScene.current.baseLink) {
             threeScene.current.baseLink.link.attach(Link);
             Link.parentURDF = threeScene.current.baseLink;
-        }
-        else {
+        } else {
             const { current: three } = threeScene;
             three.scene.attach(Link);
             three.baseLink = Link;
@@ -420,7 +431,6 @@ export default function SceneState({ threeScene }) {
     };
 
     const forceUpdateCode = () => {
-        console.log("force update code");
         pushUndo();
         redo.current = [];
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);

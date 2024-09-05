@@ -8,7 +8,7 @@ export default class urdfObject extends THREE.Object3D {
 
         this.position.set(...origin);
         this.rotation.set(...rotation);
-        
+
         this.urdfObject = true;
         this.isUrdfObject = true;
         this.isBaseLink = false;
@@ -33,14 +33,14 @@ export default class urdfObject extends THREE.Object3D {
      *
      **/
 
-     makeid(length) {
-        let result = '';
-        const characters = '0123456789';
+    makeid(length) {
+        let result = "";
+        const characters = "0123456789";
         const charactersLength = characters.length;
         let counter = 0;
         while (counter < length) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-          counter += 1;
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
         }
         return result;
     }
@@ -338,11 +338,13 @@ export default class urdfObject extends THREE.Object3D {
 
     moveJoint(transformControls) {
         this.parent.attach(this.link);
+        this.linkDetached = true;
         transformControls.attach(this);
     }
 
     reattachLink() {
         this.joint.attach(this.link);
+        this.linkDetached = false;
         this.attach(this.axis);
     }
 
