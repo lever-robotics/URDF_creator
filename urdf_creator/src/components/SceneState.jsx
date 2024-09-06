@@ -25,7 +25,6 @@ export default function SceneState({ threeScene }) {
     const lastSelectedObject = useRef(null);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
-    const [pressedKeys, setPressedKeys] = useState([]);
     const [numShapes, setNumShapes] = useState({
         cube: 0,
         sphere: 0,
@@ -40,6 +39,7 @@ export default function SceneState({ threeScene }) {
     ]);
     const redo = useRef([]);
     const objectNames = useRef([]);
+    const pressedKeys = useRef([]);
 
     useEffect(() => {
         const { current: three } = threeScene;
@@ -49,28 +49,33 @@ export default function SceneState({ threeScene }) {
     }, []);
 
     useEffect(() => {
-
-        const control = pressedKeys.includes("Control") || pressedKeys.includes("Meta");
-        const shift = pressedKeys.includes("Shift");
-        const z = pressedKeys.includes("z");
-
-        if (control && !shift && z) {
-            popUndo();
-            forceUpdateCode();
-        }
-
         function keydown(e) {
+            e.preventDefault();
+            const pressed = pressedKeys.current;
             const key = e.key.toLowerCase();
             if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
-            setPressedKeys([...pressedKeys, key]);
+            pressedKeys.current.push(key);
+
+            // check if the keys are down
+            const control = pressed.includes("control") || pressed.includes("meta");
+            const shift = pressed.includes("shift");
+            const z = pressed.includes("z");
+
+            // check for undo
+            if (control && !shift && z) {
+                popUndo();
+            }
+
+            // check for redo
+            if (control && shift && z) {
+                popRedo();
+            }
         }
 
         function keyup(e) {
             const key = e.key.toLowerCase();
-            const index = pressedKeys.indexOf(key);
-            pressedKeys.splice(index, 1);
-            const newKeys = [...pressedKeys];
-            setPressedKeys(newKeys);
+            const index = pressedKeys.current.indexOf(key);
+            pressedKeys.current.splice(index, 1);
         }
 
         window.addEventListener("keydown", keydown);
