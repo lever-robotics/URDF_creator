@@ -19,6 +19,7 @@ export default class Frame extends THREE.Object3D {
         //     name += this.makeid(4)
         // }
         this.name = name;
+        // this.bus= [];
     }
 
     /**
@@ -48,7 +49,7 @@ export default class Frame extends THREE.Object3D {
     }
 
     getFrameChildren = () => {
-        return this.link.children.filter(
+        return this.jointVisualizer.children.filter(
             (child) => child instanceof Frame
         );
     };
@@ -124,14 +125,23 @@ export default class Frame extends THREE.Object3D {
     }
 
     attachChild(child) {
-        this.link.attach(child);
+        this.jointVisualizer.attach(child);
         child.parentFrame = this;
+        // this.bus.push(child);
     }
 
     addChild(child) {
-        this.link.add(child);
+        this.jointVisualizer.add(child);
         child.parentFrame = this;
+        // this.bus.push(child);
     }
+
+    // removeChild(child) {
+    //     const index = this.bus.indexOf(child);
+    //     if (index > -1) {
+    //         array.splice(index, 1);
+    //     }
+    // }
 
     setCustomInertia(type, inertia) {
         this.inertia.setCustomInertia(type, inertia);
@@ -366,12 +376,16 @@ export default class Frame extends THREE.Object3D {
         }
     }
 
+    // TODO rename this rotateJointAxis
     rotateJoint(transformControls) {
         transformControls.attach(this.axis);
     }
 
     moveJoint(transformControls) {
         this.parent.attach(this.link);
+        // this.getFrameChildren.forEach((child) => {
+        //     this.parent.attach(child);
+        // })
         this.linkDetached = true;
         transformControls.attach(this);
     }
@@ -379,6 +393,9 @@ export default class Frame extends THREE.Object3D {
     reattachLink() {
         this.jointVisualizer.attach(this.link);
         this.linkDetached = false;
+        // this.bus.forEach((child) => {
+        //     this.jointVisualizer.attach(child);
+        // })
         this.attach(this.axis);
     }
 
