@@ -23,7 +23,7 @@ const MenuModal = ({ onClose, menuItems, buttonRef }) => {
             style={{ top: position.top , left: position.left }}>
             <ul className="menu-list">
                 {menuItems.map((item, index) => (
-                    <MenuItem index={index} action={item.action} label={item.label}/>
+                    <MenuItem key={index} action={item.action} label={item.label}/>
                 ))}
             </ul>
         </div>
