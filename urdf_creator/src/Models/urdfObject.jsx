@@ -311,18 +311,18 @@ export default class urdfObject extends THREE.Object3D {
 
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
+
         if (type === "offset") {
             const currentOffset = this.offset.toArray();
             this.parent.attach(this.link);
             this.linkDetached = true;
-            console.log("uo", this.position.toArray());
-            console.log("offset", this.offset.toArray());
+
             const newValues = this.position.toArray();
             // console.log(newValues, currentOffset);
             newValues[this.determineComponentIndex(axis)] -=
                 (value - currentOffset[this.determineComponentIndex(axis)]);
             this.position.set(...newValues);
-            console.log(this.position);
+
             this.reattachLink();
         } else if (type === "scale") {
             const newValues = this.objectScale.toArray();

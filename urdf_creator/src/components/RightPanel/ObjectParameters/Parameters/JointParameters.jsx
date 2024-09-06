@@ -9,7 +9,6 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     const [max, setMax] = useState(selectedObject.max);
     const [maxInput, setMaxInput] = useState(selectedObject.max);
     const [minInput, setMinInput] = useState(selectedObject.min);
-    console.log("max input", maxInput);
     const [jointValue, setJointValue] = useState(selectedObject.jointValue);
     const [jointInput, setJointInput] = useState(selectedObject.jointValue);
 

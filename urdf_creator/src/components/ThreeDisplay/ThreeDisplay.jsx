@@ -5,31 +5,32 @@ import SceneState from "../SceneState";
 function ThreeDisplay() {
     const mountRef = useRef(null);
     const threeScene = useRef(null);
-    const [sceneState, stateFunctions] = SceneState({ threeScene });
-
+    
     // Set up the scene (initialization)
     useEffect(() => {
         if (!mountRef.current) return;
         const tsm = new ThreeSceneManager();
         const three = tsm.constructScene(mountRef, stateFunctions);
         threeScene.current = three;
-
+        
         const sceneCallback = threeScene.current.callback;
         const setUpMouseCallback = threeScene.current.mouse.callback;
-
+        
         const animate = () => {
             requestAnimationFrame(animate);
             threeScene.current.composer.render();
             threeScene.current.orbitControls.update();
-        };
-
-        animate();
-
-        return () => {
-            sceneCallback();
-            setUpMouseCallback();
-        };
+            };
+            
+            animate();
+            
+            return () => {
+                sceneCallback();
+                setUpMouseCallback();
+                };
     }, []);
+    
+    const [sceneState, stateFunctions] = SceneState({ threeScene });
 
     return (
         <div className="display" ref={mountRef} style={{ width: "100%", height: "100%" }}>
