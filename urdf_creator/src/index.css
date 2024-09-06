@@ -51,6 +51,7 @@ button {
     background-color: #1d2a31;
     cursor: pointer;
     transition: border-color 0.25s;
+    color: #fff;
 }
 
 /* For when the button is the currently used item */
@@ -71,21 +72,6 @@ button:focus-visible {
 .button_unselected:focus,
 .button_unselected:focus-visible {
     outline: 0px;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-
-    a:hover {
-        color: #747bff;
-    }
-
-    button {
-        background-color: #f9f9f9;
-    }
 }
 
 .row-no-space {
