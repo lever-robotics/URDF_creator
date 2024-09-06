@@ -3,7 +3,7 @@ name: Deploy React App
 on:
   push:
     branches:
-      - deploy
+      - main
 
 permissions:
   contents: read
@@ -38,7 +38,7 @@ jobs:
         with:
           path: urdf_creator/build
 
-  deploy:
+  main:
     needs: build
     environment:
       name: github-pages
