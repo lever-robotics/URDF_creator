@@ -38,7 +38,7 @@ jobs:
         with:
           path: urdf_creator/build
 
-  main:
+  deploy:
     needs: build
     environment:
       name: github-pages
