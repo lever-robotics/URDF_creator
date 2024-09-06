@@ -76,7 +76,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
 
     const props = {
         type: "number",
-        unit: "m",
+        units: "m",
         onChange: handleScaleChange,
         onBlur: handleScaleBlur,
         onKeyDown: handleKeyDown,

@@ -22,6 +22,9 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         const newName = e.target.value;
         if (newName.includes(" ")) {
             setError("Name must have no spaces");
+        } else if (newName === "") {
+            setError("Name cannot be empty");
+            setTempName(newName);
         } else {
             setTempName(newName);
         }
