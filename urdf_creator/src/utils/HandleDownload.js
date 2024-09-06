@@ -87,11 +87,11 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
     await Promise.all(filePromises);
 
     //Add the meshes to the ZIP
-    const db = await openDB("stlFilesDB", 1);
-    const files = await db.getAll("files");
-    files.forEach(async (file) => {
-        zip.file(`${title}_description/meshes/${file.name}`, file.file);
-    });
+    // const db = await openDB("stlFilesDB", 1);
+    // const files = await db.getAll("files");
+    // files.forEach(async (file) => {
+    //     zip.file(`${title}_description/meshes/${file.name}`, file.file);
+    // });
 
     // Add the URDF file to the ZIP
     if (urdfContent) {

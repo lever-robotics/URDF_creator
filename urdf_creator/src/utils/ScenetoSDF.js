@@ -108,9 +108,9 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 if (jointType === "continuous") {
                     jointType = "revolute";
                 }
-                if (geometryType === "SphereGeometry") {
-                    jointType = "ball";
-                }
+                // if (geometryType === "SphereGeometry") {
+                //     jointType = "ball";
+                // }
 
                 xml += `  <joint name="${parentName}_to_${linkName}" type="${jointType}">\n`;
 
