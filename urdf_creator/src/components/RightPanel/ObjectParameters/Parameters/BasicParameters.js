@@ -22,9 +22,6 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         const newName = e.target.value;
         if (newName.includes(" ")) {
             setError("Name must have no spaces");
-        } else if (newName === "") {
-            setError("Name cannot be empty");
-            setTempName(newName);
         } else {
             setTempName(newName);
         }
@@ -36,7 +33,9 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
             setError("");
         }else if(stateFunctions.doesLinkNameExist(newName)){
             setError("Name must be unique");
-        }else{
+        }else if (newName === "") {
+            setError("Name cannot be empty");
+        } else {
             stateFunctions.setLinkName(selectedObject, newName);
             setError("");
         }

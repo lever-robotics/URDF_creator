@@ -24,3 +24,8 @@
     vertical-align: middle; /* Adjusts the vertical alignment to match surrounding text */
     display: inline-block;
 }
+
+.joint-input {
+    background-color: #202020;
+    color: #ffffff;
+}

@@ -6,6 +6,16 @@ const App = () => {
     // initialize Google Analytics
     useEffect(() => {
         initializeAnalytics();
+        const handleWheel = (e) => {
+            if (e.ctrlKey) {
+              e.preventDefault();
+            }
+          };
+        window.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+        window.removeEventListener('wheel', handleWheel);
+        };
     }, []);
 
     return (

@@ -114,6 +114,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                                 <Parameter
                                     title="Min:"
                                     size="small"
+                                    className="joint-input"
                                     value={minInput}
                                     onChange={(e) => {
                                         setMinInput(e.target.value);
@@ -128,6 +129,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                                 <Parameter
                                     title="Max:"
                                     size="small"
+                                    className="joint-input"
                                     value={maxInput}
                                     onChange={(e) => {
                                         setMaxInput(e.target.value);
@@ -142,6 +144,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                                 <Parameter
                                     title="Value:"
                                     size="small"
+                                    className="joint-input"
                                     value={jointInput}
                                     onChange={(e) => {
                                         setJointInput(e.target.value);

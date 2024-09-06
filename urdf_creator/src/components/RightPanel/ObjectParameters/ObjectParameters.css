@@ -81,6 +81,8 @@ h4:hover {
 }
 
 .object-parameters select {
+    background-color: #202020;
+    color: #ffffff;
     display: block;
     margin-top: 4px;
 }
