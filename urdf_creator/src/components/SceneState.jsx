@@ -25,6 +25,7 @@ export default function SceneState({ threeScene }) {
     const lastSelectedObject = useRef(null);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
+    const [pressedKeys, setPressedKeys] = useState([]);
     const [numShapes, setNumShapes] = useState({
         cube: 0,
         sphere: 0,
@@ -48,22 +49,30 @@ export default function SceneState({ threeScene }) {
     }, []);
 
     useEffect(() => {
-        const handleUndo = (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === "z" && !e.shiftKey) {
-                e.preventDefault(); // Prevent the default browser undo action
-                popUndo();
-            } else if ((e.metaKey || e.ctrlKey) && e.key === "z" && e.shiftKey) {
-                e.preventDefault();
-                popRedo();
-            }
-        };
+        function keydown(e) {
+            const key = e.key.toLowerCase();
+            if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
+            setPressedKeys([...pressedKeys, key]);
+        }
 
-        window.addEventListener("keydown", handleUndo);
+        function keyup(e) {
+            const key = e.key.toLowerCase();
+            const index = pressedKeys.indexOf(key);
+            pressedKeys.splice(index, 1);
+            const newKeys = [...pressedKeys];
+            setPressedKeys(newKeys);
+        }
+
+        window.addEventListener("keydown", keydown);
+        window.addEventListener("keyup", keyup);
 
         return () => {
-            window.removeEventListener("keydown", handleUndo);
+            window.removeEventListener("keydown", keydown);
+            window.removeEventListener("keyup", keyup);
         };
-    }, [updateCode]);
+    }, []);
+
+    useEffect(() => {}, []);
 
     // Function added to the Mouse object to allow clicking of meshes
     function clickObject(event) {
