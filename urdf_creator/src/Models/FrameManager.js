@@ -34,39 +34,63 @@ export default class FrameManager {
     }
 
     createFrame(params) {
-        const name = params.name;
-        const shape = params.shape;
+        const {
+            name,
+            shape,
+            version,
+            position, 
+            rotation, 
+            jointType,
+            jointMin,
+            jointMax,
+            axisRotation,
+            offset, 
+            scale, 
+            material, 
+            color, 
+            mass, 
+            ixx,
+            ixy,
+            ixz,
+            iyy,
+            izz,
+            iyz,
+            sensor,
+        } = params;
 
-        const link = new Link();
+        // Instantiate new objects
+        const mesh = new Mesh(shape, scale, color);
+        const link = new Link(offset);
         const jointVisualizer = new JointVisualizer();
-        const axis = new Axis();
-        const mesh = new Mesh(shape);
-        const inertia = new Inertia();
-        const sensor = new Sensor();
-        const unnamedFrame = new Frame(name);
+        const axis = new Axis(axisRotation);
+        const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
+        const unnamedFrame = new Frame(name, position, rotation, jointType, jointMin, jointMax);
         const frame = this.registerName(unnamedFrame);
-
+        
+        // Add link children
         link.add(mesh);
-
-        jointVisualizer.link = link;
+        
+        // Add jV children
         jointVisualizer.add(link);
-
+        jointVisualizer.link = link;
+        
+        // Add frame children
+        frame.add(jointVisualizer);
+        frame.add(axis);
         frame.jointVisualizer = jointVisualizer;
         frame.link = link;
         frame.axis = axis;
         frame.mesh = mesh;
-        frame.add(jointVisualizer);
-        frame.add(axis);
+        frame.sensor = sensorCreator(sensor);
+        frame.inertia = inertia;
+        inertia.updateInertia(frame);
 
+        // Give all tree objects a reference to frame
         jointVisualizer.frame = frame;
         link.frame = frame;
         axis.frame = frame;
         mesh.frame = frame;
 
-        inertia.updateInertia(frame);
-        frame.inertia = inertia;
-
-        frame.sensor = sensor;
         return frame;
     }
 
@@ -112,20 +136,19 @@ export default class FrameManager {
     compressScene(frame) {
         const compressedFrame = new THREE.Mesh();
         const userData = {
+            name: frame.name,
+            shape: frame.shape,
+            version: "beta",
             position: frame.position,
             rotation: frame.rotation,
-            scale: frame.mesh.scale,
-            offset: frame.link.position,
             jointType: frame.jointType,
-            // jointAxis: joint.position,
             jointMin: frame.min,
             jointMax: frame.max,
-            axisRotation: frame.axis.rotation,
-            jointOrigin: frame.jointVisualizer.position,
+            axisRotation: frame.axisRotation,
+            offset: frame.offset,
+            scale: frame.objectScale,
             material: frame.mesh.material,
             color: frame.color,
-            shape: frame.shape,
-            name: frame.name,
             mass: frame.mass,
             ixx: frame.inertia.ixx,
             ixy: frame.inertia.ixy,
@@ -133,7 +156,6 @@ export default class FrameManager {
             iyy: frame.inertia.yyx,
             izz: frame.inertia.izz,
             iyz: frame.inertia.iyz,
-
             sensor: frame.sensor,
         };
         compressedFrame.userData = userData;
@@ -145,82 +167,8 @@ export default class FrameManager {
         return compressedFrame;
     }
 
-    loadFrame(gltfObject) {
-        const {
-            position,
-            rotation,
-            scale,
-            offset,
-            jointType,
-            jointMin,
-            jointMax,
-            axisRotation,
-            jointOrigin,
-            material,
-            sensor,
-            color,
-            shape,
-            name,
-            mass,
-            ixx,
-            ixy,
-            ixz,
-            iyy,
-            izz,
-            iyz,
-        } = gltfObject.userData;
-
-        const link = new Link(Object.values(offset));
-        const mesh = new Mesh(shape, Object.values(scale));
-        const jointVisualizer = new JointVisualizer(
-            Object.values(jointOrigin),
-            jointType,
-            jointMin,
-            jointMax
-        );
-        //Need to take out the nullish operator!
-        const axis = new Axis(
-            jointType,
-            Object.values(axisRotation ?? {}).slice(1, 4)
-        );
-        axis.type = jointType;
-        const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
-
-        const unnamedFrame = new Frame(
-            name,
-            Object.values(position),
-            Object.values(rotation).slice(1, 4)
-        );
-        const frame = this.registerName(unnamedFrame);
-
-        // BIG OLE COMMENT, this is a bandaid. Fix compressing and loading sensors
-        frame.sensor = sensorCreator(sensor);
-
-        link.mesh = mesh;
-        link.add(mesh);
-
-        jointVisualizer.link = link;
-        jointVisualizer.add(link);
-
-        frame.jointVisualizer = jointVisualizer;
-        frame.link = link;
-        frame.axis = axis;
-        frame.mesh = mesh;
-        frame.add(jointVisualizer);
-        frame.add(axis);
-        frame.color = color;
-
-        jointVisualizer.frame = frame;
-        link.frame = frame;
-        axis.frame = frame;
-        mesh.frame = frame;
-
-        frame.inertia = inertia;
-        return frame;
-    }
-
     readScene(gltfObject) {
-        const newFrame = this.loadFrame(gltfObject);
+        const newFrame = this.createFrame(gltfObject.userData);
 
         gltfObject.children.forEach((child) => {
             const newChild = this.readScene(child);

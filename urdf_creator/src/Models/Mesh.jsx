@@ -2,19 +2,19 @@ import * as THREE from "three";
 import ScaleVector from "./ScaleVector";
 
 export default class Mesh extends THREE.Mesh {
-    constructor(shape = "cube", scale = [1, 1, 1]) {
+    constructor(shape = "cube", scale = [1, 1, 1], color = Math.random() * 0xffffff) {
         super();
 
-        this.scale.set(...scale);
+        this.scale.set(...Object.values(scale));
 
-        this._scale = new ScaleVector(shape, ...scale);
+        this._scale = new ScaleVector(shape, ...Object.values(scale));
 
         this.shape = shape;
         this.isShape = true; // Used to be detectable by the mouse
 
         this.geometry = defineGeometry(this, shape);
         this.material = new THREE.MeshPhongMaterial();
-        this.color = Math.random() * 0xffffff;
+        this.color = color;
 
         this.customRenderBehaviors = {};
 
@@ -66,7 +66,7 @@ export default class Mesh extends THREE.Mesh {
     }
 
     clone() {
-        const clone = new Mesh(this.shape, this.scale);
+        const clone = new Mesh(this.shape, this.scale, this.color);
         clone.color.copy(this.color);
         return clone;
     }

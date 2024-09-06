@@ -7,6 +7,6 @@ export default class JointVisualizer extends THREE.Object3D {
     }
 
     clone() {
-        return new JointVisualizer(this.position, this.type, this.min, this.max, this.value);
+        return new JointVisualizer();
     }
 }

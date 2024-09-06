@@ -4,7 +4,7 @@ export default class Link extends THREE.Object3D {
     constructor(offset = [0, 0, 0]) {
         super();
 
-        this.position.set(...offset); // The offset from the joint
+        this.position.set(...Object.values(offset)); // The offset from the joint
     }
 
     clone() {

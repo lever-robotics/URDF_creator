@@ -12,7 +12,7 @@ export class Sensor {
     }
 }
 
-export function sensorCreator(sensor) {
+export function sensorCreator(sensor = {type: ""}) {
     let newSensor;
     switch (sensor.type) {
         case "imu":

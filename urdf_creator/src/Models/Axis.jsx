@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Axis extends THREE.Line {
-    constructor(axisRotation = [0,0,0]) {
+    constructor(axisRotation = [0,0,0,0]) {
         const originPoint = new THREE.Vector3();
         const lineAxis = new THREE.Vector3(0, 0, 1);
         const length = 10;
@@ -17,7 +17,7 @@ export default class Axis extends THREE.Line {
         super(geometry, material);
 
         this._axis = lineAxis;
-        this.rotation.set(...axisRotation);
+        this.rotation.set(...Object.values(axisRotation).slice(1,4));
         this.isFrame = false;
     }
 

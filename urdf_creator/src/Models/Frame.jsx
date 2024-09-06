@@ -3,11 +3,11 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class Frame extends THREE.Object3D {
-    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0], jointType = "fixed", jointMin = -1, jointMax = 1) {
+    constructor(name = "", position = [0, 0, 0], rotation = [0, 0, 0, 0], jointType = "fixed", jointMin = -1, jointMax = 1) {
         super();
 
-        this.position.set(...origin);
-        this.rotation.set(...rotation);
+        this.position.set(...Object.values(position));
+        this.rotation.set(...Object.values(rotation).slice(1, 4));
 
         this._jointType = jointType;
         this._min = jointMin;
@@ -126,6 +126,14 @@ export default class Frame extends THREE.Object3D {
 
     set color(color) {
         this.mesh.color = color;
+    }
+
+    get axisRotation() {
+        return this.axis.rotation;
+    }
+
+    set axisRotation(values) {
+        this.axis.rotation.set(...values);
     }
 
     attachChild(child) {
@@ -392,7 +400,7 @@ export default class Frame extends THREE.Object3D {
     }
 
     clone() {
-        return new Frame(this.name, this.position, this.rotation);
+        return new Frame(this.name, this.position, this.rotation, this.jointType, this.min, this.max);
     }
 
     //Add STL to the Frame
