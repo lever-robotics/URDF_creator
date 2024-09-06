@@ -49,6 +49,16 @@ export default function SceneState({ threeScene }) {
     }, []);
 
     useEffect(() => {
+
+        const control = pressedKeys.includes("Control") || pressedKeys.includes("Meta");
+        const shift = pressedKeys.includes("Shift");
+        const z = pressedKeys.includes("z");
+
+        if (control && !shift && z) {
+            popUndo();
+            forceUpdateCode();
+        }
+
         function keydown(e) {
             const key = e.key.toLowerCase();
             if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
