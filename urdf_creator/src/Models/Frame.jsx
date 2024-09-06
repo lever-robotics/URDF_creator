@@ -123,6 +123,16 @@ export default class Frame extends THREE.Object3D {
         this.mesh.color = color;
     }
 
+    attachChild(child) {
+        this.link.attach(child);
+        child.parentFrame = this;
+    }
+
+    addChild(child) {
+        this.link.add(child);
+        child.parentFrame = this;
+    }
+
     setCustomInertia(type, inertia) {
         this.inertia.setCustomInertia(type, inertia);
     }

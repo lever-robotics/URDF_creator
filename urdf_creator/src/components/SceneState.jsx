@@ -231,11 +231,9 @@ export default function SceneState({ threeScene }) {
         newFrame.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.link.attach(newFrame);
-            newFrame.parentFrame = selectedObject;
+            selectedObject.attachChild(newFrame);
         } else if (three.baseLink !== null) {
-            three.baseLink.link.attach(newFrame);
-            newFrame.parentFrame = three.baseLink;
+            three.baseLink.attachChild(newFrame);
         } else {
             newFrame.position.set(0, 0, 0.5);
             newFrame.isBaseLink = true;
@@ -437,18 +435,16 @@ export default function SceneState({ threeScene }) {
     };
 
     const loadSingleObject = (gltfScene) => {
-        const Link = frameManager.readScene(gltfScene);
+        const frame = frameManager.readScene(gltfScene);
         if (selectedObject) {
-            selectedObject.link.attach(Link);
-            Link.parentFrame = selectedObject;
+            selectedObject.attachChild(frame);
         } else if (threeScene.current.baseLink) {
-            threeScene.current.baseLink.link.attach(Link);
-            Link.parentFrame = threeScene.current.baseLink;
+            threeScene.current.baseLink.attachChild(frame);
         } else {
             const { current: three } = threeScene;
-            three.scene.attach(Link);
-            three.baseLink = Link;
-            Link.isBaseLink = true;
+            three.scene.attach(frame);
+            three.baseLink = frame;
+            frame.isBaseLink = true;
         }
         forceSceneUpdate();
     };
@@ -474,10 +470,10 @@ export default function SceneState({ threeScene }) {
 
         if (frame.isBaseLink) {
             clone.parentFrame = frame;
-            frame.link.attach(clone);
+            frame.attachChild(clone);
         } else {
             clone.parentFrame = frame.parentFrame;
-            frame.parentFrame.link.add(clone);
+            frame.parentFrame.addChild(clone);
         }
         selectObject(clone);
         forceSceneUpdate();
@@ -593,8 +589,7 @@ export default function SceneState({ threeScene }) {
     };
 
     const reparentObject = (parent, child) => {
-        parent.link.attach(child);
-        child.parentFrame = parent;
+        parent.attachChild(child);
         forceUpdateCode();
     };
 

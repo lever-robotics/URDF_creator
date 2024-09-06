@@ -47,7 +47,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
     const isAncestor = (ancestor, descendant) => {
         if (descendant === ancestor) return true;
         if (ancestor.isBaseLink || descendant.isBaseLink) return false;
-        return isAncestor(ancestor, descendant.parentURDF);
+        return isAncestor(ancestor, descendant.parentFrame);
     };
 
     return (

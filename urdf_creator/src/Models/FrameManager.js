@@ -102,8 +102,7 @@ export default class FrameManager {
 
         for (const child of children) {
             const cloneChild = this.cloneFrame(child);
-            clone.link.add(cloneChild);
-            cloneChild.parentFrame = clone;
+            clone.addChild(cloneChild);
         }
 
         return clone;
@@ -225,8 +224,7 @@ export default class FrameManager {
 
         gltfObject.children.forEach((child) => {
             const newChild = this.readScene(child);
-            newChild.parentFrame = newFrame;
-            newFrame.link.add(newChild);
+            newFrame.addChild(newChild);
         });
 
         return newFrame;
