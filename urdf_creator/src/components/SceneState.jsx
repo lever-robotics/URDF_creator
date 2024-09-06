@@ -50,7 +50,6 @@ export default function SceneState({ threeScene }) {
 
     useEffect(() => {
         function keydown(e) {
-            e.preventDefault();
             const pressed = pressedKeys.current;
             const key = e.key.toLowerCase();
             if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
