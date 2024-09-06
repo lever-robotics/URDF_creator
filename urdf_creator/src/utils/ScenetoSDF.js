@@ -18,7 +18,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
         return xml;
     }
 
-    xml += `<model name="${projectTitle}" canonical_link='base_link'>\n`;
+    xml += `<model name="${projectTitle.replace(" ", "_")}" canonical_link='base_link'>\n`;
     //put on static for debugging
     xml += `  <static>false</static>\n`;
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;

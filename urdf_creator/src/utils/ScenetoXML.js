@@ -6,7 +6,7 @@ import { quaternionToRPY } from "./quaternionToRPY.js";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene, projectTitle) => {
-    let xml = `<robot name="${projectTitle}">\n`;
+    let xml = `<robot name="${projectTitle.replace(" ", "_")}">\n`;
     if (scene === undefined) {
         xml += `</robot>`;
         return xml;

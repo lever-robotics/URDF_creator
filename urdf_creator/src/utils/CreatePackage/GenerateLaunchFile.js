@@ -29,11 +29,11 @@ def generate_launch_description():
         parameters=[{"robot_description": open(urdf_file).read()}],
     )
 
-    joint_gui = Node(
-        package="joint_state_publisher_gui",
-        executable="joint_state_publisher_gui",
-        name="joint_state_publisher_gui",
-    )
+    # joint_gui = Node(
+    #     package="joint_state_publisher_gui",
+    #     executable="joint_state_publisher_gui",
+    #     name="joint_state_publisher_gui",
+    # )
 
     # Define the RViz node
     rviz_node = Node(
@@ -71,10 +71,10 @@ def generate_launch_description():
                 description="Use simulation (Gazebo) clock if true",
             ),
             robot_state_publisher_node,
-            joint_gui,
+            # joint_gui,
             rviz_node,
-            # gazebo_node,
-            # spawn_entity_node,
+            gazebo_node,
+            spawn_entity_node,
         ]
     )
 `;

@@ -11,17 +11,17 @@ import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/
 
 export async function handleDownload(scene, type, title) {
     if (type === "urdfpackage") {
-        const urdf = ScenetoXML(scene, title);
-        const sdf = ScenetoSDF(scene);
+        const urdf = ScenetoXML(scene, title.replace(" ", "_"));
+        const sdf = ScenetoSDF(scene, title.replace(" ", "_"));
         const projectProperties = LaunchPropertiesContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
-        await generateZip(urdf, sdf, projectProperties, title);
+        await generateZip(urdf, sdf, projectProperties, title.replace(" ", "_"));
     } else if (type === "urdf") {
-        const urdf = ScenetoXML(scene, title);
-        otherFileDownload(urdf, type, title);
+        const urdf = ScenetoXML(scene, title.replace(" ", "_"));
+        otherFileDownload(urdf, type, title.replace(" ", "_"));
     } else if (type === "gltf") {
         const exporter = new GLTFExporter();
         exporter.parse(scene, (gltf) => {
-            otherFileDownload(JSON.stringify(gltf), type, title);
+            otherFileDownload(JSON.stringify(gltf), type, title.replace(" ", "_"));
         });
         // const json = scene.toJSON();
         // otherFileDownload(JSON.stringify(json), type, title);
