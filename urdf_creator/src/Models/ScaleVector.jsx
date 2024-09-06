@@ -22,11 +22,11 @@ export default class ScaleVector extends THREE.Vector3 {
                 }
                 return this;
             case "cylinder":
-                if (x !== this.getComponent(0) && x !== 1) {
+                if (x !== this.getComponent(0)) {
                     super.set(x, x, z);
-                } else if (y !== this.getComponent(1) && y !== 1) {
+                } else if (y !== this.getComponent(1)) {
                     super.set(y, y, z);
-                } else if (z !== this.getComponent(2) && z !== 1) {
+                } else if (z !== this.getComponent(2)) {
                     super.set(x, y, z);
                 }
                 return this;

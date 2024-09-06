@@ -12,8 +12,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
         setTempX(selectedObject.offset.x);
         setTempY(selectedObject.offset.y);
         setTempZ(selectedObject.offset.z);
-
-    }, [JSON.stringify(selectedObject.offset)]);
+    }, [selectedObject.offset.x, selectedObject.offset.y, selectedObject.offset.z]);
 
     const handleOffsetChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");

@@ -840,8 +840,9 @@ class TransformControlsGizmo extends Object3D {
 
         // Creates an Object3D with gizmos described in custom hierarchy definition.
 
-        function setupGizmo(gizmoMap) {
+        function setupGizmo(gizmoMap, type) {
             const gizmo = new Object3D();
+            gizmo.transformType = type;
 
             for (const name in gizmoMap) {
                 for (let i = gizmoMap[name].length; i--; ) {
@@ -891,15 +892,15 @@ class TransformControlsGizmo extends Object3D {
         this.picker = {};
         this.helper = {};
 
-        this.add((this.gizmo["translate"] = setupGizmo(gizmoTranslate)));
-        this.add((this.gizmo["rotate"] = setupGizmo(gizmoRotate)));
-        this.add((this.gizmo["scale"] = setupGizmo(gizmoScale)));
-        this.add((this.picker["translate"] = setupGizmo(pickerTranslate)));
-        this.add((this.picker["rotate"] = setupGizmo(pickerRotate)));
-        this.add((this.picker["scale"] = setupGizmo(pickerScale)));
-        this.add((this.helper["translate"] = setupGizmo(helperTranslate)));
-        this.add((this.helper["rotate"] = setupGizmo(helperRotate)));
-        this.add((this.helper["scale"] = setupGizmo(helperScale)));
+        this.add((this.gizmo["translate"] = setupGizmo(gizmoTranslate, "translate")));
+        this.add((this.gizmo["rotate"] = setupGizmo(gizmoRotate, "rotate")));
+        this.add((this.gizmo["scale"] = setupGizmo(gizmoScale, "scale")));
+        this.add((this.picker["translate"] = setupGizmo(pickerTranslate, "translate")));
+        this.add((this.picker["rotate"] = setupGizmo(pickerRotate, "rotate")));
+        this.add((this.picker["scale"] = setupGizmo(pickerScale, "scale")));
+        this.add((this.helper["translate"] = setupGizmo(helperTranslate, "translate")));
+        this.add((this.helper["rotate"] = setupGizmo(helperRotate, "rotate")));
+        this.add((this.helper["scale"] = setupGizmo(helperScale, "scale")));
 
         // Pickers should be hidden always
 

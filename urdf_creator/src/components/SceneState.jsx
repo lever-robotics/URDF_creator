@@ -67,6 +67,7 @@ export default function SceneState({ threeScene }) {
 
     // Function added to the Mouse object to allow clicking of meshes
     function clickObject(event) {
+        console.log(event);
         const three = threeScene.current;
         const rect = three.mountRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -78,13 +79,24 @@ export default function SceneState({ threeScene }) {
         three.raycaster.setFromCamera(three.mouse, three.camera);
         const intersects = three.raycaster.intersectObjects(three.scene.children);
 
+        // this will contain all of our objects (they have the property "isShape")
         const shapes = intersects.filter((collision) => collision.object.isShape);
-        const meshes = intersects.filter((collision) => collision.object.type === "Mesh");
 
+        // this will contain all meshes in the scene (ie the transform controls)
+        const meshes = intersects.filter((collision) => {
+            return collision.object.parent.transformType === toolMode && collision.object.isMesh;
+        });
+
+        console.log(meshes.map((val) => val.object));
+
+        // if we hit a shape, select the closest
         if (shapes.length > 0) {
             const object = shapes[0].object.urdfObject;
+            console.log("selecting shape");
             selectObject(object);
+            // if we don't hit any mesh (if we don't hit transform controls) deselect
         } else if (meshes.length === 0) {
+            console.log("nothing selected");
             selectObject(null);
         }
     }
