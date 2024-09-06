@@ -1,11 +1,10 @@
 import React from "react";
 import "./MenuModal.css";
 
-const MenuItem = ({ index, action, label }) => {
+const MenuItem = ({ action, label }) => {
 
     return (
         <li
-            key={index}
             className="menu-item"
             onClick={action}>
             {label}
