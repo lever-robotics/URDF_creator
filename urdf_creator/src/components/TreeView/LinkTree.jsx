@@ -83,7 +83,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
     if (!node) {
         return null;
     }
-    const children = node.getUrdfObjectChildren();
+    const children = node.getFrameChildren();
     const name = node.name;
 
     //check if the node is the selected object

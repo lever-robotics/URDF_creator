@@ -19,7 +19,7 @@ export default class Axis extends THREE.Line {
         this._axis = lineAxis;
         this.type = jointType;
         this.rotation.set(...axisRotation);
-        this.isUrdfObject = false;
+        this.isFrame = false;
     }
 
     get type() {

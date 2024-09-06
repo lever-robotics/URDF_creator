@@ -10,7 +10,7 @@ import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
 import MenuBar from "./Menu/MenuBar.jsx";
 import { handleProject } from "../utils/HandleUpload.js";
-import urdfObjectManager from "../Models/urdfObjectManager.js";
+import FrameManager from "../Models/FrameManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 import RightPanel from "./RightPanel/RightPanel.jsx";
@@ -114,7 +114,7 @@ export default function SceneState({ threeScene }) {
 
         // if we hit a shape, select the closest
         if (shapes.length > 0) {
-            const object = shapes[0].object.urdfObject;
+            const object = shapes[0].object.frame;
             console.log("selecting shape");
             selectObject(object);
             // if we don't hit any mesh (if we don't hit transform controls) deselect
@@ -134,7 +134,7 @@ export default function SceneState({ threeScene }) {
         };
         // If the baseLink is not null then it actually has objects so compress it
         if (getBaseLink() !== null) {
-            const compressedScene = urdfManager.compressScene(getBaseLink());
+            const compressedScene = frameManager.compressScene(getBaseLink());
             const gltfScene = await ScenetoGLTF(compressedScene);
             currentScene.scene = JSON.stringify(gltfScene);
             currentScene.selected = selectedObject?.name;
@@ -167,7 +167,7 @@ export default function SceneState({ threeScene }) {
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
-        const baseLink = urdfManager.readScene(gltfScene.children[0]);
+        const baseLink = frameManager.readScene(gltfScene.children[0]);
 
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
@@ -175,7 +175,7 @@ export default function SceneState({ threeScene }) {
 
         // If the lastSelected name exists then select that Object
         const lastSelectedName = currentState.selected;
-        const lastSelected = findUrdfObjectByName(baseLink, lastSelectedName);
+        const lastSelected = findFrameByName(baseLink, lastSelectedName);
         selectObject(lastSelected);
     };
 
@@ -198,7 +198,7 @@ export default function SceneState({ threeScene }) {
 
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
-        const baseLink = urdfManager.readScene(gltfScene.children[0]);
+        const baseLink = frameManager.readScene(gltfScene.children[0]);
 
         three.scene.attach(baseLink);
         three.baseLink = baseLink;
@@ -221,29 +221,29 @@ export default function SceneState({ threeScene }) {
         const { current: three } = threeScene;
         if (!three.scene) return;
 
-        const newUrdfObject = urdfManager.createUrdfObject({
+        const newFrame = frameManager.createFrame({
             shape: shape,
             name: shape + (numShapes[shape] + 1).toString(),
         });
 
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape] + 1 }));
 
-        newUrdfObject.position.set(2.5, 2.5, 0.5);
+        newFrame.position.set(2.5, 2.5, 0.5);
 
         if (selectedObject !== null) {
-            selectedObject.link.attach(newUrdfObject);
-            newUrdfObject.parentURDF = selectedObject;
+            selectedObject.link.attach(newFrame);
+            newFrame.parentFrame = selectedObject;
         } else if (three.baseLink !== null) {
-            three.baseLink.link.attach(newUrdfObject);
-            newUrdfObject.parentURDF = three.baseLink;
+            three.baseLink.link.attach(newFrame);
+            newFrame.parentFrame = three.baseLink;
         } else {
-            newUrdfObject.position.set(0, 0, 0.5);
-            newUrdfObject.isBaseLink = true;
-            setLinkName(newUrdfObject, "base_link");
-            three.baseLink = newUrdfObject;
-            three.scene.attach(newUrdfObject);
+            newFrame.position.set(0, 0, 0.5);
+            newFrame.isBaseLink = true;
+            setLinkName(newFrame, "base_link");
+            three.baseLink = newFrame;
+            three.scene.attach(newFrame);
         }
-        selectObject(newUrdfObject);
+        selectObject(newFrame);
         forceUpdateCode();
         forceSceneUpdate();
     };
@@ -268,27 +268,27 @@ export default function SceneState({ threeScene }) {
         return toolMode;
     };
 
-    const startRotateJoint = (urdfObject) => {
+    const startRotateJoint = (frame) => {
         const { current: three } = threeScene;
         setToolMode("rotate");
         three.transformControls.setMode("rotate");
-        urdfObject.rotateJoint(three.transformControls);
+        frame.rotateJoint(three.transformControls);
     };
 
-    const startMoveJoint = (urdfObject) => {
+    const startMoveJoint = (frame) => {
         const { current: three } = threeScene;
         setToolMode("translate");
         three.transformControls.setMode("translate");
-        urdfObject.moveJoint(three.transformControls);
+        frame.moveJoint(three.transformControls);
     };
 
-    const reattachLink = (urdfObject) => {
+    const reattachLink = (frame) => {
         const { current: three } = threeScene;
         three.transformControls.detach();
-        urdfObject.reattachLink();
+        frame.reattachLink();
     };
 
-    const selectObject = (urdfObject) => {
+    const selectObject = (frame) => {
         const { current: three } = threeScene;
 
         // the link may not be attached correctly, this checks for that case
@@ -296,13 +296,13 @@ export default function SceneState({ threeScene }) {
             reattachLink(lastSelectedObject.current);
         }
 
-        if (!urdfObject) {
+        if (!frame) {
             setSelectedObject(null);
             three.transformControls.detach();
-        } else if (urdfObject.selectable) {
-            setSelectedObject(urdfObject);
-            lastSelectedObject.current = urdfObject;
-            urdfObject.attachTransformControls(three.transformControls);
+        } else if (frame.selectable) {
+            setSelectedObject(frame);
+            lastSelectedObject.current = frame;
+            frame.attachTransformControls(three.transformControls);
         } else {
             setSelectedObject(null);
             three.transformControls.detach();
@@ -310,8 +310,8 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    const setLinkColor = (urdfObject, color) => {
-        urdfObject.color = color;
+    const setLinkColor = (frame, color) => {
+        frame.color = color;
     };
 
     const doesLinkNameExist = (name) => {
@@ -331,93 +331,93 @@ export default function SceneState({ threeScene }) {
         objectNames.current.splice(index, 1);
     };
 
-    const findUrdfObjectByName = (urdfObject, name) => {
-        if (urdfObject.name === name) return urdfObject;
+    const findFrameByName = (frame, name) => {
+        if (frame.name === name) return frame;
         let returnChild = null;
-        urdfObject.getUrdfObjectChildren().forEach((child) => {
-            returnChild = findUrdfObjectByName(child, name);
+        frame.getFrameChildren().forEach((child) => {
+            returnChild = findFrameByName(child, name);
         });
         return returnChild;
     };
 
-    const setLinkName = (urdfObject, name) => {
+    const setLinkName = (frame, name) => {
         // remove old name from registry
-        deregisterName(urdfObject.name);
+        deregisterName(frame.name);
 
         //add the new name
-        urdfObject.name = name;
-        urdfManager.registerName(urdfObject);
+        frame.name = name;
+        frameManager.registerName(frame);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setMass = (urdfObject, mass) => {
-        urdfObject.updateMass(mass);
+    const setMass = (frame, mass) => {
+        frame.updateMass(mass);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setInertia = (urdfObject, type, inertia) => {
-        urdfObject.setCustomInertia(type, inertia);
+    const setInertia = (frame, type, inertia) => {
+        frame.setCustomInertia(type, inertia);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setSensor = (urdfObject, type) => {
-        urdfManager.changeSensor(urdfObject, type);
+    const setSensor = (frame, type) => {
+        frameManager.changeSensor(frame, type);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const updateSensor = (urdfObject, name, value) => {
-        urdfObject.sensor.update(name, value);
+    const updateSensor = (frame, name, value) => {
+        frame.sensor.update(name, value);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setJointType = (urdfObject, type) => {
-        urdfObject.jointType = type;
+    const setJointType = (frame, type) => {
+        frame.jointType = type;
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setJointMinMax = (urdfObject, type, value) => {
+    const setJointMinMax = (frame, type, value) => {
         if (type === "both") {
-            urdfObject.min = -value;
-            urdfObject.max = value;
+            frame.min = -value;
+            frame.max = value;
         } else {
-            urdfObject[type] = value;
+            frame[type] = value;
         }
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const setJointValue = (urdfObject, value) => {
-        urdfObject.jointValue = value;
+    const setJointValue = (frame, value) => {
+        frame.jointValue = value;
         forceSceneUpdate();
     };
 
-    const rotateAroundJointAxis = (urdfObject, angle) => {
-        urdfObject.rotateAroundJointAxis(angle);
+    const rotateAroundJointAxis = (frame, angle) => {
+        frame.rotateAroundJointAxis(angle);
         forceSceneUpdate();
     };
 
-    const translateAlongJointAxis = (urdfObject, distance) => {
-        urdfObject.translateAlongJointAxis(distance);
+    const translateAlongJointAxis = (frame, distance) => {
+        frame.translateAlongJointAxis(distance);
         forceSceneUpdate();
     };
 
-    const saveForDisplayChanges = (urdfObject) => {
-        urdfObject.saveForDisplayChanges();
+    const saveForDisplayChanges = (frame) => {
+        frame.saveForDisplayChanges();
     };
 
-    const resetJointPosition = (urdfObject) => {
-        urdfObject.resetJointPosition();
+    const resetJointPosition = (frame) => {
+        frame.resetJointPosition();
         forceSceneUpdate();
     };
 
-    const setMesh = (urdfObject, meshFileName) => {
-        urdfObject.setMesh(meshFileName);
+    const setMesh = (frame, meshFileName) => {
+        frame.setMesh(meshFileName);
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -425,7 +425,7 @@ export default function SceneState({ threeScene }) {
     const loadScene = (gltfScene) => {
         const { current: three } = threeScene;
         objectNames.current.length = 0;
-        const baseLink = urdfManager.readScene(gltfScene);
+        const baseLink = frameManager.readScene(gltfScene);
         // if (three.baseLink) {
         //     three.baseLink.removeFromParent();
         // }
@@ -437,13 +437,13 @@ export default function SceneState({ threeScene }) {
     };
 
     const loadSingleObject = (gltfScene) => {
-        const Link = urdfManager.readScene(gltfScene);
+        const Link = frameManager.readScene(gltfScene);
         if (selectedObject) {
             selectedObject.link.attach(Link);
-            Link.parentURDF = selectedObject;
+            Link.parentFrame = selectedObject;
         } else if (threeScene.current.baseLink) {
             threeScene.current.baseLink.link.attach(Link);
-            Link.parentURDF = threeScene.current.baseLink;
+            Link.parentFrame = threeScene.current.baseLink;
         } else {
             const { current: three } = threeScene;
             three.scene.attach(Link);
@@ -464,44 +464,44 @@ export default function SceneState({ threeScene }) {
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
     };
 
-    const transformObject = (urdfObject, transformType, axis, value) => {
-        urdfObject.operate(transformType, axis, value);
+    const transformObject = (frame, transformType, axis, value) => {
+        frame.operate(transformType, axis, value);
         forceSceneUpdate();
     };
 
-    const duplicateObject = (urdfObject) => {
-        const clone = urdfManager.cloneUrdfObject(urdfObject);
+    const duplicateObject = (frame) => {
+        const clone = frameManager.cloneFrame(frame);
 
-        if (urdfObject.isBaseLink) {
-            clone.parentURDF = urdfObject;
-            urdfObject.link.attach(clone);
+        if (frame.isBaseLink) {
+            clone.parentFrame = frame;
+            frame.link.attach(clone);
         } else {
-            clone.parentURDF = urdfObject.parentURDF;
-            urdfObject.parentURDF.link.add(clone);
+            clone.parentFrame = frame.parentFrame;
+            frame.parentFrame.link.add(clone);
         }
         selectObject(clone);
         forceSceneUpdate();
         forceUpdateCode();
     };
 
-    const deleteObject = (urdfObject) => {
+    const deleteObject = (frame) => {
         const { current: three } = threeScene;
 
-        const deleteChildren = (object) => {
-            object.getUrdfObjectChildren().forEach((child) => {
+        const deleteChildren = (frame) => {
+            frame.getFrameChildren().forEach((child) => {
                 deleteChildren(child);
                 child.removeFromParent();
                 deregisterName(child.name);
             });
         };
 
-        if (urdfObject.isBaseLink) {
+        if (frame.isBaseLink) {
             three.baseLink = null;
         }
         selectObject();
-        deleteChildren(urdfObject);
-        urdfObject.removeFromParent();
-        deregisterName(urdfObject.name);
+        deleteChildren(frame);
+        frame.removeFromParent();
+        deregisterName(frame.name);
         forceSceneUpdate();
     };
 
@@ -594,7 +594,7 @@ export default function SceneState({ threeScene }) {
 
     const reparentObject = (parent, child) => {
         parent.link.attach(child);
-        child.parentURDF = parent;
+        child.parentFrame = parent;
         forceUpdateCode();
     };
 
@@ -650,7 +650,7 @@ export default function SceneState({ threeScene }) {
         popUndo,
         popRedo,
     };
-    const urdfManager = new urdfObjectManager(stateFunctions);
+    const frameManager = new FrameManager(stateFunctions);
 
     return [
         <div className="screen">

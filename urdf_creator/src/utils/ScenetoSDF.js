@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { generateSensorSDF } from "./generateSensorSDF";
 import findBaseLink from "./findBaseLink";
-import urdfObject from "../Models/urdfObject";
+import Frame from "../Models/Frame";
 import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to SDF-compatible XML
@@ -18,7 +18,10 @@ export const ScenetoSDF = (scene, projectTitle) => {
         return xml;
     }
 
-    xml += `<model name="${projectTitle.replace(" ", "_")}" canonical_link='base_link'>\n`;
+    xml += `<model name="${projectTitle.replace(
+        " ",
+        "_"
+    )}" canonical_link='base_link'>\n`;
     //put on static for debugging
     xml += `  <static>false</static>\n`;
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
@@ -29,19 +32,23 @@ export const ScenetoSDF = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
+        return (
+            node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`)
+        );
     };
 
     // Function to process a single node
     const processNode = (node, parentName = null) => {
-        if (node instanceof urdfObject) {
+        if (node instanceof Frame) {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
             //offset from parent to joint origin
             let offset = formatVector(node.link.position.clone().negate()); // offset from parent link to joint origin as sdf is link defined and not joint defined
             // position of link in relation to parent
-            let position = formatVector(node.position.clone().add(node.link.position));
+            let position = formatVector(
+                node.position.clone().add(node.link.position)
+            );
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
@@ -53,7 +60,9 @@ export const ScenetoSDF = (scene, projectTitle) => {
             // Start link
             xml += `  <link name="${linkName}">\n`;
             if (node.isBaseLink) {
-                xml += `    <pose relative_to='__model__'>${formatVector(node.position)} ${quaternionToRPY(node.quaternion)}</pose>\n`;
+                xml += `    <pose relative_to='__model__'>${formatVector(
+                    node.position
+                )} ${quaternionToRPY(node.quaternion)}</pose>\n`;
             } else {
                 xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
             }
@@ -81,7 +90,11 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 const color = node.mesh.material.color;
                 xml += `    <material>\n      <script>\n        <uri>file://media/materials/scripts/gazebo.material</uri>\n        <name>${
                     node.mesh.material.name || "Gazebo/Red"
-                }</name>\n      </script>\n      <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${
+                }</name>\n      </script>\n      <ambient>${color.r} ${
+                    color.g
+                } ${color.b} 1</ambient>\n      <diffuse>${color.r} ${
+                    color.g
+                } ${
                     color.b
                 } 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
             }
@@ -89,9 +102,15 @@ export const ScenetoSDF = (scene, projectTitle) => {
             // Add inertial element
             const mass = node.inertia.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia;
-            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${ixx || 0}</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${ixz || 0}</ixz>\n        <iyy>${
-                iyy || 0
-            }</iyy>\n        <iyz>${iyz || 0}</iyz>\n        <izz>${izz || 0}</izz>\n      </inertia>\n    </inertial>\n`;
+            xml += `    <inertial>\n      <mass>${mass}</mass>\n      <inertia>\n        <ixx>${
+                ixx || 0
+            }</ixx>\n        <ixy>${ixy || 0}</ixy>\n        <ixz>${
+                ixz || 0
+            }</ixz>\n        <iyy>${iyy || 0}</iyy>\n        <iyz>${
+                iyz || 0
+            }</iyz>\n        <izz>${
+                izz || 0
+            }</izz>\n      </inertia>\n    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
             if (node.sensor.type) {
@@ -119,7 +138,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(node.parentURDF.position);
+                originInRelationToParentsJoint.add(node.parentFrame.position);
 
                 if (node.parent.isBaseLink) {
                     node.getWorldPosition(originInRelationToParentsJoint);
@@ -132,9 +151,13 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 if (node.jointType !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.joint.rotation);
-                    const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(
+                        ...node.axis.axis
+                    ).applyQuaternion(quaternion);
                     xml += `    <axis>\n`;
-                    xml += `        <xyz expressed_in='${linkName}'>${formatVector(newAxis)}</xyz>\n`;
+                    xml += `        <xyz expressed_in='${linkName}'>${formatVector(
+                        newAxis
+                    )}</xyz>\n`;
                     if (node.jointType === "revolute") {
                         xml += `        <limit>`;
                         xml += `            <lower>${node.joint.min}</lower>`;
@@ -151,7 +174,9 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 pub_joint_states += `       <joint_name>${parentName}_to_${linkName}</joint_name>\n`;
 
             // Recursively process children with the correct parent name
-            node.getUrdfObjectChildren().forEach((child) => processNode(child, linkName));
+            node.getFrameChildren().forEach((child) =>
+                processNode(child, linkName)
+            );
         }
     };
 

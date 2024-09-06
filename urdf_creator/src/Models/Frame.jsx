@@ -2,15 +2,15 @@ import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
-export default class urdfObject extends THREE.Object3D {
+export default class Frame extends THREE.Object3D {
     constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
         super();
 
         this.position.set(...origin);
         this.rotation.set(...rotation);
 
-        this.urdfObject = true;
-        this.isUrdfObject = true;
+        this.frame = true;
+        this.isFrame = true;
         this.isBaseLink = false;
         this.selectable = true;
         this.stlfile = null;
@@ -47,15 +47,15 @@ export default class urdfObject extends THREE.Object3D {
         return result;
     }
 
-    getUrdfObjectChildren = () => {
+    getFrameChildren = () => {
         return this.link.children.filter(
-            (child) => child instanceof urdfObject
+            (child) => child instanceof Frame
         );
     };
 
     get parentName() {
         if (this.isBaseLink) return null;
-        return this.parentURDF.name;
+        return this.parentFrame.name;
     }
 
     get objectScale() {
@@ -194,7 +194,7 @@ export default class urdfObject extends THREE.Object3D {
         // Set the stlfile name to the userData
         this.userData.stlfile = meshFileName;
 
-        // Add the STL Mesh to the urdfObject as a child of urdfObject.joint.link.mesh and apply wireframe to link geometry
+        // Add the STL Mesh to the Frame as a child of Frame.joint.link.mesh and apply wireframe to link geometry
         //get stl file from openDB
         try {
             // Get the STL file from IndexedDB
@@ -287,11 +287,11 @@ export default class urdfObject extends THREE.Object3D {
     attachTransformControls = (transformControls) => {
         const mode = transformControls.mode;
         switch (mode) {
-            // this case will attach the transform controls to the urdfObject and move everything together
+            // this case will attach the transform controls to the Frame and move everything together
             case "translate":
                 transformControls.attach(this);
                 break;
-            // will attach to urdfObject which will rotate the mesh about said origin
+            // will attach to Frame which will rotate the mesh about said origin
             case "rotate":
                 transformControls.attach(this);
                 break;
@@ -373,10 +373,10 @@ export default class urdfObject extends THREE.Object3D {
     }
 
     clone() {
-        return new urdfObject(this.name, this.position, this.rotation);
+        return new Frame(this.name, this.position, this.rotation);
     }
 
-    //Add STL to the urdfObject
+    //Add STL to the Frame
     // setSTL = (stlfile) => {
     //     const loader = new STLLoader();
     //     loader.load(stlfile, (geometry) => {

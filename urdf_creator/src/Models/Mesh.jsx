@@ -72,6 +72,6 @@ export default class Mesh extends THREE.Mesh {
     }
 
     onAfterRender = () => {
-        this.urdfObject.updateInertia();
+        this.frame.updateInertia();
     };
 }

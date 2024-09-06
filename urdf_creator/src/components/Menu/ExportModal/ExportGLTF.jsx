@@ -1,10 +1,10 @@
 import "./Export.css";
-import urdfObjectManager from "../../../Models/urdfObjectManager";
+import FrameManager from "../../../Models/FrameManager";
 import { handleDownload } from "../../../utils/HandleDownload";
 
 const ExportGLTF = ({ onClose, getBaseLink, projectTitle, stateFunctions }) => {
     const handleGLTFExport = () => {
-        const manager = new urdfObjectManager(stateFunctions);
+        const manager = new FrameManager(stateFunctions);
         const compressedScene = manager.compressScene(getBaseLink());
         handleDownload(compressedScene, "gltf", projectTitle);
     };
