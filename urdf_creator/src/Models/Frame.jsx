@@ -63,36 +63,36 @@ export default class Frame extends THREE.Object3D {
     }
 
     get jointType() {
-        return this.joint.type;
+        return this.jointVisualizer.type;
     }
 
     set jointType(type) {
-        this.joint.type = type;
+        this.jointVisualizer.type = type;
         this.axis.type = type;
     }
 
     get min() {
-        return this.joint.min;
+        return this.jointVisualizer.min;
     }
 
     set min(value) {
-        this.joint.min = value;
+        this.jointVisualizer.min = value;
     }
 
     get max() {
-        return this.joint.max;
+        return this.jointVisualizer.max;
     }
 
     set max(value) {
-        this.joint.max = value;
+        this.jointVisualizer.max = value;
     }
 
     get jointValue() {
-        return this.joint.value;
+        return this.jointVisualizer.value;
     }
 
     set jointValue(value) {
-        this.joint.value = value;
+        this.jointVisualizer.value = value;
     }
 
     get offset() {
@@ -158,7 +158,7 @@ export default class Frame extends THREE.Object3D {
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
 
         // the joint's rotation is then set to be a rotation around the new axis by this angle
-        this.joint.setRotationFromAxisAngle(newAxis, angle);
+        this.jointVisualizer.setRotationFromAxisAngle(newAxis, angle);
     }
 
     translateAlongJointAxis(distance) {
@@ -170,13 +170,13 @@ export default class Frame extends THREE.Object3D {
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        this.joint.position.set(0, 0, 0);
-        this.joint.translateOnAxis(newAxis, distance);
+        this.jointVisualizer.position.set(0, 0, 0);
+        this.jointVisualizer.translateOnAxis(newAxis, distance);
     }
 
     resetJointPosition() {
-        this.joint.position.set(0, 0, 0);
-        this.joint.rotation.set(0, 0, 0);
+        this.jointVisualizer.position.set(0, 0, 0);
+        this.jointVisualizer.rotation.set(0, 0, 0);
     }
 
     get sensorType() {
@@ -185,7 +185,7 @@ export default class Frame extends THREE.Object3D {
 
     setMesh = async (meshFileName) => {
         if (meshFileName === "") {
-            this.joint.link.material.wireframe = false;
+            this.jointVisualizer.link.material.wireframe = false;
             this.userData.stlfile = null;
             this.link.children = [];
             return;
@@ -197,8 +197,8 @@ export default class Frame extends THREE.Object3D {
         }
 
         // Remove the existing mesh from link childreen
-        if (this.joint.link.children.length > 0) {
-            this.joint.link.children = [];
+        if (this.jointVisualizer.link.children.length > 0) {
+            this.jointVisualizer.link.children = [];
         }
 
         // Set the stlfile name to the userData
@@ -267,7 +267,7 @@ export default class Frame extends THREE.Object3D {
                 );
 
                 // Make the mesh object a wireframe
-                this.joint.link.material.wireframe = true;
+                this.jointVisualizer.link.material.wireframe = true;
             } else {
                 console.error("File not found in database");
             }
@@ -377,7 +377,7 @@ export default class Frame extends THREE.Object3D {
     }
 
     reattachLink() {
-        this.joint.attach(this.link);
+        this.jointVisualizer.attach(this.link);
         this.linkDetached = false;
         this.attach(this.axis);
     }

@@ -108,7 +108,7 @@ export const ScenetoXML = (scene, projectTitle) => {
 
             // Add joint if there's a parent link
             if (parentName) {
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.joint.type}">\n`;
+                xml += `  <joint name="${parentName}_to_${linkName}" type="${node.jointType}">\n`;
                 xml += `    <parent link="${parentName}" />\n`;
                 xml += `    <child link="${linkName}" />\n`;
 
@@ -128,15 +128,15 @@ export const ScenetoXML = (scene, projectTitle) => {
                 xml += `    <origin xyz="${formatVector(
                     originInRelationToParentsJoint
                 )}" rpy="${rotation}" />\n`;
-                if (node.joint.type !== "fixed") {
+                if (node.jointType !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.axis.rotation);
                     const newAxis = new THREE.Vector3(
                         ...node.axis.axis
                     ).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
-                    if (node.joint.type !== "continuous") {
-                        xml += `    <limit effort="1000.0" lower="${node.joint.min}" upper="${node.joint.max}" velocity="0.5"/>`;
+                    if (node.jointType !== "continuous") {
+                        xml += `    <limit effort="1000.0" lower="${node.min}" upper="${node.max}" velocity="0.5"/>`;
                     }
                 }
                 xml += `  </joint>\n`;

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export default class Joint extends THREE.Object3D {
+export default class JointVisualizer extends THREE.Object3D {
     constructor(jointPosition = [0, 0, 0], type = "fixed", jointMin = -1, jointMax = 1, value = 0) {
         super();
 
@@ -57,6 +57,6 @@ export default class Joint extends THREE.Object3D {
     }
 
     clone() {
-        return new Joint(this.position, this.type, this.min, this.max, this.value);
+        return new JointVisualizer(this.position, this.type, this.min, this.max, this.value);
     }
 }

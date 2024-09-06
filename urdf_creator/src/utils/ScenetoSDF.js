@@ -150,7 +150,7 @@ export const ScenetoSDF = (scene, projectTitle) => {
                 xml += `    <child>${linkName}</child>\n`;
                 if (node.jointType !== "fixed") {
                     const quaternion = new THREE.Quaternion();
-                    quaternion.setFromEuler(node.joint.rotation);
+                    quaternion.setFromEuler(node.jointVisualizer.rotation);
                     const newAxis = new THREE.Vector3(
                         ...node.axis.axis
                     ).applyQuaternion(quaternion);
@@ -160,8 +160,8 @@ export const ScenetoSDF = (scene, projectTitle) => {
                     )}</xyz>\n`;
                     if (node.jointType === "revolute") {
                         xml += `        <limit>`;
-                        xml += `            <lower>${node.joint.min}</lower>`;
-                        xml += `            <upper>${node.joint.max}</upper>`;
+                        xml += `            <lower>${node.min}</lower>`;
+                        xml += `            <upper>${node.max}</upper>`;
                         xml += `        </limit>\n`;
                     }
                     xml += `    </axis>\n`;

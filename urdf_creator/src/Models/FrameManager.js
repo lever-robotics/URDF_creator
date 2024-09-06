@@ -1,5 +1,5 @@
 import Link from "./Link";
-import Joint from "./Joint";
+import JointVisualizer from "./JointVisualizer";
 import Inertia from "./Inertia";
 import Frame from "./Frame";
 import { IMU, Camera, Lidar, Sensor } from "./SensorsClass";
@@ -38,7 +38,7 @@ export default class FrameManager {
         const shape = params.shape;
 
         const link = new Link();
-        const joint = new Joint();
+        const jointVisualizer = new JointVisualizer();
         const axis = new Axis();
         const mesh = new Mesh(shape);
         const inertia = new Inertia();
@@ -48,17 +48,17 @@ export default class FrameManager {
 
         link.add(mesh);
 
-        joint.link = link;
-        joint.add(link);
+        jointVisualizer.link = link;
+        jointVisualizer.add(link);
 
-        frame.joint = joint;
+        frame.jointVisualizer = jointVisualizer;
         frame.link = link;
         frame.axis = axis;
         frame.mesh = mesh;
-        frame.add(joint);
+        frame.add(jointVisualizer);
         frame.add(axis);
 
-        joint.frame = frame;
+        jointVisualizer.frame = frame;
         link.frame = frame;
         axis.frame = frame;
         mesh.frame = frame;
@@ -72,7 +72,7 @@ export default class FrameManager {
 
     cloneFrame(frame) {
         const link = frame.link.clone();
-        const joint = frame.joint.clone();
+        const jointVisualizer = frame.jointVisualizer.clone();
         const axis = frame.axis.clone();
         const mesh = frame.mesh.clone();
         const inertia = frame.inertia.clone();
@@ -82,18 +82,18 @@ export default class FrameManager {
         const clone = this.registerName(unnamedClone);
 
         clone.link = link;
-        clone.joint = joint;
+        clone.jointVisualizer = jointVisualizer;
         clone.axis = axis;
         clone.mesh = mesh;
         clone.inertia = inertia;
         clone.sensor = sensor;
 
-        joint.add(link);
+        jointVisualizer.add(link);
         link.add(mesh);
-        clone.add(joint);
+        clone.add(jointVisualizer);
         clone.add(axis);
 
-        joint.frame = clone;
+        jointVisualizer.frame = clone;
         link.frame = clone;
         axis.frame = clone;
         mesh.frame = clone;
@@ -121,7 +121,7 @@ export default class FrameManager {
             jointMin: frame.min,
             jointMax: frame.max,
             axisRotation: frame.axis.rotation,
-            jointOrigin: frame.joint.position,
+            jointOrigin: frame.jointVisualizer.position,
             material: frame.mesh.material,
             color: frame.color,
             shape: frame.shape,
@@ -172,7 +172,7 @@ export default class FrameManager {
 
         const link = new Link(Object.values(offset));
         const mesh = new Mesh(shape, Object.values(scale));
-        const joint = new Joint(
+        const jointVisualizer = new JointVisualizer(
             Object.values(jointOrigin),
             jointType,
             jointMin,
@@ -199,18 +199,18 @@ export default class FrameManager {
         link.mesh = mesh;
         link.add(mesh);
 
-        joint.link = link;
-        joint.add(link);
+        jointVisualizer.link = link;
+        jointVisualizer.add(link);
 
-        frame.joint = joint;
+        frame.jointVisualizer = jointVisualizer;
         frame.link = link;
         frame.axis = axis;
         frame.mesh = mesh;
-        frame.add(joint);
+        frame.add(jointVisualizer);
         frame.add(axis);
         frame.color = color;
 
-        joint.frame = frame;
+        jointVisualizer.frame = frame;
         link.frame = frame;
         axis.frame = frame;
         mesh.frame = frame;
