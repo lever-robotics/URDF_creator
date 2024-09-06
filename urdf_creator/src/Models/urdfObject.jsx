@@ -39,14 +39,18 @@ export default class urdfObject extends THREE.Object3D {
         const charactersLength = characters.length;
         let counter = 0;
         while (counter < length) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            result += characters.charAt(
+                Math.floor(Math.random() * charactersLength)
+            );
             counter += 1;
         }
         return result;
     }
 
     getUrdfObjectChildren = () => {
-        return this.link.children.filter((child) => child instanceof urdfObject);
+        return this.link.children.filter(
+            (child) => child instanceof urdfObject
+        );
     };
 
     get parentName() {
@@ -216,9 +220,14 @@ export default class urdfObject extends THREE.Object3D {
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(mesh);
+                        const boundingBox = new THREE.Box3().setFromObject(
+                            mesh
+                        );
                         // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
+                        const desiredBox = new THREE.Box3(
+                            new THREE.Vector3(-0.5, -0.5, -0.5),
+                            new THREE.Vector3(0.5, 0.5, 0.5)
+                        );
 
                         // Calculate the size of the bounding box and desired box
                         const boundingBoxSize = new THREE.Vector3();
@@ -302,7 +311,20 @@ export default class urdfObject extends THREE.Object3D {
 
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
-        if (type === "scale") {
+        if (type === "offset") {
+            const currentOffset = this.offset.toArray();
+            this.parent.attach(this.link);
+            this.linkDetached = true;
+            console.log("uo", this.position.toArray());
+            console.log("offset", this.offset.toArray());
+            const newValues = this.position.toArray();
+            // console.log(newValues, currentOffset);
+            newValues[this.determineComponentIndex(axis)] -=
+                (value - currentOffset[this.determineComponentIndex(axis)]);
+            this.position.set(...newValues);
+            console.log(this.position);
+            this.reattachLink();
+        } else if (type === "scale") {
             const newValues = this.objectScale.toArray();
             newValues[this.determineComponentIndex(axis)] = value;
             this.objectScale.set(...newValues);
@@ -325,7 +347,9 @@ export default class urdfObject extends THREE.Object3D {
                 case "height":
                     return 2;
                 default:
-                    throw new Error("Axis must be 'x', 'y', 'z', 'radius, or 'height'");
+                    throw new Error(
+                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
+                    );
             }
         } catch (e) {
             console.error(e, "axis provided", axis);
