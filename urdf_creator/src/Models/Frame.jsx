@@ -3,11 +3,15 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 
 export default class Frame extends THREE.Object3D {
-    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0]) {
+    constructor(name = "", origin = [0, 0, 0], rotation = [0, 0, 0], jointType = "fixed", jointMin = -1, jointMax = 1) {
         super();
 
         this.position.set(...origin);
         this.rotation.set(...rotation);
+
+        this._jointType = jointType;
+        this._min = jointMin;
+        this._max = jointMax;
 
         this.frame = true;
         this.isFrame = true;
@@ -15,9 +19,6 @@ export default class Frame extends THREE.Object3D {
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
-        // if (stateFunctions.doesLinkNameExist(name)) {
-        //     name += this.makeid(4)
-        // }
         this.name = name;
         // this.bus= [];
     }
@@ -33,20 +34,6 @@ export default class Frame extends THREE.Object3D {
      *
      *
      **/
-
-    makeid(length) {
-        let result = "";
-        const characters = "0123456789";
-        const charactersLength = characters.length;
-        let counter = 0;
-        while (counter < length) {
-            result += characters.charAt(
-                Math.floor(Math.random() * charactersLength)
-            );
-            counter += 1;
-        }
-        return result;
-    }
 
     getFrameChildren = () => {
         return this.jointVisualizer.children.filter(
@@ -64,28 +51,45 @@ export default class Frame extends THREE.Object3D {
     }
 
     get jointType() {
-        return this.jointVisualizer.type;
+        return this._jointType;
     }
 
     set jointType(type) {
-        this.jointVisualizer.type = type;
-        this.axis.type = type;
+        this._jointType = type;
+        switch (type) {
+            case "fixed":
+                this.axis.material.visible = false;
+                break;
+            case "revolute":
+            case "prismatic":
+                this.min = -1;
+                this.max = 1;
+                this.axis.material.visible = true;
+                break;
+            case "continuous":
+                this.min = -3.14;
+                this.max = 3.14;
+                this.axis.material.visible = true;
+                break;
+            default:
+                break;
+        }
     }
 
     get min() {
-        return this.jointVisualizer.min;
+        return this._min;
     }
 
     set min(value) {
-        this.jointVisualizer.min = value;
+        this._min = value;
     }
 
     get max() {
-        return this.jointVisualizer.max;
+        return this._max;
     }
 
     set max(value) {
-        this.jointVisualizer.max = value;
+        this._max = value;
     }
 
     get jointValue() {
@@ -332,19 +336,7 @@ export default class Frame extends THREE.Object3D {
     operate = (type, axis, value) => {
         /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
 
-        if (type === "offset") {
-            const currentOffset = this.offset.toArray();
-            this.parent.attach(this.link);
-            this.linkDetached = true;
-
-            const newValues = this.position.toArray();
-            // console.log(newValues, currentOffset);
-            newValues[this.determineComponentIndex(axis)] -=
-                (value - currentOffset[this.determineComponentIndex(axis)]);
-            this.position.set(...newValues);
-
-            this.reattachLink();
-        } else if (type === "scale") {
+        if (type === "scale") {
             const newValues = this.objectScale.toArray();
             newValues[this.determineComponentIndex(axis)] = value;
             this.objectScale.set(...newValues);

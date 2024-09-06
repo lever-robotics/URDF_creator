@@ -87,7 +87,7 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
                 <strong>Parent Link:</strong>
                 <span> {selectedObject.parentName}</span>
             </div>
-            {/* <OffsetParameters selectedObject={selectedObject} stateFunctions={stateFunctions} /> */}
+            <OffsetParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
             {!selectedObject.isBaseLink && (
                 <>
                     <div>
