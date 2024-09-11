@@ -34,6 +34,16 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
         return v;
     };
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handleJointValueChange = (value) => {
         value = toFloat(value);
         //clamp the value to the min and max
@@ -64,14 +74,14 @@ export default function JointParameters({ selectedObject, stateFunctions }) {
     };
 
     const handleMinValueChange = (value) => {
-        value = toFloat(value);
+        value = toFloat(checkNegativeZero(value));
         setMinInput(value);
         setMin(value);
         stateFunctions.setJointMinMax(selectedObject, "min", value);
     };
 
     const handleMaxValueChange = (value) => {
-        value = toFloat(value);
+        value = toFloat(checkNegativeZero(value));
         setMaxInput(value);
         setMax(value);
         stateFunctions.setJointMinMax(selectedObject, "max", value);

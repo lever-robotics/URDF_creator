@@ -15,6 +15,16 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
 
     }, [JSON.stringify(selectedObject.offset)]);
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handleOffsetChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -35,7 +45,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
 
     const handleOffsetBlur = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(e.target.value);
+        const newValue = parseFloat(checkNegativeZero(e.target.value));
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
@@ -47,15 +57,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
 
     const handleKeyDown = (e) => {
         if(e.key === "Enter"){
-            const axis = e.target.title.toLowerCase().replace(":", "");
-            const newValue = parseFloat(e.target.value);
-            if (isNaN(newValue)) return;
-            stateFunctions.transformObject(
-                selectedObject,
-                "offset",
-                axis,
-                newValue
-            );
+            handleOffsetBlur(e);
         }
     }
 
@@ -64,7 +66,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
             <ul>
                 <Parameter
                     title="X:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempX}
                     onChange={handleOffsetChange}
@@ -73,7 +75,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Y:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempY}
                     onChange={handleOffsetChange}
@@ -82,7 +84,7 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Z:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempZ}
                     onChange={handleOffsetChange}

@@ -24,6 +24,16 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
         setTempIzz(selectedObject.inertia.izz);
     }, [JSON.stringify(selectedObject.inertia)]);
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handleInertiaChange = (e) => {
         const type = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -51,7 +61,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
     };
 
     const handleInertiaBlur = (e) => {
-        const inertia = parseFloat(e.target.value);
+        const inertia = parseFloat(checkNegativeZero(e.target.value));
         const type = e.target.title.toLowerCase().replace(":", "");
 
         if (isNaN(inertia)) return;
@@ -65,7 +75,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
 
     const handleMassBlur = (e) => {
         if (isNaN(e.target.value)) return;
-        stateFunctions.setMass(selectedObject, parseFloat(e.target.value));
+        stateFunctions.setMass(selectedObject, parseFloat(checkNegativeZero(e.target.value)));
     };
 
     const handleKeyDown = (e) => {
@@ -83,7 +93,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
             <ul>
                 <Parameter
                     title="Mass:"
-                    type="number"
+                    type="text"
                     value={tempMass}
                     onChange={handleMassChange}
                     onBlur={handleMassBlur}
@@ -97,7 +107,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
             <ul>
                 <Parameter
                     title="Ixx:"
-                    type="number"
+                    type="text"
                     value={tempIxx}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}
@@ -110,7 +120,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Ixy:"
-                    type="number"
+                    type="text"
                     value={tempIxy}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}
@@ -123,7 +133,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Ixz:"
-                    type="number"
+                    type="text"
                     value={tempIxz}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}
@@ -136,7 +146,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Iyy:"
-                    type="number"
+                    type="text"
                     value={tempIyy}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}
@@ -149,7 +159,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Iyz:"
-                    type="number"
+                    type="text"
                     value={tempIyz}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}
@@ -162,7 +172,7 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Izz:"
-                    type="number"
+                    type="text"
                     value={tempIzz}
                     onChange={handleInertiaChange}
                     onBlur={handleInertiaBlur}

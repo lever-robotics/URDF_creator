@@ -23,6 +23,16 @@ function RotationParameters({ selectedObject, stateFunctions }) {
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
     }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handleRotationChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -41,7 +51,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
 
     const handleRotationBlur = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(e.target.value);
+        const newValue = parseFloat(checkNegativeZero(e.target.value));
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
@@ -53,15 +63,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
-            const axis = e.target.title.toLowerCase().replace(":", "");
-            const newValue = parseFloat(e.target.value);
-            if (isNaN(newValue)) return;
-            stateFunctions.transformObject(
-                selectedObject,
-                "rotation",
-                axis,
-                degToRad(newValue)
-            );
+            handleRotationBlur(e);
         }
     };
 
@@ -70,7 +72,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
             <ul>
                 <Parameter
                     title="X:"
-                    type="number"
+                    type="text"
                     units="°degrees"
                     value={tempX}
                     onChange={handleRotationChange}
@@ -79,7 +81,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Y:"
-                    type="number"
+                    type="text"
                     units="°degrees"
                     value={tempY}
                     onChange={handleRotationChange}
@@ -88,7 +90,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Z:"
-                    type="number"
+                    type="text"
                     units="°degrees"
                     value={tempZ}
                     onChange={handleRotationChange}
