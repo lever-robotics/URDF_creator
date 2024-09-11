@@ -466,6 +466,7 @@ export default function SceneState({ threeScene }) {
 
     const transformObject = (urdfObject, transformType, axis, value) => {
         urdfObject.operate(transformType, axis, value);
+        forceUpdateCode();
         forceSceneUpdate();
     };
 
