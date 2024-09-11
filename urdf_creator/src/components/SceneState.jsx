@@ -460,8 +460,9 @@ export default function SceneState({ threeScene }) {
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
     };
 
-    const transformObject = (frame, transformType, axis, value) => {
-        frame.operate(transformType, axis, value);
+    const transformObject = (urdfObject, transformType, axis, value) => {
+        urdfObject.operate(transformType, axis, value);
+        forceUpdateCode();
         forceSceneUpdate();
     };
 
