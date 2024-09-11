@@ -18,6 +18,16 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         setTempHeight(selectedObject.objectScale.z);
     }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handleScaleChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -42,7 +52,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
 
     const handleScaleBlur = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        let newValue = parseFloat(e.target.value);
+        let newValue = parseFloat(checkNegativeZero(e.target.value));
 
         if (axis === "radius") {
             newValue = newValue * 2;
@@ -58,24 +68,12 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
-            const axis = e.target.title.toLowerCase().replace(":", "");
-            let newValue = parseFloat(e.target.value);
-
-            if (axis === "radius") {
-                newValue = newValue * 2;
-            }
-
-            if (newValue <= 0) {
-                newValue = 0.001;
-            }
-
-            if (isNaN(newValue)) return;
-            stateFunctions.transformObject(selectedObject, "scale", axis, newValue);
+            handleScaleBlur(e);
         }
     };
 
     const props = {
-        type: "number",
+        type: "text",
         units: "m",
         onChange: handleScaleChange,
         onBlur: handleScaleBlur,

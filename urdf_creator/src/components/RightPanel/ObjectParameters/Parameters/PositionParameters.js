@@ -15,6 +15,16 @@ function PositionParameters({ selectedObject, stateFunctions }) {
 
     }, [JSON.stringify(selectedObject.position)]);
 
+    const checkNegativeZero = (value) => {
+
+        if(value === "-0"){
+            console.log("negative 0");
+            return 0;
+        }else{
+            return value;
+        }
+    }
+
     const handlePositionChange = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
@@ -35,7 +45,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
 
     const handlePositionBlur = (e) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(e.target.value);
+        const newValue = parseFloat(checkNegativeZero(e.target.value));
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
@@ -47,15 +57,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
 
     const handleKeyDown = (e) => {
         if(e.key === "Enter"){
-            const axis = e.target.title.toLowerCase().replace(":", "");
-            const newValue = parseFloat(e.target.value);
-            if (isNaN(newValue)) return;
-            stateFunctions.transformObject(
-                selectedObject,
-                "position",
-                axis,
-                newValue
-            );
+            handlePositionBlur(e);
         }
     }
 
@@ -64,7 +66,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
             <ul>
                 <Parameter
                     title="X:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempX}
                     onChange={handlePositionChange}
@@ -73,7 +75,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Y:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempY}
                     onChange={handlePositionChange}
@@ -82,7 +84,7 @@ function PositionParameters({ selectedObject, stateFunctions }) {
                 />
                 <Parameter
                     title="Z:"
-                    type="number"
+                    type="text"
                     units="m"
                     value={tempZ}
                     onChange={handlePositionChange}
