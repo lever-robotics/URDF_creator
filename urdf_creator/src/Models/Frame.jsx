@@ -148,61 +148,12 @@ export default class Frame extends THREE.Object3D {
         // this.bus.push(child);
     }
 
-    // removeChild(child) {
-    //     const index = this.bus.indexOf(child);
-    //     if (index > -1) {
-    //         array.splice(index, 1);
-    //     }
-    // }
-
-    setCustomInertia(type, inertia) {
-        this.inertia.setCustomInertia(type, inertia);
-    }
-
-    updateInertia = () => {
-        this.inertia.updateInertia(this);
-    };
-
-    updateMass = (mass) => {
-        this.inertia.updateMass(mass, this);
-    };
-
-    // Angle must be in radians
-    rotateAroundJointAxis(angle) {
-        // a quaternion is basically how to get from one rotation to another
-        const quaternion = new THREE.Quaternion();
-
-        // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
-        quaternion.setFromEuler(this.axis.rotation);
-
-        // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-
-        // the joint's rotation is then set to be a rotation around the new axis by this angle
-        this.jointVisualizer.setRotationFromAxisAngle(newAxis, angle);
-    }
-
-    translateAlongJointAxis(distance) {
-        const quaternion = new THREE.Quaternion();
-        // a quaternion is basically how to get from one rotation to another
-        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(this.axis.rotation);
-        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        this.jointVisualizer.position.set(0, 0, 0);
-        this.jointVisualizer.translateOnAxis(newAxis, distance);
-    }
-
-    resetJointPosition() {
-        this.jointVisualizer.position.set(0, 0, 0);
-        this.jointVisualizer.rotation.set(0, 0, 0);
-    }
-
     get sensorType() {
         return this?.sensor?.type ?? "";
+    }
+
+    updateInertia() {
+        this.inertia.updateInertia(this);
     }
 
     setMesh = async (meshFileName) => {
@@ -335,69 +286,6 @@ export default class Frame extends THREE.Object3D {
                 break;
         }
     };
-
-    // clear custom render behavior
-    clearCustomRenderBehavior = (behavior) => {
-        delete this.link.customRenderBehaviors[behavior];
-    };
-
-    operate = (type, axis, value) => {
-        /* Rotation is a Euler object while Postion and Scale are Vector3 objects. To set all three properties in the same way I convert to an array first. */
-
-        if (type === "scale") {
-            const newValues = this.objectScale.toArray();
-            newValues[this.determineComponentIndex(axis)] = value;
-            this.objectScale.set(...newValues);
-        } else {
-            const newValues = this[type].toArray();
-            newValues[this.determineComponentIndex(axis)] = value;
-            this[type].set(...newValues);
-        }
-    };
-
-    determineComponentIndex(axis) {
-        try {
-            switch (axis) {
-                case "x":
-                case "radius":
-                    return 0;
-                case "y":
-                    return 1;
-                case "z":
-                case "height":
-                    return 2;
-                default:
-                    throw new Error(
-                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
-                    );
-            }
-        } catch (e) {
-            console.error(e, "axis provided", axis);
-        }
-    }
-
-    // TODO rename this rotateJointAxis
-    rotateJoint(transformControls) {
-        transformControls.attach(this.axis);
-    }
-
-    moveJoint(transformControls) {
-        this.parent.attach(this.link);
-        // this.getFrameChildren.forEach((child) => {
-        //     this.parent.attach(child);
-        // })
-        this.linkDetached = true;
-        transformControls.attach(this);
-    }
-
-    reattachLink() {
-        this.jointVisualizer.attach(this.link);
-        this.linkDetached = false;
-        // this.bus.forEach((child) => {
-        //     this.jointVisualizer.attach(child);
-        // })
-        this.attach(this.axis);
-    }
 
     clone() {
         return new Frame(this.name, this.position, this.rotation, this.jointType, this.min, this.max);

@@ -16,6 +16,7 @@ import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
 import RightPanel from "./RightPanel/RightPanel.jsx";
 import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";
+import * as THREE from "three";
 
 export default function SceneState({ threeScene }) {
     //State
@@ -40,7 +41,6 @@ export default function SceneState({ threeScene }) {
     const redo = useRef([]);
     const objectNames = useRef([]);
     const pressedKeys = useRef([]);
-
     useEffect(() => {
         const { current: three } = threeScene;
         if (three) {
@@ -124,8 +124,26 @@ export default function SceneState({ threeScene }) {
         }
     }
 
-    // pushUndo gets called from forceCodeUpdate
+
+    /*
+        Update Functions
+    */    
+    const forceSceneUpdate = () => {
+        setScene({ ...threeScene.current.scene });
+    };
+    
+    const forceUpdateCode = () => {
+        pushUndo();
+        redo.current = [];
+        setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
+    };
+
+
+    /*
+        Undo/Redo Functions
+    */
     const pushUndo = async () => {
+        // pushUndo gets called from forceCodeUpdate
         const { current: undoArray } = undo;
 
         const currentScene = {
@@ -179,8 +197,8 @@ export default function SceneState({ threeScene }) {
         selectObject(lastSelected);
     };
 
-    // Redo stack gets destroyed when forceCodeUpdate gets called
     const popRedo = async () => {
+        // Redo stack gets destroyed when forceCodeUpdate gets called
         const { current: redoArray } = redo;
         const { current: three } = threeScene;
 
@@ -208,6 +226,10 @@ export default function SceneState({ threeScene }) {
         pushUndo();
     };
 
+
+    /*
+        Entire Scene Modification Functions
+    */
     const clearScene = () => {
         const { current: three } = threeScene;
         if (three.baseLink === null) return;
@@ -246,8 +268,18 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    const forceSceneUpdate = () => {
-        setScene({ ...threeScene.current.scene });
+    const loadScene = (gltfScene) => {
+        const { current: three } = threeScene;
+        objectNames.current.length = 0;
+        const baseLink = frameManager.readScene(gltfScene);
+        // if (three.baseLink) {
+        //     three.baseLink.removeFromParent();
+        // }
+        three.scene.attach(baseLink);
+        three.baseLink = baseLink;
+        baseLink.isBaseLink = true;
+        closeModal();
+        forceSceneUpdate();
     };
 
     const setTransformMode = (selectedObject, mode) => {
@@ -264,26 +296,6 @@ export default function SceneState({ threeScene }) {
 
     const getToolMode = () => {
         return toolMode;
-    };
-
-    const startRotateJoint = (frame) => {
-        const { current: three } = threeScene;
-        setToolMode("rotate");
-        three.transformControls.setMode("rotate");
-        frame.rotateJoint(three.transformControls);
-    };
-
-    const startMoveJoint = (frame) => {
-        const { current: three } = threeScene;
-        setToolMode("translate");
-        three.transformControls.setMode("translate");
-        frame.moveJoint(three.transformControls);
-    };
-
-    const reattachLink = (frame) => {
-        const { current: three } = threeScene;
-        three.transformControls.detach();
-        frame.reattachLink();
     };
 
     const selectObject = (frame) => {
@@ -308,132 +320,6 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    const setLinkColor = (frame, color) => {
-        frame.color = color;
-    };
-
-    const doesLinkNameExist = (name) => {
-        return objectNames.current.includes(name);
-    };
-
-    const registerName = (name) => {
-        if (!doesLinkNameExist(name)) {
-            objectNames.current.push(name);
-            return true;
-        }
-        return false;
-    };
-
-    const deregisterName = (name) => {
-        const index = objectNames.current.indexOf(name);
-        objectNames.current.splice(index, 1);
-    };
-
-    const findFrameByName = (frame, name) => {
-        if (frame.name === name) return frame;
-        let returnChild = null;
-        frame.getFrameChildren().forEach((child) => {
-            returnChild = findFrameByName(child, name);
-        });
-        return returnChild;
-    };
-
-    const setLinkName = (frame, name) => {
-        // remove old name from registry
-        deregisterName(frame.name);
-
-        //add the new name
-        frame.name = name;
-        frameManager.registerName(frame);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setMass = (frame, mass) => {
-        frame.updateMass(mass);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setInertia = (frame, type, inertia) => {
-        frame.setCustomInertia(type, inertia);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setSensor = (frame, type) => {
-        frameManager.changeSensor(frame, type);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const updateSensor = (frame, name, value) => {
-        frame.sensor.update(name, value);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setJointType = (frame, type) => {
-        frame.jointType = type;
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setJointMinMax = (frame, type, value) => {
-        if (type === "both") {
-            frame.min = -value;
-            frame.max = value;
-        } else {
-            frame[type] = value;
-        }
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const setJointValue = (frame, value) => {
-        frame.jointValue = value;
-        forceSceneUpdate();
-    };
-
-    const rotateAroundJointAxis = (frame, angle) => {
-        frame.rotateAroundJointAxis(angle);
-        forceSceneUpdate();
-    };
-
-    const translateAlongJointAxis = (frame, distance) => {
-        frame.translateAlongJointAxis(distance);
-        forceSceneUpdate();
-    };
-
-    const saveForDisplayChanges = (frame) => {
-        frame.saveForDisplayChanges();
-    };
-
-    const resetJointPosition = (frame) => {
-        frame.resetJointPosition();
-        forceSceneUpdate();
-    };
-
-    const setMesh = (frame, meshFileName) => {
-        frame.setMesh(meshFileName);
-        forceSceneUpdate();
-        forceUpdateCode();
-    };
-
-    const loadScene = (gltfScene) => {
-        const { current: three } = threeScene;
-        objectNames.current.length = 0;
-        const baseLink = frameManager.readScene(gltfScene);
-        // if (three.baseLink) {
-        //     three.baseLink.removeFromParent();
-        // }
-        three.scene.attach(baseLink);
-        three.baseLink = baseLink;
-        baseLink.isBaseLink = true;
-        closeModal();
-        forceSceneUpdate();
-    };
-
     const loadSingleObject = (gltfScene) => {
         const frame = frameManager.readScene(gltfScene);
         if (selectedObject) {
@@ -452,18 +338,6 @@ export default function SceneState({ threeScene }) {
     const getScene = () => {
         const { current: three } = threeScene;
         return three.scene;
-    };
-
-    const forceUpdateCode = () => {
-        pushUndo();
-        redo.current = [];
-        setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
-    };
-
-    const transformObject = (urdfObject, transformType, axis, value) => {
-        urdfObject.operate(transformType, axis, value);
-        forceUpdateCode();
-        forceSceneUpdate();
     };
 
     const duplicateObject = (frame) => {
@@ -509,6 +383,56 @@ export default function SceneState({ threeScene }) {
         }
     };
 
+    const reparentObject = (parent, child) => {
+        parent.attachChild(child);
+        forceUpdateCode();
+    };
+
+
+    /*
+        Name Functions
+    */
+    const doesLinkNameExist = (name) => {
+        return objectNames.current.includes(name);
+    };
+
+    const registerName = (name) => {
+        if (!doesLinkNameExist(name)) {
+            objectNames.current.push(name);
+            return true;
+        }
+        return false;
+    };
+
+    const deregisterName = (name) => {
+        const index = objectNames.current.indexOf(name);
+        objectNames.current.splice(index, 1);
+    };
+
+    const findFrameByName = (frame, name) => {
+        if (frame.name === name) return frame;
+        let returnChild = null;
+        frame.getFrameChildren().forEach((child) => {
+            returnChild = findFrameByName(child, name);
+        });
+        return returnChild;
+    };
+
+    const setLinkName = (frame, name) => {
+        // remove old name from registry
+        deregisterName(frame.name);
+
+        //add the new name
+        frame.name = name;
+        frameManager.registerName(frame);
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+
+    /*
+        Modal Functions
+    */
     const openProjectManager = () => {
         setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} onClose={closeProjectManager} />);
         setIsModalOpen(true);
@@ -520,8 +444,8 @@ export default function SceneState({ threeScene }) {
 
     const closeModal = () => setIsModalOpen(false);
 
-    // Close the onboarding Modal and launch the project manager
     const closeOnboarding = () => {
+        // Close the onboarding Modal and launch the project manager
         setIsModalOpen(false);
         openProjectManager();
     };
@@ -549,8 +473,6 @@ export default function SceneState({ threeScene }) {
         setIsModalOpen(true);
     };
 
-    const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
-
     const changeProjectTitle = (e) => setProjectTitle(e.target.value);
 
     const handleProjectClick = async (projectPath, title) => {
@@ -568,6 +490,168 @@ export default function SceneState({ threeScene }) {
         loadSingleObject(link);
         closeImportDisplayer();
     };
+
+    const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
+
+
+    /*
+        Frame Functions
+    */
+    const startRotateJoint = (frame) => {
+        const { current: three } = threeScene;
+        setToolMode("rotate");
+        three.transformControls.setMode("rotate");
+
+        three.transformControls.attach(frame.axis);
+    };
+
+    const startMoveJoint = (frame) => {
+        const { current: three } = threeScene;
+        setToolMode("translate");
+        three.transformControls.setMode("translate");
+
+        frame.parent.attach(frame.link);
+        frame.linkDetached = true;
+        three.transformControls.attach(frame);
+    };
+
+    const reattachLink = (frame) => {
+        const { current: three } = threeScene;
+        three.transformControls.detach();
+        frame.jointVisualizer.attach(frame.link);
+        frame.linkDetached = false;
+        frame.attach(frame.axis);
+    };
+
+    const setLinkColor = (frame, color) => {
+        frame.color = color;
+    };
+
+    const setMass = (frame, mass) => {
+        frame.mass = mass;
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const setInertia = (frame, type, inertia) => {
+        frame.inertia.setCustomInertia(type, inertia);
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const setSensor = (frame, type) => {
+        frameManager.changeSensor(frame, type);
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const updateSensor = (frame, name, value) => {
+        frame.sensor.update(name, value);
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const setJointType = (frame, type) => {
+        frame.jointType = type;
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const setJointMinMax = (frame, type, value) => {
+        if (type === "both") {
+            frame.min = -value;
+            frame.max = value;
+        } else {
+            frame[type] = value;
+        }
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const setJointValue = (frame, value) => {
+        frame.jointValue = value;
+        forceSceneUpdate();
+    };
+
+    const rotateAroundJointAxis = (frame, angle) => {
+        // Angle must be in radians
+        // a quaternion is basically how to get from one rotation to another
+        const quaternion = new THREE.Quaternion();
+
+        // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
+        quaternion.setFromEuler(frame.axis.rotation);
+
+        // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+
+        // the joint's rotation is then set to be a rotation around the new axis by this angle
+        frame.jointVisualizer.setRotationFromAxisAngle(newAxis, angle);
+
+        forceSceneUpdate();
+    };
+
+    const translateAlongJointAxis = (frame, distance) => {
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(frame.axis.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+        frame.jointVisualizer.position.set(0, 0, 0);
+        frame.jointVisualizer.translateOnAxis(newAxis, distance);
+        forceSceneUpdate();
+    };
+
+    const resetJointPosition = (frame) => {
+        frame.jointVisualizer.position.set(0, 0, 0);
+        frame.jointVisualizer.rotation.set(0, 0, 0);
+        forceSceneUpdate();
+    };
+
+    const setMesh = (frame, meshFileName) => {
+        frame.setMesh(meshFileName);
+        forceSceneUpdate();
+        forceUpdateCode();
+    };
+
+    const transformObject = (frame, transformType, axis, value) => {
+        if (transformType === "scale") {
+            const newValues = frame.objectScale.toArray();
+            newValues[whichAxis(axis)] = value;
+            frame.objectScale.set(...newValues);
+        } else {
+            const newValues = frame[transformType].toArray();
+            newValues[whichAxis(axis)] = value;
+            frame[transformType].set(...newValues);
+        }
+
+        forceUpdateCode();
+        forceSceneUpdate();
+    };
+
+    const whichAxis = (axis) => {
+        try {
+            switch (axis) {
+                case "x":
+                case "radius":
+                    return 0;
+                case "y":
+                    return 1;
+                case "z":
+                case "height":
+                    return 2;
+                default:
+                    throw new Error(
+                        "Axis must be 'x', 'y', 'z', 'radius, or 'height'"
+                    );
+            }
+        } catch (e) {
+            console.error(e, "axis provided", axis);
+        }
+    }
 
     const setObjectPosition = (object, position) => {
         object.position.copy(position);
@@ -589,39 +673,18 @@ export default function SceneState({ threeScene }) {
         forceSceneUpdate();
     };
 
-    const reparentObject = (parent, child) => {
-        parent.attachChild(child);
-        forceUpdateCode();
-    };
+
 
     const stateFunctions = {
         addObject,
         forceSceneUpdate,
         setTransformMode,
         getToolMode,
-        startRotateJoint,
-        startMoveJoint,
-        reattachLink,
         selectObject,
-        setLinkColor,
         setLinkName,
-
-        setMass,
-        setInertia,
-        setSensor,
-        setJointType,
-        saveForDisplayChanges,
-        resetJointPosition,
-        translateAlongJointAxis,
-        rotateAroundJointAxis,
-        setJointMinMax,
-        setJointValue,
-        setMesh,
-        updateSensor,
         loadScene,
         loadSingleObject,
         getScene,
-        transformObject,
         duplicateObject,
         deleteObject,
         getBaseLink,
@@ -634,10 +697,6 @@ export default function SceneState({ threeScene }) {
         closeModal,
         changeProjectTitle,
         handleProjectClick,
-        setObjectPosition,
-        setObjectScale,
-        copyObjectScale,
-        setObjectQuaternion,
         doesLinkNameExist,
         registerName,
         deregisterName,
@@ -645,8 +704,29 @@ export default function SceneState({ threeScene }) {
         forceUpdateCode,
         popUndo,
         popRedo,
+        startRotateJoint,
+        startMoveJoint,
+        reattachLink,
+        setLinkColor,    
+        setMass,
+        setInertia,
+        setSensor,
+        setJointType,
+        resetJointPosition,
+        translateAlongJointAxis,
+        rotateAroundJointAxis,
+        setJointMinMax,
+        setJointValue,
+        setMesh,
+        updateSensor,
+        transformObject,
+        setObjectPosition,
+        setObjectScale,
+        copyObjectScale,
+        setObjectQuaternion,
     };
     const frameManager = new FrameManager(stateFunctions);
+
 
     return [
         <div className="screen">
