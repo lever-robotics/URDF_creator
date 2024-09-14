@@ -6,22 +6,23 @@ import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
 import { ScenetoSDF } from "./ScenetoSDF";
 import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesContained";
-import { GenerateLaunchFile } from "./CreatePackage/GenerateLaunchFile";
+import { GenerateRealLaunchFile } from "./CreatePackage/GenerateLaunchFile";
 import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/GenerateBuildFiles";
 
 export async function handleDownload(scene, type, title) {
+
     if (type === "urdfpackage") {
-        const urdf = ScenetoXML(scene, title.replace(" ", "_"));
-        const sdf = ScenetoSDF(scene, title.replace(" ", "_"));
+        const urdf = ScenetoXML(scene, title);
+        const sdf = ScenetoSDF(scene, title);
         const projectProperties = LaunchPropertiesContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
-        await generateZip(urdf, sdf, projectProperties, title.replace(" ", "_"));
+        await generateZip(urdf, sdf, projectProperties, title);
     } else if (type === "urdf") {
-        const urdf = ScenetoXML(scene, title.replace(" ", "_"));
-        otherFileDownload(urdf, type, title.replace(" ", "_"));
+        const urdf = ScenetoXML(scene, title);
+        otherFileDownload(urdf, type, title);
     } else if (type === "gltf") {
         const exporter = new GLTFExporter();
         exporter.parse(scene, (gltf) => {
-            otherFileDownload(JSON.stringify(gltf), type, title.replace(" ", "_"));
+            otherFileDownload(JSON.stringify(gltf), type, title);
         });
         // const json = scene.toJSON();
         // otherFileDownload(JSON.stringify(json), type, title);
@@ -106,7 +107,7 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
     }
 
     //Programatically generate the launch file
-    const launchFileContent = GenerateLaunchFile(title, projectProperties);
+    const launchFileContent = GenerateRealLaunchFile(title, projectProperties);
 
     // Add the launch file to the ZIP
     zip.file(`${title}_description/launch/${title}.launch.py`, launchFileContent);
