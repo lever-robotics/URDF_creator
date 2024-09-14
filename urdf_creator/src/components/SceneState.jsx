@@ -290,7 +290,30 @@ export default function SceneState({ threeScene }) {
         }
 
         if (selectedObject) {
-            selectedObject.attachTransformControls(three.transformControls);
+            attachTransformControls(selectedObject);
+        }
+    };
+
+    const attachTransformControls = (selectedObject) => {
+        const { current: three } = threeScene;
+        const transformControls = three.transformControls;
+
+        const mode = transformControls.mode;
+        switch (mode) {
+            // this case will attach the transform controls to the Frame and move everything together
+            case "translate":
+                transformControls.attach(selectedObject);
+                break;
+            // will attach to Frame which will rotate the mesh about said origin
+            case "rotate":
+                transformControls.attach(selectedObject);
+                break;
+            // will attach to the link and scale nothing else
+            case "scale":
+                transformControls.attach(selectedObject.mesh);
+                break;
+            default:
+                break;
         }
     };
 
@@ -312,7 +335,7 @@ export default function SceneState({ threeScene }) {
         } else if (frame.selectable) {
             setSelectedObject(frame);
             lastSelectedObject.current = frame;
-            frame.attachTransformControls(three.transformControls);
+            attachTransformControls(frame);
         } else {
             setSelectedObject(null);
             three.transformControls.detach();

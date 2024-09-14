@@ -139,13 +139,11 @@ export default class Frame extends THREE.Object3D {
     attachChild(child) {
         this.jointVisualizer.attach(child);
         child.parentFrame = this;
-        // this.bus.push(child);
     }
 
     addChild(child) {
         this.jointVisualizer.add(child);
         child.parentFrame = this;
-        // this.bus.push(child);
     }
 
     get sensorType() {
@@ -246,44 +244,6 @@ export default class Frame extends THREE.Object3D {
             }
         } catch (error) {
             console.error("Error retrieving file from database:", error);
-        }
-    };
-
-    /**
-     *
-     *
-     *
-     *
-     * Logic Functions: Alphabetical
-     *
-     *
-     *
-     *
-     **/
-
-    // add a custom render behavior to the link
-    addCustomRenderBehavior = (behavior, func) => {
-        this.link.customRenderBehaviors[behavior] = func;
-    };
-
-    // Attaches transform controls to the correct child
-    attachTransformControls = (transformControls) => {
-        const mode = transformControls.mode;
-        switch (mode) {
-            // this case will attach the transform controls to the Frame and move everything together
-            case "translate":
-                transformControls.attach(this);
-                break;
-            // will attach to Frame which will rotate the mesh about said origin
-            case "rotate":
-                transformControls.attach(this);
-                break;
-            // will attach to the link and scale nothing else
-            case "scale":
-                transformControls.attach(this.mesh);
-                break;
-            default:
-                break;
         }
     };
 
