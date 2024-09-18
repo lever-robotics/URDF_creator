@@ -48,7 +48,7 @@ const STLImport = ({ onClose }) => {
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={process.env.PUBLIC_URL + '/statics/STL_Description.png'} alt="STL Mesh" className="stlgraphic" />
+                    <img src={'/statics/STL_Description.png'} alt="STL Mesh" className="stlgraphic" />
                 </div>
                 <div className="image-description">STLs can be exported from most CAD Modeling software including but not limited to Solidworks, Blender, AutoCad, Onshape and several others. A public repository of them can also be found online, one place being <a href="https://www.thingiverse.com/">Thingiverse</a></div>
             </div>

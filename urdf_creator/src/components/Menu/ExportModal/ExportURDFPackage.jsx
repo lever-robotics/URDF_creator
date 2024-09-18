@@ -32,7 +32,7 @@ const ExportURDFPackage = ({ onClose, getScene, projectTitle }) => {
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={process.env.PUBLIC_URL + '/statics/folders_white.png'} alt="Folder file structure" className="urdfgraphic" />
+                    <img src={'/statics/folders_white.png'} alt="Folder file structure" className="urdfgraphic" />
                 </div>
                 <div className="image-description">
                     <h3>File Structure:</h3>

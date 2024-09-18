@@ -1,5 +1,5 @@
 // Handle misc download types
-import { openDB } from "idb";
+import * as openDB from "idb";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -77,7 +77,7 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
 
     // Function to fetch and add files to the zip
     const addFilesToZip = async (fileInfo) => {
-        const response = await fetch(`${process.env.PUBLIC_URL}/${fileInfo.path}`);
+        const response = await fetch(`/${fileInfo.path}`);
         const content = await response.blob();
         zip.file(fileInfo.zipPath, content);
     };

@@ -103,7 +103,7 @@ export class ThreeSceneManager {
 
     setupFont(scene, camera) {
         const fontLoader = new FontLoader();
-        fontLoader.load(process.env.PUBLIC_URL + "/fonts/helvetiker_regular.typeface.json", (font) => {
+        fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
             const textMaterial = new THREE.MeshBasicMaterial({
                 color: 0xffffff,
             }); // Change color to blue

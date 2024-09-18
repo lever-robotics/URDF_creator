@@ -10,8 +10,8 @@ const fileNames = [
 ];
 
 const GltfFile = ({ fileName, displayName, handleSensorClick }) => {
-    const gltfFilePath = `${process.env.PUBLIC_URL}/statics/GLTFFiles/${fileName}.gltf`;
-    const imageFilePath = `${process.env.PUBLIC_URL}/statics/GLTFFilesImages/${fileName}.png`;
+    const gltfFilePath = `/statics/GLTFFiles/${fileName}.gltf`;
+    const imageFilePath = `/statics/GLTFFilesImages/${fileName}.png`;
 
     const loadGltfFile = () => {
         handleSensorClick(gltfFilePath);

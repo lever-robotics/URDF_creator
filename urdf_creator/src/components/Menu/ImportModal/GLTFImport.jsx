@@ -41,7 +41,7 @@ const GLTFImport = ({ onClose, loadScene }) => {
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={process.env.PUBLIC_URL + '/statics/gltf_share.png'} alt="gltf Share" className="gltfgraphic" />
+                    <img src={'/statics/gltf_share.png'} alt="gltf Share" className="gltfgraphic" />
                 </div>
                 <div className="image-description">Share your robot description in this software with developer teams to modify the same robot description</div>
             </div>

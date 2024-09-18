@@ -27,7 +27,7 @@ const ExportURDFPackage = ({ onClose, getScene, projectTitle }) => {
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={process.env.PUBLIC_URL + '/statics/urdf_folder.png'} alt="URDF file" className="urdfgraphic" />
+                    <img src={'/statics/urdf_folder.png'} alt="URDF file" className="urdfgraphic" />
                 </div>
                 <div className="image-description">
                     Download the URDF file to be used for uploading on several platforms including Unity, Issac Sim, and ROS2.

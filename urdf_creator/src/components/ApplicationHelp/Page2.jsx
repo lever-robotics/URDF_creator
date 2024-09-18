@@ -21,7 +21,7 @@ const Page2 = () => {
                     </p>
                 </div>
                 <div className="graphic-container-page2">
-                    <img src={process.env.PUBLIC_URL + '/statics/link.png'} alt="Links" className="graphic"/>
+                    <img src={'/statics/link.png'} alt="Links" className="graphic"/>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@ const Page2 = () => {
                     </p>
                 </div>
                 <div className="graphic-container-page2">
-                    <img src={process.env.PUBLIC_URL + '/statics/joints.png'} alt="Joints" className="graphic"/>
+                    <img src={'/statics/joints.png'} alt="Joints" className="graphic"/>
                 </div>
             </div>
         </div>

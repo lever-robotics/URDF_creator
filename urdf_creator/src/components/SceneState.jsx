@@ -500,7 +500,7 @@ export default function SceneState({ threeScene }) {
 
     const handleProjectClick = async (projectPath, title) => {
         clearScene();
-        const group = await handleProject(process.env.PUBLIC_URL + projectPath);
+        const group = await handleProject(projectPath);
         const baseLink = group.scene.children[0];
         loadScene(baseLink);
         setProjectTitle(title);
