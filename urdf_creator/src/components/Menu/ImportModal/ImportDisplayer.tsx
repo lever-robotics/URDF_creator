@@ -2,11 +2,16 @@ import React, { useState, useRef } from "react";
 import STLImport from "./STLImport";
 import GLTFImport from "./GLTFImport";
 import GltfFilesGrid from "./ImportSensor";
-import ReactGA from "react-ga4";
-
 import "./importDisplayer.css";
+import Frame from "../../../Models/Frame";
 
-const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
+type Props = {
+    handleSensorClick: (path: string) => void,
+    onImportClose: () => void,
+    loadScene: (object: string) => void
+}
+
+const ImportDisplayer: React.FC<Props> = ({ handleSensorClick, onImportClose, loadScene }) => {
     const [content, setContent] = useState(<GLTFImport onClose={onImportClose} loadScene={loadScene} />);
     const [selectedIndex, setSelectedIndex] = useState(1);
 
@@ -36,7 +41,18 @@ const ImportDisplayer = ({ handleSensorClick, onImportClose, loadScene }) => {
     );
 };
 
-const ImportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
+type ImportProps = {
+    item: {
+        label: string;
+        content: JSX.Element;
+    },
+    index: number,
+    setContent: (content: JSX.Element) => void,
+    selectedIndex: number,
+    setSelectedIndex: (index: number) => void
+}
+
+const ImportOption: React.FC<ImportProps> = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
     const handleClick = () => {
         setContent(item.content);
         setSelectedIndex(index);

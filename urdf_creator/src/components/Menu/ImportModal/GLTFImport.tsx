@@ -2,18 +2,19 @@ import React from 'react';
 import './Import.css';
 import { useRef } from 'react';
 import { handleUpload } from '../../../utils/HandleUpload';
+import Frame from '../../../Models/Frame';
 
 
-const GLTFImport = ({ onClose, loadScene }) => {
-    const inputGTLFFile = useRef(null);
+const GLTFImport = ({ onClose, loadScene }: {onClose: () => void; loadScene: (object: string) => void}) => {
+    const inputGTLFFile = useRef<HTMLInputElement>(null);
 
     /* Annoying File Upload Logic
       1. Clicking Upload File activates onFileUpload() which 'clicks' the input element
       2. The input element has an onChange listener that uploads the file using the handleFileChange() function which calls handleUpload() 
     */
-      const onFileUpload = () => inputGTLFFile.current.click();
-      const handleFileChange = async (e) => {
-          const file = e.target.files[0];
+      const onFileUpload = () => inputGTLFFile.current!.click();
+      const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files![0];
           const type = file.name.split(".").pop();
           const group = await handleUpload(file, type);
           const base_link = group.children[0];
@@ -22,7 +23,7 @@ const GLTFImport = ({ onClose, loadScene }) => {
 
     const onClick = () => {
         onFileUpload();
-        // onClose();
+        onClose();
     };
 
     return (

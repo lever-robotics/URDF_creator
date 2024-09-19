@@ -1,7 +1,15 @@
 import React from "react";
 
-const Project = ({ project, handleProjectClick, onClose }) => {
-    const handleClick = (e) => {
+import { ProjectType } from "./ProjectDisplayer";
+
+type Props = {
+    project: ProjectType,
+    handleProjectClick: (path: string, title: string) => void,
+    onClose: () => void
+}
+
+const Project: React.FC<Props> = ({ project, handleProjectClick, onClose }) => {
+    const handleClick = () => {
         if (project?.path === undefined) {
             onClose();
         } else {

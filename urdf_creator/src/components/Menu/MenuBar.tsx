@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useState, useRef } from "react";
 import MenuIcon from "./MenuIcon.jsx";
-import HelpIcon from "../ApplicationHelp/HelpIcon.jsx";
+import HelpIcon from "../ApplicationHelp/HelpIcon.js";
 import "./MenuBar.css";
+import { StateFunctionsType } from "../SceneState.js";
 
-export default function MenuBar({ stateFunctions, projectTitle }) {
+export default function MenuBar({ stateFunctions, projectTitle }: {stateFunctions: StateFunctionsType, projectTitle: string}) {
     const { openProjectManager, openOnboarding, openExportDisplayer, openImportDisplayer, changeProjectTitle } = stateFunctions;
 
     return (

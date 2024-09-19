@@ -3,9 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import MenuModal from '../../FunctionalComponents/MenuModal';
 
-const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer }) => {
+type Props = {
+    openProjectManager: () => void,
+    openImportDisplayer: () => void,
+    openExportDisplayer: () => void,
+}
+
+const MenuIcon: React.FC<Props> = ({ openProjectManager, openImportDisplayer, openExportDisplayer }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const buttonRef = useRef(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const menuItems = [
         { label: "Project Manager", action: () => {
@@ -23,7 +29,7 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
         // { label: "Settings", action: () => alert("Setting") }
     ];
 
-    const handleClick = (e) => {
+    const handleClick = () => {
         if(isModalOpen){
             setIsModalOpen(false);
         }else{
@@ -31,10 +37,8 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
         }
     };
 
-    const closeModal = (e) => {
-        if ((buttonRef.current && !buttonRef.current.contains(e.target))) {
-            setIsModalOpen(false);
-        }
+    const closeModal = () => {
+        setIsModalOpen(false);
     }
 
     return (
@@ -43,7 +47,6 @@ const MenuIcon = ({ openProjectManager, openImportDisplayer, openExportDisplayer
                 <FontAwesomeIcon icon={faBars} />
             </button>
             {isModalOpen && <MenuModal
-            isOpen={isModalOpen}
             onClose={closeModal}
             menuItems={menuItems}
             buttonRef={buttonRef}

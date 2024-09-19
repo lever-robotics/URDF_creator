@@ -9,7 +9,7 @@ const fileNames = [
     // Add more file names as needed
 ];
 
-const GltfFile = ({ fileName, displayName, handleSensorClick }) => {
+const GltfFile = ({ fileName, displayName, handleSensorClick }: { fileName: string, displayName: string, handleSensorClick: (path: string) => void }) => {
     const gltfFilePath = `/statics/GLTFFiles/${fileName}.gltf`;
     const imageFilePath = `/statics/GLTFFilesImages/${fileName}.png`;
 
@@ -25,7 +25,7 @@ const GltfFile = ({ fileName, displayName, handleSensorClick }) => {
     );
 };
 
-const GltfFilesGrid = ({handleSensorClick}) => {
+const GltfFilesGrid = ({handleSensorClick} : {handleSensorClick: (path: string) => void}) => {
     const gltfButtons = fileNames.map((file) => (
         <GltfFile key={file.fileName} fileName={file.fileName} displayName={file.displayName} handleSensorClick={handleSensorClick} />
     ));

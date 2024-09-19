@@ -3,13 +3,13 @@ import './Import.css';
 import { useRef } from 'react';
 import { openDB } from "idb";
 
-const STLImport = ({ onClose }) => {
+const STLImport = ({ onClose }: {onClose: () => void}) => {
 
-    const inputSTLFile = useRef(null);
+    const inputSTLFile = useRef<HTMLInputElement>(null);
 
-    const onSTLFileUpload = () => inputSTLFile.current.click();
-    const handleSTLFileChange = async (event) => {
-        const selectedFile = event.target.files[0];
+    const onSTLFileUpload = () => inputSTLFile.current!.click();
+    const handleSTLFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files![0];
         if (selectedFile) {
             const db = await openDB("stlFilesDB", 1, {
                 upgrade(db) {
@@ -23,13 +23,13 @@ const STLImport = ({ onClose }) => {
                 file: selectedFile,
             });
 
-            event.target.value = null; // Clear the input value after upload
+            event.target.value = ""; // Clear the input value after upload
         }
     };
 
     const onClick = () => {
         onSTLFileUpload();
-        // onClose();
+        onClose();
     };
 
     return (

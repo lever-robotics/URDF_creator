@@ -4,13 +4,21 @@ import "./MenuModal.css";
 import MenuItem from "./MenuItem";
 import useClickOutside from "./useClickOutside";
 
-const MenuModal = ({ onClose, menuItems, buttonRef }) => {
-    
+type Props = {
+    onClose: () => void,
+    menuItems: {
+        label: string;
+        action: () => void;
+    }[],
+    buttonRef: React.RefObject<HTMLButtonElement>,
+}
 
-    const wrapperRef = useRef();
+const MenuModal: React.FC<Props> = ({ onClose, menuItems, buttonRef }) => {
+    
+    const wrapperRef = useRef<HTMLDivElement>(null);
     useClickOutside(wrapperRef, onClose);
 
-    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const buttonRect = buttonRef.current!.getBoundingClientRect();
     const position = {
         top: buttonRect.bottom + window.scrollY, // Position below button
         left: buttonRect.left + window.scrollX, // Align left with the button

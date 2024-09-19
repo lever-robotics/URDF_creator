@@ -1,8 +1,15 @@
 import React from 'react';
 import './Export.css';
 import { handleDownload } from '../../../utils/HandleDownload';
+import { Scene } from 'three';
 
-const ExportURDFPackage = ({ onClose, getScene, projectTitle }) => {
+type Props = {
+    onClose: () => void,
+    getScene: () => Scene,
+    projectTitle: string
+}
+
+const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
 
     const handleURDFExport = () => {
         const scene = getScene();

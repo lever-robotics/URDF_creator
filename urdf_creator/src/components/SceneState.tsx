@@ -12,7 +12,7 @@ import MenuBar from "./Menu/MenuBar.jsx";
 import { handleProject } from "../utils/HandleUpload.js";
 import FrameManager from "../Models/FrameManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
-import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.jsx";
+import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.js";
 import RightPanel from "./RightPanel/RightPanel.jsx";
 import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";

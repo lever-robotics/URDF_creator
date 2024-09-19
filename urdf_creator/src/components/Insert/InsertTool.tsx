@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function InsertTool({ addObject }) {
+function InsertTool({ addObject }: { addObject: (type: "cube" | "sphere" | "cylinder") => void }) {
     return (
         <div style={{ marginTop: "10px" }} className="column-box">
             Add Link
