@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import ExportURDFPackage from "./ExportURDFPackage";
 import ExportGLTF from "./ExportGLTF";
 import ExportURDF from "./ExportURDF";
-
 import "./exportDisplayer.css";
+import { StateFunctionsType } from "../../SceneState";
 
-const ExportDisplayer = ({ onClose, getBaseLink, projectTitle, getScene, stateFunctions }) => {
+type Props = { onClose: Function; getRootFrame: any; projectTitle: any; getScene: any; stateFunctions: StateFunctionsType };
+
+// the params originally were enclosed in {} braces but there was a type script compilation error that got fixed when I removed them
+const ExportDisplayer: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, getScene, stateFunctions }) => {
     const [selectedIndex, setSelectedIndex] = useState(1);
     const [content, setContent] = useState(<ExportURDFPackage onClose={onClose} getScene={getScene} projectTitle={projectTitle} />);
 
     const exportOptions = [
         { label: "URDF", content: <ExportURDF onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
         { label: "Robot Package", content: <ExportURDFPackage onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
-        { label: "GLTF", content: <ExportGLTF onClose={onClose} getBaseLink={getBaseLink} projectTitle={projectTitle} stateFunctions={stateFunctions} /> },
+        { label: "GLTF", content: <ExportGLTF onClose={onClose} getRootFrame={getRootFrame} projectTitle={projectTitle} stateFunctions={stateFunctions} /> },
     ];
 
     return (
@@ -32,7 +35,9 @@ const ExportDisplayer = ({ onClose, getBaseLink, projectTitle, getScene, stateFu
     );
 };
 
-const ExportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
+type OptionProps = { item: any; index: any; setContent: any; selectedIndex: any; setSelectedIndex: any };
+
+const ExportOption: React.FC<OptionProps> = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
     const handleClick = () => {
         setContent(item.content);
         setSelectedIndex(index);

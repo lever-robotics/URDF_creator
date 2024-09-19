@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function Column({ children, width = "", height = "", pointerEvents = null }) {
+type Props = {
+    children: any;
+    width: string;
+    height: string;
+    pointerEvents: "auto" | undefined;
+};
+
+const Column: React.FC<Props> = ({ children, width = "", height = "", pointerEvents = "auto" }) => {
     return (
         <div
             style={{
@@ -16,4 +23,6 @@ export default function Column({ children, width = "", height = "", pointerEvent
             {children}
         </div>
     );
-}
+};
+
+export default Column;

@@ -2,10 +2,10 @@ import "./Export.css";
 import FrameManager from "../../../Models/FrameManager";
 import { handleDownload } from "../../../utils/HandleDownload";
 
-const ExportGLTF = ({ onClose, getBaseLink, projectTitle, stateFunctions }) => {
+const ExportGLTF = ({ onClose, getRootFrame, projectTitle, stateFunctions }) => {
     const handleGLTFExport = () => {
         const manager = new FrameManager(stateFunctions);
-        const compressedScene = manager.compressScene(getBaseLink());
+        const compressedScene = manager.compressScene(getRootFrame());
         handleDownload(compressedScene, "gltf", projectTitle);
     };
 
@@ -30,8 +30,8 @@ const ExportGLTF = ({ onClose, getBaseLink, projectTitle, stateFunctions }) => {
             <div className="description-container">
                 <h3>Description: </h3>
                 <p>
-                    A GLTF file is a local file that you would have exported from this URDF creator to save a local copy of your project. It takes all the information from your defined robot and
-                    condenses it into a small file that can be exported here.
+                    A GLTF file is a local file that you would have exported from this URDF creator to save a local copy of your project. It takes all the information from your
+                    defined robot and condenses it into a small file that can be exported here.
                 </p>
             </div>
             <div className="image-description-container">

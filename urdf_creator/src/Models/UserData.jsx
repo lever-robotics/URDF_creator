@@ -5,7 +5,7 @@ export default class UserData {
         this.name = name;
         this.shape = shape;
         this.inertia = new Inertia();
-        this.isBaseLink = false;
+        this.isRootFrame = false;
         this.selectable = true;
         this.sensor = null; // Sensor object
         this.stlfile = null;
@@ -18,7 +18,7 @@ export default class UserData {
         duplicated.stlfile = this.stlfile;
         duplicated.name = this.name + " copy";
         duplicated.inertia = this.inertia.duplicate();
-        duplicated.isBaseLink = false;
+        duplicated.isRootFrame = false;
         if (this.sensor) {
             duplicated.sensor = this.sensor.duplicate();
         }

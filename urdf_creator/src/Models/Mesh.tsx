@@ -1,11 +1,19 @@
 import * as THREE from "three";
 import ScaleVector from "./ScaleVector";
+import Frame from "./Frame";
+import { Color } from "three";
 
 export default class Mesh extends THREE.Mesh {
-    constructor(shape = "cube", scale = [1, 1, 1], color = Math.random() * 0xffffff) {
+    private _scale: ScaleVector;
+    shape: string;
+    isShape: boolean;
+    customRenderBehaviors: {};
+    frame: Frame | null;
+    material: THREE.MeshPhongMaterial;
+    constructor(shape = "cube", scale: [number, number, number] = [1, 1, 1], color = Math.random() * 0xffffff) {
         super();
 
-        this.scale.set(...Object.values(scale));
+        this.scale.set(...scale);
 
         this._scale = new ScaleVector(shape, ...Object.values(scale));
 
@@ -14,13 +22,14 @@ export default class Mesh extends THREE.Mesh {
 
         this.geometry = defineGeometry(this, shape);
         this.material = new THREE.MeshPhongMaterial();
-        this.color = color;
+        this.color = new Color(color);
 
         this.customRenderBehaviors = {};
+        this.frame = null;
 
-        // There was a problem with scaling spheres and cylinders based off render. It could cause a bug where the user would enter a radius value that they probably want to be exact and then the render would average that input out to uniformly scale the object. So a user would enter a diameter of 10 and then the sphere would have a diameter of 3.33. To fix this I customized the scaling behavior with a new Vector3 class called scale vector. It is probablly not the most elegant solution but it is functional.
-        function defineGeometry(context, shape) {
+        function defineGeometry(context: Mesh, shape: string) {
             switch (shape) {
+                default:
                 case "cube":
                     return new THREE.BoxGeometry(1, 1, 1);
                 case "sphere":
@@ -47,8 +56,6 @@ export default class Mesh extends THREE.Mesh {
                     cylinder.rotateX(Math.PI / 2);
 
                     return cylinder;
-                default:
-                    return;
             }
         }
     }
@@ -57,21 +64,22 @@ export default class Mesh extends THREE.Mesh {
         return this.material.color;
     }
 
-    get scale() {
-        return this._scale;
+    get scaleVector() {
+        return new THREE.Vector3(this._scale.x, this._scale.y, this._scale.z);
     }
 
     set color(color) {
-        this.material.color.set(color);
+        this.material.color.copy(color);
     }
 
-    clone() {
-        const clone = new Mesh(this.shape, this.scale, this.color);
+    clone(): this {
+        const clone = new Mesh(this.shape, [this.scale.x, this.scale.y, this.scale.z], this.color.getHex());
         clone.color.copy(this.color);
-        return clone;
+        // I added the as this. could potentially cause stupid errors
+        return clone as this;
     }
 
     onAfterRender = () => {
-        this.frame.updateInertia();
+        this.frame?.updateInertia();
     };
 }

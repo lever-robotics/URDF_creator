@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { generateSensorXML } from "./generateSensorXML";
-import findBaseLink from "./findBaseLink";
+import findRootFrame from "./findRootFrame";
 import Frame from "../Models/Frame.jsx";
 import { quaternionToRPY } from "./quaternionToRPY.js";
 
@@ -18,9 +18,7 @@ export const ScenetoXML = (scene, projectTitle) => {
     // Variables to keep track of link naming
     let linkIndex = 0;
     const generateLinkName = (node) => {
-        return (
-            node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`)
-        );
+        return node.name || (linkIndex === 0 ? "base_link" : `link${linkIndex}`);
     };
 
     // Function to process a single node
@@ -33,17 +31,12 @@ export const ScenetoXML = (scene, projectTitle) => {
             let rotation = quaternionToRPY(node.quaternion);
             let linkRotation = "0 0 0";
 
-            if (node.isBaseLink) {
+            if (node.isRootFrame) {
                 offset = formatVector(node.position);
                 linkRotation = quaternionToRPY(node.quaternion);
-            } else if (node.parentFrame.isBaseLink) {
+            } else if (node.parentFrame.isRootFrame) {
                 const quaternion = new THREE.Quaternion();
-                rotation = quaternionToRPY(
-                    quaternion.multiplyQuaternions(
-                        node.parentFrame.quaternion,
-                        node.quaternion
-                    )
-                );
+                rotation = quaternionToRPY(quaternion.multiplyQuaternions(node.parentFrame.quaternion, node.quaternion));
             }
 
             // Start link
@@ -55,14 +48,14 @@ export const ScenetoXML = (scene, projectTitle) => {
             const geometryType = node.mesh.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
-                const size = `${formatVector(node.mesh.scale)}`;
+                const size = `${formatVector(node.objectScale)}`;
                 geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
             } else if (geometryType === "SphereGeometry") {
-                const radius = node.mesh.scale.x / 2;
+                const radius = node.objectScale.x / 2;
                 geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
             } else if (geometryType === "CylinderGeometry") {
-                const radius = node.mesh.scale.x / 2; // Assume uniform scaling for the radius
-                const height = node.mesh.scale.z;
+                const radius = node.objectScale.x / 2; // Assume uniform scaling for the radius
+                const height = node.objectScale.z;
                 geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
             }
             xml += geometryXML;
@@ -70,9 +63,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             // Material
             if (node.mesh.material && node.mesh.material.color) {
                 const color = node.mesh.material.color;
-                xml += `      <material name="${
-                    node.mesh.material.name || node.name + "-material"
-                }">\n`;
+                xml += `      <material name="${node.mesh.material.name || node.name + "-material"}">\n`;
                 xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
                 xml += `      </material>\n`;
             }
@@ -92,9 +83,7 @@ export const ScenetoXML = (scene, projectTitle) => {
             xml += `    <inertial>\n`;
             xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
             xml += `      <mass value="${mass}" />\n`;
-            xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${
-                ixz || 0
-            }" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
+            xml += `      <inertia ixx="${ixx || 0}" ixy="${ixy || 0}" ixz="${ixz || 0}" iyy="${iyy || 0}" iyz="${iyz || 0}" izz="${izz || 0}" />\n`;
             xml += `    </inertial>\n`;
 
             // Check for sensors and add Gazebo plugin if applicable
@@ -117,23 +106,17 @@ export const ScenetoXML = (scene, projectTitle) => {
                 // ie it add the links position to its own since it isnt passed with
                 const originInRelationToParentsJoint = new THREE.Vector3();
                 originInRelationToParentsJoint.copy(node.position);
-                originInRelationToParentsJoint.add(
-                    node.parentFrame.link.position
-                );
+                originInRelationToParentsJoint.add(node.parentFrame.link.position);
 
-                if (node.parentFrame.isBaseLink) {
+                if (node.parentFrame.isRootFrame) {
                     node.getWorldPosition(originInRelationToParentsJoint);
                 }
 
-                xml += `    <origin xyz="${formatVector(
-                    originInRelationToParentsJoint
-                )}" rpy="${rotation}" />\n`;
+                xml += `    <origin xyz="${formatVector(originInRelationToParentsJoint)}" rpy="${rotation}" />\n`;
                 if (node.jointType !== "fixed") {
                     const quaternion = new THREE.Quaternion();
                     quaternion.setFromEuler(node.axis.rotation);
-                    const newAxis = new THREE.Vector3(
-                        ...node.axis.axis
-                    ).applyQuaternion(quaternion);
+                    const newAxis = new THREE.Vector3(...node.axis.axis).applyQuaternion(quaternion);
                     xml += `    <axis xyz="${formatVector(newAxis)}"/>\n`;
                     if (node.jointType !== "continuous") {
                         xml += `    <limit effort="1000.0" lower="${node.min}" upper="${node.max}" velocity="0.5"/>`;
@@ -143,15 +126,13 @@ export const ScenetoXML = (scene, projectTitle) => {
             }
 
             // Recursively process children with the correct parent name
-            node.getFrameChildren().forEach((child) =>
-                processNode(child, linkName)
-            );
+            node.getFrameChildren().forEach((child) => processNode(child, linkName));
         }
     };
 
     // Find the base node and start processing
-    const baseLink = findBaseLink(scene);
-    if (baseLink) processNode(baseLink);
+    const rootFrame = findRootFrame(scene);
+    if (rootFrame) processNode(rootFrame);
 
     // Close robot tag
     xml += `</robot>`;

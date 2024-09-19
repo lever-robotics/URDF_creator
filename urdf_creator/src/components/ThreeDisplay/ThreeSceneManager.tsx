@@ -4,28 +4,31 @@ import { TransformControls } from "../../Models/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { Mouse } from "./Mouse";
-import { ThreeScene } from "./ThreeSceneObject";
+import ThreeScene from "./ThreeSceneObject";
 
 //For putting letters in the scene
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
+import { RefObject } from "react";
+import { StateFunctionsType } from "../SceneState";
+
+type NullableHTMLElement = HTMLElement | null;
 
 export class ThreeSceneManager {
-    constructScene(mountRef, stateFunctions) {
+    constructScene(mountRef: React.MutableRefObject<HTMLDivElement | null>, stateFunctions: StateFunctionsType) {
         const scene = this.setupScene();
-        const camera = this.setupCamera(mountRef.current);
-        const renderer = this.setupRenderer(mountRef.current);
+        const camera = this.setupCamera(mountRef.current!);
+        const renderer = this.setupRenderer(mountRef.current!);
         const orbitControls = this.setupOrbitControls(camera, renderer);
         const transformControls = this.setupTransformControls(camera, renderer, stateFunctions);
-        const lights = this.setupLights();
+        const lights: THREE.Light[] = this.setupLights();
         const gridHelper = this.setupGridHelper();
-        const font = this.setupFont(scene, camera);
         const axesHelper = this.setupAxesHelper();
         const renderPass = this.setupRenderPass(scene, camera);
         const composer = this.setupComposer(renderer, renderPass);
         const background = this.setupBackground();
         const raycaster = this.setupRaycaster();
-        const mouse = this.setupMouse(mountRef.current);
+        const mouse = this.setupMouse(mountRef.current!);
         const callback = this.setupCallback(orbitControls, transformControls, renderer, scene, mountRef);
 
         const three = new ThreeScene(
@@ -37,7 +40,6 @@ export class ThreeSceneManager {
             transformControls,
             lights,
             gridHelper,
-            font,
             axesHelper,
             renderPass,
             composer,
@@ -49,7 +51,7 @@ export class ThreeSceneManager {
 
         three.addToScene([three.transformControls, three.lights[0], three.lights[1], three.lights[2], three.lights[3], three.gridHelper, three.axesHelper]);
 
-        three.transformControls.addEventListener("dragging-changed", (event) => {
+        three.transformControls.addEventListener("dragging-changed", (event: any) => {
             three.orbitControls.enabled = !event.value;
         });
 
@@ -62,29 +64,29 @@ export class ThreeSceneManager {
         return new THREE.Scene();
     }
 
-    setupCamera(mountRef) {
-        const camera = new THREE.PerspectiveCamera(75, mountRef.clientWidth / mountRef.clientHeight, 0.1, 1000);
+    setupCamera(mount: HTMLDivElement) {
+        const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
         camera.position.set(5, 5, 5);
         camera.up.set(0, 0, 1);
         return camera;
     }
 
-    setupRenderer(mountRef) {
+    setupRenderer(mount: HTMLElement) {
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(mountRef.clientWidth, mountRef.clientHeight);
-        mountRef.appendChild(renderer.domElement);
+        renderer.setSize(mount.clientWidth, mount.clientHeight);
+        mount.appendChild(renderer.domElement);
         return renderer;
     }
 
-    setupOrbitControls(camera, renderer) {
+    setupOrbitControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer) {
         return new OrbitControls(camera, renderer.domElement);
     }
 
-    setupTransformControls(camera, renderer, stateFunctions) {
+    setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer, stateFunctions: any) {
         return new TransformControls(camera, renderer.domElement, stateFunctions);
     }
 
-    setupLights(color) {
+    setupLights() {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
         const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
@@ -101,14 +103,16 @@ export class ThreeSceneManager {
         return gridHelper;
     }
 
-    setupFont(scene, camera) {
+    setupFont(scene: THREE.Scene, camera: THREE.Camera) {
         const fontLoader = new FontLoader();
         fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
             const textMaterial = new THREE.MeshBasicMaterial({
                 color: 0xffffff,
             }); // Change color to blue
 
-            const textGemetry = (title, position) => {
+            type Position = [number, number, number];
+
+            const textGemetry = (title: string, position: Position) => {
                 const textGeo = new TextGeometry(title, {
                     font: font,
                     size: 0.1, // Make the text smaller
@@ -147,11 +151,11 @@ export class ThreeSceneManager {
         return axesHelper;
     }
 
-    setupRenderPass(scene, camera) {
+    setupRenderPass(scene: THREE.Scene, camera: THREE.Camera) {
         return new RenderPass(scene, camera);
     }
 
-    setupComposer(renderer, renderPass) {
+    setupComposer(renderer: THREE.WebGLRenderer, renderPass: RenderPass) {
         const composer = new EffectComposer(renderer);
         composer.addPass(renderPass);
         return composer;
@@ -165,13 +169,13 @@ export class ThreeSceneManager {
         return new THREE.Raycaster();
     }
 
-    setupMouse(mountRef) {
-        const mouse = new Mouse(mountRef);
+    setupMouse(mount: HTMLElement) {
+        const mouse = new Mouse(mount);
         mouse.addListeners();
         return mouse;
     }
 
-    setupCallback(orbitControls, transformControls, renderer, scene, mountRef) {
+    setupCallback(orbitControls: OrbitControls, transformControls: TransformControls, renderer: THREE.WebGLRenderer, scene: THREE.Scene, mountRef: RefObject<HTMLElement>) {
         return () => {
             orbitControls.dispose();
             transformControls.dispose();

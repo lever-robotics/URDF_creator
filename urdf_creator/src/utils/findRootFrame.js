@@ -1,6 +1,6 @@
 import Frame from "../Models/Frame";
 
-export default function findBaseLink(scene) {
+export default function findRootFrame(scene) {
     if (scene) {
         if (scene.children) {
             const children = scene.children.filter((child) => {

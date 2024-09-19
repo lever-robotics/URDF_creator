@@ -36,6 +36,10 @@ const _mouseDownEvent = { type: "mouseDown" };
 const _mouseUpEvent = { type: "mouseUp", mode: null };
 const _objectChangeEvent = { type: "objectChange" };
 
+class Gizmo extends Object3D {
+    transformType = "";
+}
+
 class TransformControls extends Object3D {
     constructor(camera, domElement, stateFunctions) {
         super();
@@ -801,7 +805,11 @@ class TransformControlsGizmo extends Object3D {
                 [new Mesh(lineGeometry2, matRed), [0, 0, 0], [0, 0, -Math.PI / 2]],
                 [new Mesh(scaleHandleGeometry, matRed), [-0.5, 0, 0], [0, 0, Math.PI / 2]],
             ],
-            Y: [[new Mesh(scaleHandleGeometry, matGreen), [0, 0.5, 0]], [new Mesh(lineGeometry2, matGreen)], [new Mesh(scaleHandleGeometry, matGreen), [0, -0.5, 0], [0, 0, Math.PI]]],
+            Y: [
+                [new Mesh(scaleHandleGeometry, matGreen), [0, 0.5, 0]],
+                [new Mesh(lineGeometry2, matGreen)],
+                [new Mesh(scaleHandleGeometry, matGreen), [0, -0.5, 0], [0, 0, Math.PI]],
+            ],
             Z: [
                 [new Mesh(scaleHandleGeometry, matBlue), [0, 0, 0.5], [Math.PI / 2, 0, 0]],
                 [new Mesh(lineGeometry2, matBlue), [0, 0, 0], [Math.PI / 2, 0, 0]],
@@ -841,7 +849,7 @@ class TransformControlsGizmo extends Object3D {
         // Creates an Object3D with gizmos described in custom hierarchy definition.
 
         function setupGizmo(gizmoMap, type) {
-            const gizmo = new Object3D();
+            const gizmo = new Gizmo();
             gizmo.transformType = type;
 
             for (const name in gizmoMap) {
@@ -1144,7 +1152,10 @@ class TransformControlsGizmo extends Object3D {
 
 class TransformControlsPlane extends Mesh {
     constructor() {
-        super(new PlaneGeometry(100000, 100000, 2, 2), new MeshBasicMaterial({ visible: false, wireframe: true, side: DoubleSide, transparent: true, opacity: 0.1, toneMapped: false }));
+        super(
+            new PlaneGeometry(100000, 100000, 2, 2),
+            new MeshBasicMaterial({ visible: false, wireframe: true, side: DoubleSide, transparent: true, opacity: 0.1, toneMapped: false })
+        );
 
         this.isTransformControlsPlane = true;
 
@@ -1218,4 +1229,4 @@ class TransformControlsPlane extends Mesh {
     }
 }
 
-export { TransformControls, TransformControlsGizmo, TransformControlsPlane };
+export { TransformControls, TransformControlsGizmo, TransformControlsPlane, Gizmo };

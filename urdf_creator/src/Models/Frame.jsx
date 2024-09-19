@@ -15,11 +15,18 @@ export default class Frame extends THREE.Object3D {
 
         this.frame = true;
         this.isFrame = true;
-        this.isBaseLink = false;
+        this.isRootFrame = false;
         this.selectable = true;
         this.stlfile = null;
         this.mesh = "";
         this.name = name;
+        this.linkDetached = false;
+        this.parentFrame = null;
+        this.axis = null;
+        this.link = null;
+        this.jointVisualizer = null;
+        this.sensor = null;
+        this.inertia = null;
         // this.bus= [];
     }
 
@@ -36,18 +43,16 @@ export default class Frame extends THREE.Object3D {
      **/
 
     getFrameChildren = () => {
-        return this.jointVisualizer.children.filter(
-            (child) => child instanceof Frame
-        );
+        return this.jointVisualizer.children.filter((child) => child instanceof Frame);
     };
 
     get parentName() {
-        if (this.isBaseLink) return null;
+        if (this.isRootFrame) return null;
         return this.parentFrame.name;
     }
 
     get objectScale() {
-        return this.mesh.scale;
+        return this.mesh.scaleVector;
     }
 
     get jointType() {
@@ -201,14 +206,9 @@ export default class Frame extends THREE.Object3D {
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(
-                            mesh
-                        );
+                        const boundingBox = new THREE.Box3().setFromObject(mesh);
                         // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(
-                            new THREE.Vector3(-0.5, -0.5, -0.5),
-                            new THREE.Vector3(0.5, 0.5, 0.5)
-                        );
+                        const desiredBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
 
                         // Calculate the size of the bounding box and desired box
                         const boundingBoxSize = new THREE.Vector3();

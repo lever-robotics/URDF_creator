@@ -30,7 +30,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
         setContextMenuVisible(false);
     };
 
-    const baseLink = stateFunctions.getBaseLink();
+    const rootFrame = stateFunctions.getRootFrame();
 
     // put the button that is dragged as the child of the hovered button
     const dropButton = (e) => {
@@ -46,7 +46,7 @@ export function LinkTree({ selectedObject, stateFunctions }) {
 
     const isAncestor = (ancestor, descendant) => {
         if (descendant === ancestor) return true;
-        if (ancestor.isBaseLink || descendant.isBaseLink) return false;
+        if (ancestor.isRootFrame || descendant.isRootFrame) return false;
         return isAncestor(ancestor, descendant.parentFrame);
     };
 
@@ -54,9 +54,9 @@ export function LinkTree({ selectedObject, stateFunctions }) {
         <div className="object-tree" onClick={onClick} onMouseLeave={onMouseLeave}>
             Link Tree
             <div className="scroll-box">
-                {baseLink && (
+                {rootFrame && (
                     <Node
-                        node={baseLink}
+                        node={rootFrame}
                         selectedObject={selectedObject}
                         handleContextMenu={handleContextMenu}
                         stateFunctions={stateFunctions}
@@ -112,7 +112,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                         }
                     }}
                     onDragStart={() => {
-                        if (!node.isBaseLink) setDraggedButton(node);
+                        if (!node.isRootFrame) setDraggedButton(node);
                     }}
                     onDragEnd={dropButton}
                     onContextMenu={(e) => {
@@ -127,7 +127,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                 <>
                     {children.map((child) => (
                         <Node
-                            key={child.id} 
+                            key={child.id}
                             node={child}
                             handleContextMenu={handleContextMenu}
                             selectedObject={selectedObject}

@@ -11,6 +11,8 @@ export class Mouse {
 
         this.onClickFunctions = [];
         this.onDoubleClickFunctions = [];
+        this.x = 0;
+        this.y = 0;
     }
 
     addListeners() {
