@@ -1,7 +1,7 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 type Props = {
-    children: any;
+    children: ReactNode;
     width: string;
     height: string;
     pointerEvents: "auto" | undefined;
