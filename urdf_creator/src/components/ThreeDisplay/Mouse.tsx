@@ -1,13 +1,26 @@
+import React from "react"
+
 export class Mouse {
-    constructor(mountRef) {
-        this.mountRef = mountRef;
+
+    mount: HTMLDivElement;
+    eventFunctions: { type: string; func: (event: any) => void; }[];
+    previousUpTime: number;
+    currentDownTime: number;
+    startPos: [number, number];
+    onClickFunctions: Function[];
+    onDoubleClickFunctions: Function[];
+    x: number;
+    y: number;
+
+    constructor(mount: HTMLDivElement) {
+        this.mount = mount;
         this.eventFunctions = [
             { type: "pointerdown", func: this.onMouseDown.bind(this) },
             { type: "pointerup", func: this.onMouseUp.bind(this) },
         ];
-        this.previousUpTime = null;
-        this.currentDownTime = null;
-        this.startPos = null;
+        this.previousUpTime = 0;
+        this.currentDownTime = 0;
+        this.startPos = [0, 0];
 
         this.onClickFunctions = [];
         this.onDoubleClickFunctions = [];
@@ -16,32 +29,32 @@ export class Mouse {
     }
 
     addListeners() {
-        if (this.mountRef) {
+        if (this.mount) {
             this.eventFunctions.forEach((event) => {
-                this.mountRef.addEventListener(event.type, event.func);
+                this.mount.addEventListener(event.type, event.func);
             });
         }
     }
 
     callback() {
         if (this) {
-            if (this.mountRef) {
+            if (this.mount) {
                 this.eventFunctions.forEach((event) => {
-                    this.mountRef.removeEventListener(event.type, event.func);
+                    this.mount.removeEventListener(event.type, event.func);
                 });
             }
         }
     }
 
-    onMouseDown(event) {
-        if (event.target.localName !== "canvas") return;
+    onMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+        if (event.currentTarget.className !== "display") return;
         event.preventDefault();
         this.currentDownTime = Date.now();
         this.startPos = [event.clientX, event.clientY];
     }
 
-    onMouseUp(event) {
-        if (event.target.localName !== "canvas") return;
+    onMouseUp(event: React.MouseEvent<HTMLDivElement>) {
+        if (event.currentTarget.localName !== "display") return;
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;
@@ -60,21 +73,21 @@ export class Mouse {
         this.previousUpTime = Date.now();
     }
 
-    onDoubleClick(event) {
+    onDoubleClick(event: React.MouseEvent<HTMLDivElement>) {
         this.onDoubleClickFunctions.forEach((func) => {
             func(event);
         });
     }
 
-    addOnDoubleClickFunctions(func) {
+    addOnDoubleClickFunctions(func: (event: MouseEvent) => void) {
         this.onDoubleClickFunctions.push(func);
     }
 
-    addOnClickFunctions(func) {
+    addOnClickFunctions(func: (event: MouseEvent) => void) {
         this.onClickFunctions.push(func);
     }
 
-    onClick(event) {
+    onClick(event: React.MouseEvent<HTMLDivElement>) {
         this.onClickFunctions.forEach((func) => {
             func(event);
         });

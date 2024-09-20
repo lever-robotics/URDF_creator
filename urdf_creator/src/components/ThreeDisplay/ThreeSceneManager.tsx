@@ -12,7 +12,6 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { RefObject } from "react";
 import { StateFunctionsType } from "../SceneState";
 
-type NullableHTMLElement = HTMLElement | null;
 
 export class ThreeSceneManager {
     constructScene(mountRef: React.MutableRefObject<HTMLDivElement | null>, stateFunctions: StateFunctionsType) {
@@ -169,7 +168,7 @@ export class ThreeSceneManager {
         return new THREE.Raycaster();
     }
 
-    setupMouse(mount: HTMLElement) {
+    setupMouse(mount: HTMLDivElement) {
         const mouse = new Mouse(mount);
         mouse.addListeners();
         return mouse;

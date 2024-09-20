@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { ReactNode } from "react";
 
-const Section = ({ title, children }) => {
+const Section = ({ title, children }: {title: string, children: ReactNode}) => {
 
     return (
         <div>

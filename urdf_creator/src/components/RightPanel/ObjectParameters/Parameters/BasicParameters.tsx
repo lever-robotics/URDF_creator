@@ -7,8 +7,10 @@ import Section from "../Section";
 import PositionParameters from "./PositionParameters";
 import RotationParameters from "./RotationParameters";
 import ScaleParameters from "./ScaleParameters";
+import ParameterProps from "../ParameterProps";
 
-export default function BasicParameters({ stateFunctions, selectedObject }) {
+export default function BasicParameters({ stateFunctions, selectedObject }: ParameterProps) {
+    if (!selectedObject) return;
     const [error, setError] = useState("");
     const [tempName, setTempName] = useState(selectedObject.name);
 
@@ -18,7 +20,7 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         setError("");
     }, [JSON.stringify(selectedObject.name)]);
 
-    const handleNameChange = (e) => {
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newName = e.target.value;
         if (newName.includes(" ")) {
             setError("Name must have no spaces");
@@ -27,8 +29,8 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         }
     };
 
-    const handleNameBlur = (e) => {
-        const newName = e.target.value;
+    const handleNameBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const newName = e.currentTarget.value;
         if(newName === selectedObject.name){
             setError("");
         }else if(stateFunctions.doesLinkNameExist(newName)){
@@ -41,17 +43,17 @@ export default function BasicParameters({ stateFunctions, selectedObject }) {
         }
     }
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter"){
             handleNameBlur(e);
         }
     }
 
-    const handleColorChange = (e) => {
+    const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         stateFunctions.setLinkColor(selectedObject, e.target.value);
     };
 
-    const handleColorBlur = (e) => {
+    const handleColorBlur = () => {
         stateFunctions.forceSceneUpdate();
     };
 

@@ -2,16 +2,29 @@ import React, { useState } from "react";
 import CodeBox from "./CodeBox.jsx/CodeBox";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
+import Frame from "../../Models/Frame";
+import { StateFunctionsType } from "../SceneState";
+import { Scene } from "three";
 
 /**
  * @param {Scene} scene
  * @param {string} projectTitle
  */
-export default function RightPanel({ scene, projectTitle, selectedObject, stateFunctions, updateCode }) {
+
+type Props = {
+    scene: Scene,
+    projectTitle: string,
+    selectedObject?: Frame | null,
+    stateFunctions: StateFunctionsType,
+    updateCode: number,
+    className: string
+}
+
+export default function RightPanel({ scene, projectTitle, selectedObject, stateFunctions, updateCode }: Props) {
     const [selectedFormat, setSelectedFormat] = useState("Parameters");
 
-    const handleClick = (e) => {
-        const format = e.target.innerText;
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const format = e.currentTarget.innerText;
         setSelectedFormat(format);
     };
 

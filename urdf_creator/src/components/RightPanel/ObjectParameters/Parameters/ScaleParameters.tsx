@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
+import ParameterProps from "../ParameterProps";
+import Frame from "../../../../Models/Frame";
 
-function ScaleParameters({ selectedObject, stateFunctions }) {
+function ScaleParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
     const [tempX, setTempX] = useState(selectedObject.objectScale.x);
     const [tempY, setTempY] = useState(selectedObject.objectScale.y);
     const [tempZ, setTempZ] = useState(selectedObject.objectScale.z);
@@ -18,19 +21,18 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         setTempHeight(selectedObject.objectScale.z);
     }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
 
-    const checkNegativeZero = (value) => {
+    const checkNegativeZero = (value: string) => {
 
         if(value === "-0"){
-            console.log("negative 0");
-            return 0;
+            return "0";
         }else{
             return value;
         }
     }
 
-    const handleScaleChange = (e) => {
+    const handleScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+        const tempValue = Number(e.target.value);
         switch (axis) {
             case "x":
                 setTempX(tempValue);
@@ -50,9 +52,9 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         }
     };
 
-    const handleScaleBlur = (e) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        let newValue = parseFloat(checkNegativeZero(e.target.value));
+    const handleScaleBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        let newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
 
         if (axis === "radius") {
             newValue = newValue * 2;
@@ -66,7 +68,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         stateFunctions.transformObject(selectedObject, "scale", axis, newValue);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleScaleBlur(e);
         }
@@ -80,7 +82,7 @@ function ScaleParameters({ selectedObject, stateFunctions }) {
         onKeyDown: handleKeyDown,
     };
 
-    const determineParametersFromShape = (object) => {
+    const determineParametersFromShape = (object: Frame) => {
         switch (object.shape) {
             case "sphere":
                 return <Parameter title="Radius:" value={tempRadius} {...props} />;

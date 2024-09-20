@@ -2,12 +2,13 @@ import Section from "../Section";
 import IMUParameters from "../Sensors/IMUParameters";
 import CameraParameters from "../Sensors/CameraParameters";
 import LidarParameters from "../Sensors/LidarParameters";
+import React from "react";
+import ParameterProps from "../ParameterProps";
 
-// Import other sensor parameter components here
-
-function SensorsParameters({ selectedObject, stateFunctions }) {
+function SensorsParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
     
-    const handleSensorTypeChange = (e) => {
+    const handleSensorTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const type = e.target.value;
         stateFunctions.setSensor(selectedObject, type);
     };
@@ -30,7 +31,8 @@ function SensorsParameters({ selectedObject, stateFunctions }) {
     );
 }
 
-function SensorParams({ selectedObject, stateFunctions }) {
+function SensorParams({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
     switch (selectedObject.sensorType) {
         case "imu":
             return (

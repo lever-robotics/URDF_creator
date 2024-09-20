@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import { openDB } from "idb";
+import ParameterProps from "../ParameterProps";
 
-function MeshParameters({ selectedObject, stateFunctions }) {
-    const [files, setFiles] = useState([]);
 
-    const handleMeshChange = (e) => {
+function MeshParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
+    const [files, setFiles] = useState<any[]>([]);
+
+    const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         stateFunctions.setMesh(selectedObject, e.target.value);
     };
 

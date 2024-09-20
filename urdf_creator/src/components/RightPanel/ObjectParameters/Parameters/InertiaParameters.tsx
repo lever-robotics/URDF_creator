@@ -4,8 +4,10 @@ import Parameter from "./Parameter";
 import Section from "../Section";
 import "../ObjectParameters.css"
 import { handleDownload } from "../../../../utils/HandleDownload";
+import ParameterProps from "../ParameterProps";
 
-function InertiaParameters({ selectedObject, stateFunctions }) {
+function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
+    if (!selectedObject) return;
     const [tempMass, setTempMass] = useState(selectedObject.inertia.mass);
     const [tempIxx, setTempIxx] = useState(selectedObject.inertia.ixx);
     const [tempIxy, setTempIxy] = useState(selectedObject.inertia.ixy);
@@ -24,19 +26,18 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
         setTempIzz(selectedObject.inertia.izz);
     }, [JSON.stringify(selectedObject.inertia)]);
 
-    const checkNegativeZero = (value) => {
+    const checkNegativeZero = (value: string) => {
 
         if(value === "-0"){
-            console.log("negative 0");
-            return 0;
+            return "0";
         }else{
             return value;
         }
     }
 
-    const handleInertiaChange = (e) => {
-        const type = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+    const handleInertiaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const type = e.currentTarget.title.toLowerCase().replace(":", "");
+        const tempValue = e.currentTarget.value;
 
         switch (type) {
             case "ixx":
@@ -60,27 +61,28 @@ function InertiaParameters({ selectedObject, stateFunctions }) {
         }
     };
 
-    const handleInertiaBlur = (e) => {
-        const inertia = parseFloat(checkNegativeZero(e.target.value));
-        const type = e.target.title.toLowerCase().replace(":", "");
+    const handleInertiaBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const inertia = parseFloat(checkNegativeZero(e.currentTarget.value));
+        const type = e.currentTarget.title.toLowerCase().replace(":", "");
 
         if (isNaN(inertia)) return;
 
         stateFunctions.setInertia(selectedObject, type, inertia);
     };
 
-    const handleMassChange = (e) => {
+    const handleMassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTempMass(e.target.value);
     };
 
-    const handleMassBlur = (e) => {
-        if (isNaN(e.target.value)) return;
-        stateFunctions.setMass(selectedObject, parseFloat(checkNegativeZero(e.target.value)));
+    const handleMassBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        // convert value to number then check if its a number
+        if (isNaN(Number(e.currentTarget.value))) return;
+        stateFunctions.setMass(selectedObject, parseFloat(checkNegativeZero(e.currentTarget.value)));
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            if (e.target.title.toLowerCase().replace(":", "") === "mass") {
+            if (e.currentTarget.title.toLowerCase().replace(":", "") === "mass") {
                 handleMassBlur(e);
             } else {
                 handleInertiaBlur(e);

@@ -19,8 +19,6 @@ export default function ScenetoText(format, scene, projectTitle) {
             return ScenetoSDF(scene, projectTitle);
         case "XACRO":
             return "Xacro not currently supported. This format is for programmatically writing urdf files.";
-        case 'JSON':
-            return ScenetoJSON(scene, projectTitle);
         default:
             return "Error in ScenetoText";
     }

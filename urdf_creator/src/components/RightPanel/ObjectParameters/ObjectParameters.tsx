@@ -9,8 +9,9 @@ import SensorsParameters from "./Parameters/SensorParameters";
 import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 import { selectClasses } from "@mui/material";
+import ParameterProps from "./ParameterProps";
 
-function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }) {
+function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }: ParameterProps & {selectedFormat: string}) {
     if(selectedFormat !== "Parameters") return null;
     if (!selectedObject) {
         return (

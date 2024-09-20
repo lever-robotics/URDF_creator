@@ -13,7 +13,7 @@ import { handleProject } from "../utils/HandleUpload.js";
 import FrameManager from "../Models/FrameManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.js";
-import RightPanel from "./RightPanel/RightPanel.jsx";
+import RightPanel from "./RightPanel/RightPanel.js";
 import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";
 import * as THREE from "three";
@@ -96,7 +96,6 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
 
     // Function added to the Mouse object to allow clicking of meshes
     function clickObject(event: MouseEvent) {
-        console.log(event);
         const three = sceneRef.current;
         const rect = three?.mountRef.current?.getBoundingClientRect();
         const x = event.clientX - rect!.left;
@@ -115,7 +114,8 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const meshes = intersects.filter((collision) => {
             return (collision.object.parent as Gizmo).transformType === toolMode && collision.object.type === typeof THREE.Mesh;
         });
-
+        console.log(intersects)
+        console.log(shapes)
         console.log(meshes.map((val) => val.object));
 
         // if we hit a shape, select the closest
@@ -140,7 +140,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         // setScene({ ...sceneRef.current!.scene });
 
         // current implementation. Also not sure if it works but it will at least compile
-        setScene(Object.create(threeScene!.scene));
+        setScene(Object.create(sceneRef.current!.scene));
     };
 
     const forceUpdateCode = () => {
@@ -565,7 +565,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         forceUpdateCode();
     };
 
-    const setInertia = (frame: Frame, type: string, inertia: boolean) => {
+    const setInertia = (frame: Frame, type: string, inertia: number) => {
         frame.inertia.setCustomInertia(type, inertia);
         forceSceneUpdate();
         forceUpdateCode();
@@ -717,7 +717,6 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         forceSceneUpdate();
     };
 
-    console.log("hello");
 
     const stateFunctions = {
         addObject,
@@ -785,7 +784,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
                     <Toolbar selectedObject={selectedObject} stateFunctions={stateFunctions} toolMode={toolMode} />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <RightPanel
-                            scene={scene}
+                            scene={scene!}
                             projectTitle={projectTitle}
                             selectedObject={selectedObject}
                             stateFunctions={stateFunctions}
@@ -839,7 +838,7 @@ export type StateFunctionsType = {
     reattachLink: (frame: Frame) => void;
     setLinkColor: (frame: Frame, color: string) => void;
     setMass: (frame: Frame, mass: number) => void;
-    setInertia: (frame: Frame, type: string, inertia: boolean) => void;
+    setInertia: (frame: Frame, type: string, inertia: number) => void;
     setSensor: (frame: Frame, type: string) => void;
     setJointType: (frame: Frame, type: string) => void;
     resetJointPosition: (frame: Frame) => void;

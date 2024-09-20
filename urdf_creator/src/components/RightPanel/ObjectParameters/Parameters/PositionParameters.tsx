@@ -1,33 +1,34 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
+import ParameterProps from "../ParameterProps";
 
-function OffsetParameters({ selectedObject, stateFunctions }) {
-    const [tempX, setTempX] = useState(selectedObject.offset.x);
-    const [tempY, setTempY] = useState(selectedObject.offset.y);
-    const [tempZ, setTempZ] = useState(selectedObject.offset.z);
+function PositionParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
+    const [tempX, setTempX] = useState(selectedObject.position.x);
+    const [tempY, setTempY] = useState(selectedObject.position.y);
+    const [tempZ, setTempZ] = useState(selectedObject.position.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(Math.abs(selectedObject.offset.x) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.x.toFixed(4)));
-        setTempY(Math.abs(selectedObject.offset.y) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.y.toFixed(4)));
-        setTempZ(Math.abs(selectedObject.offset.z) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.z.toFixed(4)));
+        setTempX(selectedObject.position.x);
+        setTempY(selectedObject.position.y);
+        setTempZ(selectedObject.position.z);
 
-    }, [JSON.stringify(selectedObject.offset)]);
+    }, [JSON.stringify(selectedObject.position)]);
 
-    const checkNegativeZero = (value) => {
+    const checkNegativeZero = (value: string) => {
 
         if(value === "-0"){
-            console.log("negative 0");
-            return 0;
+            return "0";
         }else{
             return value;
         }
     }
 
-    const handleOffsetChange = (e) => {
+    const handlePositionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+        const tempValue = Number(e.target.value);
         switch (axis) {
             case "x":
                 setTempX(tempValue);
@@ -43,34 +44,34 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
         }
     };
 
-    const handleOffsetBlur = (e) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(checkNegativeZero(e.target.value));
+    const handlePositionBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
-            "offset",
+            "position",
             axis,
             newValue
         );
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter"){
-            handleOffsetBlur(e);
+            handlePositionBlur(e);
         }
     }
 
     return (
-        <Section title="Offset">
+        <Section title="Position">
             <ul>
                 <Parameter
                     title="X:"
                     type="text"
                     units="m"
                     value={tempX}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
+                    onChange={handlePositionChange}
+                    onBlur={handlePositionBlur}
                     onKeyDown={handleKeyDown}
                 />
                 <Parameter
@@ -78,8 +79,8 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
                     type="text"
                     units="m"
                     value={tempY}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
+                    onChange={handlePositionChange}
+                    onBlur={handlePositionBlur}
                     onKeyDown={handleKeyDown}
                 />
                 <Parameter
@@ -87,8 +88,8 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
                     type="text"
                     units="m"
                     value={tempZ}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
+                    onChange={handlePositionChange}
+                    onBlur={handlePositionBlur}
                     onKeyDown={handleKeyDown}
                 />
             </ul>
@@ -96,4 +97,4 @@ function OffsetParameters({ selectedObject, stateFunctions }) {
     );
 }
 
-export default OffsetParameters;
+export default PositionParameters;

@@ -1,7 +1,10 @@
 import React from "react";
+import ParameterProps from "../ParameterProps";
 
-function CameraParameters({ selectedObject, stateFunctions }) {
-    const handleChange = (e) => {
+
+function CameraParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         stateFunctions.updateSensor(selectedObject, name, value);
     };

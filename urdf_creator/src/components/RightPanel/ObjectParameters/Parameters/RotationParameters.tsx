@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
+import ParameterProps from "../ParameterProps";
 
-function RotationParameters({ selectedObject, stateFunctions }) {
-    const radToDeg = (radians) => (radians * 180) / Math.PI;
-    const degToRad = (degrees) => (degrees * Math.PI) / 180;
+function RotationParameters({ selectedObject, stateFunctions }: ParameterProps) {
+    if (!selectedObject) return;
+    const radToDeg = (radians: number) => (radians * 180) / Math.PI;
+    const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
     const [tempX, setTempX] = useState(
         radToDeg(selectedObject.rotation.x).toFixed(2)
@@ -23,17 +25,16 @@ function RotationParameters({ selectedObject, stateFunctions }) {
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
     }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
 
-    const checkNegativeZero = (value) => {
+    const checkNegativeZero = (value: string) => {
 
         if(value === "-0"){
-            console.log("negative 0");
-            return 0;
+            return "0";
         }else{
             return value;
         }
     }
 
-    const handleRotationChange = (e) => {
+    const handleRotationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
         const tempValue = e.target.value;
         switch (axis) {
@@ -49,9 +50,9 @@ function RotationParameters({ selectedObject, stateFunctions }) {
         }
     };
 
-    const handleRotationBlur = (e) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(checkNegativeZero(e.target.value));
+    const handleRotationBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
         stateFunctions.transformObject(
             selectedObject,
@@ -61,7 +62,7 @@ function RotationParameters({ selectedObject, stateFunctions }) {
         );
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleRotationBlur(e);
         }

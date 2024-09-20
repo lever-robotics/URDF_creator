@@ -3,13 +3,24 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../../utils/ScenetoText";
 import "./CodeBox.css";
+import Frame from "../../../Models/Frame";
+import { StateFunctionsType } from "../../SceneState";
+import {Scene} from "three";
 
 /**
  * @param {Scene} scene
  * @param {string} projectTitle
  * @param {string} selectedFormat
  */
-export default function CodeBox({ scene, projectTitle, selectedFormat, updateCode }) {
+
+type Props = {
+    scene: Scene,
+    projectTitle: string,
+    selectedFormat: string,
+    updateCode: number
+}
+
+export default function CodeBox({ scene, projectTitle, selectedFormat, updateCode }: Props) {
     const style = {
         fontSize: "12px",
         overflow: "auto",
@@ -19,8 +30,8 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
 
     };
     const [copied, setCopied] = useState(false);
-    const [mousePosition, setMousePosition] = useState({});
-    const [code, setCode] = useState();
+    const [mousePosition, setMousePosition] = useState({x: 0, y:0});
+    const [code, setCode] = useState<string>();
 
     useEffect(() => {
         if (selectedFormat !== "Parameters") {
@@ -31,7 +42,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
 
     // Copies the text to the clipboard and displays a tooltip saying copied for two seconds
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(code).then(
+        navigator.clipboard.writeText(code!).then(
             () => {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 1000); // Hide tooltip after 2 seconds
@@ -42,7 +53,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
         );
     };
 
-    const handleClick = (e) => {
+    const handleClick = (e: React.MouseEvent) => {
         setMousePosition({ x: e.clientX, y: e.clientY });
         copyToClipboard();
     };
@@ -53,7 +64,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
     return (
         <div onClick={handleClick} className="code-container">
             <SyntaxHighlighter language={selectedFormat === "XACRO" ? "text" : "xml"} style={atomDark} customStyle={style}>
-                {code}
+                {code!}
             </SyntaxHighlighter>
             {copied && <Tooltip mousePosition={mousePosition} />}
         </div>
@@ -64,7 +75,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
  * @param {*} mousePosition
  * @returns JSX component that displays the text 'Copied!'
  */
-function Tooltip({ mousePosition }) {
+function Tooltip({ mousePosition }: {mousePosition: {x: number, y: number}}) {
     return (
         <div className="tooltip" style={{ left: mousePosition.x, top: mousePosition.y }}>
             Copied!

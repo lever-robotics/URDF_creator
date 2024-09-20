@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 
-const ToggleSection = ({ title, children, open }) => {
+const ToggleSection = ({ title, children, open }: {title: string, children: ReactNode, open: boolean}) => {
     const [isOpen, setIsOpen] = useState(open);
 
     return (

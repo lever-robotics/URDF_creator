@@ -1,7 +1,7 @@
 import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
+import Menu, { MenuProps } from "@mui/material/Menu";
 
 export const StyledMenuItem = styled((props) => (
     <MenuItem {...props} disableRipple></MenuItem>
@@ -16,7 +16,7 @@ export const StyledMenuItem = styled((props) => (
     },
 }));
 
-export const StyledMenu = styled((props) => <Menu {...props} />)(({ theme }) => ({
+export const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
     "& .MuiPaper-root": {
         background: "transparent",
         color: "white",

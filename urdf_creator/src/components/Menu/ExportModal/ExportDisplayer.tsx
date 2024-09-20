@@ -5,7 +5,7 @@ import ExportURDF from "./ExportURDF";
 import "./exportDisplayer.css";
 import { StateFunctionsType } from "../../SceneState";
 
-type Props = { onClose: Function; getRootFrame: any; projectTitle: any; getScene: any; stateFunctions: StateFunctionsType };
+type Props = { onClose: () => void; getRootFrame: any; projectTitle: any; getScene: any; stateFunctions: StateFunctionsType };
 
 // the params originally were enclosed in {} braces but there was a type script compilation error that got fixed when I removed them
 const ExportDisplayer: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, getScene, stateFunctions }) => {
