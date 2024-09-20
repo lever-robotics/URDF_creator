@@ -5,7 +5,7 @@ import THREE from "three";
 import ThreeScene from "./ThreeSceneObject";
 
 function ThreeDisplay() {
-    const mountRef = useRef<HTMLDivElement | null>(null);
+    const mountRef = useRef<HTMLDivElement>(null);
     const threeScene = useRef<ThreeScene | null>(null);
 
     // Set up the scene (initialization)

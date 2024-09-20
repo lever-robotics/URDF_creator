@@ -1,10 +1,18 @@
 import React from "react";
+import Frame from "../../Models/Frame";
+import { StateFunctionsType } from "../SceneState";
+
+type ContextProps = {
+    contextMenuPosition: {left: number, top: number},
+    selectedObject: Frame | null | undefined,
+    stateFunctions: StateFunctionsType
+}
 
 export function ObjectContextMenu({
     contextMenuPosition,
     selectedObject,
     stateFunctions,
-}) {
+}: ContextProps) {
     const { left, top } = contextMenuPosition;
 
     return (
@@ -14,14 +22,14 @@ export function ObjectContextMenu({
             style={{ left: left, top: top }}>
             <button
                 onClick={() => {
-                    stateFunctions.duplicateObject(selectedObject);
+                    stateFunctions.duplicateObject(selectedObject!);
                 }}
                 className="duplicate-button">
                 Duplicate
             </button>
             <button
                 onClick={() => {
-                    stateFunctions.deleteObject(selectedObject);
+                    stateFunctions.deleteObject(selectedObject!);
                 }}
                 className="delete-button">
                 Delete

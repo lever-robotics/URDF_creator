@@ -2,9 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateLeft, faRotateRight, faUpDownLeftRight, faMaximize, faRotate } from "@fortawesome/free-solid-svg-icons";
 import TooltipButton from "../../FunctionalComponents/TooltipButton";
 import React from "react";
+import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 
-const Toolbar = ({ selectedObject, stateFunctions, toolMode }) => {
-    const handleClick = (e) => {
+const Toolbar = ({ selectedObject, stateFunctions, toolMode }: ParameterProps & {toolMode: string}) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!selectedObject) return;
         const mode = e.currentTarget.id;
         stateFunctions.setTransformMode(selectedObject, mode);
     };

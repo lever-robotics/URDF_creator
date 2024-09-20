@@ -27,8 +27,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     //State
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
-    const [selectedObject, setSelectedObject] = useState<Frame | null | undefined>(null);
-    const lastSelectedObject = useRef<Frame | null | undefined>(null);
+    const [selectedObject, setSelectedObject] = useState<Frame | null | undefined>(undefined);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
@@ -44,15 +43,24 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
             selectedName: "",
         },
     ]);
+
     const redo: React.MutableRefObject<UndoState[]> = useRef([]);
     const objectNames: React.MutableRefObject<string[]> = useRef([]);
     const pressedKeys = useRef<string[]>([]);
+
+    // very important that this function has toolMode and selected Object in its dependency array
+    // if not it will cause what is called a "stale closure"
+    // basically the function click object will save the state of toolMode and SelectedObject
+    // when it is added to the mouse's onclickfunctions
+    // this way, the function is updated whenever those values are changed 
+    // and the state stays current :)
     useEffect(() => {
         const { current: three } = sceneRef;
         if (three) {
             three.mouse.addOnClickFunctions(clickObject);
         }
-    }, []);
+        console.log("use effect", selectedObject)
+    }, [toolMode, selectedObject]);
 
     useEffect(() => {
         function keydown(e: KeyboardEvent): any {
@@ -92,10 +100,9 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         };
     }, []);
 
-    useEffect(() => {}, []);
 
     // Function added to the Mouse object to allow clicking of meshes
-    function clickObject(event: MouseEvent) {
+    const clickObject = (event: MouseEvent) => {
         const three = sceneRef.current;
         const rect = three?.mountRef.current?.getBoundingClientRect();
         const x = event.clientX - rect!.left;
@@ -108,19 +115,19 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const intersects = three!.raycaster.intersectObjects(three!.scene.children);
 
         // this will contain all of our objects (they have the property "isShape")
-        const shapes = intersects.filter((collision) => collision.object.type === typeof Mesh);
+        const shapes: Mesh[] = intersects.filter((collision) => collision.object instanceof Mesh)
+                                         .map((collision) => collision.object as Mesh);
 
         // this will contain all meshes in the scene (ie the transform controls)
         const meshes = intersects.filter((collision) => {
-            return (collision.object.parent as Gizmo).transformType === toolMode && collision.object.type === typeof THREE.Mesh;
+            return (collision.object.parent as Gizmo).transformType === toolMode && collision.object instanceof THREE.Mesh;
         });
-        console.log(intersects)
-        console.log(shapes)
-        console.log(meshes.map((val) => val.object));
+
+        // conso.log(meshes.map((mesh) => mesh.object))
 
         // if we hit a shape, select the closest
         if (shapes.length > 0) {
-            const object = (shapes[0].object as Mesh).frame;
+            const object = shapes[0].frame;
             selectObject(object);
             // if we don't hit any mesh (if we don't hit transform controls) deselect
         } else if (meshes.length === 0) {
@@ -262,7 +269,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
 
         newFrame.position.set(2.5, 2.5, 0.5);
 
-        if (selectedObject !== null) {
+        if (selectedObject) {
             selectedObject!.attachChild(newFrame);
         } else if (three!.rootFrame !== null) {
             three!.rootFrame.attachChild(newFrame);
@@ -334,9 +341,12 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     const selectObject = (frame: Frame | null) => {
         const { current: three } = sceneRef;
 
+        console.log("previous", selectedObject)
+        console.log("new", frame)
+
         // the link may not be attached correctly, this checks for that case
-        if (lastSelectedObject.current?.linkDetached) {
-            reattachLink(lastSelectedObject.current);
+        if (selectedObject?.linkDetached) {
+            reattachLink(selectedObject!);
         }
 
         if (!frame) {
@@ -344,7 +354,6 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
             three!.transformControls.detach();
         } else if (frame.selectable) {
             setSelectedObject(frame);
-            lastSelectedObject.current = frame;
             attachTransformControls(frame);
         } else {
             setSelectedObject(null);

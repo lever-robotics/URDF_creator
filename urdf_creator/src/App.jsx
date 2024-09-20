@@ -20,9 +20,8 @@ const App = () => {
 
     return (
         // Taking strictmode off makes the scaling of meshes really jerky
-        <StrictMode>
+        
             <ThreeDisplay />
-        </StrictMode>
     );
 };
 

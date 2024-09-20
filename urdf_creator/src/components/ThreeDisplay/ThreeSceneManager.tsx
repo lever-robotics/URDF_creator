@@ -27,7 +27,7 @@ export class ThreeSceneManager {
         const composer = this.setupComposer(renderer, renderPass);
         const background = this.setupBackground();
         const raycaster = this.setupRaycaster();
-        const mouse = this.setupMouse(mountRef.current!);
+        const mouse = this.setupMouse(mountRef);
         const callback = this.setupCallback(orbitControls, transformControls, renderer, scene, mountRef);
 
         const three = new ThreeScene(
@@ -168,8 +168,8 @@ export class ThreeSceneManager {
         return new THREE.Raycaster();
     }
 
-    setupMouse(mount: HTMLDivElement) {
-        const mouse = new Mouse(mount);
+    setupMouse(mountRef: React.MutableRefObject<HTMLDivElement | null>) {
+        const mouse = new Mouse(mountRef);
         mouse.addListeners();
         return mouse;
     }
