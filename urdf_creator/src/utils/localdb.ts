@@ -24,9 +24,9 @@ export const getFile = async (fileName: string) => {
 
 // Function to convert a Blob/File to an ArrayBuffer
 export const blobToArrayBuffer = (blob: Blob) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
+        reader.onloadend = () => resolve(reader.result as string);
         reader.onerror = reject;
         reader.readAsArrayBuffer(blob);
     });

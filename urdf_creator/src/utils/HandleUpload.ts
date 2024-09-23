@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTF, GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-export async function handleUpload(file: string, type: string) {
+export async function handleUpload(file: Blob, type: string) {
     const fileText = await readFile(file);
     const object = await loadFileToObject(fileText, type);
     return object.scene;
@@ -29,11 +29,11 @@ export function loadFileToObject(fileText: string, type: string): Promise<GLTF> 
     });
 }
 
-function readFile(file: string): Promise<string> {
+function readFile(file: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
-            resolve(reader.result);
+            resolve(reader.result as string);
         };
         reader.onerror = reject;
         reader.readAsText(file);

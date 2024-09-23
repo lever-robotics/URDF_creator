@@ -8,8 +8,9 @@ import { ScenetoSDF } from "./ScenetoSDF";
 import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesContained";
 import { GenerateLaunchFile } from "./CreatePackage/GenerateLaunchFile";
 import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/GenerateBuildFiles";
+import * as THREE from "three";
 
-export async function handleDownload(scene, type, title) {
+export async function handleDownload(scene: THREE.Scene, type: string, title: string) {
     if (type === "urdfpackage") {
         const urdf = ScenetoXML(scene, title.replace(" ", "_"));
         const sdf = ScenetoSDF(scene, title.replace(" ", "_"));
@@ -20,9 +21,15 @@ export async function handleDownload(scene, type, title) {
         otherFileDownload(urdf, type, title.replace(" ", "_"));
     } else if (type === "gltf") {
         const exporter = new GLTFExporter();
-        exporter.parse(scene, (gltf) => {
-            otherFileDownload(JSON.stringify(gltf), type, title.replace(" ", "_"));
-        });
+        exporter.parse(
+            scene,
+            (gltf) => {
+                otherFileDownload(JSON.stringify(gltf), type, title.replace(" ", "_"));
+            },
+            (error) => {
+                console.error("An error occurred during GLTF export:", error);
+            }
+        );
         // const json = scene.toJSON();
         // otherFileDownload(JSON.stringify(json), type, title);
     } else {
@@ -30,7 +37,7 @@ export async function handleDownload(scene, type, title) {
     }
 }
 
-export function otherFileDownload(data, type, title) {
+export function otherFileDownload(data: string, type: string, title: string) {
     // Create Blob
     const blob = new Blob([data], { type: `application/${type}` });
 
@@ -48,7 +55,7 @@ export function otherFileDownload(data, type, title) {
     URL.revokeObjectURL(link.href);
 }
 
-export async function generateZip(urdfContent, SDFContent, projectProperties, title) {
+export async function generateZip(urdfContent: string, SDFContent: string, projectProperties: null, title: string) {
     const zip = new JSZip();
 
     // List of static files and their paths in the ZIP
@@ -71,12 +78,12 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
         },
     ];
     //generate the package.xml file
-    zip.file(`${title}_description/package.xml`, GeneratePackageXMLFile(title, projectProperties));
+    zip.file(`${title}_description/package.xml`, GeneratePackageXMLFile(title));
     //generate the CMakeLists.txt file
-    zip.file(`${title}_description/CMakeLists.txt`, GenerateCMakelistsFile(title, projectProperties));
+    zip.file(`${title}_description/CMakeLists.txt`, GenerateCMakelistsFile(title));
 
     // Function to fetch and add files to the zip
-    const addFilesToZip = async (fileInfo) => {
+    const addFilesToZip = async (fileInfo: {path:string, zipPath:string}) => {
         const response = await fetch(`/${fileInfo.path}`);
         const content = await response.blob();
         zip.file(fileInfo.zipPath, content);
@@ -106,7 +113,7 @@ export async function generateZip(urdfContent, SDFContent, projectProperties, ti
     }
 
     //Programatically generate the launch file
-    const launchFileContent = GenerateLaunchFile(title, projectProperties);
+    const launchFileContent = GenerateLaunchFile(title);
 
     // Add the launch file to the ZIP
     zip.file(`${title}_description/launch/${title}.launch.py`, launchFileContent);
