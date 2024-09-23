@@ -128,7 +128,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         // if we hit a shape, select the closest
         if (shapes.length > 0) {
             const object = shapes[0].frame;
-            selectObject(object);
+            selectObject(object!);
             // if we don't hit any mesh (if we don't hit transform controls) deselect
         } else if (meshes.length === 0) {
             selectObject(null);
@@ -169,7 +169,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         };
         // If the rootFrame is not null then it actually has objects so compress it
         if (getRootFrame() !== null) {
-            const compressedScene = frameManager.compressScene(getRootFrame());
+            const compressedScene = frameManager.compressScene(getRootFrame()!);
             const gltfScene = await ScenetoGLTF(compressedScene);
             currentScene.scene = JSON.stringify(gltfScene);
             currentScene.selectedName = selectedObject?.name!;
@@ -201,7 +201,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         clearScene();
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        const gltfScene: THREE.Scene = lastScene.scene;
+        const gltfScene: THREE.Group<THREE.Object3DEventMap> = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -232,7 +232,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         clearScene();
 
         const lastScene = await loadFileToObject(lastState!.scene, "gltf");
-        const gltfScene: THREE.Scene = lastScene.scene;
+        const gltfScene: THREE.Group<THREE.Object3DEventMap> = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -390,7 +390,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
             frame.attachChild(clone);
         } else {
             clone.parentFrame = frame.parentFrame;
-            frame.parentFrame.addChild(clone);
+            frame.parentFrame!.addChild(clone);
         }
         selectObject(clone);
         forceSceneUpdate();
@@ -551,7 +551,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         setToolMode("translate");
         three!.transformControls.setMode("translate");
 
-        frame.parent!.attach(frame.link);
+        frame.parent!.attach(frame.link!);
         frame.linkDetached = true;
         three!.transformControls.attach(frame);
     };
@@ -559,13 +559,13 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     const reattachLink = (frame: Frame) => {
         const { current: three } = sceneRef;
         three!.transformControls.detach();
-        frame.jointVisualizer!.attach(frame.link);
+        frame.jointVisualizer!.attach(frame.link!);
         frame.linkDetached = false;
-        frame.attach(frame.axis);
+        frame.attach(frame.axis!);
     };
 
     const setLinkColor = (frame: Frame, color: string) => {
-        frame.color = color;
+        frame.setColorByHex(color);
     };
 
     const setMass = (frame: Frame, mass: number) => {
@@ -587,7 +587,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     };
 
     const updateSensor = (frame: Frame, name: string, value: string | number) => {
-        frame.sensor.update(name, value);
+        frame.sensor!.update(name, value);
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -625,7 +625,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const quaternion = new THREE.Quaternion();
 
         // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
-        quaternion.setFromEuler(frame.axis.rotation);
+        quaternion.setFromEuler(frame.axis!.rotation);
 
         // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
@@ -641,7 +641,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const quaternion = new THREE.Quaternion();
         // a quaternion is basically how to get from one rotation to another
         // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(frame.axis.rotation);
+        quaternion.setFromEuler(frame.axis!.rotation);
         // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
@@ -820,8 +820,8 @@ export type StateFunctionsType = {
     getToolMode: () => string;
     selectObject: (frame: Frame | null) => void;
     setLinkName: (frame: Frame, name: string) => void;
-    loadScene: (gltfScene: string) => void;
-    loadSingleObject: (gltfScene: string) => void;
+    loadScene: (gltfScene: THREE.Object3D) => void;
+    loadSingleObject: (gltfScene: THREE.Object3D) => void;
     getScene: () => THREE.Scene;
     duplicateObject: (frame: Frame) => void;
     deleteObject: (frame: Frame) => void;
@@ -862,4 +862,4 @@ export type StateFunctionsType = {
     setObjectScale: (object: Frame, scale: THREE.Vector3) => void;
     copyObjectScale: (object: Frame, scale: THREE.Vector3) => void;
     setObjectQuaternion: (object: Frame, quaternion: THREE.Quaternion) => void;
-};
+}

@@ -4,7 +4,7 @@ export class Sensor {
         this.type = type;
     }
 
-    update(name: string, value: number){
+    update(name: string, value: number | string){
         (this as any)[name] = value; //hotfix for Typescript, code as all possible values in future
     }
 

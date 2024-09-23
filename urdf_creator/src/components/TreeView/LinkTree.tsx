@@ -50,7 +50,7 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
     const isAncestor = (ancestor: Frame, descendant: Frame) => {
         if (descendant === ancestor) return true;
         if (ancestor.isRootFrame || descendant.isRootFrame) return false;
-        return isAncestor(ancestor, descendant.parentFrame);
+        return isAncestor(ancestor, descendant.parentFrame!);
     };
 
     return (
@@ -111,7 +111,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                     onDragEnter={() => {
                         setHoveredButton(node);
                     }}
-                    onDragLeave={(e) => {
+                    onDragLeave={(e: any) => {
                         if (hoveredButton.current === node && e.relatedTarget) {
                             setHoveredButton(null);
                         }
@@ -120,7 +120,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                         if (!node.isRootFrame) setDraggedButton(node);
                     }}
                     onDragEnd={dropButton}
-                    onContextMenu={(e) => {
+                    onContextMenu={(e: any) => {
                         handleContextMenu(e, node);
                     }}
                     draggable={true}

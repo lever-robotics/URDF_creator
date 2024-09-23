@@ -1,23 +1,5 @@
 import React, { ReactNode, useRef } from "react";
 
-type Props = {
-    className : string,
-    onClick : (e: any) => void,
-    onDoubleClick :(e: any) => void,
-    onLongClick :(e: any) => void,
-    onLongClickUp :(e: any) => void,
-    onContextMenu :(e: any) => void,
-    onMouseEnter :(e: any) => void,
-    onMouseLeave :(e: any) => void,
-    onMouseUp :(e: any) => void,
-    onDrag :(e: any) => void,
-    onDragStart :(e: any) => void,
-    onDragEnd :(e: any) => void,
-    onDragEnter :(e: any) => void,
-    onDragLeave :(e: any) => void,
-    draggable :boolean,
-    children: ReactNode,
-}
 
 export default function AllClickButton({
     className = "",
@@ -25,7 +7,7 @@ export default function AllClickButton({
     onDoubleClick = () => {},
     onLongClick = () => {},
     onLongClickUp = () => {},
-    onContextMenu = () => {},
+    onContextMenu = (e: any) => {},
     onMouseEnter = () => {},
     onMouseLeave = () => {},
     onMouseUp = () => {},
@@ -33,10 +15,10 @@ export default function AllClickButton({
     onDragStart = () => {},
     onDragEnd = () => {},
     onDragEnter = () => {},
-    onDragLeave = () => {},
+    onDragLeave = (e: any) => {},
     draggable = false,
     children,
-}: Props) {
+}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> | any) {
     let clicks = useRef(0);
     let timeAtClick = useRef(0);
     let longClicking = useRef(false);

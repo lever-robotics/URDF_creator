@@ -3,9 +3,11 @@ import './Import.css';
 import { useRef } from 'react';
 import { handleUpload } from '../../../utils/HandleUpload';
 import Frame from '../../../Models/Frame';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { Object3D } from 'three';
 
 
-const GLTFImport = ({ onClose, loadScene }: {onClose: () => void; loadScene: (object: string) => void}) => {
+const GLTFImport = ({ onClose, loadScene }: {onClose: () => void; loadScene: (object: Object3D) => void}) => {
     const inputGTLFFile = useRef<HTMLInputElement>(null);
 
     /* Annoying File Upload Logic

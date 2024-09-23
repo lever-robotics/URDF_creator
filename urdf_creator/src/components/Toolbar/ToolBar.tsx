@@ -15,10 +15,10 @@ const Toolbar = ({ selectedObject, stateFunctions, toolMode }: ParameterProps & 
     return (
         <div style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }} className="row-space-between">
             <div className="row-spaced">
-                <TooltipButton onClick={stateFunctions.popUndo} content={"Undo (ctrl + z)"} anchorPosition={"top-right"} label="undo">
+                <TooltipButton onClick={stateFunctions.popUndo} content={"Undo (ctrl + z)"} anchorPosition={"top-right"} label="undo" active={false}>
                     <FontAwesomeIcon icon={faRotateLeft} />
                 </TooltipButton>
-                <TooltipButton onClick={stateFunctions.popRedo} content={"Redo (ctrl + shift + z)"} anchorPosition={"top-right"} label="redo">
+                <TooltipButton onClick={stateFunctions.popRedo} content={"Redo (ctrl + shift + z)"} anchorPosition={"top-right"} label="redo" active={false}>
                     <FontAwesomeIcon icon={faRotateRight} />
                 </TooltipButton>
                 <TooltipButton active={toolMode === "translate"} onClick={handleClick} content={"Translate"} anchorPosition={"top-right"} label="translate">

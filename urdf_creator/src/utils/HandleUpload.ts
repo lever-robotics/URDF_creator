@@ -42,7 +42,7 @@ function readFile(file: Blob): Promise<string> {
 
 export async function handleProject(path: string) {
     const loader = new GLTFLoader();
-    return new Promise((resolve, reject) => {
+    return new Promise<GLTF>((resolve, reject) => {
         loader.load(path, (obj) => {
             resolve(obj);
         });

@@ -4,11 +4,13 @@ import GLTFImport from "./GLTFImport";
 import GltfFilesGrid from "./ImportSensor";
 import "./importDisplayer.css";
 import Frame from "../../../Models/Frame";
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { Object3D } from "three";
 
 type Props = {
     handleSensorClick: (path: string) => void,
     onImportClose: () => void,
-    loadScene: (object: string) => void
+    loadScene: (object: Object3D) => void
 }
 
 const ImportDisplayer: React.FC<Props> = ({ handleSensorClick, onImportClose, loadScene }) => {

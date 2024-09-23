@@ -147,8 +147,8 @@ export default class Frame extends THREE.Object3D {
         return this.mesh!.material.color;
     }
 
-    set color(color) {
-        this.mesh!.color = color;
+    setColorByHex(color: string) {
+        this.mesh!.color = new THREE.Color(color);
     }
 
     get axisRotation() {
