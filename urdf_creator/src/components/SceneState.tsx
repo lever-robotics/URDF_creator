@@ -19,7 +19,7 @@ import { loadFileToObject } from "../utils/HandleUpload.js";
 import * as THREE from "three";
 import ThreeScene from "./ThreeDisplay/ThreeSceneObject.jsx";
 import Frame from "../Models/Frame.jsx";
-import Mesh from "../Models/Mesh.jsx";
+import Mesh from "../Models/Mesh.js";
 import { Gizmo } from "../Models/TransformControls.jsx";
 
 export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene | null>): [React.ReactNode, StateFunctionsType] {
@@ -201,7 +201,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         clearScene();
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        const gltfScene = lastScene.scene;
+        const gltfScene: THREE.Scene = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -232,7 +232,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         clearScene();
 
         const lastScene = await loadFileToObject(lastState!.scene, "gltf");
-        const gltfScene = lastScene.scene;
+        const gltfScene: THREE.Scene = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -285,7 +285,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         forceSceneUpdate();
     };
 
-    const loadScene = (gltfScene: string) => {
+    const loadScene = (gltfScene: THREE.Object3D) => {
         const { current: three } = sceneRef;
         objectNames.current.length = 0;
         const rootFrame = frameManager.readScene(gltfScene);
@@ -362,7 +362,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         forceSceneUpdate();
     };
 
-    const loadSingleObject = (gltfScene: string) => {
+    const loadSingleObject = (gltfScene: THREE.Object3D) => {
         const { current: three } = sceneRef;
         const frame = frameManager.readScene(gltfScene);
         if (selectedObject) {
@@ -559,7 +559,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     const reattachLink = (frame: Frame) => {
         const { current: three } = sceneRef;
         three!.transformControls.detach();
-        frame.jointVisualizer.attach(frame.link);
+        frame.jointVisualizer!.attach(frame.link);
         frame.linkDetached = false;
         frame.attach(frame.axis);
     };
@@ -575,7 +575,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     };
 
     const setInertia = (frame: Frame, type: string, inertia: number) => {
-        frame.inertia.setCustomInertia(type, inertia);
+        frame.inertia!.setCustomInertia(type, inertia);
         forceSceneUpdate();
         forceUpdateCode();
     };
@@ -632,7 +632,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
 
         // the joint's rotation is then set to be a rotation around the new axis by this angle
-        frame.jointVisualizer.setRotationFromAxisAngle(newAxis, angle);
+        frame.jointVisualizer!.setRotationFromAxisAngle(newAxis, angle);
 
         forceSceneUpdate();
     };
@@ -646,14 +646,14 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        frame.jointVisualizer.position.set(0, 0, 0);
-        frame.jointVisualizer.translateOnAxis(newAxis, distance);
+        frame.jointVisualizer!.position.set(0, 0, 0);
+        frame.jointVisualizer!.translateOnAxis(newAxis, distance);
         forceSceneUpdate();
     };
 
     const resetJointPosition = (frame: Frame) => {
-        frame.jointVisualizer.position.set(0, 0, 0);
-        frame.jointVisualizer.rotation.set(0, 0, 0);
+        frame.jointVisualizer!.position.set(0, 0, 0);
+        frame.jointVisualizer!.rotation.set(0, 0, 0);
         forceSceneUpdate();
     };
 

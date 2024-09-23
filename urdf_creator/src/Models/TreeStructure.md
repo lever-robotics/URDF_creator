@@ -1,15 +1,15 @@
 # Tree Structure
 
 ## Diagram
-[![](https://mermaid.ink/img/pako:eNplkbFuwzAMRH9F4Oygu4ZOXVIkSNG0mxbWom0mNlVQ0hCk-fcqtpMU9UTpHXU4UmeogyewUPcY4wtjqzg4yeqb3deB6rRFwZbUrFbmAZ38bSnaz7N5DSxpiddCmhiXwp4kBl3yuuPeK8nnnUcno_mkb1iOxslYJqOPzb881uyUW5bKvIeEiYPcHKw5XOsNP72FyJM--pWHTROpjDHHto_8U15rPCaECgbSAdmXzZ2dGOMgdTSQA1uOHvXowMml9GFOYX-SGmzSTBVoyG0HtsE-llv-LnY0r_1OyXMKup0_5louvxC-llI?type=png)](https://mermaid.live/edit#pako:eNplkbFuwzAMRH9F4Oygu4ZOXVIkSNG0mxbWom0mNlVQ0hCk-fcqtpMU9UTpHXU4UmeogyewUPcY4wtjqzg4yeqb3deB6rRFwZbUrFbmAZ38bSnaz7N5DSxpiddCmhiXwp4kBl3yuuPeK8nnnUcno_mkb1iOxslYJqOPzb881uyUW5bKvIeEiYPcHKw5XOsNP72FyJM--pWHTROpjDHHto_8U15rPCaECgbSAdmXzZ2dGOMgdTSQA1uOHvXowMml9GFOYX-SGmzSTBVoyG0HtsE-llv-LnY0r_1OyXMKup0_5louvxC-llI)
+[![](https://mermaid.ink/img/pako:eNqdUsFOwzAM_RUrJyZ14p4DEgKBkBgghjjlErVua9baVZICY-zfSZtuGkO7cEnil2e_Z8sblUuBSqu8sd5fk62cbQ3fxBMXlm2FDuZzGGPD00dEvi_gTYjDK_neNvSFzvARkFh5TU3hMCX6E6R74pXh4UzxHaMLZA-hlHKILJG9uEPkSpqGPMlvn5ef5AfrO1DDo6OKOINnCTaM9GNXGl6w7VKLOxacw5N4SgmjaKxUlh4DnH1QqMGh7zAPECTNa2Z40NZ7nZO0qd9Yj5s1CCN00cSgkcGD8PvUe-pYgx9vKGyII0qu9eANLBeDGMho64_cUHCWwS1Ki8GtDe8H9r90wypTLbrWUhFXaGMYwKhQY9wVpeOzsG5llOFt5Nk-yHLNudLB9ZgpJ31VK13axseo72I3OO3fHsWCgrjFtKHCJVVq-wOLt_aG?type=png)](https://mermaid.live/edit#pako:eNqdUsFOwzAM_RUrJyZ14p4DEgKBkBgghjjlErVua9baVZICY-zfSZtuGkO7cEnil2e_Z8sblUuBSqu8sd5fk62cbQ3fxBMXlm2FDuZzGGPD00dEvi_gTYjDK_neNvSFzvARkFh5TU3hMCX6E6R74pXh4UzxHaMLZA-hlHKILJG9uEPkSpqGPMlvn5ef5AfrO1DDo6OKOINnCTaM9GNXGl6w7VKLOxacw5N4SgmjaKxUlh4DnH1QqMGh7zAPECTNa2Z40NZ7nZO0qd9Yj5s1CCN00cSgkcGD8PvUe-pYgx9vKGyII0qu9eANLBeDGMho64_cUHCWwS1Ki8GtDe8H9r90wypTLbrWUhFXaGMYwKhQY9wVpeOzsG5llOFt5Nk-yHLNudLB9ZgpJ31VK13axseo72I3OO3fHsWCgrjFtKHCJVVq-wOLt_aG)
 
 ## Explanation
 
-### urdfObjectManager
+### FrameManger
 
     I was reading this website [url](https://refactoring.guru/) and decided to implement a manager pattern. It made sense for how complicated the urdfObject was getting and helped abstract some details away from it. Just give it a peruse it is pretty self explanatory. It has no relation to the react or the scene, it's only purpose it to make or modify urdfObjects and their tree structure. I think it will help make it easier to add/remove/modify the tree structure going forward.
 
-### urdfObject
+### Frame
     So I changed the tree structure but don't worry it makes way more sense. It is super easy to understand now. I didn't have time to go through the scene to xml/sdf/text and update them properly so I'm pretty sure I broke them ;( sorry mark. But they should be easy to fix and way more intuitive.
 
     Also I deleted shimmy but we can totally still implement a shimmy function. In fact right now if you mess with a joint and move it up/down or rotate it, after releasing the slider it returns to normal. We can modify this functionality to make a shimmy!
@@ -20,7 +20,7 @@
 
     There are logic functions that made sense to include in the object as well. Helped simplify sceneState and reduce redundant/unecessary calls to the object
 
-### Joint
+### JointVisualizer
     Currently Joint displays the joint axis with its rotation and position data
 
 ### Link

@@ -8,14 +8,14 @@ export default class Mesh extends THREE.Mesh {
     shape: string;
     isShape: boolean;
     customRenderBehaviors: {};
-    frame: Frame | null;
+    frame?: Frame | null;
     material: THREE.MeshPhongMaterial;
     constructor(shape = "cube", scale: [number, number, number] = [1, 1, 1], color = Math.random() * 0xffffff) {
         super();
 
         this.scale.set(...scale);
 
-        this._scale = new ScaleVector(shape, ...Object.values(scale));
+        this._scale = new ScaleVector(shape, ...scale);
 
         this.shape = shape;
         this.isShape = true; // Used to be detectable by the mouse
@@ -25,7 +25,6 @@ export default class Mesh extends THREE.Mesh {
         this.color = new Color(color);
 
         this.customRenderBehaviors = {};
-        this.frame = null;
 
         function defineGeometry(context: Mesh, shape: string) {
             switch (shape) {
@@ -72,7 +71,7 @@ export default class Mesh extends THREE.Mesh {
         this.material.color.copy(color);
     }
 
-    clone(): this {
+    duplicate(): this {
         const clone = new Mesh(this.shape, [this.scale.x, this.scale.y, this.scale.z], this.color.getHex());
         clone.color.copy(this.color);
         // I added the as this. could potentially cause stupid errors
