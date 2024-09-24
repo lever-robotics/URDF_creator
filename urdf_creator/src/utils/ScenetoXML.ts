@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { generateSensorXML } from "./generateSensorXML.js";
-import findRootFrame from "./findRootFrame.js";
-import Frame from "../Models/Frame.jsx";
-import { quaternionToRPY } from "./quaternionToRPY.js";
+import { generateSensorXML } from "./generateSensorXML";
+import findRootFrame from "./findRootFrame";
+import Frame from "../Models/Frame";
+import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to URDF-compatible XML
 export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {

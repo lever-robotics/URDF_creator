@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CodeBox from "./CodeBox.jsx/CodeBox";
+import CodeBox from "./CodeBox/CodeBox";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
 import Frame, { Frameish } from "../../Models/Frame";

@@ -61,7 +61,6 @@ export default class FrameManager {
         } = params;
 
         // Instantiate new objects
-        console.log(color)
         const mesh = new Mesh(shape, scale, color);
         const link = new Link(offset);
         const jointVisualizer = new JointVisualizer();

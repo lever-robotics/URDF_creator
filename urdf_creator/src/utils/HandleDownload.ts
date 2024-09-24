@@ -1,6 +1,6 @@
 // Handle misc download types
 import * as openDB from "idb";
-import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";

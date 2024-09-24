@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
 import Mesh from "./Mesh";
 import { Camera, IMU, Lidar, Sensor } from "./SensorsClass";

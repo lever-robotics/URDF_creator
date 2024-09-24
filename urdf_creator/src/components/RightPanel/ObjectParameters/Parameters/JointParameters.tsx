@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
-import Section from "../Section.js";
-import Parameter from "./Parameter.js";
-import OffsetParameters from "./OffsetParameters.jsx";
-import ParameterProps from "../ParameterProps.js";
+import Section from "../Section";
+import Parameter from "./Parameter";
+import OffsetParameters from "./OffsetParameters";
+import ParameterProps from "../ParameterProps";
 
 export default function JointParameters({ selectedObject, stateFunctions }: ParameterProps) {
     if (!selectedObject) return;

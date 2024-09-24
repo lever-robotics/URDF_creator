@@ -1,26 +1,26 @@
 import React, { useRef, useEffect, useState } from "react";
-import Toolbar from "./Toolbar/ToolBar.jsx";
-import InsertTool from "./Insert/InsertTool.jsx";
-import { LinkTree } from "./TreeView/LinkTree.jsx";
-import Column from "../utils/ScreenTools/Column.jsx";
-import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition.jsx";
-import Row from "../utils/ScreenTools/Row.jsx";
-import Modal from "../FunctionalComponents/Modal.jsx";
-import Onboarding from "./ApplicationHelp/Onboarding.jsx";
-import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
-import MenuBar from "./Menu/MenuBar.jsx";
-import { handleProject } from "../utils/HandleUpload.js";
-import FrameManager, { UserData } from "../Models/FrameManager.js";
-import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
-import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.js";
-import RightPanel from "./RightPanel/RightPanel.js";
-import ScenetoGLTF from "../utils/ScenetoGLTF.js";
-import { loadFileToObject } from "../utils/HandleUpload.js";
+import Toolbar from "./Toolbar/ToolBar";
+import InsertTool from "./Insert/InsertTool";
+import { LinkTree } from "./TreeView/LinkTree";
+import Column from "../utils/ScreenTools/Column";
+import AbsolutePosition from "../utils/ScreenTools/AbsolutePosition";
+import Row from "../utils/ScreenTools/Row";
+import Modal from "../FunctionalComponents/Modal";
+import Onboarding from "./ApplicationHelp/Onboarding";
+import ProjectDisplayer from "./ProjectManager/ProjectDisplayer";
+import MenuBar from "./Menu/MenuBar";
+import { handleProject } from "../utils/HandleUpload";
+import FrameManager, { UserData } from "../Models/FrameManager";
+import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer";
+import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer";
+import RightPanel from "./RightPanel/RightPanel";
+import ScenetoGLTF from "../utils/ScenetoGLTF";
+import { loadFileToObject } from "../utils/HandleUpload";
 import * as THREE from "three";
-import ThreeScene from "./ThreeDisplay/ThreeSceneObject.jsx";
-import Frame, { Frameish } from "../Models/Frame.jsx";
-import Mesh from "../Models/Mesh.js";
-import { Gizmo, TransformControlsMode } from "../Models/TransformControls.jsx";
+import ThreeScene from "./ThreeDisplay/ThreeSceneObject";
+import Frame, { Frameish } from "../Models/Frame";
+import Mesh from "../Models/Mesh";
+import { Gizmo, TransformControlsMode } from "../Models/TransformControls";
 
 export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene | null>): [React.ReactNode, StateFunctionsType] {
     const threeScene = sceneRef.current;
@@ -159,7 +159,6 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         Undo/Redo Functions
     */
     const pushUndo = async () => {
-        console.log("push undo")
         // pushUndo gets called from forceCodeUpdate
         const { current: undoArray } = undo;
 
@@ -175,11 +174,9 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
             currentScene.selectedName = selectedObject?.name!;
         }
         undoArray.push(currentScene);
-        console.log(undoArray)
     };
 
     const popUndo = async () => {
-        console.log("pop undo")
         const { current: three } = sceneRef;
         const { current: undoArray } = undo;
         const { current: redoArray } = redo;
@@ -197,11 +194,8 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         // clear the scene
         clearScene();
 
-        console.log("last state", lastState)
-
         // If the last state was empty then return 
         if (lastState.scene === "") return;
-        console.log("got past")
 
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
@@ -216,11 +210,9 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const lastSelectedName = currentState!.selectedName;
         const lastSelected = findFrameByName(rootFrame, lastSelectedName);
         selectObject(lastSelected);
-        console.log(undoArray)
     };
 
     const popRedo = async () => {
-        console.log("pop redo")
         // Redo stack gets destroyed when forceCodeUpdate gets called
         const { current: redoArray } = redo;
         const { current: three } = sceneRef;

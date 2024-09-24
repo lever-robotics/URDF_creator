@@ -1,4 +1,4 @@
-import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 import * as THREE from "three";
 
 
