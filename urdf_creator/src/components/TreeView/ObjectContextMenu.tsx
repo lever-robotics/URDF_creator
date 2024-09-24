@@ -1,10 +1,10 @@
 import React from "react";
-import Frame from "../../Models/Frame";
+import Frame, { Frameish } from "../../Models/Frame";
 import { StateFunctionsType } from "../SceneState";
 
 type ContextProps = {
     contextMenuPosition: {left: number, top: number},
-    selectedObject: Frame | null | undefined,
+    selectedObject: Frameish,
     stateFunctions: StateFunctionsType
 }
 

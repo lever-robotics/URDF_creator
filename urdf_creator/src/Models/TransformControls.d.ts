@@ -1,4 +1,5 @@
 import { Camera, Mesh, MOUSE, Object3D, Object3DEventMap, Quaternion, Raycaster, Vector3 } from "three";
+import { StateFunctionsType } from "../components/SceneState";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
 
@@ -35,7 +36,7 @@ export interface TransformControlsEventMap extends Object3DEventMap {
 }
 
 export class TransformControls extends Object3D<TransformControlsEventMap> {
-    constructor(object: Camera, domElement?: HTMLElement);
+    constructor(object: Camera, domElement?: HTMLElement, stateFunctions: StateFunctionsType);
 
     domElement: HTMLElement;
 
@@ -79,6 +80,10 @@ export class TransformControls extends Object3D<TransformControlsEventMap> {
     setSpace(space: "world" | "local"): void;
     reset(): void;
     dispose(): void;
+}
+
+export class Gizmo extends Object3D {
+    transformType = "";
 }
 
 export class TransformControlsGizmo extends Object3D {

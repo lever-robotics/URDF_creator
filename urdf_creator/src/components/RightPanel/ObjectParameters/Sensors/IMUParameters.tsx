@@ -1,5 +1,6 @@
 import React from "react";
 import ParameterProps from "../ParameterProps";
+import { IMU } from "../../../../Models/SensorsClass";
 
 function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
     if (!selectedObject) return;
@@ -8,6 +9,8 @@ function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
         stateFunctions.updateSensor(selectedObject, name, value);
     };
 
+    const imu = selectedObject.sensor as IMU
+
     return (
         <div>
             <label>
@@ -15,7 +18,7 @@ function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
                 <input
                     type="number"
                     name="updateRate"
-                    value={selectedObject.sensor.updateRate}
+                    value={imu.updateRate}
                     onChange={handleChange}
                 />
                 <span className="units">Hz</span>
@@ -25,7 +28,7 @@ function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
                 <input
                     type="number"
                     name="mean"
-                    value={selectedObject.sensor.mean}
+                    value={imu.mean}
                     onChange={handleChange}
                 />
             </label>
@@ -34,7 +37,7 @@ function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
                 <input
                     type="number"
                     name="stddev"
-                    value={selectedObject.sensor.stddev}
+                    value={imu.stddev}
                     onChange={handleChange}
                 />
             </label>
@@ -43,7 +46,7 @@ function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
                 <input
                     type="number"
                     name="gaussianNoise"
-                    value={selectedObject.sensor.gaussianNoise}
+                    value={imu.gaussianNoise}
                     onChange={handleChange}
                 />
             </label>

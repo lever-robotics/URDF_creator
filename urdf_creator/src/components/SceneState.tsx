@@ -10,7 +10,7 @@ import Onboarding from "./ApplicationHelp/Onboarding.jsx";
 import ProjectDisplayer from "./ProjectManager/ProjectDisplayer.jsx";
 import MenuBar from "./Menu/MenuBar.jsx";
 import { handleProject } from "../utils/HandleUpload.js";
-import FrameManager from "../Models/FrameManager.js";
+import FrameManager, { UserData } from "../Models/FrameManager.js";
 import ExportDisplayer from "./Menu/ExportModal/ExportDisplayer.jsx";
 import ImportDisplayer from "./Menu/ImportModal/ImportDisplayer.js";
 import RightPanel from "./RightPanel/RightPanel.js";
@@ -18,16 +18,16 @@ import ScenetoGLTF from "../utils/ScenetoGLTF.js";
 import { loadFileToObject } from "../utils/HandleUpload.js";
 import * as THREE from "three";
 import ThreeScene from "./ThreeDisplay/ThreeSceneObject.jsx";
-import Frame from "../Models/Frame.jsx";
+import Frame, { Frameish } from "../Models/Frame.jsx";
 import Mesh from "../Models/Mesh.js";
-import { Gizmo } from "../Models/TransformControls.jsx";
+import { Gizmo, TransformControlsMode } from "../Models/TransformControls.jsx";
 
 export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene | null>): [React.ReactNode, StateFunctionsType] {
     const threeScene = sceneRef.current;
     //State
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [projectTitle, setProjectTitle] = useState("robot");
-    const [selectedObject, setSelectedObject] = useState<Frame | null | undefined>(undefined);
+    const [selectedObject, setSelectedObject] = useState<Frameish>(undefined);
     const [toolMode, setToolMode] = useState("translate");
     const [scene, setScene] = useState(threeScene?.scene);
     const [numShapes, setNumShapes] = useState({
@@ -59,11 +59,10 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         if (three) {
             three.mouse.addOnClickFunctions(clickObject);
         }
-        console.log("use effect", selectedObject)
     }, [toolMode, selectedObject]);
 
     useEffect(() => {
-        function keydown(e: KeyboardEvent): any {
+        function keydown(e: KeyboardEvent): void {
             const pressed = pressedKeys.current;
             const key = e.key.toLowerCase();
             if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
@@ -160,6 +159,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         Undo/Redo Functions
     */
     const pushUndo = async () => {
+        console.log("push undo")
         // pushUndo gets called from forceCodeUpdate
         const { current: undoArray } = undo;
 
@@ -175,9 +175,11 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
             currentScene.selectedName = selectedObject?.name!;
         }
         undoArray.push(currentScene);
+        console.log(undoArray)
     };
 
     const popUndo = async () => {
+        console.log("pop undo")
         const { current: three } = sceneRef;
         const { current: undoArray } = undo;
         const { current: redoArray } = redo;
@@ -189,19 +191,21 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const currentState = undoArray.pop();
         redoArray.push(currentState!);
 
-        // Get the last state but leave it in the redoArray
-        const lastState = undoArray[undoArray.length - 1];
+        // Get the last state before scene is cleared
+        const lastState = undoArray[undoArray.length -1];
 
-        // If the last state was empty then clear the scene
-        if (lastState.scene === "") {
-            clearScene();
-            return;
-        }
-
+        // clear the scene
         clearScene();
+
+        console.log("last state", lastState)
+
+        // If the last state was empty then return 
+        if (lastState.scene === "") return;
+        console.log("got past")
+
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        const gltfScene: THREE.Group<THREE.Object3DEventMap> = lastScene.scene;
+        const gltfScene = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -212,9 +216,11 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         const lastSelectedName = currentState!.selectedName;
         const lastSelected = findFrameByName(rootFrame, lastSelectedName);
         selectObject(lastSelected);
+        console.log(undoArray)
     };
 
     const popRedo = async () => {
+        console.log("pop redo")
         // Redo stack gets destroyed when forceCodeUpdate gets called
         const { current: redoArray } = redo;
         const { current: three } = sceneRef;
@@ -223,16 +229,13 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
 
         const lastState = redoArray.pop();
 
-        // If the last state was empty then clear the scene
-        if (lastState!.scene === "") {
-            clearScene();
-            return;
-        }
-
         clearScene();
 
+        // If the last state was empty then return;
+        if (lastState!.scene === "") return;
+
         const lastScene = await loadFileToObject(lastState!.scene, "gltf");
-        const gltfScene: THREE.Group<THREE.Object3DEventMap> = lastScene.scene;
+        const gltfScene = lastScene.scene;
         const rootFrame = frameManager.readScene(gltfScene.children[0]);
 
         three!.scene.attach(rootFrame);
@@ -249,7 +252,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     const clearScene = () => {
         const { current: three } = sceneRef;
         if (three!.rootFrame === null) return;
-        three!.rootFrame.removeFromParent();
+        three!.rootFrame!.removeFromParent();
         three!.rootFrame = null;
         objectNames.current.length = 0;
         selectObject(null);
@@ -261,9 +264,8 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
 
         const newFrame = frameManager.createFrame({
             shape: shape,
-            // keyof typeof is gross but we make do
             name: shape + (numShapes[shape as keyof typeof numShapes] + 1).toString(),
-        });
+        } as UserData);
 
         setNumShapes((prev) => ({ ...prev, [shape]: prev[shape as keyof typeof prev] + 1 }));
 
@@ -272,7 +274,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         if (selectedObject) {
             selectedObject!.attachChild(newFrame);
         } else if (three!.rootFrame !== null) {
-            three!.rootFrame.attachChild(newFrame);
+            three!.rootFrame!.attachChild(newFrame);
         } else {
             newFrame.position.set(0, 0, 0.5);
             newFrame.isRootFrame = true;
@@ -302,7 +304,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
     const setTransformMode = (selectedObject: Frame, mode: string) => {
         const { current: three } = sceneRef;
         if (three!.transformControls) {
-            three!.transformControls.setMode(mode);
+            three!.transformControls.setMode(mode as TransformControlsMode);
             setToolMode(mode);
         }
 
@@ -327,7 +329,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
                 break;
             // will attach to the link and scale nothing else
             case "scale":
-                transformControls.attach(selectedObject.mesh);
+                transformControls.attach(selectedObject.mesh!);
                 break;
             default:
                 break;
@@ -338,11 +340,9 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         return toolMode;
     };
 
-    const selectObject = (frame: Frame | null) => {
+    const selectObject = (frame: Frameish) => {
         const { current: three } = sceneRef;
 
-        console.log("previous", selectedObject)
-        console.log("new", frame)
 
         // the link may not be attached correctly, this checks for that case
         if (selectedObject?.linkDetached) {
@@ -543,7 +543,7 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         setToolMode("rotate");
         three!.transformControls.setMode("rotate");
 
-        three!.transformControls.attach(frame.axis);
+        three!.transformControls.attach(frame.axis!);
     };
 
     const startMoveJoint = (frame: Frame) => {
@@ -818,14 +818,14 @@ export type StateFunctionsType = {
     forceSceneUpdate: () => void;
     setTransformMode: (selectedObject: Frame, mode: string) => void;
     getToolMode: () => string;
-    selectObject: (frame: Frame | null) => void;
+    selectObject: (frame: Frameish) => void;
     setLinkName: (frame: Frame, name: string) => void;
     loadScene: (gltfScene: THREE.Object3D) => void;
     loadSingleObject: (gltfScene: THREE.Object3D) => void;
     getScene: () => THREE.Scene;
     duplicateObject: (frame: Frame) => void;
     deleteObject: (frame: Frame) => void;
-    getRootFrame: () => Frame | null | undefined;
+    getRootFrame: () => Frameish;
     openProjectManager: () => void;
     openOnboarding: () => void;
     openExportDisplayer: () => void;

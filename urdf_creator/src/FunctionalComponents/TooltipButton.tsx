@@ -6,7 +6,7 @@ type Props = {
     active: boolean,
     content: string,
     anchorPosition: string,
-    onClick: (e: any) => void,
+    onClick: (e: React.MouseEvent) => void,
     label: string,
     children: ReactNode
 }

@@ -7,6 +7,9 @@ import Inertia from "./Inertia";
 import JointVisualizer from "./JointVisualizer";
 import Link from "./Link";
 import Axis from "./Axis";
+import { Vector3, Euler } from "three";
+
+export type Frameish = Frame | null | undefined;
 
 export default class Frame extends THREE.Object3D {
     mesh?: Mesh;
@@ -29,11 +32,11 @@ export default class Frame extends THREE.Object3D {
 
     
 
-    constructor(name = "", position:[number, number, number] = [0, 0, 0], rotation: [number, number, number] = [0, 0, 0], jointType = "fixed", jointMin = -1, jointMax = 1) {
+    constructor(name = "", position: Vector3 = new Vector3(0, 0, 0), rotation: Euler = new Euler(0, 0, 0), jointType = "fixed", jointMin = -1, jointMax = 1) {
         super();
 
-        this.position.set(...position);
-        this.rotation.set(...rotation);
+        this.position.copy(position);
+        this.rotation.copy(rotation);
 
         this._jointType = jointType;
         this._min = jointMin;
@@ -124,11 +127,7 @@ export default class Frame extends THREE.Object3D {
     }
 
     get offset() {
-        return [this.link!.position.x, this.link!.position.y, this.link!.position.z];
-    }
-
-    set offset(values: [number, number, number]) {
-        this.link!.position.set(...values);
+        return this.link!.position;
     }
 
     set mass(mass) {
@@ -152,11 +151,11 @@ export default class Frame extends THREE.Object3D {
     }
 
     get axisRotation() {
-        return [this.axis!.rotation.x, this.axis!.rotation.y, this.axis!.rotation.z];
+        return this.axis!.rotation;
     }
 
-    set axisRotation(values: [number, number, number]) {
-        this.axis!.rotation.set(...values);
+    set axisRotation(rotation: Euler) {
+        this.axis!.rotation.copy(rotation);
     }
 
     attachChild(child: Frame) {
@@ -266,9 +265,7 @@ export default class Frame extends THREE.Object3D {
     };
 
     duplicate() {
-        const pos_tuple: [number, number, number] = [this.position.x, this.position.y, this.position.z];
-        const rotation_tuple: [number, number, number] = [this.rotation.x, this.rotation.y, this.rotation.z];
-        return new Frame(this.name, pos_tuple, rotation_tuple, this.jointType, this.min, this.max);
+        return new Frame(this.name, this.position, this.rotation, this.jointType, this.min, this.max);
     }
 
     //Add STL to the Frame

@@ -1,12 +1,12 @@
 import "./Export.css";
 import FrameManager from "../../../Models/FrameManager";
 import { handleDownload } from "../../../utils/HandleDownload";
-import Frame from "../../../Models/Frame";
+import Frame, { Frameish } from "../../../Models/Frame";
 import { StateFunctionsType } from "../../SceneState";
 
 type Props = {
     onClose: () => void, 
-    getRootFrame: () => Frame, 
+    getRootFrame: () => Frameish, 
     projectTitle: string, 
     stateFunctions: StateFunctionsType
 }
@@ -14,7 +14,7 @@ type Props = {
 const ExportGLTF: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, stateFunctions }) => {
     const handleGLTFExport = () => {
         const manager = new FrameManager(stateFunctions);
-        const compressedScene = manager.compressScene(getRootFrame());
+        const compressedScene = manager.compressScene(getRootFrame()!);
         handleDownload(compressedScene, "gltf", projectTitle);
     };
 

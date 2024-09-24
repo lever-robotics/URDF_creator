@@ -3,7 +3,7 @@ import React from "react"
 export class Mouse {
 
     mountRef: React.MutableRefObject<HTMLDivElement | null>;
-    eventFunctions: { type: string; func: (event: any) => void; }[];
+    eventFunctions: { type: string; func: (event: React.MouseEvent<HTMLDivElement>) => void; }[];
     previousUpTime: number;
     currentDownTime: number;
     startPos: [number, number];
@@ -31,7 +31,7 @@ export class Mouse {
     addListeners() {
         if (this.mountRef.current) {
             this.eventFunctions.forEach((event) => {
-                this.mountRef.current!.addEventListener(event.type, event.func);
+                this.mountRef.current!.addEventListener(event.type, event.func as unknown as (e: Event) => void);
             });
         }
     }
@@ -40,7 +40,7 @@ export class Mouse {
         if (this) {
             if (this.mountRef.current) {
                 this.eventFunctions.forEach((event) => {
-                    this.mountRef.current!.removeEventListener(event.type, event.func);
+                    this.mountRef.current!.removeEventListener(event.type, event.func as unknown as (e: Event) => void);
                 });
             }
         }

@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import Frame from "./Frame";
+import Frame, { Frameish } from "./Frame";
 
 export default class Inertia {
-    frame?: Frame | null;
+    frame: Frameish;
     mass: number;
     ixx: number;
     iyy: number;

@@ -7,7 +7,7 @@ export default function AllClickButton({
     onDoubleClick = () => {},
     onLongClick = () => {},
     onLongClickUp = () => {},
-    onContextMenu = (e: any) => {},
+    onContextMenu = (e: React.MouseEvent) => {},
     onMouseEnter = () => {},
     onMouseLeave = () => {},
     onMouseUp = () => {},
@@ -15,10 +15,10 @@ export default function AllClickButton({
     onDragStart = () => {},
     onDragEnd = () => {},
     onDragEnter = () => {},
-    onDragLeave = (e: any) => {},
+    onDragLeave = (e: React.MouseEvent) => {},
     draggable = false,
     children,
-}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> | any) {
+}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {onLongClickUp?: (e: React.MouseEvent<HTMLButtonElement>) => void, onLongClick?: (e: React.MouseEvent<HTMLButtonElement>) => void}) {
     let clicks = useRef(0);
     let timeAtClick = useRef(0);
     let longClicking = useRef(false);

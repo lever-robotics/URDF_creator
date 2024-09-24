@@ -8,7 +8,8 @@ import ParameterProps from "../ParameterProps";
 
 function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
-    const [tempMass, setTempMass] = useState(selectedObject.inertia.mass);
+    if (!selectedObject.inertia) return;
+    const [tempMass, setTempMass] = useState<string>(selectedObject.inertia.mass.toString());
     const [tempIxx, setTempIxx] = useState(selectedObject.inertia.ixx);
     const [tempIxy, setTempIxy] = useState(selectedObject.inertia.ixy);
     const [tempIxz, setTempIxz] = useState(selectedObject.inertia.ixz);
@@ -17,7 +18,8 @@ function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
     const [tempIzz, setTempIzz] = useState(selectedObject.inertia.izz);
 
     useEffect(() => {
-        setTempMass(selectedObject.inertia.mass);
+        if (!selectedObject.inertia) return;
+        setTempMass(selectedObject.inertia.mass.toString());
         setTempIxx(selectedObject.inertia.ixx);
         setTempIxy(selectedObject.inertia.ixy);
         setTempIxz(selectedObject.inertia.ixz);
@@ -37,7 +39,7 @@ function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
 
     const handleInertiaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const type = e.currentTarget.title.toLowerCase().replace(":", "");
-        const tempValue = e.currentTarget.value;
+        const tempValue = Number(e.currentTarget.value);
 
         switch (type) {
             case "ixx":

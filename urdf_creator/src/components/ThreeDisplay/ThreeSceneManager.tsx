@@ -11,6 +11,7 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { RefObject } from "react";
 import { StateFunctionsType } from "../SceneState";
+import { Vector3 } from "three";
 
 
 export class ThreeSceneManager {
@@ -29,6 +30,8 @@ export class ThreeSceneManager {
         const raycaster = this.setupRaycaster();
         const mouse = this.setupMouse(mountRef);
         const callback = this.setupCallback(orbitControls, transformControls, renderer, scene, mountRef);
+
+        this.setupFont(scene, camera)
 
         const three = new ThreeScene(
             mountRef,
@@ -50,7 +53,7 @@ export class ThreeSceneManager {
 
         three.addToScene([three.transformControls, three.lights[0], three.lights[1], three.lights[2], three.lights[3], three.gridHelper, three.axesHelper]);
 
-        three.transformControls.addEventListener("dragging-changed", (event: any) => {
+        three.transformControls.addEventListener("dragging-changed", (event: {value: unknown}) => {
             three.orbitControls.enabled = !event.value;
         });
 
@@ -81,7 +84,7 @@ export class ThreeSceneManager {
         return new OrbitControls(camera, renderer.domElement);
     }
 
-    setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer, stateFunctions: any) {
+    setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer, stateFunctions: StateFunctionsType) {
         return new TransformControls(camera, renderer.domElement, stateFunctions);
     }
 
@@ -109,9 +112,8 @@ export class ThreeSceneManager {
                 color: 0xffffff,
             }); // Change color to blue
 
-            type Position = [number, number, number];
 
-            const textGemetry = (title: string, position: Position) => {
+            const textGemetry = (title: string, position: Vector3) => {
                 const textGeo = new TextGeometry(title, {
                     font: font,
                     size: 0.1, // Make the text smaller
@@ -121,16 +123,16 @@ export class ThreeSceneManager {
                 });
                 const textMesh = new THREE.Mesh(textGeo, textMaterial);
                 textMesh.up.copy(new THREE.Vector3(0, 0, 1));
-                textMesh.position.set(...position);
+                textMesh.position.copy(position);
                 textMesh.onBeforeRender = () => {
                     textMesh.lookAt(camera.position);
                 };
                 return textMesh;
             };
 
-            const textMeshX = textGemetry("X", [5, 0, 0]);
-            const textMeshY = textGemetry("Y", [0, 5, 0]);
-            const textMeshZ = textGemetry("Z", [0, 0, 5]);
+            const textMeshX = textGemetry("X", new Vector3(5, 0, 0));
+            const textMeshY = textGemetry("Y", new Vector3(0, 5, 0));
+            const textMeshZ = textGemetry("Z", new Vector3(0, 0, 5));
 
             scene.add(textMeshX);
             scene.add(textMeshY);

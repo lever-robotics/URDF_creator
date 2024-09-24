@@ -1,7 +1,7 @@
 import Frame from "../Models/Frame";
 import * as THREE from "three";
 
-export default function findRootFrame(scene: THREE.Scene) {
+export default function findRootFrame(scene: THREE.Object3D) {
     if (scene) {
         if (scene.children) {
             const children = scene.children.filter((child) => {

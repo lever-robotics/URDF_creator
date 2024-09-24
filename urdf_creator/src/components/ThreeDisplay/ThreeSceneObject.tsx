@@ -4,17 +4,17 @@ import { TransformControls } from "../../Models/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { Mouse } from "./Mouse";
-import Frame from "../../Models/Frame";
+import Frame, { Frameish } from "../../Models/Frame";
 
 export default class ThreeScene {
-    rootFrame: Frame | null;
+    rootFrame: Frameish;
     constructor(
         public mountRef: React.RefObject<HTMLElement>,
         public scene: THREE.Scene,
         public camera: THREE.Camera,
         public renderer: THREE.WebGLRenderer,
         public orbitControls: OrbitControls,
-        public transformControls: any,
+        public transformControls: TransformControls,
         public lights: THREE.Light[],
         public gridHelper: THREE.GridHelper,
         public axesHelper: THREE.AxesHelper,

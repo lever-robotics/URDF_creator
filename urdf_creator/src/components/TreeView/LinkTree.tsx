@@ -1,5 +1,5 @@
 import AllClickButton from "../../FunctionalComponents/AllClickButton";
-import Frame from "../../Models/Frame";
+import Frame, { Frameish } from "../../Models/Frame";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 import { StateFunctionsType } from "../SceneState";
 import { ObjectContextMenu } from "./ObjectContextMenu";
@@ -12,8 +12,8 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
         top: -10000,
     });
     const [contextMenuVisible, setContextMenuVisible] = useState(false);
-    const [draggedButton, setDraggedButton] = useState(null);
-    const [hoveredButton, setHoveredButton] = useState(null);
+    const [draggedButton, setDraggedButton] = useState<Frameish>(null);
+    const [hoveredButton, setHoveredButton] = useState<Frameish>(null);
 
     const handleContextMenu = (e: React.MouseEvent, node: Frame) => {
         e.preventDefault();
@@ -82,7 +82,7 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
     );
 }
 
-type Props = { node: Frame | null | undefined, selectedObject: Frame | null | undefined, handleContextMenu: any, stateFunctions: StateFunctionsType, setDraggedButton: any, hoveredButton: any, setHoveredButton: any, dropButton: any }
+type Props = { node: Frameish, selectedObject: Frameish, handleContextMenu: (e: React.MouseEvent, f: Frame) => void, stateFunctions: StateFunctionsType, setDraggedButton: (f: Frame) => void, hoveredButton: Frameish, setHoveredButton: (f: Frameish) => void, dropButton: (e: React.MouseEvent) => void }
 
 function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDraggedButton, hoveredButton, setHoveredButton, dropButton }: Props) {
     if (!node) {
@@ -111,8 +111,8 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                     onDragEnter={() => {
                         setHoveredButton(node);
                     }}
-                    onDragLeave={(e: any) => {
-                        if (hoveredButton.current === node && e.relatedTarget) {
+                    onDragLeave={(e: React.MouseEvent) => {
+                        if (hoveredButton === node && e.relatedTarget) {
                             setHoveredButton(null);
                         }
                     }}
@@ -120,7 +120,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                         if (!node.isRootFrame) setDraggedButton(node);
                     }}
                     onDragEnd={dropButton}
-                    onContextMenu={(e: any) => {
+                    onContextMenu={(e: React.MouseEvent) => {
                         handleContextMenu(e, node);
                     }}
                     draggable={true}

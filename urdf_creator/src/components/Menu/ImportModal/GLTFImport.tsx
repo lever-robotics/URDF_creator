@@ -2,8 +2,6 @@ import React from 'react';
 import './Import.css';
 import { useRef } from 'react';
 import { handleUpload } from '../../../utils/HandleUpload';
-import Frame from '../../../Models/Frame';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Object3D } from 'three';
 
 
@@ -18,7 +16,7 @@ const GLTFImport = ({ onClose, loadScene }: {onClose: () => void; loadScene: (ob
       const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           const file = e.target.files![0];
           const type = file.name.split(".").pop();
-          const group = await handleUpload(file, type);
+          const group = await handleUpload(file, type!);
           const base_link = group.children[0];
           loadScene(base_link);
       };

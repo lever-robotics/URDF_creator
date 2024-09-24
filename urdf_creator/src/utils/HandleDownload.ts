@@ -1,6 +1,6 @@
 // Handle misc download types
 import * as openDB from "idb";
-import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { ScenetoXML } from "./ScenetoXML";
@@ -10,7 +10,7 @@ import { GenerateLaunchFile } from "./CreatePackage/GenerateLaunchFile";
 import { GeneratePackageXMLFile, GenerateCMakelistsFile } from "./CreatePackage/GenerateBuildFiles";
 import * as THREE from "three";
 
-export async function handleDownload(scene: THREE.Scene, type: string, title: string) {
+export async function handleDownload(scene: THREE.Object3D, type: string, title: string) {
     if (type === "urdfpackage") {
         const urdf = ScenetoXML(scene, title.replace(" ", "_"));
         const sdf = ScenetoSDF(scene, title.replace(" ", "_"));

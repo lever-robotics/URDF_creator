@@ -1,4 +1,4 @@
-import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import * as THREE from "three";
 
 

@@ -1,25 +1,24 @@
+import { Color, MeshPhongMaterial } from "three";
 import Inertia from "./Inertia";
+import { Sensor } from "./SensorsClass";
 
 export default class UserData {
     shape: string;
     inertia: Inertia;
     isRootFrame: boolean;
     selectable: boolean;
-    sensor: any;
-    stlfile: any;
-    material: any;
-    color: any;
+    sensor?: Sensor;
+    stlfile?: string;
+    material?: MeshPhongMaterial;
+    color?: Color;
     name: string;
+
     constructor(shape: string, name: string) {
         this.name = name;
         this.shape = shape;
         this.inertia = new Inertia();
         this.isRootFrame = false;
         this.selectable = true;
-        this.sensor = null; // Sensor object
-        this.stlfile = null;
-        this.material = null;
-        this.color = null;
     }
 
     duplicate() {

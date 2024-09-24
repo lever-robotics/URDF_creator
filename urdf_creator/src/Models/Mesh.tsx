@@ -1,21 +1,21 @@
 import * as THREE from "three";
 import ScaleVector from "./ScaleVector";
-import Frame from "./Frame";
-import { Color } from "three";
+import Frame, { Frameish } from "./Frame";
+import { Color, Vector3 } from "three";
 
 export default class Mesh extends THREE.Mesh {
     private _scale: ScaleVector;
     shape: string;
     isShape: boolean;
     customRenderBehaviors: {};
-    frame?: Frame | null;
+    frame: Frameish;
     material: THREE.MeshPhongMaterial;
-    constructor(shape = "cube", scale: [number, number, number] = [1, 1, 1], color = Math.random() * 0xffffff) {
+    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color = Math.random() * 0xffffff) {
         super();
 
-        this.scale.set(...scale);
+        this.scale.copy(scale);
 
-        this._scale = new ScaleVector(shape, ...scale);
+        this._scale = new ScaleVector(shape, scale);
 
         this.shape = shape;
         this.isShape = true; // Used to be detectable by the mouse
@@ -72,7 +72,7 @@ export default class Mesh extends THREE.Mesh {
     }
 
     duplicate(): this {
-        const clone = new Mesh(this.shape, [this.scale.x, this.scale.y, this.scale.z], this.color.getHex());
+        const clone = new Mesh(this.shape, this.scale, this.color.getHex());
         clone.color.copy(this.color);
         // I added the as this. could potentially cause stupid errors
         return clone as this;

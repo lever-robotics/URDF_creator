@@ -1,16 +1,17 @@
 import * as THREE from "three";
-import Frame from "./Frame";
+import Frame, { Frameish } from "./Frame";
+import { Vector3 } from "three";
 
 export default class Link extends THREE.Object3D {
-    frame?: Frame | null;
-    constructor(offset: [number, number, number] = [0, 0, 0]) {
+    frame: Frameish;
+    constructor(offset: Vector3 = new Vector3(0, 0, 0)) {
         super();
 
-        this.position.set(...offset); // The offset from the joint
+        this.position.copy(offset); // The offset from the joint
     }
 
     duplicate() {
-        const clone = new Link([this.position.x, this.position.y, this.position.z]);
+        const clone = new Link(this.position);
         return clone;
     }
 }

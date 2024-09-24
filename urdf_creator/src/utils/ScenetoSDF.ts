@@ -5,7 +5,7 @@ import Frame from "../Models/Frame";
 import { quaternionToRPY } from "./quaternionToRPY";
 
 // Helper function to convert Scene to SDF-compatible XML
-export const ScenetoSDF = (scene: THREE.Scene, projectTitle: string) => {
+export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
     let xml = `<sdf version="1.6">\n`;
     let pub_joint_states = `    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">\n`;
     // plugin for publishing joint states from gazebo

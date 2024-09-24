@@ -1,13 +1,14 @@
 import * as THREE from "three";
-import Frame from "./Frame";
+import Frame, { Frameish } from "./Frame";
+import { Euler } from "three";
 
 export default class Axis extends THREE.Line {
     declare material: THREE.LineBasicMaterial;
     _axis: THREE.Vector3;
     isFrame: boolean;
-    frame?: Frame | null;
+    frame: Frameish;
 
-    constructor(axisRotation: [number, number, number] = [0, 0, 0]) {
+    constructor(axisRotation: Euler = new Euler(0, 0, 0)) {
         const originPoint = new THREE.Vector3();
         const lineAxis = new THREE.Vector3(0, 0, 1);
         const length = 10;
@@ -23,7 +24,7 @@ export default class Axis extends THREE.Line {
         super(geometry, material);
 
         this._axis = lineAxis;
-        this.rotation.set(...axisRotation);
+        this.rotation.copy(axisRotation);
         this.isFrame = false;
     }
 
@@ -35,7 +36,6 @@ export default class Axis extends THREE.Line {
     }
 
     duplicate() {
-        const rotation_tuple: [number, number, number] = [this.rotation.x, this.rotation.y, this.rotation.z];
-        return new Axis(rotation_tuple);
+        return new Axis(this.rotation);
     }
 }

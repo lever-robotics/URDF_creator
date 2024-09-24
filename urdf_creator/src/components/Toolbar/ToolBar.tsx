@@ -5,7 +5,7 @@ import React from "react";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 
 const Toolbar = ({ selectedObject, stateFunctions, toolMode }: ParameterProps & {toolMode: string}) => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleClick = (e: React.MouseEvent<Element>) => {
         if (!selectedObject) return;
         const mode = e.currentTarget.id;
         stateFunctions.setTransformMode(selectedObject, mode);

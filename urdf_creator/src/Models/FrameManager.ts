@@ -35,7 +35,7 @@ export default class FrameManager {
         }
     }
 
-    createFrame(params: any): Frame {
+    createFrame(params: UserData): Frame {
         const {
             name,
             shape,
@@ -61,6 +61,7 @@ export default class FrameManager {
         } = params;
 
         // Instantiate new objects
+        console.log(color)
         const mesh = new Mesh(shape, scale, color);
         const link = new Link(offset);
         const jointVisualizer = new JointVisualizer();
@@ -170,7 +171,7 @@ export default class FrameManager {
     }
 
     readScene(gltfObject: THREE.Object3D) {
-        const newFrame = this.createFrame(gltfObject.userData);
+        const newFrame = this.createFrame(gltfObject.userData as UserData);
 
         gltfObject.children.forEach((child) => {
             const newChild = this.readScene(child);
@@ -221,4 +222,28 @@ export default class FrameManager {
             return [string, number];
         }
     }
+}
+
+export type UserData = {
+    name: string;
+    shape: string;
+    version: string;
+    position: THREE.Vector3;
+    rotation: THREE.Euler;
+    jointType: string;
+    jointMin: number;
+    jointMax: number;
+    axisRotation: THREE.Euler;
+    offset: THREE.Vector3;
+    scale: THREE.Vector3;
+    material: THREE.MeshPhongMaterial;
+    color: number;
+    mass: number;
+    ixx: number;
+    ixy: number;
+    ixz: number;
+    iyy: number;
+    izz: number;
+    iyz: number;
+    sensor: Sensor | IMU | Camera | Lidar | undefined;
 }

@@ -4,8 +4,11 @@ import ExportGLTF from "./ExportGLTF";
 import ExportURDF from "./ExportURDF";
 import "./exportDisplayer.css";
 import { StateFunctionsType } from "../../SceneState";
+import Frame, { Frameish } from "../../../Models/Frame";
+import { Scene } from "three";
+import { JsxElement } from "typescript";
 
-type Props = { onClose: () => void; getRootFrame: any; projectTitle: any; getScene: any; stateFunctions: StateFunctionsType };
+type Props = { onClose: () => void; getRootFrame: () => Frameish; projectTitle: string; getScene: () => Scene; stateFunctions: StateFunctionsType };
 
 // the params originally were enclosed in {} braces but there was a type script compilation error that got fixed when I removed them
 const ExportDisplayer: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, getScene, stateFunctions }) => {
@@ -35,9 +38,14 @@ const ExportDisplayer: React.FC<Props> = ({ onClose, getRootFrame, projectTitle,
     );
 };
 
-type OptionProps = { item: any; index: any; setContent: any; selectedIndex: any; setSelectedIndex: any };
+type Item = {
+    label: string;
+    content: JSX.Element;
+}
 
-const ExportOption: React.FC<OptionProps> = ({ item, index, setContent, selectedIndex, setSelectedIndex }) => {
+type OptionProps = { item: Item; index: number; setContent: (e: JSX.Element) => void; selectedIndex: number; setSelectedIndex: (i: number) => void };
+
+const ExportOption = ({ item, index, setContent, selectedIndex, setSelectedIndex }: OptionProps) => {
     const handleClick = () => {
         setContent(item.content);
         setSelectedIndex(index);

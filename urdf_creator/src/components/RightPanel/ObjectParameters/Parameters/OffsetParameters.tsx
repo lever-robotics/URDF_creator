@@ -28,7 +28,7 @@ function OffsetParameters({ selectedObject, stateFunctions }: ParameterProps) {
 
     const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+        const tempValue = Number(e.target.value);
         switch (axis) {
             case "x":
                 setTempX(tempValue);

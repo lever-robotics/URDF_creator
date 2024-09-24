@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 /** https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
  * Hook that alerts clicks outside of the passed ref
  */
-export default function useClickOutside(ref: React.MutableRefObject<HTMLDivElement | null>, action: (ev: any)=> void) {
+export default function useClickOutside(ref: React.MutableRefObject<HTMLDivElement | null>, action: (ev: MouseEvent)=> void) {
     useEffect(() => {
       /**
        * Alert if clicked on outside of element

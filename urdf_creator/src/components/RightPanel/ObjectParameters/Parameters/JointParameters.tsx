@@ -12,14 +12,14 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
     const [maxInput, setMaxInput] = useState(selectedObject.max);
     const [minInput, setMinInput] = useState(selectedObject.min);
     const [jointValue, setJointValue] = useState(selectedObject.jointValue);
-    const [jointInput, setJointInput] = useState(selectedObject.jointValue);
+    const [jointInput, setJointInput] = useState(selectedObject.jointValue.toString());
 
     useEffect(() => {
         setMaxInput(selectedObject.max);
         setMinInput(selectedObject.min);
         setMax(selectedObject.max);
         setMin(selectedObject.min);
-        setJointInput(selectedObject.jointValue);
+        setJointInput(selectedObject.jointValue.toString());
         setJointValue(selectedObject.jointValue);
     }, [selectedObject]);
 
@@ -50,7 +50,7 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
         //clamp the value to the min and max
         value = Math.min(Math.max(value, min), max);
         setJointValue(value);
-        setJointInput(value);
+        setJointInput(value.toString());
         stateFunctions.setJointValue(selectedObject, value);
         switch (selectedObject.jointType) {
             case "prismatic":

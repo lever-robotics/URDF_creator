@@ -1,8 +1,8 @@
 import { StateFunctionsType } from "../../SceneState";
-import Frame from "../../../Models/Frame";
+import Frame, { Frameish } from "../../../Models/Frame";
 
 type ParameterProps = {
-    selectedObject?: Frame | null,
+    selectedObject?: Frameish,
     stateFunctions: StateFunctionsType,
 }
 

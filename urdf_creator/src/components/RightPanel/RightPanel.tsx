@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CodeBox from "./CodeBox.jsx/CodeBox";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
-import Frame from "../../Models/Frame";
+import Frame, { Frameish } from "../../Models/Frame";
 import { StateFunctionsType } from "../SceneState";
 import { Scene } from "three";
 
@@ -14,7 +14,7 @@ import { Scene } from "three";
 type Props = {
     scene: Scene,
     projectTitle: string,
-    selectedObject?: Frame | null,
+    selectedObject?: Frameish,
     stateFunctions: StateFunctionsType,
     updateCode: number,
     className: string

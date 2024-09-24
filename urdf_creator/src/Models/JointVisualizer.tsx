@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import Link from "./Link";
-import Frame from "./Frame";
+import Frame, { Frameish } from "./Frame";
 
 export default class JointVisualizer extends THREE.Object3D {
     link?: Link
     value: number;
-    frame?: Frame | null;
+    frame: Frameish;
 
     constructor() {
         super();

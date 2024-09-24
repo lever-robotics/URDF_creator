@@ -1,9 +1,11 @@
 import * as THREE from "three";
+import { Vector3 } from "three";
 
 export default class ScaleVector extends THREE.Vector3 {
     shape: string;
 
-    constructor(shape: string, x: number, y: number, z: number) {
+    constructor(shape: string, scale: Vector3) {
+        const {x, y, z} = scale;
         super(x, y, z);
 
         this.shape = shape;

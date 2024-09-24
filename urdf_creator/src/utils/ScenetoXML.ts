@@ -5,7 +5,7 @@ import Frame from "../Models/Frame.jsx";
 import { quaternionToRPY } from "./quaternionToRPY.js";
 
 // Helper function to convert Scene to URDF-compatible XML
-export const ScenetoXML = (scene: THREE.Scene, projectTitle: string) => {
+export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
     let xml = `<robot name="${projectTitle.replace(" ", "_")}">\n`;
     if (scene === undefined) {
         xml += `</robot>`;

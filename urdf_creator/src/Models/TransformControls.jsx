@@ -234,6 +234,7 @@ class TransformControls extends Object3D {
             }
 
             this.dragging = true;
+            this.pointerMoved = false;
             _mouseDownEvent.mode = this.mode;
             this.dispatchEvent(_mouseDownEvent);
         }
@@ -244,6 +245,7 @@ class TransformControls extends Object3D {
         const mode = this.mode;
         const object = this.object;
         let space = this.space;
+        this.pointerMoved = true;
 
         if (mode === "scale") {
             space = "local";
@@ -449,12 +451,17 @@ class TransformControls extends Object3D {
         if (this.dragging && this.axis !== null) {
             _mouseUpEvent.mode = this.mode;
             this.dispatchEvent(_mouseUpEvent);
+            
+            if (this.pointerMoved) {
+                console.log("upping")
+                this.stateFunctions.forceUpdateCode()
+            };
         }
 
         // if (this.object && this.object?.linkDetached) {
         //     this.stateFunctions.reattachLink(this.object);
         // }
-        this.stateFunctions.forceUpdateCode();
+        
 
         this.dragging = false;
         this.axis = null;
