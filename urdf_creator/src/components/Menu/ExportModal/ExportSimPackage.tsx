@@ -10,12 +10,11 @@ type Props = {
     projectTitle: string
 }
 
-const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
+const ExportSimPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
 
     const handleURDFExport = () => {
         const scene = getScene();
-        const title = projectTitle;
-        handleDownload(scene, "urdfpackage", title);
+        handleDownload(scene, "urdfpackage", projectTitle);
     };
 
     return (
@@ -29,28 +28,17 @@ const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle })
                 </div>
             </div>
             <div className="description-container">
-                <h3>Installation instructions: </h3>
-                <p>This package has the robot description and launch file runs joint state publihser with URDF to create TF2 tree.
+                <h3>Description: </h3>
+                <p>This downloaded package contains a launch file that can be used to launch the robot model in RViz and Gazebo. It includes the necessary robot description files and configuration for visualization and simulation.
+                    Place this folder in the src folder of your ROS development <a href="https://roboeverything.com">workspace</a>, build it then run the example executable.
                 </p>
-                <div className="steps-container">
-                <h3>Steps:</h3>
-                <ol>
-                    <li>Unzip the downloaded package.</li>
-                    <li>Place the {projectTitle}_description folder in the src directory of your ROS <a href="https://roboeverything.com">workspace</a></li>
-                    <li>Return to the base of the ROS2 workspace </li>
-                    <li>Build the package with the following command</li>
-                    <div className="terminal-container"><code>colcon build --packages-select {projectTitle}_description</code></div>
-                    <li>Source the workspace with the following command</li>
-                    <div className="terminal-container"><code>source install/setup.bash</code></div>
-                    <li>Run the launch file using the command: </li>
-                    <div className="terminal-container"><code>ros2 launch {projectTitle}_description {projectTitle}.launch.py</code></div>
-                </ol>
-                <p>For more info on installing this into your ROS system, following this <a href="https://roboeverything.com">documentaion</a></p>
+                <div className="terminal-container">
+                    <code>ros2 launch {projectTitle}_description {projectTitle}.launch.py</code>
                 </div>
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={'/statics/folders_white.png'} alt="Folder file structure" className="urdfgraphic" />
+                    <img src={process.env.PUBLIC_URL + '/statics/folders_white.png'} alt="Folder file structure" className="urdfgraphic" />
                 </div>
                 <div className="image-description">
                     <h3>File Structure:</h3>
@@ -70,4 +58,4 @@ const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle })
     );
 }
 
-export default ExportURDFPackage;
+export default ExportSimPackage;

@@ -13,8 +13,7 @@ const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle })
 
     const handleURDFExport = () => {
         const scene = getScene();
-        const title = projectTitle;
-        handleDownload(scene, "urdf", title);
+        handleDownload(scene, "urdf", projectTitle);
     };
 
     return (
