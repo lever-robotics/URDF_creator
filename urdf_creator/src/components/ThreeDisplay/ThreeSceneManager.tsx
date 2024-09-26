@@ -10,20 +10,19 @@ import ThreeScene from "./ThreeSceneObject";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { RefObject } from "react";
-import { StateFunctionsType } from "../SceneState";
 import { Vector3 } from "three";
 
 
 export class ThreeSceneManager {
-    constructScene(mountRef: React.MutableRefObject<HTMLDivElement | null>, stateFunctions: StateFunctionsType) {
-        const scene = this.setupScene();
+    constructScene(mountRef: React.MutableRefObject<HTMLDivElement | null>) {
         const camera = this.setupCamera(mountRef.current!);
         const renderer = this.setupRenderer(mountRef.current!);
         const orbitControls = this.setupOrbitControls(camera, renderer);
-        const transformControls = this.setupTransformControls(camera, renderer, stateFunctions);
+        const transformControls = this.setupTransformControls(camera, renderer);
         const lights: THREE.Light[] = this.setupLights();
         const gridHelper = this.setupGridHelper();
         const axesHelper = this.setupAxesHelper();
+        const scene = this.setupScene([transformControls, lights[0], lights[1], lights[2], lights[3], gridHelper, axesHelper]);
         const renderPass = this.setupRenderPass(scene, camera);
         const composer = this.setupComposer(renderer, renderPass);
         const background = this.setupBackground();
@@ -33,37 +32,35 @@ export class ThreeSceneManager {
 
         this.setupFont(scene, camera)
 
+       scene.background = background;
+
         const three = new ThreeScene(
             mountRef,
             scene,
             camera,
-            renderer,
             orbitControls,
             transformControls,
-            lights,
-            gridHelper,
-            axesHelper,
-            renderPass,
             composer,
-            background,
             raycaster,
             mouse,
             callback
         );
 
-        three.addToScene([three.transformControls, three.lights[0], three.lights[1], three.lights[2], three.lights[3], three.gridHelper, three.axesHelper]);
+        transformControls.scene = three;
 
         three.transformControls.addEventListener("dragging-changed", (event: {value: unknown}) => {
             three.orbitControls.enabled = !event.value;
         });
 
-        three.scene.background = three.background;
-
         return three;
     }
 
-    setupScene() {
-        return new THREE.Scene();
+    setupScene(objects: THREE.Object3D[]) {
+        const scene = new THREE.Scene();
+        objects.forEach((object) => {
+            scene.add(object);
+        });
+        return scene;
     }
 
     setupCamera(mount: HTMLDivElement) {
@@ -84,8 +81,8 @@ export class ThreeSceneManager {
         return new OrbitControls(camera, renderer.domElement);
     }
 
-    setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer, stateFunctions: StateFunctionsType) {
-        return new TransformControls(camera, renderer.domElement, stateFunctions);
+    setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer) {
+        return new TransformControls(camera, renderer.domElement);
     }
 
     setupLights() {

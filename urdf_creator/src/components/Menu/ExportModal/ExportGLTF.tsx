@@ -3,18 +3,18 @@ import FrameManager from "../../../Models/FrameManager";
 import { handleDownload } from "../../../utils/HandleDownload";
 import Frame, { Frameish } from "../../../Models/Frame";
 import { StateFunctionsType } from "../../SceneState";
+import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
 
 type Props = {
     onClose: () => void, 
     getRootFrame: () => Frameish, 
     projectTitle: string, 
-    stateFunctions: StateFunctionsType
+    threeScene: ThreeScene,
 }
 
-const ExportGLTF: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, stateFunctions }) => {
+const ExportGLTF: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, threeScene }) => {
     const handleGLTFExport = () => {
-        const manager = new FrameManager(stateFunctions);
-        const compressedScene = manager.compressScene(getRootFrame()!);
+        const compressedScene = threeScene.compressScene(getRootFrame()!);
         handleDownload(compressedScene, "gltf", projectTitle);
     };
 

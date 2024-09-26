@@ -41,7 +41,7 @@ class Gizmo extends Object3D {
 }
 
 class TransformControls extends Object3D {
-    constructor(camera, domElement, stateFunctions) {
+    constructor(camera, domElement) {
         super();
 
         if (domElement === undefined) {
@@ -51,7 +51,7 @@ class TransformControls extends Object3D {
 
         this.isTransformControls = true;
 
-        this.stateFunctions = stateFunctions;
+        this.scene = undefined;
 
         this.visible = false;
         this.domElement = domElement;
@@ -332,7 +332,7 @@ class TransformControls extends Object3D {
                 }
             }
 
-            this.stateFunctions.setObjectPosition(object, newPosition);
+            this.scene.setObjectPosition(object, newPosition);
         } else if (mode === "scale") {
             if (axis.search("XYZ") !== -1) {
                 let d = this.pointEnd.length() / this.pointStart.length();
@@ -382,7 +382,7 @@ class TransformControls extends Object3D {
                 }
             }
 
-            this.stateFunctions.copyObjectScale(object, newScale);
+            this.scene.copyObjectScale(object, newScale);
         } else if (mode === "rotate") {
             this._offset.copy(this.pointEnd).sub(this.pointStart);
 
@@ -438,7 +438,7 @@ class TransformControls extends Object3D {
                 newQuaternion.multiply(this._quaternionStart).normalize();
             }
 
-            this.stateFunctions.setObjectQuaternion(object, newQuaternion);
+            this.scene.setObjectQuaternion(object, newQuaternion);
         }
 
         this.dispatchEvent(_changeEvent);
@@ -454,7 +454,7 @@ class TransformControls extends Object3D {
             
             if (this.pointerMoved) {
                 console.log("upping")
-                this.stateFunctions.forceUpdateCode()
+                this.scene.forceUpdateCode()
             };
         }
 

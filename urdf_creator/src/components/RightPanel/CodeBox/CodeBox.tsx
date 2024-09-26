@@ -6,6 +6,7 @@ import "./CodeBox.css";
 import Frame from "../../../Models/Frame";
 import { StateFunctionsType } from "../../SceneState";
 import {Scene} from "three";
+import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
 
 /**
  * @param {Scene} scene
@@ -14,13 +15,13 @@ import {Scene} from "three";
  */
 
 type Props = {
-    scene: Scene,
     projectTitle: string,
+    threeScene: ThreeScene,
     selectedFormat: string,
     updateCode: number
 }
 
-export default function CodeBox({ scene, projectTitle, selectedFormat, updateCode }: Props) {
+export default function CodeBox({ projectTitle, threeScene, selectedFormat, updateCode }: Props) {
     const style = {
         fontSize: "12px",
         overflow: "auto",
@@ -35,7 +36,7 @@ export default function CodeBox({ scene, projectTitle, selectedFormat, updateCod
 
     useEffect(() => {
         if (selectedFormat !== "Parameters") {
-            const text = ScenetoText(selectedFormat, scene, projectTitle);
+            const text = ScenetoText(selectedFormat, threeScene.scene, projectTitle);
             setCode(text);
         }
     }, [updateCode, selectedFormat, projectTitle]);

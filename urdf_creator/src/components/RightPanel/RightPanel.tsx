@@ -5,6 +5,7 @@ import ObjectParameters from "./ObjectParameters/ObjectParameters";
 import Frame, { Frameish } from "../../Models/Frame";
 import { StateFunctionsType } from "../SceneState";
 import { Scene } from "three";
+import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
 
 /**
  * @param {Scene} scene
@@ -12,15 +13,13 @@ import { Scene } from "three";
  */
 
 type Props = {
-    scene: Scene,
     projectTitle: string,
-    selectedObject?: Frameish,
-    stateFunctions: StateFunctionsType,
+    threeScene: ThreeScene,
     updateCode: number,
     className: string
 }
 
-export default function RightPanel({ scene, projectTitle, selectedObject, stateFunctions, updateCode }: Props) {
+export default function RightPanel({ projectTitle, threeScene, updateCode }: Props) {
     const [selectedFormat, setSelectedFormat] = useState("Parameters");
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,8 +43,8 @@ export default function RightPanel({ scene, projectTitle, selectedObject, stateF
                     XACRO
                 </button>
             </div>
-            <CodeBox scene={scene} projectTitle={projectTitle} selectedFormat={selectedFormat} updateCode={updateCode} />
-            <ObjectParameters selectedObject={selectedObject} stateFunctions={stateFunctions} selectedFormat={selectedFormat} />
+            <CodeBox projectTitle={projectTitle} threeScene={threeScene} selectedFormat={selectedFormat} updateCode={updateCode} />
+            <ObjectParameters threeScene={threeScene} selectedFormat={selectedFormat} />
         </div>
     );
 }

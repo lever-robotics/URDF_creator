@@ -1,17 +1,17 @@
 import React from "react";
 import Frame, { Frameish } from "../../Models/Frame";
-import { StateFunctionsType } from "../SceneState";
+import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
 
 type ContextProps = {
     contextMenuPosition: {left: number, top: number},
     selectedObject: Frameish,
-    stateFunctions: StateFunctionsType
+    threeScene: ThreeScene,
 }
 
 export function ObjectContextMenu({
     contextMenuPosition,
     selectedObject,
-    stateFunctions,
+    threeScene,
 }: ContextProps) {
     const { left, top } = contextMenuPosition;
 
@@ -22,14 +22,14 @@ export function ObjectContextMenu({
             style={{ left: left, top: top }}>
             <button
                 onClick={() => {
-                    stateFunctions.duplicateObject(selectedObject!);
+                    threeScene.duplicateObject(selectedObject!);
                 }}
                 className="duplicate-button">
                 Duplicate
             </button>
             <button
                 onClick={() => {
-                    stateFunctions.deleteObject(selectedObject!);
+                    threeScene.deleteObject(selectedObject!);
                 }}
                 className="delete-button">
                 Delete

@@ -1,7 +1,10 @@
 import React from "react";
+import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
 
 
-function InsertTool({ addObject }: { addObject: (type: "cube" | "sphere" | "cylinder") => void }) {
+function InsertTool({ threeScene }: { threeScene: ThreeScene }) {
+    const addObject = threeScene?.addObject;
+
     return (
         <div style={{ marginTop: "10px" }} className="column-box">
             Add Link

@@ -3,22 +3,33 @@ import { faRotateLeft, faRotateRight, faUpDownLeftRight, faMaximize, faRotate } 
 import TooltipButton from "../../FunctionalComponents/TooltipButton";
 import React from "react";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
+import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import { useState, useEffect } from "react";
 
-const Toolbar = ({ selectedObject, stateFunctions, toolMode }: ParameterProps & {toolMode: string}) => {
+const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, popUndo: () => void, popRedo: () => void }) => {
+    const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
+    const [toolMode, setToolMode] = useState(threeScene?.toolMode);
+
+    useEffect(() => {
+        setSelectedObject(threeScene?.selectedObject);
+        setToolMode(threeScene?.toolMode);
+
+    }, [JSON.stringify(threeScene?.toolMode), JSON.stringify(threeScene?.selectedObject)]);
+
     const handleClick = (e: React.MouseEvent<Element>) => {
         if (!selectedObject) return;
         const mode = e.currentTarget.id;
-        stateFunctions.setTransformMode(selectedObject, mode);
+        threeScene.setTransformMode(selectedObject, mode);
     };
 
 
     return (
         <div style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }} className="row-space-between">
             <div className="row-spaced">
-                <TooltipButton onClick={stateFunctions.popUndo} content={"Undo (ctrl + z)"} anchorPosition={"top-right"} label="undo" active={false}>
+                <TooltipButton onClick={popUndo} content={"Undo (ctrl + z)"} anchorPosition={"top-right"} label="undo" active={false}>
                     <FontAwesomeIcon icon={faRotateLeft} />
                 </TooltipButton>
-                <TooltipButton onClick={stateFunctions.popRedo} content={"Redo (ctrl + shift + z)"} anchorPosition={"top-right"} label="redo" active={false}>
+                <TooltipButton onClick={popRedo} content={"Redo (ctrl + shift + z)"} anchorPosition={"top-right"} label="redo" active={false}>
                     <FontAwesomeIcon icon={faRotateRight} />
                 </TooltipButton>
                 <TooltipButton active={toolMode === "translate"} onClick={handleClick} content={"Translate"} anchorPosition={"top-right"} label="translate">

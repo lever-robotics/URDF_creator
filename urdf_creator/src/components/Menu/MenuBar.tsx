@@ -3,10 +3,10 @@ import { useState, useRef } from "react";
 import MenuIcon from "./MenuIcon";
 import HelpIcon from "../ApplicationHelp/HelpIcon";
 import "./MenuBar.css";
-import { StateFunctionsType } from "../SceneState";
+import { ModalFunctionsType } from "../../App";
 
-export default function MenuBar({ stateFunctions, projectTitle }: {stateFunctions: StateFunctionsType, projectTitle: string}) {
-    const { openProjectManager, openOnboarding, openExportDisplayer, openImportDisplayer, changeProjectTitle } = stateFunctions;
+export default function MenuBar({ modalFunctions, projectTitle }: {modalFunctions: ModalFunctionsType, projectTitle: string}) {
+    const { openProjectManager, openOnboarding, openExportDisplayer, openImportDisplayer, changeProjectTitle } = modalFunctions;
 
     return (
         <div className="menu-bar">

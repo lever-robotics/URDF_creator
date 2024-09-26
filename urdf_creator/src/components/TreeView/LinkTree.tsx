@@ -1,12 +1,12 @@
 import AllClickButton from "../../FunctionalComponents/AllClickButton";
 import Frame, { Frameish } from "../../Models/Frame";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
-import { StateFunctionsType } from "../SceneState";
+import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
 import { ObjectContextMenu } from "./ObjectContextMenu";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // RecursiveTreeView Component
-export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
+export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
     const [contextMenuPosition, setContextMenuPosition] = useState({
         left: -1000,
         top: -10000,
@@ -15,9 +15,16 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
     const [draggedButton, setDraggedButton] = useState<Frameish>(null);
     const [hoveredButton, setHoveredButton] = useState<Frameish>(null);
 
+    const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
+
+    useEffect(() => {
+        setSelectedObject(threeScene?.selectedObject);
+
+    }, [JSON.stringify(threeScene?.selectedObject)]);
+
     const handleContextMenu = (e: React.MouseEvent, node: Frame) => {
         e.preventDefault();
-        stateFunctions.selectObject(node);
+        threeScene.selectObject(node);
         setContextMenuVisible(true);
         setContextMenuPosition({
             left: e.clientX,
@@ -33,14 +40,14 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
         setContextMenuVisible(false);
     };
 
-    const rootFrame = stateFunctions.getRootFrame();
+    const rootFrame = threeScene?.getRootFrame();
 
     // put the button that is dragged as the child of the hovered button
     const dropButton = (e: React.MouseEvent) => {
         if (hoveredButton && draggedButton) {
             if (draggedButton !== hoveredButton && !isAncestor(draggedButton, hoveredButton)) {
-                stateFunctions.reparentObject(hoveredButton, draggedButton);
-                stateFunctions.selectObject(draggedButton);
+                threeScene.reparentObject(hoveredButton, draggedButton);
+                threeScene.selectObject(draggedButton);
                 setHoveredButton(null);
             }
         }
@@ -62,7 +69,7 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
                         node={rootFrame}
                         selectedObject={selectedObject}
                         handleContextMenu={handleContextMenu}
-                        stateFunctions={stateFunctions}
+                        threeScene={threeScene}
                         setDraggedButton={setDraggedButton}
                         hoveredButton={hoveredButton}
                         setHoveredButton={setHoveredButton}
@@ -74,17 +81,17 @@ export function LinkTree({ selectedObject, stateFunctions }: ParameterProps) {
                 <ObjectContextMenu
                     // objectContextMenu={objectContextMenu}
                     contextMenuPosition={contextMenuPosition}
-                    selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
+                    selectedObject={threeScene.selectedObject}
+                    threeScene={threeScene}
                 />
             )}
         </div>
     );
 }
 
-type Props = { node: Frameish, selectedObject: Frameish, handleContextMenu: (e: React.MouseEvent, f: Frame) => void, stateFunctions: StateFunctionsType, setDraggedButton: (f: Frame) => void, hoveredButton: Frameish, setHoveredButton: (f: Frameish) => void, dropButton: (e: React.MouseEvent) => void }
+type Props = { node: Frameish, selectedObject: Frameish, handleContextMenu: (e: React.MouseEvent, f: Frame) => void, threeScene: ThreeScene, setDraggedButton: (f: Frame) => void, hoveredButton: Frameish, setHoveredButton: (f: Frameish) => void, dropButton: (e: React.MouseEvent) => void }
 
-function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDraggedButton, hoveredButton, setHoveredButton, dropButton }: Props) {
+function Node({ node, selectedObject, handleContextMenu, threeScene, setDraggedButton, hoveredButton, setHoveredButton, dropButton }: Props) {
     if (!node) {
         return null;
     }
@@ -102,11 +109,11 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                     key={node.id}
                     className={`tree-item ${isSelected ? "button_selected" : "button_unselected"} ${hoveredButton === node ? "hover" : ""}`}
                     onClick={() => {
-                        stateFunctions.selectObject(node);
+                        threeScene.selectObject(node);
                     }}
                     onDoubleClick={() => {
                         //put renaming functionality here
-                        stateFunctions.selectObject(node);
+                        threeScene.selectObject(node);
                     }}
                     onDragEnter={() => {
                         setHoveredButton(node);
@@ -136,7 +143,7 @@ function Node({ node, selectedObject, handleContextMenu, stateFunctions, setDrag
                             node={child}
                             handleContextMenu={handleContextMenu}
                             selectedObject={selectedObject}
-                            stateFunctions={stateFunctions}
+                            threeScene={threeScene}
                             setDraggedButton={setDraggedButton}
                             hoveredButton={hoveredButton}
                             setHoveredButton={setHoveredButton}

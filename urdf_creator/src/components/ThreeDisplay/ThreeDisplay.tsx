@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { ThreeSceneManager } from "./ThreeSceneManager";
 import SceneState from "../SceneState";
-import THREE from "three";
+// import THREE from "three";
 import ThreeScene from "./ThreeSceneObject";
 
 function ThreeDisplay() {

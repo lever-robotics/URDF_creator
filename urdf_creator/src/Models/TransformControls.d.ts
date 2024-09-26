@@ -1,5 +1,6 @@
 import { Camera, Mesh, MOUSE, Object3D, Object3DEventMap, Quaternion, Raycaster, Vector3 } from "three";
 import { StateFunctionsType } from "../components/SceneState";
+import ThreeScene from "../components/ThreeDisplay/ThreeSceneObject";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
 
@@ -36,11 +37,12 @@ export interface TransformControlsEventMap extends Object3DEventMap {
 }
 
 export class TransformControls extends Object3D<TransformControlsEventMap> {
-    constructor(object: Camera, domElement?: HTMLElement, stateFunctions: StateFunctionsType);
+    constructor(object: Camera, domElement?: HTMLElement);
 
     domElement: HTMLElement;
 
     // API
+    scene: ThreeScene | undefined;
 
     camera: Camera;
     object: Object3D | undefined;

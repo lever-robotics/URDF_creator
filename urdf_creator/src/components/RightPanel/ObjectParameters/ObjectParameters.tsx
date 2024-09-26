@@ -10,9 +10,19 @@ import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 import { selectClasses } from "@mui/material";
 import ParameterProps from "./ParameterProps";
+import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
+import { useEffect, useState } from "react";
 
-function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }: ParameterProps & {selectedFormat: string}) {
+function ObjectParameters({ threeScene, selectedFormat }: { threeScene: ThreeScene, selectedFormat: string}) {
     if(selectedFormat !== "Parameters") return null;
+
+    const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
+
+    useEffect(() => {
+        setSelectedObject(threeScene?.selectedObject);
+
+    }, [JSON.stringify(threeScene?.selectedObject)]);
+
     if (!selectedObject) {
         return (
             <div className="object-parameters">
@@ -25,32 +35,32 @@ function ObjectParameters({ selectedObject, stateFunctions, selectedFormat }: Pa
     <div className="object-parameters">
         <h3>Link Parameters</h3>
         <BasicParameters
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
             selectedObject={selectedObject}
         />
         <PositionParameters
                 selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
+                threeScene={threeScene}
         />
         <RotationParameters
             selectedObject={selectedObject}
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
         />
         <ScaleParameters
             selectedObject={selectedObject}
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
         />
         <InertiaParameters
             selectedObject={selectedObject}
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
         />
         <JointParameters
             selectedObject={selectedObject}
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
         />
         <SensorsParameters
             selectedObject={selectedObject}
-            stateFunctions={stateFunctions}
+            threeScene={threeScene}
         />
         {/* Disabling STL upload for now */}
         {/* <MeshParameters
