@@ -8,6 +8,7 @@ import PositionParameters from "./PositionParameters";
 import RotationParameters from "./RotationParameters";
 import ScaleParameters from "./ScaleParameters";
 import ParameterProps from "../ParameterProps";
+import { deregisterName, registerName } from "../../../ThreeDisplay/TreeUtils";
 
 export default function BasicParameters({ threeScene, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
@@ -33,12 +34,14 @@ export default function BasicParameters({ threeScene, selectedObject }: Paramete
         const newName = e.currentTarget.value;
         if(newName === selectedObject.name){
             setError("");
-        }else if(threeScene.doesLinkNameExist(newName)){
+        }else if(threeScene.objectNames.includes(newName)){
             setError("Name must be unique");
         }else if (newName === "") {
             setError("Name cannot be empty");
         } else {
-            threeScene.setLinkName(selectedObject, newName);
+            deregisterName(selectedObject.name, threeScene.objectNames);
+            selectedObject.name = registerName(newName, threeScene.objectNames);
+            threeScene.forceUpdateBoth();
             setError("");
         }
     }
@@ -50,11 +53,11 @@ export default function BasicParameters({ threeScene, selectedObject }: Paramete
     }
 
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        threeScene.setLinkColor(selectedObject, e.target.value);
+        selectedObject.setColorByHex(e.target.value);
     };
 
     const handleColorBlur = () => {
-        threeScene.forceSceneUpdate();
+        threeScene.forceUpdateScene();
     };
 
     return (

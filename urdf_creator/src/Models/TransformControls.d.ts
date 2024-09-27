@@ -1,6 +1,6 @@
 import { Camera, Mesh, MOUSE, Object3D, Object3DEventMap, Quaternion, Raycaster, Vector3 } from "three";
 import { StateFunctionsType } from "../components/SceneState";
-import ThreeScene from "../components/ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../components/ThreeDisplay/ThreeScene";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
 

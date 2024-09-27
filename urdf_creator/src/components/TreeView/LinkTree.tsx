@@ -1,7 +1,7 @@
 import AllClickButton from "../../FunctionalComponents/AllClickButton";
 import Frame, { Frameish } from "../../Models/Frame";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
-import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../ThreeDisplay/ThreeScene";
 import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useState, useEffect } from "react";
 
@@ -37,7 +37,7 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
         setContextMenuVisible(false);
     };
 
-    const rootFrame = threeScene?.getRootFrame();
+    const rootFrame = threeScene?.rootFrame;
 
     // put the button that is dragged as the child of the hovered button
     const dropButton = (e: React.MouseEvent) => {

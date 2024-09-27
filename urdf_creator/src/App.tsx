@@ -13,9 +13,11 @@ import ExportDisplayer from "./components/Menu/ExportModal/ExportDisplayer";
 import ImportDisplayer from "./components/Menu/ImportModal/ImportDisplayer";
 import Onboarding from "./components/ApplicationHelp/Onboarding";
 import initializeAnalytics from "./analytics";
-import { ThreeSceneManager } from "./components/ThreeDisplay/ThreeSceneManager";
-import ThreeScene from "./components/ThreeDisplay/ThreeSceneObject";
-import { handleProject } from "./utils/HandleUpload";
+import ThreeScene from "./components/ThreeDisplay/ThreeScene";
+import { handleProject, loadFileToObject } from "./utils/HandleUpload";
+import ScenetoGLTF from "./utils/ScenetoGLTF";
+import { compressScene, findFrameByName, readScene } from "./components/ThreeDisplay/TreeUtils";
+import { constructThreeScene } from "./components/ThreeDisplay/ThreeSceneUtils";
 
 const App = () => {
     const mountRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,7 @@ const App = () => {
     const [projectTitle, setProjectTitle] = useState("robot");
 
     const [updateCode, setUpdateCode] = useState(0);
-    const [forceUpdate, setForceUpdate] = useState(0);
+    const [updateScene, setUpdateScene] = useState(0);
 
     type UndoState = { scene: string; selectedName: string };
     const undo: React.MutableRefObject<UndoState[]> = useRef([
@@ -35,140 +37,90 @@ const App = () => {
             selectedName: "",
         },
     ]);
-
     const redo: React.MutableRefObject<UndoState[]> = useRef([]);
-    // const objectNames: React.MutableRefObject<string[]> = useRef([]);
+
     const pressedKeys = useRef<string[]>([]);
 
-    // very important that this function has toolMode and selected Object in its dependency array
-    // if not it will cause what is called a "stale closure"
-    // basically the function click object will save the state of toolMode and SelectedObject
-    // when it is added to the mouse's onclickfunctions
-    // this way, the function is updated whenever those values are changed 
-    // and the state stays current :)
-    // useEffect(() => {
-    //     const { current: three } = sceneRef;
-    //     if (three) {
-    //         three.mouse.addOnClickFunctions(clickObject);
-    //     }
-    // }, [toolMode, selectedObject]);
-
-    // useEffect(() => {
-    //     function keydown(e: KeyboardEvent): void {
-    //         const pressed = pressedKeys.current;
-    //         const key = e.key.toLowerCase();
-    //         if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
-    //         pressedKeys.current.push(key);
-
-    //         // check if the keys are down
-    //         const control = pressed.includes("control") || pressed.includes("meta");
-    //         const shift = pressed.includes("shift");
-    //         const z = pressed.includes("z");
-
-    //         // check for undo
-    //         if (control && !shift && z) {
-    //             popUndo();
-    //         }
-
-    //         // check for redo
-    //         if (control && shift && z) {
-    //             popRedo();
-    //         }
-    //     }
-
-    //     function keyup(e: KeyboardEvent) {
-    //         const key = e.key.toLowerCase();
-    //         const index = pressedKeys.current.indexOf(key);
-    //         pressedKeys.current.splice(index, 1);
-    //     }
-
-    //     window.addEventListener("keydown", keydown);
-    //     window.addEventListener("keyup", keyup);
-
-    //     return () => {
-    //         window.removeEventListener("keydown", keydown);
-    //         window.removeEventListener("keyup", keyup);
-    //     };
-    // }, []);
-
-
-    // Function added to the Mouse object to allow clicking of meshes
-    // const clickObject = (event: MouseEvent) => {
-    //     const three = sceneRef.current;
-    //     const rect = three?.mountRef.current?.getBoundingClientRect();
-    //     const x = event.clientX - rect!.left;
-    //     const y = event.clientY - rect!.top;
-
-    //     three!.mouse.x = (x / rect!.width) * 2 - 1;
-    //     three!.mouse.y = -(y / rect!.height) * 2 + 1;
-
-    //     three!.raycaster.setFromCamera(new THREE.Vector2(three!.mouse.x, three!.mouse.y), three!.camera);
-    //     const intersects = three!.raycaster.intersectObjects(three!.scene.children);
-
-    //     // this will contain all of our objects (they have the property "isShape")
-    //     const shapes: Mesh[] = intersects.filter((collision) => collision.object instanceof Mesh)
-    //                                      .map((collision) => collision.object as Mesh);
-
-    //     // this will contain all meshes in the scene (ie the transform controls)
-    //     const meshes = intersects.filter((collision) => {
-    //         return (collision.object.parent as Gizmo).transformType === toolMode && collision.object instanceof THREE.Mesh;
-    //     });
-
-    //     // conso.log(meshes.map((mesh) => mesh.object))
-
-    //     // if we hit a shape, select the closest
-    //     if (shapes.length > 0) {
-    //         const object = shapes[0].frame;
-    //         selectObject(object!);
-    //         // if we don't hit any mesh (if we don't hit transform controls) deselect
-    //     } else if (meshes.length === 0) {
-    //         selectObject(null);
-    //     }
-    // }
-
-    /*
-        Update Functions
-    */
-    const updateScene = () => {
-        // this makes a shallow copy of the scene to trick react into thinking there has been changes made
-        // and while there have been changes they are actually nested deep into the scene tree
-        // hence the force update
-
-        // the old implementation, not working in ts
-        // setScene({ ...sceneRef.current!.scene });
-
-        // current implementation. Also not sure if it works but it will at least compile
-        setForceUpdate((prev) => prev + 1);
-    };
-
-    // const forceUpdateCode = () => {
-    //     pushUndo();
-    //     redo.current = [];
-    //     setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
-    // };
-
-
-    // initialize Google Analytics
+    // Initialize the ThreeScene ref, the animation loop, the event listeners, and google analytics
     useEffect(() => {
+        if (!mountRef.current) return;
+
         initializeAnalytics();
-        const handleWheel = (e: WheelEvent): void => {
-            if (e.ctrlKey) {
-              e.preventDefault();
-            }
-          };
+
+        const [sceneCallback, setUpMouseCallback] = initThreeScene(mountRef);
+
+        // Add EventListeners
+        window.addEventListener("keydown", keydown);
+        window.addEventListener("keyup", keyup);
         window.addEventListener('wheel', handleWheel, { passive: false });
+        mountRef.current!.addEventListener("updateScene", forceUpdateScene);
+        mountRef.current!.addEventListener("updateCode", forceUpdateCode);
 
         return () => {
-        window.removeEventListener('wheel', handleWheel);
+            sceneCallback();
+            setUpMouseCallback();
+            window.removeEventListener("keydown", keydown);
+            window.removeEventListener("keyup", keyup);
+            window.removeEventListener('wheel', handleWheel);
+            mountRef.current?.removeEventListener("updateScene", forceUpdateScene);
+            mountRef.current?.removeEventListener("updateCode", forceUpdateCode);
         };
     }, []);
 
-    // Set up the scene (initialization)
-    useEffect(() => {
-        if (!mountRef.current) return;
-        const tsm = new ThreeSceneManager();
-        const three = tsm.constructScene(mountRef);
-        threeSceneRef.current = three;
+    /**
+     * Handles keydown events globaly across the application
+     * @param e KeyboardEvent
+     */
+    function keydown(e: KeyboardEvent): void {
+        const pressed = pressedKeys.current;
+        const key = e.key.toLowerCase();
+        if (e.repeat) return; // keydown event trigger rapidly if you hold the key, we only want to detect keydown once.
+        pressedKeys.current.push(key);
+
+        // check if the keys are down
+        const control = pressed.includes("control") || pressed.includes("meta");
+        const shift = pressed.includes("shift");
+        const z = pressed.includes("z");
+
+        // check for undo
+        if (control && !shift && z) {
+            popUndo();
+        }
+
+        // check for redo
+        if (control && shift && z) {
+            popRedo();
+        }
+    }
+
+    /**
+     * Handles keyup events globally across the application
+     * @param e KeyboardEvent
+     */
+    function keyup(e: KeyboardEvent) {
+        const key = e.key.toLowerCase();
+        const index = pressedKeys.current.indexOf(key);
+        pressedKeys.current.splice(index, 1);
+    }
+
+    /**
+     * Handles wheel events globally across the application
+     * @param e WheelEvent
+     */
+    function handleWheel(e: WheelEvent): void{
+        if (e.ctrlKey) {
+            e.preventDefault();
+        }
+    };
+
+    /**
+     * Initializes the the ThreeScene
+     * @param mountRef Reference to the DOM element the ThreeScene will attach to
+     * @returns Callback functions for the useEffect to remove upon closure
+     */
+    function initThreeScene(mountRef: React.RefObject<HTMLDivElement>){
+        const threeScene = constructThreeScene(mountRef);
+        threeSceneRef.current = threeScene;
 
         const sceneCallback = threeSceneRef.current!.callback;
         const setUpMouseCallback = threeSceneRef.current!.mouse.callback;
@@ -181,93 +133,120 @@ const App = () => {
 
         animate();
 
-        mountRef.current.addEventListener("forceUpdate", updateScene);
+        return [sceneCallback, setUpMouseCallback]
+    }
 
-        return () => {
-            sceneCallback();
-            setUpMouseCallback();
-            mountRef.current?.removeEventListener("forceUpdate", updateScene);
-        };
-    }, []);
-
-    const pushUndo = async () => {
-        // pushUndo gets called from forceCodeUpdate
-        // const { current: undoArray } = undo;
-
-        // const currentScene: UndoState = {
-        //     scene: "",
-        //     selectedName: "",
-        // };
-        // // If the rootFrame is not null then it actually has objects so compress it
-        // if (getRootFrame() !== null) {
-        //     const compressedScene = frameManager.compressScene(getRootFrame()!);
-        //     const gltfScene = await ScenetoGLTF(compressedScene);
-        //     currentScene.scene = JSON.stringify(gltfScene);
-        //     currentScene.selectedName = selectedObject?.name!;
-        // }
-        // undoArray.push(currentScene);
+    /*
+        Update Functions
+    */
+    /**
+     * Increments the state value updateScene by 1.
+     * This causes a gobal rerender ensuring the react components are up to date with the changes made to THREE
+     */
+    function forceUpdateScene(){
+        setUpdateScene((prev) => prev + 1);
     };
 
+    /**
+     * Increments the state value updateCode by 1.
+     * This causes a gobal rerender to keep react components up to date, to update the codeBox, and to update the undo array
+     */
+    function forceUpdateCode(){
+        pushUndo();
+        redo.current = [];
+        setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
+    };
+
+    /**
+     * Pushes a compressed scene tree into the undo array
+     * @returns Returns early if threeScene is undefined 
+     */
+    const pushUndo = async () => {
+        // pushUndo gets called from forceCodeUpdate
+        const { current: threeScene } = threeSceneRef;
+        const { current: undoArray } = undo;
+        if(threeScene === undefined) return;
+
+        const currentScene: UndoState = {
+            scene: "",
+            selectedName: "",
+        };
+        // If the rootFrame is not null then it actually has objects so compress it
+        if (threeScene.rootFrame !== null) {
+            const compressedScene = compressScene(threeScene.rootFrame!);
+            const gltfScene = await ScenetoGLTF(compressedScene);
+            currentScene.scene = JSON.stringify(gltfScene);
+            currentScene.selectedName = threeScene.selectedObject?.name!;
+        }
+        undoArray.push(currentScene);
+    };
+
+    /**
+     * Pops the last compressed scene tree from the undo array and loads it into THREE
+     * @returns Returns early if threeScene is undefined, the undoArray is empty, or if the last scene tree was empty
+     */
     const popUndo = async () => {
-        // const { current: three } = sceneRef;
-        // const { current: undoArray } = undo;
-        // const { current: redoArray } = redo;
+        const { current: threeScene } = threeSceneRef;
+        const { current: undoArray } = undo;
+        const { current: redoArray } = redo;
+        if(threeScene === undefined) return;
 
-        // // There should always be an empty state as the first element
-        // if (undoArray.length === 1) return;
+        // There should always be an empty state as the first element
+        if (undoArray.length === 1) return;
 
-        // // Pop the current state and push to the redoArray
-        // const currentState = undoArray.pop();
-        // redoArray.push(currentState!);
+        // Pop the current state and push to the redoArray
+        const currentState = undoArray.pop();
+        redoArray.push(currentState!);
 
-        // // Get the last state before scene is cleared
-        // const lastState = undoArray[undoArray.length -1];
+        // Get the last state before scene is cleared
+        const lastState = undoArray[undoArray.length -1];
 
-        // // clear the scene
-        // clearScene();
+        // clear the scene
+        threeScene.clearScene();
 
-        // // If the last state was empty then return 
-        // if (lastState.scene === "") return;
+        // If the last state was empty then return 
+        if (lastState.scene === "") return;
 
-        // // Load the last state
-        // const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        // const gltfScene = lastScene.scene;
-        // const rootFrame = frameManager.readScene(gltfScene.children[0]);
+        // Load the last state
+        const lastScene = await loadFileToObject(lastState.scene, "gltf");
+        const gltfScene = lastScene.scene;
+        const rootFrame = readScene(gltfScene.children[0], threeScene.objectNames);
 
-        // three!.scene.attach(rootFrame);
-        // three!.rootFrame = rootFrame;
-        // rootFrame.isRootFrame = true;
+        threeScene!.scene.attach(rootFrame);
+        threeScene!.rootFrame = rootFrame;
+        rootFrame.isRootFrame = true;
 
-        // // If the lastSelected name exists then select that Object
-        // const lastSelectedName = currentState!.selectedName;
-        // const lastSelected = findFrameByName(rootFrame, lastSelectedName);
-        // selectObject(lastSelected);
+        // If the lastSelected name exists then select that Object
+        const lastSelectedName = currentState!.selectedName;
+        const lastSelected = findFrameByName(rootFrame, lastSelectedName);
+        threeScene.selectObject(lastSelected);
     };
 
     const popRedo = async () => {
         // Redo stack gets destroyed when forceCodeUpdate gets called
-        // const { current: redoArray } = redo;
-        // const { current: three } = sceneRef;
+        const { current: redoArray } = redo;
+        const { current: threeScene } = threeSceneRef;
+        if(threeScene === undefined) return;
 
-        // if (redoArray.length === 0) return;
+        if (redoArray.length === 0) return;
 
-        // const lastState = redoArray.pop();
+        const lastState = redoArray.pop();
 
-        // clearScene();
+        threeScene.clearScene();
 
-        // // If the last state was empty then return;
-        // if (lastState!.scene === "") return;
+        // If the last state was empty then return;
+        if (lastState!.scene === "") return;
 
-        // const lastScene = await loadFileToObject(lastState!.scene, "gltf");
-        // const gltfScene = lastScene.scene;
-        // const rootFrame = frameManager.readScene(gltfScene.children[0]);
+        const lastScene = await loadFileToObject(lastState!.scene, "gltf");
+        const gltfScene = lastScene.scene;
+        const rootFrame = readScene(gltfScene.children[0], threeScene.objectNames);
 
-        // three!.scene.attach(rootFrame);
-        // three!.rootFrame = rootFrame;
-        // rootFrame.isRootFrame = true;
-        // selectObject(null);
+        threeScene.scene.attach(rootFrame);
+        threeScene.rootFrame = rootFrame;
+        rootFrame.isRootFrame = true;
+        threeScene.selectObject(null);
 
-        // pushUndo();
+        pushUndo();
     };
 
 

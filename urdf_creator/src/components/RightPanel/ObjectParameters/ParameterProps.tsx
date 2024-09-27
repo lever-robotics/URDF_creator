@@ -1,6 +1,6 @@
 import { StateFunctionsType } from "../../SceneState";
 import Frame, { Frameish } from "../../../Models/Frame";
-import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../../ThreeDisplay/ThreeScene";
 
 type ParameterProps = {
     selectedObject?: Frameish,

@@ -9,8 +9,11 @@ export class Sensor {
     }
 
     duplicate() {
-        return new Sensor();
+        const clone: Sensor = sensorCreator({type: this.type});
+        Object.assign(clone, this);
+        return clone;
     }
+    
 }
 
 export function sensorCreator(sensor = {type: ""}) {
@@ -59,12 +62,6 @@ export class IMU extends Sensor{
         this.updateRate = updateRate;
         this.mean = mean;
         this.stddev = stddev;
-    }
-
-    clone() {
-        const clone = new IMU();
-        Object.assign(clone, this);
-        return clone;
     }
 }
 
@@ -123,11 +120,6 @@ export class Camera extends Sensor{
         this.stddev = stddev;
     }
 
-    clone() {
-        const clone = new Camera();
-        Object.assign(clone, this);
-        return clone;
-    }
 }
 
 export class Lidar extends Sensor{
@@ -174,9 +166,4 @@ export class Lidar extends Sensor{
         this.stddev = stddev;
     }
 
-    clone() {
-        const clone = new Lidar();
-        Object.assign(clone, this);
-        return clone;
-    }
 }

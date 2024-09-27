@@ -14,7 +14,7 @@ export type Frameish = Frame | null | undefined;
 export default class Frame extends THREE.Object3D {
     mesh?: Mesh;
     link?: Link;
-    sensor?: Sensor | IMU | Camera | Lidar;
+    sensor?: Sensor;
     inertia?: Inertia;
     jointVisualizer?: JointVisualizer;
     axis?: Axis;
@@ -73,7 +73,7 @@ export default class Frame extends THREE.Object3D {
     }
 
     get objectScale() {
-        return this.mesh!.scaleVector;
+        return this.mesh!.scale;
     }
 
     get jointType() {
@@ -170,6 +170,26 @@ export default class Frame extends THREE.Object3D {
 
     get sensorType() {
         return this?.sensor?.type ?? "";
+    }
+
+    set sensorType(type) {
+        switch (type) {
+            case "imu":
+                this.sensor = new IMU();
+                break;
+            case "camera":
+                this.sensor = new Camera();
+                break;
+            case "lidar":
+                this.sensor = new Lidar();
+                break;
+            case "":
+                this.sensor = new Sensor();
+                break;
+            // Add cases for other sensor types here
+            default:
+                throw Error("This type of sensor is not yet supported");
+        }
     }
 
     updateInertia() {

@@ -1,6 +1,6 @@
 import React from "react";
 import Frame, { Frameish } from "../../Models/Frame";
-import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../ThreeDisplay/ThreeScene";
 
 type ContextProps = {
     contextMenuPosition: {left: number, top: number},

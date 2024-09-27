@@ -69,7 +69,8 @@ function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
 
         if (isNaN(inertia)) return;
 
-        threeScene.setInertia(selectedObject, type, inertia);
+        selectedObject.inertia?.setCustomInertia(type, inertia);
+        threeScene.forceUpdateBoth();
     };
 
     const handleMassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +80,8 @@ function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
     const handleMassBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         // convert value to number then check if its a number
         if (isNaN(Number(e.currentTarget.value))) return;
-        threeScene.setMass(selectedObject, parseFloat(checkNegativeZero(e.currentTarget.value)));
+        selectedObject.mass = parseFloat(checkNegativeZero(e.currentTarget.value));
+        threeScene.forceUpdateBoth();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

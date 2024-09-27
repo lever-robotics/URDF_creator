@@ -1,5 +1,5 @@
 import React from "react";
-import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../ThreeDisplay/ThreeScene";
 
 
 function InsertTool({ threeScene }: { threeScene: ThreeScene }) {

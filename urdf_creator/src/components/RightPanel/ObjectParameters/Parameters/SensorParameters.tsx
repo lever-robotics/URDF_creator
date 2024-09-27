@@ -10,7 +10,8 @@ function SensorsParameters({ selectedObject, threeScene }: ParameterProps) {
     
     const handleSensorTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const type = e.target.value;
-        threeScene.setSensor(selectedObject, type);
+        selectedObject.sensorType = type;
+        threeScene.forceUpdateBoth();
     };
 
     return (

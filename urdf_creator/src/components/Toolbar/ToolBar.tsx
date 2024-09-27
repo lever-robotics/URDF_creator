@@ -3,7 +3,7 @@ import { faRotateLeft, faRotateRight, faUpDownLeftRight, faMaximize, faRotate } 
 import TooltipButton from "../../FunctionalComponents/TooltipButton";
 import React from "react";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
-import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../ThreeDisplay/ThreeScene";
 import { useState, useEffect } from "react";
 
 const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, popUndo: () => void, popRedo: () => void }) => {

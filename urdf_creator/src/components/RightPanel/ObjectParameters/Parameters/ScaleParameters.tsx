@@ -20,7 +20,7 @@ function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
         setTempZ(selectedObject.objectScale.z);
         setTempRadius(selectedObject.objectScale.x / 2);
         setTempHeight(selectedObject.objectScale.z);
-    }, [JSON.stringify(selectedObject.objectScale), threeScene?.getToolMode()]);
+    }, [JSON.stringify(selectedObject.objectScale), threeScene?.toolMode]);
 
     const checkNegativeZero = (value: string) => {
 

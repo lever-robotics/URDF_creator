@@ -4,7 +4,7 @@ import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
 import Frame, { Frameish } from "../../Models/Frame";
 import { Scene } from "three";
-import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../ThreeDisplay/ThreeScene";
 
 /**
  * @param {Scene} scene

@@ -7,7 +7,8 @@ function CameraParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        threeScene.updateSensor(selectedObject, name, value);
+        selectedObject.sensor?.update(name, value);
+        threeScene.forceUpdateBoth();
     };
 
     const camera = selectedObject.sensor as Camera

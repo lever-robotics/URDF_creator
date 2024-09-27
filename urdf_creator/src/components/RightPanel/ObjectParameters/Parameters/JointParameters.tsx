@@ -25,7 +25,8 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
 
     const handleJointTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.currentTarget.value;
-        threeScene.setJointType(selectedObject, value);
+        selectedObject.jointType = value;
+        threeScene.forceUpdateBoth();
     };
 
     const toFloat = (value: string) => {
@@ -51,7 +52,7 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
         value = Math.min(Math.max(value, min), max);
         setJointValue(value);
         setJointInput(value.toString());
-        threeScene.setJointValue(selectedObject, value);
+        selectedObject.jointValue = value;
         switch (selectedObject.jointType) {
             case "prismatic":
                 threeScene.translateAlongJointAxis(selectedObject, value);
@@ -78,14 +79,16 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
         const value = toFloat(checkNegativeZero(valueString));
         setMinInput(value);
         setMin(value);
-        threeScene.setJointMinMax(selectedObject, "min", value);
+        selectedObject.min = -value;
+        threeScene.forceUpdateBoth();
     };
 
     const handleMaxValueChange = (valueString: string) => {
         const value = toFloat(checkNegativeZero(valueString));
         setMaxInput(value);
         setMax(value);
-        threeScene.setJointMinMax(selectedObject, "max", value);
+        selectedObject.max = value;
+        threeScene.forceUpdateBoth();
     };
 
     const reattachLink = () => {

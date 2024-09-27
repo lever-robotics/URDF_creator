@@ -9,7 +9,8 @@ function MeshParameters({ selectedObject, threeScene }: ParameterProps) {
     const [files, setFiles] = useState<any[]>([]);
 
     const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        threeScene.setMesh(selectedObject, e.target.value);
+        selectedObject.setMesh(e.target.value);
+        threeScene.forceUpdateBoth();
     };
 
     const loadFiles = async () => {

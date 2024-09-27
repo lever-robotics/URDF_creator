@@ -10,7 +10,7 @@ import MeshParameters from "./Parameters/MeshParameters";
 import "./ObjectParameters.css";
 import { selectClasses } from "@mui/material";
 import ParameterProps from "./ParameterProps";
-import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../../ThreeDisplay/ThreeScene";
 import { useEffect, useState } from "react";
 
 function ObjectParameters({ threeScene, selectedFormat }: { threeScene: ThreeScene, selectedFormat: string}) {

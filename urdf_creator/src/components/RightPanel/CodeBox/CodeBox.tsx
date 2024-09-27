@@ -6,7 +6,7 @@ import "./CodeBox.css";
 import Frame from "../../../Models/Frame";
 import { StateFunctionsType } from "../../SceneState";
 import {Scene} from "three";
-import ThreeScene from "../../ThreeDisplay/ThreeSceneObject";
+import ThreeScene from "../../ThreeDisplay/ThreeScene";
 
 /**
  * @param {Scene} scene

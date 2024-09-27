@@ -23,7 +23,7 @@ function RotationParameters({ selectedObject, threeScene }: ParameterProps) {
         setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
         setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedObject.rotation), threeScene?.getToolMode()]);
+    }, [JSON.stringify(selectedObject.rotation), threeScene?.toolMode]);
 
     const checkNegativeZero = (value: string) => {
 
