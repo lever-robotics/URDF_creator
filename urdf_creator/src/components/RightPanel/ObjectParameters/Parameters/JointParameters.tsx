@@ -5,7 +5,7 @@ import Parameter from "./Parameter";
 import OffsetParameters from "./OffsetParameters";
 import ParameterProps from "../ParameterProps";
 
-export default function JointParameters({ selectedObject, stateFunctions }: ParameterProps) {
+export default function JointParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const [min, setMin] = useState(selectedObject.min);
     const [max, setMax] = useState(selectedObject.max);
@@ -25,7 +25,7 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
 
     const handleJointTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.currentTarget.value;
-        stateFunctions.setJointType(selectedObject, value);
+        threeScene.setJointType(selectedObject, value);
     };
 
     const toFloat = (value: string) => {
@@ -51,13 +51,13 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
         value = Math.min(Math.max(value, min), max);
         setJointValue(value);
         setJointInput(value.toString());
-        stateFunctions.setJointValue(selectedObject, value);
+        threeScene.setJointValue(selectedObject, value);
         switch (selectedObject.jointType) {
             case "prismatic":
-                stateFunctions.translateAlongJointAxis(selectedObject, value);
+                threeScene.translateAlongJointAxis(selectedObject, value);
                 break;
             default:
-                stateFunctions.rotateAroundJointAxis(selectedObject, value);
+                threeScene.rotateAroundJointAxis(selectedObject, value);
                 break;
         }
     };
@@ -67,29 +67,29 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
     };
 
     const handleChangeAxisAngle = () => {
-        stateFunctions.startRotateJoint(selectedObject);
+        threeScene.startRotateJoint(selectedObject);
     };
 
     const handleChangeAxisOrigin = () => {
-        stateFunctions.startMoveJoint(selectedObject);
+        threeScene.startMoveJoint(selectedObject);
     };
 
     const handleMinValueChange = (valueString: string) => {
         const value = toFloat(checkNegativeZero(valueString));
         setMinInput(value);
         setMin(value);
-        stateFunctions.setJointMinMax(selectedObject, "min", value);
+        threeScene.setJointMinMax(selectedObject, "min", value);
     };
 
     const handleMaxValueChange = (valueString: string) => {
         const value = toFloat(checkNegativeZero(valueString));
         setMaxInput(value);
         setMax(value);
-        stateFunctions.setJointMinMax(selectedObject, "max", value);
+        threeScene.setJointMinMax(selectedObject, "max", value);
     };
 
     const reattachLink = () => {
-        stateFunctions.reattachLink(selectedObject);
+        threeScene.reattachLink(selectedObject);
     };
 
     return (
@@ -98,7 +98,7 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
                 <strong>Parent Link:</strong>
                 <span> {selectedObject.parentName}</span>
             </div>
-            <OffsetParameters selectedObject={selectedObject} stateFunctions={stateFunctions} />
+            <OffsetParameters selectedObject={selectedObject} threeScene={threeScene} />
             {!selectedObject.isRootFrame && (
                 <>
                     <div>
@@ -175,7 +175,7 @@ export default function JointParameters({ selectedObject, stateFunctions }: Para
                                 onChange={(e) => {
                                     handleJointValueChange((e.target! as HTMLInputElement).value);
                                 }}
-                                onBlur={stateFunctions.forceUpdateCode}
+                                onBlur={threeScene.forceUpdateCode}
                             />
                         </>
                     )}

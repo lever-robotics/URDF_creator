@@ -26,6 +26,7 @@ const App = () => {
     const [projectTitle, setProjectTitle] = useState("robot");
 
     const [updateCode, setUpdateCode] = useState(0);
+    const [forceUpdate, setForceUpdate] = useState(0);
 
     type UndoState = { scene: string; selectedName: string };
     const undo: React.MutableRefObject<UndoState[]> = useRef([
@@ -128,17 +129,17 @@ const App = () => {
     /*
         Update Functions
     */
-    // const forceSceneUpdate = () => {
-    //     // this makes a shallow copy of the scene to trick react into thinking there has been changes made
-    //     // and while there have been changes they are actually nested deep into the scene tree
-    //     // hence the force update
+    const updateScene = () => {
+        // this makes a shallow copy of the scene to trick react into thinking there has been changes made
+        // and while there have been changes they are actually nested deep into the scene tree
+        // hence the force update
 
-    //     // the old implementation, not working in ts
-    //     // setScene({ ...sceneRef.current!.scene });
+        // the old implementation, not working in ts
+        // setScene({ ...sceneRef.current!.scene });
 
-    //     // current implementation. Also not sure if it works but it will at least compile
-    //     setScene(Object.create(sceneRef.current!.scene));
-    // };
+        // current implementation. Also not sure if it works but it will at least compile
+        setForceUpdate((prev) => prev + 1);
+    };
 
     // const forceUpdateCode = () => {
     //     pushUndo();
@@ -180,9 +181,12 @@ const App = () => {
 
         animate();
 
+        mountRef.current.addEventListener("forceUpdate", updateScene);
+
         return () => {
             sceneCallback();
             setUpMouseCallback();
+            mountRef.current?.removeEventListener("forceUpdate", updateScene);
         };
     }, []);
 

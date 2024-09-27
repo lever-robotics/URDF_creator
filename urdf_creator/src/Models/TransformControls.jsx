@@ -381,7 +381,7 @@ class TransformControls extends Object3D {
                     newScale.z = Math.round(newScale.z / this.scaleSnap) * this.scaleSnap || this.scaleSnap;
                 }
             }
-
+            console.log(object);
             this.scene.copyObjectScale(object, newScale);
         } else if (mode === "rotate") {
             this._offset.copy(this.pointEnd).sub(this.pointStart);

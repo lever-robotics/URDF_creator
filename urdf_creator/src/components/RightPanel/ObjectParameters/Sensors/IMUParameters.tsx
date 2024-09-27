@@ -2,11 +2,11 @@ import React from "react";
 import ParameterProps from "../ParameterProps";
 import { IMU } from "../../../../Models/SensorsClass";
 
-function IMUParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function IMUParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        stateFunctions.updateSensor(selectedObject, name, value);
+        threeScene.updateSensor(selectedObject, name, value);
     };
 
     const imu = selectedObject.sensor as IMU

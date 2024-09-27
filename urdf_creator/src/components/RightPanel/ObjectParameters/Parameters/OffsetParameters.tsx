@@ -3,7 +3,7 @@ import Section from "../Section";
 import Parameter from "./Parameter";
 import ParameterProps from "../ParameterProps";
 
-function OffsetParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const [tempX, setTempX] = useState(selectedObject.offset.x);
     const [tempY, setTempY] = useState(selectedObject.offset.y);
@@ -48,7 +48,7 @@ function OffsetParameters({ selectedObject, stateFunctions }: ParameterProps) {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
-        stateFunctions.transformObject(
+        threeScene.transformObject(
             selectedObject,
             "offset",
             axis,

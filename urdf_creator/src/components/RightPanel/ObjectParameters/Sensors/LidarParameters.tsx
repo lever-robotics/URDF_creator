@@ -2,11 +2,11 @@ import React from 'react';
 import ParameterProps from '../ParameterProps';
 import { Lidar } from '../../../../Models/SensorsClass';
 
-function LidarParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function LidarParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        stateFunctions.updateSensor(selectedObject, name, value);
+        threeScene.updateSensor(selectedObject, name, value);
     };
 
     const lidar = selectedObject.sensor as Lidar

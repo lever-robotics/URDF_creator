@@ -4,12 +4,12 @@ import { openDB } from "idb";
 import ParameterProps from "../ParameterProps";
 
 
-function MeshParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function MeshParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const [files, setFiles] = useState<any[]>([]);
 
     const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        stateFunctions.setMesh(selectedObject, e.target.value);
+        threeScene.setMesh(selectedObject, e.target.value);
     };
 
     const loadFiles = async () => {

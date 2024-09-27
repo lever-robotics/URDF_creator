@@ -48,12 +48,19 @@ export default class ThreeScene {
         // setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
     };
 
+    forceSceneUpdate = () => {
+        const customEvent = new Event("forceUpdate");
+        this.mountRef.current?.dispatchEvent(customEvent);
+        console.log("forceUpdate");
+    }
+
     clearScene = () => {
         if (this.rootFrame === null) return;
         this.rootFrame!.removeFromParent();
         this.rootFrame = null;
         this.objectNames.length = 0;
         this.selectObject(null);
+        this.forceSceneUpdate();
     };
 
     addObject = (shape: string) => {
@@ -81,6 +88,7 @@ export default class ThreeScene {
         }
         this.selectObject(newFrame);
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     // TODO Close modal after loading scene
@@ -93,6 +101,7 @@ export default class ThreeScene {
         this.scene.attach(rootFrame);
         this.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
+        this.forceSceneUpdate();
     };
 
     setTransformMode = (selectedObject: Frame, mode: string) => {
@@ -104,6 +113,7 @@ export default class ThreeScene {
         if (selectedObject) {
             this.attachTransformControls(selectedObject);
         }
+        this.forceSceneUpdate();
     };
 
     attachTransformControls = (selectedObject: Frame) => {
@@ -126,6 +136,7 @@ export default class ThreeScene {
             default:
                 break;
         }
+        this.forceSceneUpdate();
     };
 
     getToolMode = () => {
@@ -149,6 +160,7 @@ export default class ThreeScene {
             this.selectedObject = undefined;
             this.transformControls.detach();
         }
+        this.forceSceneUpdate();
     };
 
     loadSingleObject = (gltfScene: THREE.Object3D) => {
@@ -162,6 +174,7 @@ export default class ThreeScene {
             this.rootFrame = frame;
             frame.isRootFrame = true;
         }
+        this.forceSceneUpdate();
     };
 
     getScene = () => {
@@ -207,6 +220,7 @@ export default class ThreeScene {
 
     reparentObject = (parent: Frame, child: Frame) => {
         parent.attachChild(child);
+        this.forceSceneUpdate();
     };
 
     readScene(gltfObject: THREE.Object3D) {
@@ -365,6 +379,7 @@ export default class ThreeScene {
         frame.name = name;
         this.registerName(frame);
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     findFrameByName = (frame: Frame, name: string) => {
@@ -431,6 +446,7 @@ export default class ThreeScene {
     startRotateJoint = (frame: Frame) => {
         this.transformControls.setMode("rotate");
         this.transformControls.attach(frame.axis!);
+        this.forceSceneUpdate();
     };
 
     startMoveJoint = (frame: Frame) => {
@@ -439,6 +455,7 @@ export default class ThreeScene {
         frame.parent!.attach(frame.link!);
         frame.linkDetached = true;
         this.transformControls.attach(frame);
+        this.forceSceneUpdate();
     };
 
     reattachLink = (frame: Frame) => {
@@ -455,11 +472,13 @@ export default class ThreeScene {
     setMass = (frame: Frame, mass: number) => {
         frame.mass = mass;
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     setInertia = (frame: Frame, type: string, inertia: number) => {
         frame.inertia!.setCustomInertia(type, inertia);
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     setSensor = (frame: Frame, type: string) => {
@@ -481,16 +500,19 @@ export default class ThreeScene {
                 throw Error("This type of sensor is not yet supported");
         }
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     updateSensor = (frame: Frame, name: string, value: string | number) => {
         frame.sensor!.update(name, value);
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     setJointType = (frame: Frame, type: string) => {
         frame.jointType = type;
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     setJointMinMax = (frame: Frame, type: string, value: number) => {
@@ -506,6 +528,7 @@ export default class ThreeScene {
                 frame.max = value;
         }
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     setJointValue = (frame: Frame, value: number) => {
@@ -526,7 +549,7 @@ export default class ThreeScene {
 
         // the joint's rotation is then set to be a rotation around the new axis by this angle
         frame.jointVisualizer!.setRotationFromAxisAngle(newAxis, angle);
-
+        
     };
 
     translateAlongJointAxis = (frame: Frame, distance: number) => {
@@ -545,11 +568,13 @@ export default class ThreeScene {
     resetJointPosition = (frame: Frame) => {
         frame.jointVisualizer!.position.set(0, 0, 0);
         frame.jointVisualizer!.rotation.set(0, 0, 0);
+        this.forceSceneUpdate();
     };
 
     setMesh = (frame: Frame, meshFileName: string) => {
         frame.setMesh(meshFileName);
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     transformObject = (frame: Frame, transformType: string, axis: string, value: number) => {
@@ -570,14 +595,15 @@ export default class ThreeScene {
                     frame.rotation.set(...newRot);
                     break;
                 case "scale":
-                    const newScale = frame.rotation.toArray();
+                    const newScale = frame.objectScale.toArray();
                     newScale[this.whichAxis(axis)] = value;
-                    frame.rotation.set(...newScale);
+                    frame.objectScale.set(...newScale);
                     break;
             }
         }
 
         this.forceUpdateCode();
+        this.forceSceneUpdate();
     };
 
     whichAxis = (axis: string) => {
@@ -596,18 +622,22 @@ export default class ThreeScene {
 
     setObjectPosition = (object: Frame, position: THREE.Vector3) => {
         object.position.copy(position);
+        this.forceSceneUpdate();
     };
 
     setObjectScale = (object: Frame, scale: THREE.Vector3) => {
         object.scale.set(scale.x, scale.y, scale.z);
+        this.forceSceneUpdate();
     };
 
     copyObjectScale = (object: Frame, scale: THREE.Vector3) => {
         object.scale.copy(scale);
+        this.forceSceneUpdate();
     };
 
     setObjectQuaternion = (object: Frame, quaternion: THREE.Quaternion) => {
         object.quaternion.copy(quaternion);
+        this.forceSceneUpdate();
     };
 
 

@@ -6,7 +6,11 @@ import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useState, useEffect } from "react";
 
 // RecursiveTreeView Component
-export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
+type LinkTreeProps = {
+    threeScene: ThreeScene,
+}
+export function LinkTree({ threeScene }: LinkTreeProps) {
+
     const [contextMenuPosition, setContextMenuPosition] = useState({
         left: -1000,
         top: -10000,
@@ -15,16 +19,9 @@ export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
     const [draggedButton, setDraggedButton] = useState<Frameish>(null);
     const [hoveredButton, setHoveredButton] = useState<Frameish>(null);
 
-    const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
-
-    useEffect(() => {
-        setSelectedObject(threeScene?.selectedObject);
-
-    }, [JSON.stringify(threeScene?.selectedObject)]);
-
     const handleContextMenu = (e: React.MouseEvent, node: Frame) => {
         e.preventDefault();
-        threeScene.selectObject(node);
+        threeScene?.selectObject(node);
         setContextMenuVisible(true);
         setContextMenuPosition({
             left: e.clientX,
@@ -46,8 +43,8 @@ export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
     const dropButton = (e: React.MouseEvent) => {
         if (hoveredButton && draggedButton) {
             if (draggedButton !== hoveredButton && !isAncestor(draggedButton, hoveredButton)) {
-                threeScene.reparentObject(hoveredButton, draggedButton);
-                threeScene.selectObject(draggedButton);
+                threeScene?.reparentObject(hoveredButton, draggedButton);
+                threeScene?.selectObject(draggedButton);
                 setHoveredButton(null);
             }
         }
@@ -67,7 +64,7 @@ export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
                 {rootFrame && (
                     <Node
                         node={rootFrame}
-                        selectedObject={selectedObject}
+                        selectedObject={threeScene.selectedObject}
                         handleContextMenu={handleContextMenu}
                         threeScene={threeScene}
                         setDraggedButton={setDraggedButton}
@@ -81,7 +78,7 @@ export function LinkTree({ threeScene }: { threeScene: ThreeScene }) {
                 <ObjectContextMenu
                     // objectContextMenu={objectContextMenu}
                     contextMenuPosition={contextMenuPosition}
-                    selectedObject={threeScene.selectedObject}
+                    selectedObject={threeScene?.selectedObject}
                     threeScene={threeScene}
                 />
             )}
@@ -109,11 +106,11 @@ function Node({ node, selectedObject, handleContextMenu, threeScene, setDraggedB
                     key={node.id}
                     className={`tree-item ${isSelected ? "button_selected" : "button_unselected"} ${hoveredButton === node ? "hover" : ""}`}
                     onClick={() => {
-                        threeScene.selectObject(node);
+                        threeScene?.selectObject(node);
                     }}
                     onDoubleClick={() => {
                         //put renaming functionality here
-                        threeScene.selectObject(node);
+                        threeScene?.selectObject(node);
                     }}
                     onDragEnter={() => {
                         setHoveredButton(node);

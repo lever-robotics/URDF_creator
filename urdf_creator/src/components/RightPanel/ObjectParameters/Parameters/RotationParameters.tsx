@@ -3,7 +3,7 @@ import Section from "../Section";
 import Parameter from "./Parameter";
 import ParameterProps from "../ParameterProps";
 
-function RotationParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function RotationParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const radToDeg = (radians: number) => (radians * 180) / Math.PI;
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
@@ -23,7 +23,7 @@ function RotationParameters({ selectedObject, stateFunctions }: ParameterProps) 
         setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
         setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedObject.rotation), stateFunctions.getToolMode()]);
+    }, [JSON.stringify(selectedObject.rotation), threeScene?.getToolMode()]);
 
     const checkNegativeZero = (value: string) => {
 
@@ -54,7 +54,7 @@ function RotationParameters({ selectedObject, stateFunctions }: ParameterProps) 
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
-        stateFunctions.transformObject(
+        threeScene.transformObject(
             selectedObject,
             "rotation",
             axis,

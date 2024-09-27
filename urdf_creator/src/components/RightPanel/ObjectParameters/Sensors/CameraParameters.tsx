@@ -3,11 +3,11 @@ import ParameterProps from "../ParameterProps";
 import { Camera } from "../../../../Models/SensorsClass";
 
 
-function CameraParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function CameraParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        stateFunctions.updateSensor(selectedObject, name, value);
+        threeScene.updateSensor(selectedObject, name, value);
     };
 
     const camera = selectedObject.sensor as Camera

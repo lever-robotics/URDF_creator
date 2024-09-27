@@ -3,7 +3,6 @@ import CodeBox from "./CodeBox/CodeBox";
 import "./RightPanel.css"; // Assuming you have a CSS file for this component
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
 import Frame, { Frameish } from "../../Models/Frame";
-import { StateFunctionsType } from "../SceneState";
 import { Scene } from "three";
 import ThreeScene from "../ThreeDisplay/ThreeSceneObject";
 

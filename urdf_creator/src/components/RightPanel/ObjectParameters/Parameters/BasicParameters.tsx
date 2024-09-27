@@ -9,7 +9,7 @@ import RotationParameters from "./RotationParameters";
 import ScaleParameters from "./ScaleParameters";
 import ParameterProps from "../ParameterProps";
 
-export default function BasicParameters({ stateFunctions, selectedObject }: ParameterProps) {
+export default function BasicParameters({ threeScene, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
     const [error, setError] = useState("");
     const [tempName, setTempName] = useState(selectedObject.name);
@@ -33,12 +33,12 @@ export default function BasicParameters({ stateFunctions, selectedObject }: Para
         const newName = e.currentTarget.value;
         if(newName === selectedObject.name){
             setError("");
-        }else if(stateFunctions.doesLinkNameExist(newName)){
+        }else if(threeScene.doesLinkNameExist(newName)){
             setError("Name must be unique");
         }else if (newName === "") {
             setError("Name cannot be empty");
         } else {
-            stateFunctions.setLinkName(selectedObject, newName);
+            threeScene.setLinkName(selectedObject, newName);
             setError("");
         }
     }
@@ -50,11 +50,11 @@ export default function BasicParameters({ stateFunctions, selectedObject }: Para
     }
 
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        stateFunctions.setLinkColor(selectedObject, e.target.value);
+        threeScene.setLinkColor(selectedObject, e.target.value);
     };
 
     const handleColorBlur = () => {
-        stateFunctions.forceSceneUpdate();
+        threeScene.forceSceneUpdate();
     };
 
     return (

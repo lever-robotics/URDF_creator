@@ -14,7 +14,6 @@ export function ObjectContextMenu({
     threeScene,
 }: ContextProps) {
     const { left, top } = contextMenuPosition;
-
     return (
         <div
             className="object-context-menu"
@@ -22,14 +21,14 @@ export function ObjectContextMenu({
             style={{ left: left, top: top }}>
             <button
                 onClick={() => {
-                    threeScene.duplicateObject(selectedObject!);
+                    threeScene?.duplicateObject(selectedObject!);
                 }}
                 className="duplicate-button">
                 Duplicate
             </button>
             <button
                 onClick={() => {
-                    threeScene.deleteObject(selectedObject!);
+                    threeScene?.deleteObject(selectedObject!);
                 }}
                 className="delete-button">
                 Delete

@@ -6,7 +6,7 @@ import "../ObjectParameters.css"
 import { handleDownload } from "../../../../utils/HandleDownload";
 import ParameterProps from "../ParameterProps";
 
-function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
+function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
     if (!selectedObject.inertia) return;
     const [tempMass, setTempMass] = useState<string>(selectedObject.inertia.mass.toString());
@@ -69,7 +69,7 @@ function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
 
         if (isNaN(inertia)) return;
 
-        stateFunctions.setInertia(selectedObject, type, inertia);
+        threeScene.setInertia(selectedObject, type, inertia);
     };
 
     const handleMassChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +79,7 @@ function InertiaParameters({ stateFunctions, selectedObject }: ParameterProps) {
     const handleMassBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         // convert value to number then check if its a number
         if (isNaN(Number(e.currentTarget.value))) return;
-        stateFunctions.setMass(selectedObject, parseFloat(checkNegativeZero(e.currentTarget.value)));
+        threeScene.setMass(selectedObject, parseFloat(checkNegativeZero(e.currentTarget.value)));
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

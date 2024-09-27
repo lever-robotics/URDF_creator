@@ -4,7 +4,7 @@ import Parameter from "./Parameter";
 import ParameterProps from "../ParameterProps";
 import Frame from "../../../../Models/Frame";
 
-function ScaleParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     const [tempX, setTempX] = useState(selectedObject.objectScale.x);
     const [tempY, setTempY] = useState(selectedObject.objectScale.y);
@@ -14,12 +14,13 @@ function ScaleParameters({ selectedObject, stateFunctions }: ParameterProps) {
 
     //implement use effect to update when selected object changes
     useEffect(() => {
+        // debugger;
         setTempX(selectedObject.objectScale.x);
         setTempY(selectedObject.objectScale.y);
         setTempZ(selectedObject.objectScale.z);
         setTempRadius(selectedObject.objectScale.x / 2);
         setTempHeight(selectedObject.objectScale.z);
-    }, [JSON.stringify(selectedObject.objectScale), stateFunctions.getToolMode()]);
+    }, [JSON.stringify(selectedObject.objectScale), threeScene?.getToolMode()]);
 
     const checkNegativeZero = (value: string) => {
 
@@ -65,7 +66,7 @@ function ScaleParameters({ selectedObject, stateFunctions }: ParameterProps) {
         }
 
         if (isNaN(newValue)) return;
-        stateFunctions.transformObject(selectedObject, "scale", axis, newValue);
+        threeScene.transformObject(selectedObject, "scale", axis, newValue);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -30,6 +30,15 @@ export default class Mesh extends THREE.Mesh {
             switch (shape) {
                 default:
                 case "cube":
+                    Object.defineProperty(context, "scale", {
+                        get() {
+                            return this._scale;
+                        },
+                        set(newVector) {
+                            this._scale.set(...newVector);
+                        },
+                    });
+
                     return new THREE.BoxGeometry(1, 1, 1);
                 case "sphere":
                     Object.defineProperty(context, "scale", {

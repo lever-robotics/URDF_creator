@@ -5,12 +5,12 @@ import LidarParameters from "../Sensors/LidarParameters";
 import React from "react";
 import ParameterProps from "../ParameterProps";
 
-function SensorsParameters({ selectedObject, stateFunctions }: ParameterProps) {
+function SensorsParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     
     const handleSensorTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const type = e.target.value;
-        stateFunctions.setSensor(selectedObject, type);
+        threeScene.setSensor(selectedObject, type);
     };
 
     return (
@@ -25,34 +25,34 @@ function SensorsParameters({ selectedObject, stateFunctions }: ParameterProps) {
             </select>
             <SensorParams
                 selectedObject={selectedObject}
-                stateFunctions={stateFunctions}
+                threeScene={threeScene}
             />
         </Section>
     );
 }
 
-function SensorParams({ selectedObject, stateFunctions }: ParameterProps) {
+function SensorParams({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
     switch (selectedObject.sensorType) {
         case "imu":
             return (
                 <IMUParameters
                     selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
+                    threeScene={threeScene}
                 />
             );
         case "camera":
             return (
                 <CameraParameters
                     selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
+                    threeScene={threeScene}
                 />
             );
         case "lidar":
             return (
                 <LidarParameters
                     selectedObject={selectedObject}
-                    stateFunctions={stateFunctions}
+                    threeScene={threeScene}
                 />
             );
         // Add cases for other sensor types here
