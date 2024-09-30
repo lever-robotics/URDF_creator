@@ -1,5 +1,4 @@
 import "./Export.css";
-import FrameManager from "../../../Models/FrameManager";
 import { handleDownload } from "../../../utils/HandleDownload";
 import Frame, { Frameish } from "../../../Models/Frame";
 import ThreeScene from "../../ThreeDisplay/ThreeScene";

@@ -24,7 +24,7 @@ const App = () => {
     const threeSceneRef = useRef<ThreeScene>();
 
     const [isModalOpen, setIsModalOpen] = useState(true);
-    const [modalContent, setModalContent] = useState(<Onboarding /*closeOnboarding={closeOnboarding}*/ />);
+    const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
     const [projectTitle, setProjectTitle] = useState("robot");
 
     const [updateCode, setUpdateCode] = useState(0);
@@ -261,14 +261,14 @@ const App = () => {
 
     const closeModal = () => setIsModalOpen(false);
 
-    const closeOnboarding = () => {
+    function closeOnboarding(){
         // Close the onboarding Modal and launch the project manager
         setIsModalOpen(false);
         openProjectManager();
     };
 
     const openOnboarding = () => {
-        setModalContent(<Onboarding /*closeOnboarding={closeOnboarding}*/ />);
+        setModalContent(<Onboarding closeOnboarding={closeOnboarding} />);
         setIsModalOpen(true);
     };
 

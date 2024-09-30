@@ -16,14 +16,17 @@ const GLTFImport = ({ onClose, loadScene }: {onClose: () => void; loadScene: (ob
       const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           const file = e.target.files![0];
           const type = file.name.split(".").pop();
+          console.log("here");
           const group = await handleUpload(file, type!);
+          console.log(group);
           const base_link = group.children[0];
           loadScene(base_link);
+          onClose();
       };
 
     const onClick = () => {
         onFileUpload();
-        onClose();
+        // onClose();
     };
 
     return (

@@ -16,7 +16,7 @@ type Props = {
 const MenuModal: React.FC<Props> = ({ onClose, menuItems, buttonRef }) => {
     
     const wrapperRef = useRef<HTMLDivElement | null>(null);
-    useClickOutside(wrapperRef, onClose);
+    useClickOutside(wrapperRef, buttonRef, onClose);
 
     const buttonRect = buttonRef.current!.getBoundingClientRect();
     const position = {

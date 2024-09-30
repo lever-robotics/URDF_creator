@@ -6,7 +6,7 @@ import Page2 from './Page2';
 import Page3 from './Page3';
 import './onboardstyle.css';
 
-const Onboarding = (/*{ closeOnboarding }: { closeOnboarding: () => void }*/) => {
+const Onboarding = ( { closeOnboarding }: { closeOnboarding: () => void }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = 3;
 
@@ -14,7 +14,7 @@ const Onboarding = (/*{ closeOnboarding }: { closeOnboarding: () => void }*/) =>
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         } else {
-            // closeOnboarding();
+            closeOnboarding();
         }
     };
 
