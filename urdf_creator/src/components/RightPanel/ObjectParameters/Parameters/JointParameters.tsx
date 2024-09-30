@@ -55,10 +55,10 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
         selectedObject.jointValue = value;
         switch (selectedObject.jointType) {
             case "prismatic":
-                threeScene.translateAlongJointAxis(selectedObject, value);
+                selectedObject.translateAlongJointAxis(value);
                 break;
             default:
-                threeScene.rotateAroundJointAxis(selectedObject, value);
+                selectedObject.rotateAroundJointAxis(value);
                 break;
         }
     };

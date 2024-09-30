@@ -19,43 +19,32 @@ export default class Frame extends THREE.Object3D {
     jointVisualizer?: JointVisualizer;
     axis?: Axis;
     parentFrame?: Frame;
+    
     linkDetached: boolean;
-    name: string;
-    stlfile?: string;
-    selectable: boolean;
     isRootFrame: boolean;
-    isFrame: boolean;
-    frame: boolean;
+
+    stlfile?: string;
     _jointType: string;
-    _min: number;
-    _max: number;
-    onChange: number;
 
     constructor(
-        name = "",
+        public name = "",
         position: Vector3 = new Vector3(0, 0, 0),
         rotation: Euler = new Euler(0, 0, 0),
         jointType = "fixed",
-        jointMin = -1,
-        jointMax = 1
+        public min = -1,
+        public max = 1
     ) {
         super();
 
+        this.name = name;
+
         this.position.copy(position);
         this.rotation.copy(rotation);
+        
+        this.linkDetached = false;
+        this.isRootFrame = false;
 
         this._jointType = jointType;
-        this._min = jointMin;
-        this._max = jointMax;
-
-        this.frame = true;
-        this.isFrame = true;
-        this.isRootFrame = false;
-        this.selectable = true;
-        this.name = name;
-        this.linkDetached = false;
-        this.onChange = 0;
-        // this.bus= [];
     }
 
     /**
@@ -117,22 +106,6 @@ export default class Frame extends THREE.Object3D {
             default:
                 break;
         }
-    }
-
-    get min() {
-        return this._min;
-    }
-
-    set min(value) {
-        this._min = value;
-    }
-
-    get max() {
-        return this._max;
-    }
-
-    set max(value) {
-        this._max = value;
     }
 
     get jointValue() {
@@ -212,6 +185,36 @@ export default class Frame extends THREE.Object3D {
     updateInertia() {
         this.inertia!.updateInertia(this);
     }
+
+    rotateAroundJointAxis = (angle: number) => {
+        // Angle must be in radians
+        // a quaternion is basically how to get from one rotation to another
+        const quaternion = new THREE.Quaternion();
+
+        // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
+        quaternion.setFromEuler(this.axis!.rotation);
+
+        // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+
+        // the joint's rotation is then set to be a rotation around the new axis by this angle
+        this.jointVisualizer!.setRotationFromAxisAngle(newAxis, angle);
+        
+    };
+
+    translateAlongJointAxis = (distance: number) => {
+        const quaternion = new THREE.Quaternion();
+        // a quaternion is basically how to get from one rotation to another
+        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
+        quaternion.setFromEuler(this.axis!.rotation);
+        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
+        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
+        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
+        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
+        this.jointVisualizer!.position.set(0, 0, 0);
+        this.jointVisualizer!.translateOnAxis(newAxis, distance);
+    };
 
     setMesh = async (meshFileName: string) => {
         if (meshFileName === "") {

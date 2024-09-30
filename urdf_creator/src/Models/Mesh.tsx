@@ -6,7 +6,6 @@ import { Color, Vector3 } from "three";
 export default class Mesh extends THREE.Mesh {
     private _scale: ScaleVector;
     shape: string;
-    isShape: boolean;
     customRenderBehaviors: {};
     frame: Frameish;
     material: THREE.MeshPhongMaterial;
@@ -18,7 +17,6 @@ export default class Mesh extends THREE.Mesh {
         this._scale = new ScaleVector(shape, scale);
 
         this.shape = shape;
-        this.isShape = true; // Used to be detectable by the mouse
 
         this.geometry = defineGeometry(this, shape);
         this.material = new THREE.MeshPhongMaterial();

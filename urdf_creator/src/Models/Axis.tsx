@@ -4,8 +4,7 @@ import { Euler } from "three";
 
 export default class Axis extends THREE.Line {
     declare material: THREE.LineBasicMaterial;
-    _axis: THREE.Vector3;
-    isFrame: boolean;
+    axis: THREE.Vector3;
     frame: Frameish;
 
     constructor(axisRotation: Euler = new Euler(0, 0, 0)) {
@@ -23,16 +22,8 @@ export default class Axis extends THREE.Line {
 
         super(geometry, material);
 
-        this._axis = lineAxis;
+        this.axis = lineAxis;
         this.rotation.copy(axisRotation);
-        this.isFrame = false;
-    }
-
-    // Normalized Axis of the Joint
-    get axis() {
-        // this.quaternion.setFromEuler(this.rotation);
-        // this._axis.set(0, 0, 1);
-        return this._axis;
     }
 
     duplicate() {

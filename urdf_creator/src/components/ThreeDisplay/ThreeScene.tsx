@@ -52,9 +52,9 @@ export default class ThreeScene {
         this.raycaster.setFromCamera(new THREE.Vector2(this.mouse.x, this.mouse.y), this.camera);
         const intersects = this.raycaster.intersectObjects(this.scene.children);
 
-        // this will contain all of our objects (they have the property "isShape")
+        // this will contain all of our objects that are Mesh's
         const shapes: Mesh[] = intersects.filter((collision) => collision.object instanceof Mesh)
-                                            .map((collision) => collision.object as Mesh);
+            .map((collision) => collision.object as Mesh);
 
 
         // if we hit a shape, select the closest
@@ -103,14 +103,14 @@ export default class ThreeScene {
 
         this.numberOfShapes[shape as keyof numShapes]++;
 
-        newFrame.position.set(2.5, 2.5, 0.5);
+        newFrame.objectPosition.set(2.5, 2.5, 0.5);
 
         if (this.selectedObject) {
             this.selectedObject!.attachChild(newFrame);
         } else if (this.rootFrame !== null) {
             this.rootFrame!.attachChild(newFrame);
         } else {
-            newFrame.position.set(0, 0, 0.5);
+            newFrame.objectPosition.set(0, 0, 0.5);
             newFrame.isRootFrame = true;
             newFrame.name = "base_link";
             this.rootFrame = newFrame;
@@ -177,13 +177,10 @@ export default class ThreeScene {
         if (!frame) {
             this.selectedObject = undefined;
             this.transformControls.detach();
-        } else if (frame.selectable) {
+        } else {
             this.selectedObject = frame;
             this.attachTransformControls(frame);
-        } else {
-            this.selectedObject = undefined;
-            this.transformControls.detach();
-        }
+        } 
         this.forceUpdateScene();
     };
 
@@ -264,37 +261,6 @@ export default class ThreeScene {
         frame.jointVisualizer!.attach(frame.link!);
         frame.linkDetached = false;
         frame.attach(frame.axis!);
-    };
-
-
-    rotateAroundJointAxis = (frame: Frame, angle: number) => {
-        // Angle must be in radians
-        // a quaternion is basically how to get from one rotation to another
-        const quaternion = new THREE.Quaternion();
-
-        // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
-        quaternion.setFromEuler(frame.axis!.rotation);
-
-        // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-
-        // the joint's rotation is then set to be a rotation around the new axis by this angle
-        frame.jointVisualizer!.setRotationFromAxisAngle(newAxis, angle);
-        
-    };
-
-    translateAlongJointAxis = (frame: Frame, distance: number) => {
-        const quaternion = new THREE.Quaternion();
-        // a quaternion is basically how to get from one rotation to another
-        // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(frame.axis!.rotation);
-        // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
-        // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
-        const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
-        // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        frame.jointVisualizer!.position.set(0, 0, 0);
-        frame.jointVisualizer!.translateOnAxis(newAxis, distance);
     };
 }
 
