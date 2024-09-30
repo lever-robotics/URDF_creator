@@ -1,12 +1,14 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Gizmo, TransformControls } from "../../Models/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { Mouse } from "./Mouse";
 import Frame, { Frameish } from "../../Models/Frame";
 import Mesh from "../../Models/Mesh";
-import { TransformControlsMode } from "../../Models/TransformControls";
+
 import { cloneFrame, createFrame, deregisterName, readScene, registerName, UserData } from "./TreeUtils";
+import TransformControls from "../../Models/TransformControls";
+
+type TransformControlsMode = "translate" | "rotate" | "scale";
 
 export default class ThreeScene {
     rootFrame: Frameish;
@@ -54,19 +56,13 @@ export default class ThreeScene {
         const shapes: Mesh[] = intersects.filter((collision) => collision.object instanceof Mesh)
                                             .map((collision) => collision.object as Mesh);
 
-        // this will contain all meshes in the scene (ie the transform controls)
-        const meshes = intersects.filter((collision) => {
-            return (collision.object.parent as Gizmo).transformType === this.toolMode && collision.object instanceof THREE.Mesh;
-        });
-
-        // conso.log(meshes.map((mesh) => mesh.object))
 
         // if we hit a shape, select the closest
         if (shapes.length > 0) {
             const object = shapes[0].frame;
             this.selectObject(object!);
-            // if we don't hit any mesh (if we don't hit transform controls) deselect
-        } else if (meshes.length === 0) {
+            // if we don't hit any mesh 
+        }else{
             this.selectObject(null);
         }
     }
@@ -300,71 +296,6 @@ export default class ThreeScene {
         frame.jointVisualizer!.position.set(0, 0, 0);
         frame.jointVisualizer!.translateOnAxis(newAxis, distance);
     };
-
-    transformObject = (frame: Frame, transformType: string, axis: string, value: number) => {
-        if (transformType === "scale") {
-            const newValues = frame.objectScale.toArray();
-            newValues[this.whichAxis(axis)] = value;
-            frame.objectScale.set(...newValues);
-        } else {
-            switch (transformType) {
-                case "position":
-                    const newPos = frame.position.toArray();
-                    newPos[this.whichAxis(axis)] = value;
-                    frame.position.set(...newPos);
-                    break;
-                case "rotation":
-                    const newRot = frame.rotation.toArray();
-                    newRot[this.whichAxis(axis)] = value;
-                    frame.rotation.set(...newRot);
-                    break;
-                case "scale":
-                    const newScale = frame.objectScale.toArray();
-                    newScale[this.whichAxis(axis)] = value;
-                    frame.objectScale.set(...newScale);
-                    break;
-            }
-        }
-
-        this.forceUpdateCode();
-        this.forceUpdateScene();
-    };
-
-    whichAxis = (axis: string) => {
-        switch (axis) {
-            case "x":
-            case "radius":
-                return 0;
-            case "y":
-                return 1;
-            case "z":
-            case "height":
-                return 2;
-        }
-        return 0;
-    };
-
-    setObjectPosition = (object: Frame, position: THREE.Vector3) => {
-        object.position.copy(position);
-        this.forceUpdateScene();
-    };
-
-    setObjectScale = (object: Frame, scale: THREE.Vector3) => {
-        object.scale.set(scale.x, scale.y, scale.z);
-        this.forceUpdateScene();
-    };
-
-    copyObjectScale = (object: Frame, scale: THREE.Vector3) => {
-        object.scale.copy(scale);
-        this.forceUpdateScene();
-    };
-
-    setObjectQuaternion = (object: Frame, quaternion: THREE.Quaternion) => {
-        object.quaternion.copy(quaternion);
-        this.forceUpdateScene();
-    };
-
-
 }
 
 type numShapes = {

@@ -48,12 +48,19 @@ function PositionParameters({ selectedObject, threeScene }: ParameterProps) {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
-        threeScene.transformObject(
-            selectedObject,
-            "position",
-            axis,
-            newValue
-        );
+        const newPosition = selectedObject.objectPosition.toArray();
+        switch (axis) {
+            case "x":
+                newPosition[0] = newValue; 
+                break;
+            case "y":
+                newPosition[1] = newValue; 
+                break;
+            case "z":
+                newPosition[2] = newValue; 
+                break;
+        }
+        selectedObject.objectPosition.set(...newPosition);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

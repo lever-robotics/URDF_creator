@@ -29,10 +29,16 @@ export default class Frame extends THREE.Object3D {
     _jointType: string;
     _min: number;
     _max: number;
+    onChange: number;
 
-    
-
-    constructor(name = "", position: Vector3 = new Vector3(0, 0, 0), rotation: Euler = new Euler(0, 0, 0), jointType = "fixed", jointMin = -1, jointMax = 1) {
+    constructor(
+        name = "",
+        position: Vector3 = new Vector3(0, 0, 0),
+        rotation: Euler = new Euler(0, 0, 0),
+        jointType = "fixed",
+        jointMin = -1,
+        jointMax = 1
+    ) {
         super();
 
         this.position.copy(position);
@@ -48,6 +54,7 @@ export default class Frame extends THREE.Object3D {
         this.selectable = true;
         this.name = name;
         this.linkDetached = false;
+        this.onChange = 0;
         // this.bus= [];
     }
 
@@ -64,7 +71,9 @@ export default class Frame extends THREE.Object3D {
      **/
 
     getFrameChildren = () => {
-        return this.jointVisualizer!.children.filter((child) => child instanceof Frame);
+        return this.jointVisualizer!.children.filter(
+            (child) => child instanceof Frame
+        );
     };
 
     get parentName() {
@@ -74,6 +83,14 @@ export default class Frame extends THREE.Object3D {
 
     get objectScale() {
         return this.mesh!.scale;
+    }
+
+    get objectPosition() {
+        return this.position;
+    }
+
+    get objectRotation() {
+        return this.rotation;
     }
 
     get jointType() {
@@ -243,9 +260,14 @@ export default class Frame extends THREE.Object3D {
                         });
                         const mesh = new THREE.Mesh(geometry, material);
                         // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(mesh);
+                        const boundingBox = new THREE.Box3().setFromObject(
+                            mesh
+                        );
                         // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
+                        const desiredBox = new THREE.Box3(
+                            new THREE.Vector3(-0.5, -0.5, -0.5),
+                            new THREE.Vector3(0.5, 0.5, 0.5)
+                        );
 
                         // Calculate the size of the bounding box and desired box
                         const boundingBoxSize = new THREE.Vector3();
@@ -285,7 +307,14 @@ export default class Frame extends THREE.Object3D {
     };
 
     duplicate() {
-        return new Frame(this.name, this.position, this.rotation, this.jointType, this.min, this.max);
+        return new Frame(
+            this.name,
+            this.position,
+            this.rotation,
+            this.jointType,
+            this.min,
+            this.max
+        );
     }
 
     //Add STL to the Frame

@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { TransformControls } from "../../Models/TransformControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { Mouse } from "./Mouse";
@@ -11,6 +10,7 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { RefObject } from "react";
 import { Vector3 } from "three";
+import TransformControls from "../../Models/TransformControls";
 
 export function constructThreeScene(mountRef: React.MutableRefObject<HTMLDivElement | null>) {
     const camera = setupCamera(mountRef.current!);

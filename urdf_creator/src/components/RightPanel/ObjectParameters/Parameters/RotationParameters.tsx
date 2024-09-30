@@ -52,14 +52,21 @@ function RotationParameters({ selectedObject, threeScene }: ParameterProps) {
 
     const handleRotationBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
-        const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
+        const newValue = degToRad(parseFloat(checkNegativeZero(e.currentTarget.value)));
         if (isNaN(newValue)) return;
-        threeScene.transformObject(
-            selectedObject,
-            "rotation",
-            axis,
-            degToRad(newValue)
-        );
+        const newRotation = selectedObject.objectRotation.toArray();
+        switch (axis) {
+            case "x":
+                newRotation[0] = newValue; 
+                break;
+            case "y":
+                newRotation[1] = newValue; 
+                break;
+            case "z":
+                newRotation[2] = newValue; 
+                break;
+        }
+        selectedObject.objectRotation.set(...newRotation);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

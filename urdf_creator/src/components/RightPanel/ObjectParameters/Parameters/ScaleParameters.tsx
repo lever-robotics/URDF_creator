@@ -57,16 +57,28 @@ function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         let newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
 
-        if (axis === "radius") {
-            newValue = newValue * 2;
-        }
-
         if (newValue <= 0) {
             newValue = 0.001;
         }
 
         if (isNaN(newValue)) return;
-        threeScene.transformObject(selectedObject, "scale", axis, newValue);
+        
+        const newScale = selectedObject.objectScale.toArray();
+        switch (axis) {
+            case "radius":
+                newValue = newValue * 2;
+            case "x":
+                newScale[0] = newValue;
+                break;
+            case "y":
+                newScale[1] = newValue; 
+                break;
+            case "z":
+            case "height":
+                newScale[2] = newValue;
+                break;
+        }
+        selectedObject.objectScale.set(...newScale);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
