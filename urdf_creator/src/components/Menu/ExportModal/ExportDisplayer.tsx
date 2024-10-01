@@ -7,6 +7,8 @@ import Frame, { Frameish } from "../../../Models/Frame";
 import { Scene } from "three";
 import { JsxElement } from "typescript";
 import ThreeScene from "../../ThreeDisplay/ThreeScene";
+import ExportIssacSim from "./ExportIssacSim";
+import ExportGazeboPackage from "./ExportGazeboPackage";
 
 type Props = { onClose: () => void; projectTitle: string; threeScene: ThreeScene };
 
@@ -19,8 +21,11 @@ const ExportDisplayer: React.FC<Props> = ({ onClose, projectTitle, threeScene })
 
     const exportOptions = [
         { label: "URDF", content: <ExportURDF onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
-        { label: "Robot Package", content: <ExportURDFPackage onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
-        { label: "GLTF", content: <ExportGLTF onClose={onClose} rootFrame={rootFrame} projectTitle={projectTitle} threeScene={threeScene} /> },
+        { label: "ROS2 Robot Package", content: <ExportURDFPackage onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
+        { label: "ROS2 Gazebo", content: <ExportGazeboPackage onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
+        { label: "Issac Sim", content: <ExportIssacSim onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
+        { label: "Save Project", content: <ExportGLTF onClose={onClose} scene={scene} projectTitle={projectTitle} threeScene={threeScene} /> },
+
     ];
 
     return (

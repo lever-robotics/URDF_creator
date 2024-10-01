@@ -57,34 +57,34 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
             } else {
                 xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
             }
+
+            // Material
+            let materialXML = "";
+            if (node.mesh!.material && node.mesh!.material.color) {
+                const color = node.mesh!.material.color;
+                materialXML = `    <material>\n  <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${
+                    color.b
+                } 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
+            }
+
             // Geometry
             const geometryType = node.mesh!.geometry.type;
             let geometryXML = "";
             if (geometryType === "BoxGeometry") {
                 const size = `${node.objectScale.x} ${node.objectScale.y} ${node.objectScale.z}`;
                 geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </visual>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n${materialXML}    </visual>\n`;
             } else if (geometryType === "SphereGeometry") {
                 const radius = node.objectScale.x / 3;
                 geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </visual>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n${materialXML}    </visual>\n`;
             } else if (geometryType === "CylinderGeometry") {
                 const radius = node.objectScale.x / 2; // Assume uniform scaling for the radius
                 const height = node.objectScale.z;
                 geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </visual>\n`;
+                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n${materialXML}    </visual>\n`;
             }
             xml += geometryXML;
-
-            // Material
-            if (node.mesh!.material && node.mesh!.material.color) {
-                const color = node.mesh!.material.color;
-                xml += `    <material>\n      <script>\n        <uri>file://media/materials/scripts/gazebo.material</uri>\n        <name>${
-                    node.mesh!.material.name || "Gazebo/Red"
-                }</name>\n      </script>\n      <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${
-                    color.b
-                } 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
-            }
 
             // Add inertial element
             const mass = node.inertia!.mass || 0;

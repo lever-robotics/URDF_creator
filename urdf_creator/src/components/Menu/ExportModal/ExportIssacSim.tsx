@@ -6,36 +6,37 @@ import { Scene } from 'three';
 
 type Props = {
     onClose: () => void,
-    scene: Scene,
+    getScene: () => Scene,
     projectTitle: string
 }
 
-const ExportURDFPackage: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
+const ExportIssacSim: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
 
     const handleURDFExport = () => {
+        const scene = getScene();
         const title = projectTitle;
-        handleDownload(scene, "urdfpackage", title);
+        handleDownload(scene, "issacsimpackage", title);
     };
 
     return (
         <div className='des-container'>
             <div className="header">
                 <div className="export-title">
-                    <h3>Export a Robot Description package</h3>
+                    <h3>Export ROS2 Issac Sim Package</h3>
                 </div>
                 <div className="export-box">
-                    <button className='export-button' onClick={() => {handleURDFExport(); onClose();}}>Export ROS2 Package</button>
+                    <button className='export-button' onClick={() => {handleURDFExport(); onClose();}}>Export Package</button>
                 </div>
             </div>
             <div className="description-container">
                 <h3>Installation instructions: </h3>
-                <p>This package has the robot description and launch file runs joint state publihser with URDF to create TF2 tree.
+                <p>This package containes all assets for simulating a robot in Issac Sim including a USD file that includes simulation information for accuratly simulating your robot. Also included are ROS2 launch files that will startup all important ROS2 nodes for simulation.
                 </p>
                 <div className="steps-container">
                 <h3>Steps:</h3>
                 <ol>
-                    <li>Unzip the downloaded package. Extract the {projectTitle}_description folder from the zip folder package</li>
-                    <li>Place the {projectTitle}_description folder in the src directory of your ROS <a href="https://roboeverything.com">workspace</a></li>
+                    <li>Unzip the downloaded package.</li>
+                    <li>Place the {projectTitle}_gazebo_package folder in the src directory of your ROS <a href="https://roboeverything.com">workspace</a></li>
                     <li>Return to the base of the ROS2 workspace </li>
                     <li>Build the package with the following command</li>
                     <div className="terminal-container"><code>colcon build --packages-select {projectTitle}_description</code></div>
@@ -69,4 +70,4 @@ const ExportURDFPackage: React.FC<Props> = ({ onClose, scene, projectTitle }) =>
     );
 }
 
-export default ExportURDFPackage;
+export default ExportIssacSim;

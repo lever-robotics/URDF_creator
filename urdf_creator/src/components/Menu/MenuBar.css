@@ -35,3 +35,11 @@
     color: #fff;
   }
 
+  .project-title-input.invalid {
+    animation: flash-red 1s;
+}
+
+@keyframes flash-red {
+    0% { color: red; }
+    100% { color: white; }
+}

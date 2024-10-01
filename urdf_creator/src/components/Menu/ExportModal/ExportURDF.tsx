@@ -12,8 +12,7 @@ type Props = {
 const ExportURDFPackage: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
 
     const handleURDFExport = () => {
-        const title = projectTitle;
-        handleDownload(scene, "urdf", title);
+        handleDownload(scene, "urdf", projectTitle);
     };
 
     return (
