@@ -6,16 +6,14 @@ import { Scene } from 'three';
 
 type Props = {
     onClose: () => void,
-    getScene: () => Scene,
+    scene: Scene,
     projectTitle: string
 }
 
-const ExportGazeboPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
+const ExportGazeboPackage: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
 
     const handleGazeboExport = () => {
-        const scene = getScene();
-        const title = projectTitle;
-        handleDownload(scene, "gazebopackage", title);
+        handleDownload(scene, "gazebopackage", projectTitle);
     };
 
     return (

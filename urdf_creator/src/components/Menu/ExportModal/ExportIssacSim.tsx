@@ -6,16 +6,14 @@ import { Scene } from 'three';
 
 type Props = {
     onClose: () => void,
-    getScene: () => Scene,
+    scene: Scene,
     projectTitle: string
 }
 
-const ExportIssacSim: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
+const ExportIssacSim: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
 
     const handleURDFExport = () => {
-        const scene = getScene();
-        const title = projectTitle;
-        handleDownload(scene, "issacsimpackage", title);
+        handleDownload(scene, "issacsimpackage", projectTitle);
     };
 
     return (

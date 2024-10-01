@@ -24,7 +24,7 @@ const ExportDisplayer: React.FC<Props> = ({ onClose, projectTitle, threeScene })
         { label: "ROS2 Robot Package", content: <ExportURDFPackage onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
         { label: "ROS2 Gazebo", content: <ExportGazeboPackage onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
         { label: "Issac Sim", content: <ExportIssacSim onClose={onClose} scene={scene} projectTitle={projectTitle} /> },
-        { label: "Save Project", content: <ExportGLTF onClose={onClose} scene={scene} projectTitle={projectTitle} threeScene={threeScene} /> },
+        { label: "Save Project", content: <ExportGLTF onClose={onClose} rootFrame={rootFrame} projectTitle={projectTitle} threeScene={threeScene} /> },
 
     ];
 

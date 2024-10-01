@@ -6,14 +6,13 @@ import { Scene } from 'three';
 
 type Props = {
     onClose: () => void,
-    getScene: () => Scene,
+    scene: Scene,
     projectTitle: string
 }
 
-const ExportSimPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
+const ExportSimPackage: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
 
     const handleURDFExport = () => {
-        const scene = getScene();
         handleDownload(scene, "urdfpackage", projectTitle);
     };
 
