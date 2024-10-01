@@ -548,6 +548,10 @@ export default function SceneState(sceneRef: React.MutableRefObject<ThreeScene |
         three!.transformControls.attach(frame);
     };
 
+    /**
+     * 
+     * @param frame 
+     */
     const reattachLink = (frame: Frame) => {
         const { current: three } = sceneRef;
         three!.transformControls.detach();

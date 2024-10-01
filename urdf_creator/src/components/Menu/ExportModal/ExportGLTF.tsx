@@ -40,7 +40,7 @@ const ExportGLTF: React.FC<Props> = ({ onClose, getRootFrame, projectTitle, stat
                 <h3>Description: </h3>
                 <p>
                     A GLTF file is a local file that you would have exported from this URDF creator to save a local copy of your project. It takes all the information from your
-                    defined robot and condenses it into a small file that can be exported here.
+                    defined robot and condenses it into a small file that can be import back into this tool from anywhere.
                 </p>
             </div>
             <div className="image-description-container">

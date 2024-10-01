@@ -4,6 +4,7 @@ import GLTFImport from "./GLTFImport";
 import GltfFilesGrid from "./ImportSensor";
 import "./importDisplayer.css";
 import { Object3D } from "three";
+import SolidWorksImport from "./SolidWorksImport";
 
 type Props = {
     handleSensorClick: (path: string) => void,
@@ -13,11 +14,12 @@ type Props = {
 
 const ImportDisplayer: React.FC<Props> = ({ handleSensorClick, onImportClose, loadScene }) => {
     const [content, setContent] = useState(<GLTFImport onClose={onImportClose} loadScene={loadScene} />);
-    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(2);
 
     const importOptions = [
         { label: "STL", content: <STLImport onClose={onImportClose} /> },
-        { label: "GLTF", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} /> },
+        { label: "SolidWorks", content: <SolidWorksImport onClose={onImportClose} /> },
+        { label: "Local Project", content: <GLTFImport onClose={onImportClose} loadScene={loadScene} /> },
         { label: "Robot Sensor", content: <GltfFilesGrid handleSensorClick={handleSensorClick} /> },
         // { label: "Sensors", content: },
         // { label: "Link", content: },

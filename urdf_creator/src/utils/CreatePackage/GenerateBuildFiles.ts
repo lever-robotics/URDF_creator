@@ -65,7 +65,7 @@ ament_package()
 export function GenerateSimPackageXMLFile(title: string) {
   return `<?xml version="1.0"?>
 <package format="3">
-<name>${title}_description</name>
+<name>${title}_gazebo</name>
 <version>0.0.0</version>
 <description>The ${title}_description package</description>
 
@@ -95,7 +95,7 @@ export function GenerateSimPackageXMLFile(title: string) {
 export function GenerateSimCMakelistsFile(title: string) {
   // Generate the CMakeLists.txt file for the ROS package
   return `cmake_minimum_required(VERSION 3.5)
-project(${title}_description)
+project(${title}_gazebo)
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)
@@ -117,6 +117,10 @@ DESTINATION share/\${PROJECT_NAME}
 )
 
 install(DIRECTORY launch
+DESTINATION share/\${PROJECT_NAME}
+)
+
+install(DIRECTORY worlds
 DESTINATION share/\${PROJECT_NAME}
 )
 

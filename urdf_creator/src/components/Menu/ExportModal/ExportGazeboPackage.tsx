@@ -10,40 +10,41 @@ type Props = {
     projectTitle: string
 }
 
-const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
+const ExportGazeboPackage: React.FC<Props> = ({ onClose, getScene, projectTitle }) => {
 
-    const handleURDFExport = () => {
+    const handleGazeboExport = () => {
         const scene = getScene();
         const title = projectTitle;
-        handleDownload(scene, "urdfpackage", title);
+        handleDownload(scene, "gazebopackage", title);
     };
 
     return (
         <div className='des-container'>
             <div className="header">
                 <div className="export-title">
-                    <h3>Export a Robot Description package</h3>
+                    <h3>Export Gazebo Sim package</h3>
                 </div>
                 <div className="export-box">
-                    <button className='export-button' onClick={() => {handleURDFExport(); onClose();}}>Export ROS2 Package</button>
+                    <button className='export-button' onClick={() => {handleGazeboExport(); onClose();}}>Export Gazebo Package</button>
                 </div>
             </div>
             <div className="description-container">
                 <h3>Installation instructions: </h3>
-                <p>This package has the robot description and launch file runs joint state publihser with URDF to create TF2 tree.
+                <p>This package containes all assets for simulating a robot in Gazebo including a SDF file that includes simulation information for accuratly simulating your robot. Also included are ROS2 launch files that will startup all important ROS2 nodes for simulation.
                 </p>
                 <div className="steps-container">
                 <h3>Steps:</h3>
                 <ol>
-                    <li>Unzip the downloaded package. Extract the {projectTitle}_description folder from the zip folder package</li>
-                    <li>Place the {projectTitle}_description folder in the src directory of your ROS <a href="https://roboeverything.com">workspace</a></li>
-                    <li>Return to the base of the ROS2 workspace </li>
+                    <li><strong>To use this package you will also need both the {projectTitle}_gazebo and {projectTitle}_description</strong></li>
+                    <li>Unzip the downloaded package, and extract the folder {projectTitle}_gazebo and {projectTitle}_description contained in the zip folder</li>
+                    <li>Place the {projectTitle}_gazebo folder along side the {projectTitle}_description in the src directory of your ROS <a href="https://roboeverything.com">workspace</a></li>
+                    <li>Return to the base of the ROS2 workspace</li>
                     <li>Build the package with the following command</li>
-                    <div className="terminal-container"><code>colcon build --packages-select {projectTitle}_description</code></div>
+                    <div className="terminal-container"><code>colcon build --packages-select {projectTitle}_gazebo {projectTitle}_description</code></div>
                     <li>Source the workspace with the following command</li>
                     <div className="terminal-container"><code>source install/setup.bash</code></div>
                     <li>Run the launch file using the command: </li>
-                    <div className="terminal-container"><code>ros2 launch {projectTitle}_description {projectTitle}.launch.py</code></div>
+                    <div className="terminal-container"><code>ros2 launch {projectTitle}_gazebo {projectTitle}.launch.py</code></div>
                 </ol>
                 <p>For more info on installing this into your ROS system, following this <a href="https://roboeverything.com">documentaion</a></p>
                 </div>
@@ -70,4 +71,4 @@ const ExportURDFPackage: React.FC<Props> = ({ onClose, getScene, projectTitle })
     );
 }
 
-export default ExportURDFPackage;
+export default ExportGazeboPackage;

@@ -7,6 +7,8 @@ import { StateFunctionsType } from "../../SceneState";
 import Frame, { Frameish } from "../../../Models/Frame";
 import { Scene } from "three";
 import { JsxElement } from "typescript";
+import ExportIssacSim from "./ExportIssacSim";
+import ExportGazeboPackage from "./ExportGazeboPackage";
 
 type Props = { onClose: () => void; getRootFrame: () => Frameish; projectTitle: string; getScene: () => Scene; stateFunctions: StateFunctionsType };
 
@@ -17,8 +19,11 @@ const ExportDisplayer: React.FC<Props> = ({ onClose, getRootFrame, projectTitle,
 
     const exportOptions = [
         { label: "URDF", content: <ExportURDF onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
-        { label: "Robot Package", content: <ExportURDFPackage onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
-        { label: "GLTF", content: <ExportGLTF onClose={onClose} getRootFrame={getRootFrame} projectTitle={projectTitle} stateFunctions={stateFunctions} /> },
+        { label: "ROS2 Robot Package", content: <ExportURDFPackage onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
+        { label: "ROS2 Gazebo", content: <ExportGazeboPackage onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
+        { label: "Issac Sim", content: <ExportIssacSim onClose={onClose} getScene={getScene} projectTitle={projectTitle} /> },
+        { label: "Save Project", content: <ExportGLTF onClose={onClose} getRootFrame={getRootFrame} projectTitle={projectTitle} stateFunctions={stateFunctions} /> },
+
     ];
 
     return (
