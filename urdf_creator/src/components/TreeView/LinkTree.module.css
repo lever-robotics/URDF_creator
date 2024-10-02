@@ -2,41 +2,17 @@
     display: flex;
     flex-direction: column;
     row-gap: 5px;
-    background-color: #24343f;
-    padding: 10px;
-    border-radius: 5px;
+    background-color: #1d2a31;
+    padding-left: 10px;
+    padding-top: 4px;
     flex-grow: 1;
     overflow: auto;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+    color: #fff;
 }
 
 .scrollBox {
     overflow: auto;
-}
-
-.selected {
-    outline: 4px auto -webkit-focus-ring-color;
-}
-
-.hover {
-    border-color: #646cff !important;
-}
-
-.treeFrame {
-    margin: 3px;
-    border-radius: 10px;
-    min-width: 90%;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1d2a31;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    color: #fff;
-}
-.treeFrame:hover {
-    border-color: #646cff;
 }
 
 .contextMenu {

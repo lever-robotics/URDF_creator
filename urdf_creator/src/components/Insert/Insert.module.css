@@ -2,10 +2,11 @@
     display: flex;
     flex-direction: column;
     row-gap: 5px;
-    background-color: #24343f;
+    background-color: #1d2a31;
     padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
+    border-top: 1px solid #fff;
+    color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
 }
 
 .button {
@@ -16,6 +17,7 @@
     font-weight: 500;
     font-family: inherit;
     background-color: #1d2a31;
+    /* background-color: #24343f; */
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;
