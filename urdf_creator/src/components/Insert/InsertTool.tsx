@@ -1,16 +1,25 @@
-import React from "react";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
-
+import styles from "./Insert.module.css";
 
 function InsertTool({ threeScene }: { threeScene: ThreeScene }) {
     const addObject = threeScene?.addObject;
 
     return (
-        <div style={{ marginTop: "10px" }} className="column-box">
+        <div className={styles.insertTool}>
             Add Link
-            <button onClick={() => addObject("cube")}>Add Cube</button>
-            <button onClick={() => addObject("sphere")}>Add Sphere</button>
-            <button onClick={() => addObject("cylinder")}>Add Cylinder</button>
+            <button className={styles.button} onClick={() => addObject("cube")}>
+                Add Cube
+            </button>
+            <button
+                className={styles.button}
+                onClick={() => addObject("sphere")}>
+                Add Sphere
+            </button>
+            <button
+                className={styles.button}
+                onClick={() => addObject("cylinder")}>
+                Add Cylinder
+            </button>
         </div>
     );
 }

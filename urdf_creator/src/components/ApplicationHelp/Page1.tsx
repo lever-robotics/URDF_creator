@@ -8,6 +8,12 @@ import { faCog, faRocket, faCubes, faCode, faSpaceShuttle, faHome  } from '@fort
  * 
  * @returns {JSX.Element} The rendered component.
  */
+
+// h1 {
+//     font-size: 3.2em;
+//     line-height: 1.1;
+// }
+
 const Page1 = () => {
     return (
         <div className="page-container">

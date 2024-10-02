@@ -13,9 +13,9 @@
     background-color: #1d2a31;
     cursor: pointer;
     transition: border-color 0.25s;
-    :hover{
-        border-color: #646cff;
-    }
+}
+.menu-icon-button:hover {
+    border-color: #646cff;
 }
 
 .project-title-input {

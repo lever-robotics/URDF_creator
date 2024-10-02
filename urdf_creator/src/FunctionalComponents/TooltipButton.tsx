@@ -1,6 +1,6 @@
 import React, { ReactNode, useRef, useState } from "react";
 import Tooltip from "./Tooltip";
-import "./TooltipButton.css";
+import styles from "./TooltipButton.module.css";
 
 type Props = {
     active: boolean,
@@ -42,9 +42,11 @@ export default function TooltipButton({ active = false, content = "", anchorPosi
         setShowTooltip(false);
     }
 
+    const isActive = active ? styles.active : "";
+
     return (
         <>
-            <button className={active ? "active" : ""} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} id={label}>
+            <button className={`${styles.button} ${isActive}`} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} id={label}>
                 {children}
             </button>
             {showTooltip && content && (

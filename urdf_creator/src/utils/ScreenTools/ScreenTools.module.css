@@ -1,0 +1,24 @@
+.absolutePosition{
+    position: absolute;
+    pointer-events: none;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    pointer-events: auto;
+    justify-content: space-around;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1 1 auto;
+    justify-content: space-between;
+}
+

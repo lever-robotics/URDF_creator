@@ -16,6 +16,11 @@ export type ProjectType = {
   path: string;
 }
 
+// h1 {
+//   font-size: 3.2em;
+//   line-height: 1.1;
+// }
+
 const ProjectDisplayer: React.FC<Props> = ({ handleProjectClick, onClose }) => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [projects, setProjects] : [ProjectType[], (set: ProjectType[]) => void] = useState([

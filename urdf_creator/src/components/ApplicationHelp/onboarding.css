@@ -148,7 +148,7 @@
 
 /* Style the scrollbar thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Change the color when hovered */
+    background-color: #555;  /* Change the color when hovered */
 }
 
 .tool-container {

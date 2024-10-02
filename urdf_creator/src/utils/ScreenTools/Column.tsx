@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import styles from "./ScreenTools.module.css";
 
 type Props = {
     children: ReactNode;
@@ -7,19 +8,19 @@ type Props = {
     pointerEvents: "auto" | undefined;
 };
 
-const Column: React.FC<Props> = ({ children, width = "", height = "", pointerEvents = "auto" }) => {
+const Column: React.FC<Props> = ({
+    children,
+    width = "",
+    height = "",
+    pointerEvents = "auto",
+}) => {
     return (
         <div
+            className={styles.column}
             style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
                 maxWidth: width === "" ? "auto" : width,
                 height: height === "" ? "auto" : height,
-                justifyContent: "space-around",
-                pointerEvents,
-            }}
-        >
+            }}>
             {children}
         </div>
     );
