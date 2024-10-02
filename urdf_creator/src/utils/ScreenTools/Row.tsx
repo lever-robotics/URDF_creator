@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import styles from "./ScreenTools.module.css";
 
 interface RowProps {
     children: ReactNode;
@@ -9,15 +10,11 @@ interface RowProps {
 export default function Row({ children, width = "", height = "" }: RowProps) {
     return (
         <div
+            className={styles.row}
             style={{
-                display: "flex",
-                flexDirection: "row",
-                flexGrow: "1 1 auto",
                 width: width === "" ? "auto" : width,
                 height: height === "" ? "auto" : height,
-                justifyContent: "space-between",
-            }}
-        >
+            }}>
             {children}
         </div>
     );

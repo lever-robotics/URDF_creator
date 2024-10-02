@@ -17,10 +17,20 @@ const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, pop
     }, [JSON.stringify(threeScene?.toolMode), JSON.stringify(threeScene?.selectedObject)]);
 
     const handleClick = (e: React.MouseEvent<Element>) => {
-        if (!selectedObject) return;
         const mode = e.currentTarget.id;
-        threeScene.setTransformMode(selectedObject, mode);
+        threeScene.setToolMode(mode);
     };
+
+    // .row-spaced {
+    //     display: flex;
+    //     gap: 10px;
+    // }
+
+    // .row-space-between {
+    //     display: flex;
+    //     flex-direction: row;
+    //     justify-content: space-between;
+    // }
 
 
     return (

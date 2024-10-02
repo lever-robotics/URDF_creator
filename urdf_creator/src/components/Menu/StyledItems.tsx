@@ -11,9 +11,9 @@ export const StyledMenuItem = styled((props) => (
     fontWeight: 200,
     fontFamily: "inherit",
     transition: "font-size 0.4s",
-    "&:hover, &.Mui-focusVisible": {
-        fontSize: "4em",
-    },
+    // "&:hover, &.Mui-focusVisible": {
+    //     fontSize: "4em",
+    // },
 }));
 
 export const StyledMenu = styled((props: MenuProps) => <Menu {...props} />)(({ theme }) => ({
@@ -46,9 +46,9 @@ export const StyledButton = styled((props) => <Button {...props} />)(
         backgroundColor: "#1d2a31",
         cursor: "pointer",
         transition: "border-color 0.25s",
-        "&:hover, .Mui-focusVisible, .MuiButton-colorSuccess": {
-            borderColor: "#646cff",
-            backgroundColor: "#1d2a31",
-        },
+        // "&:hover, .Mui-focusVisible, .MuiButton-colorSuccess": {
+        //     borderColor: "#646cff",
+        //     backgroundColor: "#1d2a31",
+        // },
     })
 );

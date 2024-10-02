@@ -132,14 +132,14 @@ export default class ThreeScene {
         this.forceUpdateBoth();
     };
 
-    setTransformMode = (selectedObject: Frame, mode: string) => {
+    setToolMode = (mode: string) => {
         if (this.transformControls) {
             this.transformControls.setMode(mode as TransformControlsMode);
             this.toolMode = mode as TransformControlsMode;
         }
 
-        if (selectedObject) {
-            this.attachTransformControls(selectedObject);
+        if (this.selectedObject) {
+            this.attachTransformControls(this.selectedObject);
         }
         this.forceUpdateScene();
     };

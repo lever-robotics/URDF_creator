@@ -1,6 +1,6 @@
-import React from "react";
 import Frame, { Frameish } from "../../Models/Frame";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
+import styles from "./TreeView.module.css";
 
 type ContextProps = {
     contextMenuPosition: {left: number, top: number},
@@ -16,21 +16,21 @@ export function ObjectContextMenu({
     const { left, top } = contextMenuPosition;
     return (
         <div
-            className="object-context-menu"
+            className={styles.contextMenu}
             // ref={objectContextMenu}
             style={{ left: left, top: top }}>
             <button
                 onClick={() => {
                     threeScene?.duplicateObject(selectedObject!);
                 }}
-                className="duplicate-button">
+                className={`${styles.duplicate} ${styles.button}`}>
                 Duplicate
             </button>
             <button
                 onClick={() => {
                     threeScene?.deleteObject(selectedObject!);
                 }}
-                className="delete-button">
+                className={`${styles.delete} ${styles.button}`}>
                 Delete
             </button>
         </div>

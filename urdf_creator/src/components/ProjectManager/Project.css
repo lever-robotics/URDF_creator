@@ -18,9 +18,11 @@
   width: 250px;
   height: 275px;
   overflow: hidden;
-}:hover{
-  border-color: #646cff;
+  :hover{
+    border-color: #646cff;
+  }
 }
+
 
 .project-image{
   width: 100%;
