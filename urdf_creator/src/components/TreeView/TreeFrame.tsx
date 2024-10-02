@@ -1,59 +1,50 @@
-import React, { ReactNode, useRef } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import Frame, { Frameish } from "../../Models/Frame";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
-import styles from "./TreeView.module.css";
+import styles from "./TreeFrame.module.css";
+import ToggleSection from "./ToggleSection";
+import TreeProperty from "./TreeProperty";
+import { ContextMenu, Property } from "./LinkTree";
 
 type Props = {
-    frame: Frameish;
-    handleContextMenu: (e: React.MouseEvent, f: Frame) => void;
+    frame: Frame;
+    handleContextMenu: (e: React.MouseEvent, treeObject: ContextMenu) => void;
     threeScene: ThreeScene;
-    hoveredButton: Frameish;
-    setHoveredButton: (f: Frameish) => void;
+    hoveredFrame: Frameish;
+    setHoveredFrame: (f: Frameish) => void;
 };
 
 export default function TreeFrame(props: Props) {
     // Destructure props
     const { frame, ...restProps } = props;
-    const { handleContextMenu, threeScene, hoveredButton, setHoveredButton } =
+    const { handleContextMenu, threeScene, hoveredFrame, setHoveredFrame } =
         restProps;
-
-    if (!frame) return null;
 
     const onClick = () => {
         threeScene.selectObject(frame);
     }
 
+    const onContextMenu = (e: React.MouseEvent) => {
+        handleContextMenu(e, frame);
+    }
+
     const onDragEnter = () => {
-        setHoveredButton(frame);
+        setHoveredFrame(frame);
     };
 
     // put the button that is dragged as the child of the hovered button
     const onDragEnd = (e: React.MouseEvent) => {
         if (frame.isRootFrame) return; // Do not let the rootFrame be reparented
 
-        if (hoveredButton) {
-            if (!isAncestor(frame, hoveredButton)) {
-                threeScene?.reparentObject(hoveredButton, frame);
+        if (hoveredFrame) {
+            if (!isAncestor(frame, hoveredFrame)) {
+                threeScene?.reparentObject(hoveredFrame, frame);
                 threeScene?.selectObject(frame);
-                setHoveredButton(null);
+                setHoveredFrame(null);
             }
         }
     };
 
-    const onContextMenu = (e: React.MouseEvent) => {
-        handleContextMenu(e, frame);
-    };
-
-    const className = determineClassName(
-        threeScene.selectedObject,
-        frame,
-        hoveredButton
-    );
-
-    /**
-     * Return TreeFrame components for each child of a frame objcet
-     * @returns TreeFrame[]
-     */
     const renderChildren = () => {
         const children = frame.getFrameChildren();
         return children.map((child: Frame) => (
@@ -61,47 +52,50 @@ export default function TreeFrame(props: Props) {
         ));
     };
 
+    const renderProperties = () => {
+        // const properties = frame.getProperties();
+        // return properties.map((property: any) => (
+        //     <TreeProperty key={property.id} property={property} {...restProps}/>
+        // ));
+        const properties = [{name: "Visual", id: 1}, {name: "Collision", id: 2}, {name: "Inertial", id: 3}];
+        return properties.map((property: Property) => (
+            <TreeProperty key={property.id} property={property} {...restProps}/>
+        ));
+    }
+
+    const isSelected = () => {
+        const selectedObject = threeScene.selectedObject;
+        if (!selectedObject) return false;
+        if (selectedObject.name === frame.name) return true;
+        return false;
+    };
+
+    const isHovered = () => {
+        if(hoveredFrame){
+            if(hoveredFrame.name === frame.name) return true;
+        }
+        return false;
+    }
+
+    const selectedStyle = isSelected() ? {backgroundColor: "#646cff"}: {};
+
     // Display the current node's data and render its children
     return (
-        <div style={{ marginLeft: "20px" }}>
-            <button
-                key={frame.id}
-                className={className}
-                onContextMenu={onContextMenu}
-                draggable={true}
-                onClick={onClick}
-                onDragEnd={onDragEnd}
-                onDragEnter={onDragEnter}>
-                {frame.name}
-            </button>
-            {renderChildren()}
-        </div>
+        <ToggleSection renderChildren={renderChildren} renderProperties={renderProperties} isSelected={isSelected} isHovered={isHovered}>
+                <button
+                    key={frame.id}
+                    className={styles.treeFrame}
+                    style={selectedStyle}
+                    // className={className}
+                    onContextMenu={onContextMenu}
+                    draggable={true}
+                    onClick={onClick}
+                    onDragEnd={onDragEnd}
+                    onDragEnter={onDragEnter}>
+                    {frame.name}
+                </button>
+        </ToggleSection>
     );
-}
-
-/**
- * The treeFrame can have multiple class names for conditional styling. This determines all the classNames
- * @returns string The class names seperated by spaces
- */
-function determineClassName(
-    selectedObject: Frameish,
-    frame: Frame,
-    hoveredButton: Frameish
-) {
-    const isSelected = () => {
-        if (!selectedObject) return;
-        if (selectedObject.name === frame.name) return styles.selected;
-        return;
-    };
-
-    console.log("hovered");
-    const isHover = () => {
-        console.log(hoveredButton === frame);
-        if (hoveredButton === frame) return styles.hover;
-        return;
-    };
-
-    return `${styles.treeFrame} ${isSelected()} ${isHover()}`;
 }
 
 /**

@@ -4,9 +4,13 @@ import ThreeScene from "../ThreeDisplay/ThreeScene";
 import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useState, useEffect } from "react";
 import TreeFrame from "./TreeFrame";
-import styles from "./TreeView.module.css";
+import styles from "./LinkTree.module.css";
 
-// RecursiveTreeView Component
+export type ContextMenu = false | Frame | Property;
+export type Property = {
+    name: string,
+    id: number,
+}
 type LinkTreeProps = {
     threeScene: ThreeScene;
 };
@@ -15,13 +19,13 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
         left: -1000,
         top: -10000,
     });
-    const [contextMenuVisible, setContextMenuVisible] = useState(false);
-    const [hoveredButton, setHoveredButton] = useState<Frameish>(null);
+    const [hoveredFrame, setHoveredFrame] = useState<Frameish>(null);
+    const [contextMenu, setContextMenu] = useState<ContextMenu>(false);
 
-    const handleContextMenu = (e: React.MouseEvent, node: Frame) => {
+
+    const handleContextMenu = (e: React.MouseEvent, treeObject: ContextMenu) => {
         e.preventDefault();
-        threeScene?.selectObject(node);
-        setContextMenuVisible(true);
+        setContextMenu(treeObject);
         setContextMenuPosition({
             left: e.clientX,
             top: e.clientY,
@@ -29,11 +33,11 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
     };
 
     const onMouseLeave = () => {
-        setContextMenuVisible(false);
+        setContextMenu(false);
     };
 
     const onClick = () => {
-        setContextMenuVisible(false);
+        setContextMenu(false);
     };
 
     const rootFrame = threeScene?.rootFrame;
@@ -50,19 +54,16 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
                         frame={rootFrame}
                         handleContextMenu={handleContextMenu}
                         threeScene={threeScene}
-                        hoveredButton={hoveredButton}
-                        setHoveredButton={setHoveredButton}
+                        hoveredFrame={hoveredFrame}
+                        setHoveredFrame={setHoveredFrame}
                     />
                 )}
             </div>
-            {contextMenuVisible && (
-                <ObjectContextMenu
-                    // objectContextMenu={objectContextMenu}
-                    contextMenuPosition={contextMenuPosition}
-                    selectedObject={threeScene?.selectedObject}
-                    threeScene={threeScene}
-                />
-            )}
+            <ObjectContextMenu
+                contextMenuPosition={contextMenuPosition}
+                selectedTreeObject={contextMenu}
+                threeScene={threeScene}
+            />
         </div>
     );
 }

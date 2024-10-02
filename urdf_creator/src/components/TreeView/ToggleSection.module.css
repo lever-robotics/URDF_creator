@@ -1,0 +1,36 @@
+.toggleSection {
+    border-left: 1px solid transparent;
+    font-family: inherit;
+    background-color: #1d2a31;
+    cursor: pointer;
+    color: #fff;
+    margin-left: 10px;
+}
+
+.header {
+    display: flex;
+    border: 1px solid transparent;
+    outline: none; /* fbfff1 */
+}.header:hover {
+    border: 1px solid #646cff;
+}
+
+.body {
+    background-color: #24343f;
+    padding: 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.toggleIcon {
+    border: none;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1d2a31;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
