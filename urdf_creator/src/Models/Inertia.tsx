@@ -29,7 +29,7 @@ export default class Inertia {
     updateInertia(threeObject: Frame) {
         if (this.customInertia) return;
 
-        const shape = threeObject.shape;
+        const shape = threeObject.collisions![0].shape;
         if (shape === 'cube') {
             const width = threeObject.link!.scale.x;
             const height = threeObject.link!.scale.y;
@@ -43,7 +43,7 @@ export default class Inertia {
             this.ixx = (1 / 12) * this.mass * (3 * radius ** 2 + height ** 2);
             this.iyy = (1 / 2) * this.mass * radius ** 2;
             this.izz = this.ixx;
-        } else if (shape === 'sphere') {
+        } else if (shape === 'sphere' || shape === 'mesh') {
             const radius = threeObject.link!.scale.x;
             this.ixx = (2 / 5) * this.mass * radius ** 2;
             this.iyy = this.ixx;

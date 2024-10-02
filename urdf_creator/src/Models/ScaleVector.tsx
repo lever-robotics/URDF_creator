@@ -17,6 +17,7 @@ export default class ScaleVector extends THREE.Vector3 {
                 super.set(x, y, z);
                 return this;
             case "sphere":
+            case "mesh":
                 if (x !== this.getComponent(0)) {
                     super.set(x, x, x);
                 } else if (y !== this.getComponent(1)) {

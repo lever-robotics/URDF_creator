@@ -5,6 +5,7 @@ import ParameterProps from "../ParameterProps";
 
 function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
+    
     const [tempX, setTempX] = useState(selectedObject.offset.x);
     const [tempY, setTempY] = useState(selectedObject.offset.y);
     const [tempZ, setTempZ] = useState(selectedObject.offset.z);

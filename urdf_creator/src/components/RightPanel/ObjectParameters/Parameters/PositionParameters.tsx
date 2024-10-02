@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
-import ParameterProps from "../ParameterProps";
+import ItemParameterProps from "../ItemParameterProps";
 
-function PositionParameters({ selectedObject, threeScene }: ParameterProps) {
+function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const [tempX, setTempX] = useState(selectedObject.position.x);
     const [tempY, setTempY] = useState(selectedObject.position.y);

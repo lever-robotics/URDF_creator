@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import { openDB } from "idb";
-import ParameterProps from "../ParameterProps";
+import ItemParameterProps from "../ItemParameterProps";
 
 
-function MeshParameters({ selectedObject, threeScene }: ParameterProps) {
+function MeshParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const [files, setFiles] = useState<any[]>([]);
 
     const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        selectedObject.setMesh(e.target.value);
+        selectedItem.setMesh(e.target.value);
         threeScene.forceUpdateBoth();
     };
 

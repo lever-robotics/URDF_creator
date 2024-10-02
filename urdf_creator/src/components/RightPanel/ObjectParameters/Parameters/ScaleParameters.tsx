@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
-import ParameterProps from "../ParameterProps";
 import Frame from "../../../../Models/Frame";
+import ItemParameterProps from "../ItemParameterProps";
+import { Collision, Visual } from "../../../../Models/VisualCollision";
+import Inertia from "../../../../Models/Inertia";
 
-function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
+
+function ScaleParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const [tempX, setTempX] = useState(selectedObject.objectScale.x);
     const [tempY, setTempY] = useState(selectedObject.objectScale.y);
@@ -95,7 +98,7 @@ function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
         onKeyDown: handleKeyDown,
     };
 
-    const determineParametersFromShape = (object: Frame) => {
+    const determineParametersFromShape = (object: Visual | Collision) => {
         switch (object.shape) {
             case "sphere":
                 return <Parameter title="Radius:" value={tempRadius} {...props} />;
@@ -121,7 +124,7 @@ function ScaleParameters({ selectedObject, threeScene }: ParameterProps) {
 
     return (
         <Section title="Scale">
-            <ul>{determineParametersFromShape(selectedObject)}</ul>
+            <ul>{determineParametersFromShape((selectedItem as Visual | Collision))}</ul>
         </Section>
     );
 }

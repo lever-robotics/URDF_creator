@@ -1,23 +1,23 @@
 import * as THREE from "three";
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
-import { blobToArrayBuffer, getFile } from "../utils/localdb";
-import Mesh from "./Mesh";
 import { Camera, IMU, Lidar, Sensor } from "./SensorsClass";
 import Inertia from "./Inertia";
 import JointVisualizer from "./JointVisualizer";
 import Link from "./Link";
 import Axis from "./Axis";
+import Collision, {Visual} from "./VisualCollision";
 import { Vector3, Euler } from "three";
 
 export type Frameish = Frame | null | undefined;
 
 export default class Frame extends THREE.Object3D {
-    mesh?: Mesh;
+    visuals?: Visual[];
+    collisions?: Collision[];
     link?: Link;
     sensor?: Sensor;
     inertia?: Inertia;
     jointVisualizer?: JointVisualizer;
     axis?: Axis;
+    frame?: Frame;
     parentFrame?: Frame;
     
     linkDetached: boolean;
@@ -70,8 +70,16 @@ export default class Frame extends THREE.Object3D {
         return this.parentFrame!.name;
     }
 
+    get objectVisuals() {
+        return this.visuals;
+    }
+
+    get objectCollisions() {
+        return this.collisions;
+    }
+
     get objectScale() {
-        return this.mesh!.scale;
+        return this.link!.scale;
     }
 
     get objectPosition() {
@@ -128,18 +136,6 @@ export default class Frame extends THREE.Object3D {
         return this.inertia!.mass;
     }
 
-    get shape() {
-        return this.mesh!.shape;
-    }
-
-    get color() {
-        return this.mesh!.material.color;
-    }
-
-    setColorByHex(color: string) {
-        this.mesh!.color = new THREE.Color(color);
-    }
-
     get axisRotation() {
         return this.axis!.rotation;
     }
@@ -186,6 +182,26 @@ export default class Frame extends THREE.Object3D {
         this.inertia!.updateInertia(this);
     }
 
+    /**
+     * Add a visual to the link of the frame
+     * @param shape The shape of the visual (cube, sphere, cylinder, mesh)
+     */
+    addVisual(shape: string) {
+        const visual = new Visual(shape);
+        this.link!.add(visual);
+        this.visuals!.push(visual);
+    }
+
+    /**
+     * Add a collision to the link of the frame
+     * @param shape The shape of the collision (cube, sphere, cylinder, mesh)
+     */
+    addCollision(shape: string) {
+        const collision = new Collision(shape);
+        this.link!.add(collision);
+        this.collisions!.push(collision);
+    }
+
     rotateAroundJointAxis = (angle: number) => {
         // Angle must be in radians
         // a quaternion is basically how to get from one rotation to another
@@ -214,99 +230,6 @@ export default class Frame extends THREE.Object3D {
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
         this.jointVisualizer!.position.set(0, 0, 0);
         this.jointVisualizer!.translateOnAxis(newAxis, distance);
-    };
-
-    setMesh = async (meshFileName: string) => {
-        if (meshFileName === "") {
-            this.mesh!.material.wireframe = false;
-            this.userData.stlfile = null;
-            this.link!.children = [];
-            return;
-        }
-
-        //check if object already has a mesh and if so remove it and add the new mesh
-        if (this.userData.stlfile === meshFileName) {
-            return;
-        }
-
-        // Remove the existing mesh from link childreen
-        if (this.jointVisualizer!.link!.children.length > 0) {
-            this.jointVisualizer!.link!.children = [];
-        }
-
-        // Set the stlfile name to the userData
-        this.userData.stlfile = meshFileName;
-
-        // Add the STL Mesh to the Frame as a child of Frame.joint.link.mesh and apply wireframe to link geometry
-        //get stl file from openDB
-        try {
-            // Get the STL file from IndexedDB
-            const file = await getFile(meshFileName);
-
-            if (file) {
-                //convert the file to an array buffer
-                const arrayBuffer = await blobToArrayBuffer(file);
-                // Load the STL file
-                // Create a Blob URL from the ArrayBuffer
-                const blob = new Blob([arrayBuffer], {
-                    type: "application/octet-stream",
-                });
-                const url = URL.createObjectURL(blob);
-
-                // Load the STL file using STLLoader.load
-                const loader = new STLLoader();
-                loader.load(
-                    url,
-                    (geometry) => {
-                        const material = new THREE.MeshPhongMaterial({
-                            color: this.mesh!.color || Math.random() * 0xffffff,
-                        });
-                        const mesh = new THREE.Mesh(geometry, material);
-                        // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(
-                            mesh
-                        );
-                        // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(
-                            new THREE.Vector3(-0.5, -0.5, -0.5),
-                            new THREE.Vector3(0.5, 0.5, 0.5)
-                        );
-
-                        // Calculate the size of the bounding box and desired box
-                        const boundingBoxSize = new THREE.Vector3();
-                        boundingBox.getSize(boundingBoxSize);
-                        const desiredBoxSize = new THREE.Vector3();
-                        desiredBox.getSize(desiredBoxSize);
-
-                        // Calculate the scaling factor
-                        const scaleX = desiredBoxSize.x / boundingBoxSize.x;
-                        const scaleY = desiredBoxSize.y / boundingBoxSize.y;
-                        const scaleZ = desiredBoxSize.z / boundingBoxSize.z;
-                        const scale = Math.min(scaleX, scaleY, scaleZ);
-
-                        // Apply the scaling to the mesh
-                        mesh.scale.set(scale, scale, scale);
-
-                        // Add the mesh to the scene
-                        this.link!.add(mesh);
-
-                        // Revoke the Blob URL after use
-                        URL.revokeObjectURL(url);
-                    },
-                    undefined,
-                    (error) => {
-                        console.error("Error loading the STL file:", error);
-                    }
-                );
-
-                // Make the mesh object a wireframe
-                this.mesh!.material.wireframe = true;
-            } else {
-                console.error("File not found in database");
-            }
-        } catch (error) {
-            console.error("Error retrieving file from database:", error);
-        }
     };
 
     duplicate() {

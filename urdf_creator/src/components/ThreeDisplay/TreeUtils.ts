@@ -5,13 +5,13 @@ import Frame from "../../Models/Frame";
 import { IMU, Camera, Lidar, Sensor, sensorCreator } from "../../Models/SensorsClass";
 import Axis from "../../Models/Axis";
 import * as THREE from "three";
-import Mesh from "../../Models/Mesh";
+import Collision, {Visual} from "../../Models/VisualCollision";
 
 export function createFrame(params: UserData): Frame {
     const {
         name,
-        shape,
         version,
+        shape, // This is use for generating a generic box, cylinder, or sphere
         position, 
         rotation, 
         jointType,
@@ -19,9 +19,6 @@ export function createFrame(params: UserData): Frame {
         jointMax,
         axisRotation,
         offset, 
-        scale, 
-        material, 
-        color, 
         mass, 
         ixx,
         ixy,
@@ -30,10 +27,41 @@ export function createFrame(params: UserData): Frame {
         izz,
         iyz,
         sensor,
+        collisions,
+        visuals,
     } = params;
 
+    // Take in the shape if available and create a single collision and visual with that shape
+    if(shape){
+        collisions?.push({
+            shape: shape,
+            scale: new THREE.Vector3(1, 1, 1),
+            color: Math.random() * 0xffffff,
+            position: new THREE.Vector3(0, 0, 0),
+            rotation: new THREE.Euler(0, 0, 0),
+        });
+        visuals?.push({
+            shape: shape,
+            scale: new THREE.Vector3(1, 1, 1),
+            color: Math.random() * 0xffffff,
+            position: new THREE.Vector3(0, 0, 0),
+            rotation: new THREE.Euler(0, 0, 0),
+        });
+    }
+
+    // Map all collisions to objects that will be attached to the link
+    const collisionObjects = collisions?.map((collision) => {
+        return new Collision(collision.shape, collision.scale, collision.color);
+    }) || [];
+
+    // Map all visuals to objects that will be attached to the link
+    const visualObjects = visuals?.map((visual) => {
+        return new Visual(visual.shape, visual.scale, visual.color);
+    }) || [];
+
+    debugger;
+
     // Instantiate new objects
-    const mesh = new Mesh(shape, scale, color);
     const link = new Link(offset);
     const jointVisualizer = new JointVisualizer();
     const axis = new Axis(axisRotation);
@@ -41,7 +69,8 @@ export function createFrame(params: UserData): Frame {
     const frame = new Frame(name, position, rotation, jointType, jointMin, jointMax);
     
     // Add link children
-    link.add(mesh);
+    collisionObjects.forEach((collision) => link.add(collision));
+    visualObjects.forEach((visual) => link.add(visual));
     
     // Add jV children
     jointVisualizer.add(link);
@@ -53,7 +82,8 @@ export function createFrame(params: UserData): Frame {
     frame.jointVisualizer = jointVisualizer;
     frame.link = link;
     frame.axis = axis;
-    frame.mesh = mesh;
+    frame.visuals = visualObjects;
+    frame.collisions = collisionObjects;
     frame.sensor = sensorCreator(sensor);
     frame.inertia = inertia;
     inertia.updateInertia(frame);
@@ -62,7 +92,8 @@ export function createFrame(params: UserData): Frame {
     jointVisualizer.frame = frame;
     link.frame = frame;
     axis.frame = frame;
-    mesh.frame = frame;
+    visualObjects.forEach((visual) => visual.frame = frame);
+    collisionObjects.forEach((collision) => collision.frame = frame);
 
     return frame;
 };
@@ -71,7 +102,8 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
     const link = frame.link!.duplicate();
     const jointVisualizer = frame.jointVisualizer!.duplicate();
     const axis = frame.axis!.duplicate();
-    const mesh = frame.mesh!.duplicate();
+    const visuals = frame.visuals!.map((visual) => visual.duplicate());
+    const collisions = frame.collisions!.map((collision) => collision.duplicate());
     const inertia = frame.inertia!.duplicate();
     const sensor = frame.sensor!.duplicate();
     const clone = frame.duplicate();
@@ -80,19 +112,22 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
     clone.link = link;
     clone.jointVisualizer = jointVisualizer;
     clone.axis = axis;
-    clone.mesh = mesh;
+    clone.visuals = visuals;
+    clone.collisions = collisions;
     clone.inertia = inertia;
     clone.sensor = sensor;
 
     jointVisualizer.add(link);
-    link.add(mesh);
+    visuals.forEach((visual) => link.add(visual));
+    collisions.forEach((collision) => link.add(collision));
     clone.add(jointVisualizer);
     clone.add(axis);
 
     jointVisualizer.frame = clone;
     link.frame = clone;
     axis.frame = clone;
-    mesh.frame = clone;
+    visuals.forEach((visual) => visual.frame = clone);
+    collisions.forEach((collision) => collision.frame = clone);
 
     const children = frame.getFrameChildren();
 
@@ -107,10 +142,30 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
 // Recursively compress each Frame into a single mesh to make project storing as a gltf easier
 export function compressScene(frame: Frame): THREE.Mesh {
     const compressedFrame = new THREE.Mesh();
+    
+    const collisions = frame.collisions?.map((collision) => {
+        return {
+            shape: collision.shape,
+            scale: collision.scale,
+            color: collision.color.getHex(),
+            position: collision.position,
+            rotation: collision.rotation,
+        };
+    }) || [];
+
+    const visuals = frame.visuals?.map((visual) => {
+        return {
+            shape: visual.shape,
+            scale: visual.scale,
+            color: visual.color.getHex(),
+            position: visual.position,
+            rotation: visual.rotation,
+        };
+    }) || [];
+
     const userData: UserData = {
         name: frame.name,
-        shape: frame.shape,
-        version: "beta",
+        version: "beta2",
         position: frame.objectPosition,
         rotation: frame.objectRotation,
         jointType: frame.jointType,
@@ -118,9 +173,6 @@ export function compressScene(frame: Frame): THREE.Mesh {
         jointMax: frame.max,
         axisRotation: frame.axisRotation,
         offset: frame.offset,
-        scale: frame.objectScale,
-        material: frame.mesh!.material,
-        color: frame.color.getHex(),
         mass: frame.mass,
         ixx: frame.inertia!.ixx,
         ixy: frame.inertia!.ixy,
@@ -129,6 +181,8 @@ export function compressScene(frame: Frame): THREE.Mesh {
         izz: frame.inertia!.izz,
         iyz: frame.inertia!.iyz,
         sensor: frame.sensor,
+        collisions: collisions,
+        visuals: visuals,
     };
     compressedFrame.userData = userData;
 
@@ -202,7 +256,7 @@ function extractNumberFromString(str: string): [string, string] {
 
 export type UserData = {
     name: string;
-    shape: string;
+    shape?: string;
     version: string;
     position: THREE.Vector3;
     rotation: THREE.Euler;
@@ -211,9 +265,6 @@ export type UserData = {
     jointMax: number;
     axisRotation: THREE.Euler;
     offset: THREE.Vector3;
-    scale: THREE.Vector3;
-    material: THREE.MeshPhongMaterial;
-    color: number;
     mass: number;
     ixx: number;
     ixy: number;
@@ -222,4 +273,22 @@ export type UserData = {
     izz: number;
     iyz: number;
     sensor: Sensor | IMU | Camera | Lidar | undefined;
+    collisions?: CollisionData[];
+    visuals?: VisualData[];
 }
+
+export type CollisionData = {
+    shape: string;
+    scale: THREE.Vector3;
+    color: number; 
+    position: THREE.Vector3;
+    rotation: THREE.Euler;
+};
+
+export type VisualData = {
+    shape: string;
+    scale: THREE.Vector3;
+    color: number; 
+    position: THREE.Vector3;
+    rotation: THREE.Euler
+};

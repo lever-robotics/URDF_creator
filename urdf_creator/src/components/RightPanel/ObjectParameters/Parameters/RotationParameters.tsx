@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
-import ParameterProps from "../ParameterProps";
+import ItemParameterProps from "../ItemParameterProps";
 
-function RotationParameters({ selectedObject, threeScene }: ParameterProps) {
+function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const radToDeg = (radians: number) => (radians * 180) / Math.PI;
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;

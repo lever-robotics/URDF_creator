@@ -4,7 +4,6 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../../utils/ScenetoText";
 import "./CodeBox.css";
 import Frame from "../../../Models/Frame";
-import { StateFunctionsType } from "../../SceneState";
 import {Scene} from "three";
 import ThreeScene from "../../ThreeDisplay/ThreeScene";
 

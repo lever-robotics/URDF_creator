@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./parameters_style.css";
 import "../ObjectParameters.css";
 import Parameter from "./Parameter";
-import ToggleSection from "../ToggleSection";
 import Section from "../Section";
-import PositionParameters from "./PositionParameters";
-import RotationParameters from "./RotationParameters";
-import ScaleParameters from "./ScaleParameters";
 import ParameterProps from "../ParameterProps";
 import { deregisterName, registerName } from "../../../ThreeDisplay/TreeUtils";
 
@@ -52,10 +48,6 @@ export default function BasicParameters({ threeScene, selectedObject }: Paramete
         }
     }
 
-    const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        selectedObject.setColorByHex(e.target.value);
-    };
-
     const handleColorBlur = () => {
         threeScene.forceUpdateScene();
     };
@@ -72,13 +64,6 @@ export default function BasicParameters({ threeScene, selectedObject }: Paramete
                     onKeyDown={handleKeyDown}
                     readOnly={selectedObject.name === "base_link"}
                     className={"name-input"}
-                />
-                <Parameter
-                    title={"Color:"}
-                    type="color"
-                    value={"#"+ selectedObject.color.getHexString()}
-                    onChange={handleColorChange}
-                    onBlur={handleColorBlur}
                 />
             </ul>
             {error && (

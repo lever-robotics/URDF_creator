@@ -3,16 +3,19 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { Mouse } from "./Mouse";
 import Frame, { Frameish } from "../../Models/Frame";
-import Mesh from "../../Models/Mesh";
 
 import { cloneFrame, createFrame, deregisterName, readScene, registerName, UserData } from "./TreeUtils";
 import TransformControls from "../../Models/TransformControls";
+import {Collision, Visual} from "../../Models/VisualCollision";
+import Inertia from "../../Models/Inertia";
+import { CollisionData, VisualData } from "./TreeUtils";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
 
 export default class ThreeScene {
     rootFrame: Frameish;
     selectedObject: Frameish;
+    selectedItem?: Frameish | Visual | Collision | Inertia; //There is no joint type as when selected joint it is detaching the Frame from the link to be moved around.
     toolMode: TransformControlsMode;
     objectNames: string[];
     numberOfShapes: numShapes;
@@ -36,6 +39,7 @@ export default class ThreeScene {
             cube: 0,
             sphere: 0,
             cylinder: 0,
+            mesh: 0
         }
         this.mouse.addOnClickFunctions(this.clickObject)
     }
@@ -93,12 +97,15 @@ export default class ThreeScene {
     addObject = (shape: string) => {
         if (!this.scene) return;
 
+
         const numOfShape = (this.numberOfShapes[shape as keyof numShapes]).toString();
         const name = registerName(shape + numOfShape, this.objectNames);
 
         const newFrame = createFrame({
             shape: shape,
             name: name,
+            collisions: [] as CollisionData[],
+            visuals: [] as VisualData[],
         } as UserData);
 
         this.numberOfShapes[shape as keyof numShapes]++;
@@ -144,22 +151,24 @@ export default class ThreeScene {
         this.forceUpdateScene();
     };
 
-    attachTransformControls = (selectedObject: Frame) => {
+    attachTransformControls = (selectedItem: Frameish | Visual | Collision | Inertia) => {
         const transformControls = this.transformControls;
 
         const mode = transformControls.mode;
+        //depending on the selectedItem and the current mode either attach or not
+
         switch (mode) {
             // this case will attach the transform controls to the Frame and move everything together
             case "translate":
-                transformControls.attach(selectedObject);
+                transformControls.attach(selectedItem);
                 break;
             // will attach to Frame which will rotate the mesh about said origin
             case "rotate":
-                transformControls.attach(selectedObject);
+                transformControls.attach(selectedItem);
                 break;
             // will attach to the link and scale nothing else
             case "scale":
-                transformControls.attach(selectedObject.mesh!);
+                transformControls.attach(selectedItem.mesh!);
                 break;
             default:
                 break;
@@ -183,6 +192,17 @@ export default class ThreeScene {
         } 
         this.forceUpdateScene();
     };
+
+    selectItem = (item: Frameish | Visual | Collision | Inertia) => {
+        this.selectedItem = item;
+        //Get the frame of the item and set to selectedObject
+        if (item instanceof Frame) {
+            this.selectObject(item);
+        } else {
+            this.selectObject(item!.frame);
+        }
+        this.forceUpdateScene();
+    }
 
     loadSingleObject = (gltfScene: THREE.Object3D) => {
         const frame = readScene(gltfScene, this.objectNames);
@@ -268,4 +288,5 @@ type numShapes = {
     cube: number,
     sphere: number,
     cylinder: number,
+    mesh: number
 }
