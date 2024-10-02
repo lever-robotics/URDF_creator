@@ -5,9 +5,11 @@ import React from "react";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
 import { useState, useEffect } from "react";
+import { Collision, Visual } from "../../Models/VisualCollision";
 
 const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, popUndo: () => void, popRedo: () => void }) => {
     const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
+    const [selectedItem, setSelectedItem] = useState(threeScene?.selectedItem);
     const [toolMode, setToolMode] = useState(threeScene?.toolMode);
 
     useEffect(() => {
@@ -32,7 +34,6 @@ const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, pop
     //     justify-content: space-between;
     // }
 
-
     return (
         <div style={{ marginTop: "10px", height: "40px", pointerEvents: "auto" }} className="row-space-between">
             <div className="row-spaced">
@@ -48,9 +49,11 @@ const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, pop
                 <TooltipButton active={toolMode === "rotate"} onClick={handleClick} content={"Rotate"} anchorPosition={"top-right"} label="rotate">
                     <FontAwesomeIcon icon={faRotate} />
                 </TooltipButton>
-                <TooltipButton active={toolMode === "scale"} onClick={handleClick} content={"Scale"} anchorPosition={"top-right"} label="scale">
-                    <FontAwesomeIcon icon={faMaximize} />
-                </TooltipButton>
+                {selectedItem && (selectedItem instanceof Collision || selectedItem instanceof Visual) && (
+                    <TooltipButton active={toolMode === "scale"} onClick={handleClick} content={"Scale"} anchorPosition={"top-right"} label="scale">
+                        <FontAwesomeIcon icon={faMaximize} />
+                    </TooltipButton>
+                )}
             </div>
         </div>
     );

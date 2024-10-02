@@ -17,7 +17,6 @@ export default class Frame extends THREE.Object3D {
     inertia?: Inertia;
     jointVisualizer?: JointVisualizer;
     axis?: Axis;
-    frame?: Frame;
     parentFrame?: Frame;
     
     linkDetached: boolean;

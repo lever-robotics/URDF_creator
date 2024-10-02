@@ -5,7 +5,7 @@ import Frame from "../../Models/Frame";
 import { IMU, Camera, Lidar, Sensor, sensorCreator } from "../../Models/SensorsClass";
 import Axis from "../../Models/Axis";
 import * as THREE from "three";
-import Collision, {Visual} from "../../Models/VisualCollision";
+import {Collision, Visual} from "../../Models/VisualCollision";
 
 export function createFrame(params: UserData): Frame {
     const {
@@ -59,15 +59,13 @@ export function createFrame(params: UserData): Frame {
         return new Visual(visual.shape, visual.scale, visual.color);
     }) || [];
 
-    debugger;
-
     // Instantiate new objects
     const link = new Link(offset);
     const jointVisualizer = new JointVisualizer();
     const axis = new Axis(axisRotation);
-    const inertia = new Inertia(mass, ixx, iyy, izz, ixy, ixz, iyz);
     const frame = new Frame(name, position, rotation, jointType, jointMin, jointMax);
-    
+    const inertia = new Inertia(frame, mass, ixx, iyy, izz, ixy, ixz, iyz);
+
     // Add link children
     collisionObjects.forEach((collision) => link.add(collision));
     visualObjects.forEach((visual) => link.add(visual));

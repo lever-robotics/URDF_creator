@@ -9,21 +9,21 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
     const [tempX, setTempX] = useState(
-        radToDeg(selectedObject.rotation.x).toFixed(2)
+        radToDeg(selectedItem!.rotation.x).toFixed(2)
     );
     const [tempY, setTempY] = useState(
-        radToDeg(selectedObject.rotation.y).toFixed(2)
+        radToDeg(selectedItem!.rotation.y).toFixed(2)
     );
     const [tempZ, setTempZ] = useState(
-        radToDeg(selectedObject.rotation.z).toFixed(2)
+        radToDeg(selectedItem!.rotation.z).toFixed(2)
     );
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
-        setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
-        setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedObject.rotation), threeScene?.toolMode]);
+        setTempX(radToDeg(selectedItem!.rotation.x).toFixed(2));
+        setTempY(radToDeg(selectedItem!.rotation.y).toFixed(2));
+        setTempZ(radToDeg(selectedItem!.rotation.z).toFixed(2));
+    }, [JSON.stringify(selectedItem!.rotation), threeScene?.toolMode]);
 
     const checkNegativeZero = (value: string) => {
 
@@ -54,7 +54,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const newValue = degToRad(parseFloat(checkNegativeZero(e.currentTarget.value)));
         if (isNaN(newValue)) return;
-        const newRotation = selectedObject.objectRotation.toArray();
+        const newRotation = selectedItem!.objectRotation.toArray();
         switch (axis) {
             case "x":
                 newRotation[0] = newValue; 
@@ -66,7 +66,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                 newRotation[2] = newValue; 
                 break;
         }
-        selectedObject.objectRotation.set(...newRotation);
+        selectedItem!.objectRotation.set(...newRotation);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

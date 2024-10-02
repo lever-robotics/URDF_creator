@@ -18,15 +18,14 @@ function ObjectParameters({ threeScene, selectedFormat }: { threeScene: ThreeSce
     if(selectedFormat !== "Parameters") return null;
 
     const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
-    const [visuals, setvisuals] = useState(threeScene?.rootFrame?.visuals);
-    const [collisions, setcollisions] = useState(threeScene?.rootFrame?.collisions);
+    const [visuals, setvisuals] = useState(threeScene?.selectedObject?.visuals);
+    const [collisions, setcollisions] = useState(threeScene?.selectedObject?.collisions);
     const [selectedItem, setSelectedItem] = useState(threeScene?.selectedItem);     //If the selected Type is visual, collision, inertia or joint only display that information otherwise display all Only defaulting to display all
-
 
     useEffect(() => {
         setSelectedObject(threeScene?.selectedObject);
-        setvisuals(threeScene?.rootFrame?.visuals);
-        setcollisions(threeScene?.rootFrame?.collisions);
+        setvisuals(threeScene?.selectedObject?.visuals);
+        setcollisions(threeScene?.selectedObject?.collisions);
         setSelectedItem(threeScene?.selectedItem);
 
     }, [JSON.stringify(threeScene?.selectedObject), JSON.stringify(threeScene?.selectedItem)]);
@@ -41,7 +40,6 @@ function ObjectParameters({ threeScene, selectedFormat }: { threeScene: ThreeSce
     }
 
     //put logic here to check selected Item for its different types and display only the relivent information
-
 
     return (
     <div className="object-parameters">

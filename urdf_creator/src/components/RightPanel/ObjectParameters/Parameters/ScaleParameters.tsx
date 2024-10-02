@@ -1,29 +1,36 @@
 import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
-import Frame from "../../../../Models/Frame";
+import Frame, { Frameish } from "../../../../Models/Frame";
 import ItemParameterProps from "../ItemParameterProps";
 import { Collision, Visual } from "../../../../Models/VisualCollision";
 import Inertia from "../../../../Models/Inertia";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+
+type ScaleParametersProps = {
+    selectedObject?: Frameish,
+    selectedItem?: Visual | Collision,
+    threeScene: ThreeScene,
+}
 
 
-function ScaleParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
+function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScaleParametersProps) {
     if (!selectedObject) return;
-    const [tempX, setTempX] = useState(selectedObject.objectScale.x);
-    const [tempY, setTempY] = useState(selectedObject.objectScale.y);
-    const [tempZ, setTempZ] = useState(selectedObject.objectScale.z);
-    const [tempRadius, setTempRadius] = useState(selectedObject.objectScale.x / 2);
-    const [tempHeight, setTempHeight] = useState(selectedObject.objectScale.z);
+    const [tempX, setTempX] = useState(selectedItem!.objectScale.x);
+    const [tempY, setTempY] = useState(selectedItem!.objectScale.y);
+    const [tempZ, setTempZ] = useState(selectedItem!.objectScale.z);
+    const [tempRadius, setTempRadius] = useState(selectedItem!.objectScale.x / 2);
+    const [tempHeight, setTempHeight] = useState(selectedItem!.objectScale.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
         // debugger;
-        setTempX(selectedObject.objectScale.x);
-        setTempY(selectedObject.objectScale.y);
-        setTempZ(selectedObject.objectScale.z);
-        setTempRadius(selectedObject.objectScale.x / 2);
-        setTempHeight(selectedObject.objectScale.z);
-    }, [JSON.stringify(selectedObject.objectScale), threeScene?.toolMode]);
+        setTempX(selectedItem!.objectScale.x);
+        setTempY(selectedItem!.objectScale.y);
+        setTempZ(selectedItem!.objectScale.z);
+        setTempRadius(selectedItem!.objectScale.x / 2);
+        setTempHeight(selectedItem!.objectScale.z);
+    }, [JSON.stringify(selectedItem!.objectScale), threeScene?.toolMode]);
 
     const checkNegativeZero = (value: string) => {
 
@@ -66,7 +73,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ItemParam
 
         if (isNaN(newValue)) return;
         
-        const newScale = selectedObject.objectScale.toArray();
+        const newScale = selectedItem!.objectScale.toArray();
         switch (axis) {
             case "radius":
                 newValue = newValue * 2;
@@ -81,7 +88,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ItemParam
                 newScale[2] = newValue;
                 break;
         }
-        selectedObject.objectScale.set(...newScale);
+        selectedItem!.objectScale.set(...newScale);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

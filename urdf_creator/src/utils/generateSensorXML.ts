@@ -31,9 +31,9 @@ const generateIMUXML = (selectedObject: Frame) => {
     if (sensor instanceof IMU) {
         const { type, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
 
-        const { x, y, z } = selectedObject.mesh!.position;
+        const { x, y, z } = selectedObject.position;
         const xyzOffsets_mesh = `${x} ${y} ${z}`;
-        const rpyOffsets_mesh = quaternionToRPY(selectedObject.mesh!.quaternion);
+        const rpyOffsets_mesh = quaternionToRPY(selectedObject.quaternion);
 
         //currently settinng the origin of the sensor to that of the mesh
 
@@ -62,9 +62,9 @@ const generateCameraXML = (selectedObject: Frame) => {
         const { type, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
 
         //currently settinng the origin of the sensor to that of the mesh
-        const { x, y, z } = selectedObject.mesh!.position;
+        const { x, y, z } = selectedObject.position;
         const xyzOffsets_mesh = `${x} ${y} ${z}`;
-        const rpyOffsets_mesh = quaternionToRPY(selectedObject.mesh!.quaternion);
+        const rpyOffsets_mesh = quaternionToRPY(selectedObject.quaternion);
 
         return `
         <sensor name="${cameraName}" type="${type}">
@@ -100,9 +100,9 @@ const generateLidarXML = (selectedObject: Frame) => {
 
         //currently settinng the origin of the sensor to that of the mesh
 
-        const { x, y, z } = selectedObject.mesh!.position;
+        const { x, y, z } = selectedObject.position;
         const xyzOffsets_mesh = `${x} ${y} ${z}`;
-        const rpyOffsets_mesh = quaternionToRPY(selectedObject.mesh!.quaternion);
+        const rpyOffsets_mesh = quaternionToRPY(selectedObject.quaternion);
 
         return `
         <sensor type="${type}" name="${sensor.type}">

@@ -58,33 +58,49 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
                 xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
             }
 
-            // Material
-            let materialXML = "";
-            if (node.mesh!.material && node.mesh!.material.color) {
-                const color = node.mesh!.material.color;
-                materialXML = `    <material>\n  <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n      <diffuse>${color.r} ${color.g} ${
-                    color.b
-                } 1</diffuse>\n      <specular>0.1 0.1 0.1 1</specular>\n      <emissive>0 0 0 1</emissive>\n    </material>\n`;
-            }
+            // add all the visual and collision tags needed
+            const visuals = node.visuals;
+            const collisions = node.collisions;
 
-            // Geometry
-            const geometryType = node.mesh!.geometry.type;
-            let geometryXML = "";
-            if (geometryType === "BoxGeometry") {
-                const size = `${node.objectScale.x} ${node.objectScale.y} ${node.objectScale.z}`;
-                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <box>\n          <size>${size}</size>\n        </box>\n      </geometry>\n${materialXML}    </visual>\n`;
-            } else if (geometryType === "SphereGeometry") {
-                const radius = node.objectScale.x / 3;
-                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <sphere>\n          <radius>${radius}</radius>\n        </sphere>\n      </geometry>\n${materialXML}    </visual>\n`;
-            } else if (geometryType === "CylinderGeometry") {
-                const radius = node.objectScale.x / 2; // Assume uniform scaling for the radius
-                const height = node.objectScale.z;
-                geometryXML = `    <collision name='${node.name} collision'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n    </collision>\n`;
-                geometryXML += `    <visual name='${node.name} visual'>\n      <geometry>\n        <cylinder>\n          <radius>${radius}</radius>\n          <length>${height}</length>\n        </cylinder>\n      </geometry>\n${materialXML}    </visual>\n`;
+            if (visuals) {
+                visuals.forEach((visual) => {
+                    const color = visual.material.color;
+                    const materialXML = `      <material>\n         <ambient>${color.r} ${color.g} ${color.b} 1</ambient>\n         <diffuse>${color.r} ${color.g} ${
+                        color.b
+                    } 1</diffuse>\n         <specular>0.1 0.1 0.1 1</specular>\n         <emissive>0 0 0 1</emissive>\n       </material>\n`;
+                    xml += `    <visual name='${node.name} visual'>\n`;
+                    xml += `      <pose>${formatVector(visual.position)} ${quaternionToRPY(visual.quaternion)}</pose>\n`;
+                    xml += `      <geometry>\n`;
+                    const geometryType = visual.geometry.type;
+                    if (geometryType === "BoxGeometry") {
+                        xml += `        <box>\n          <size>${formatVector(visual.scale)}</size>\n        </box>\n`;
+                    } else if (geometryType === "SphereGeometry") {
+                        xml += `        <sphere>\n          <radius>${visual.scale.x / 2}</radius>\n        </sphere>\n`;
+                    } else if (geometryType === "CylinderGeometry") {
+                        xml += `        <cylinder>\n          <radius>${visual.scale.x / 2}</radius>\n          <length>${visual.scale.z}</length>\n        </cylinder>\n`;
+                    }
+                    xml += `      </geometry>\n`;
+                    xml += materialXML;
+                    xml += `    </visual>\n`;
+                });
             }
-            xml += geometryXML;
+            if (collisions) {
+                collisions.forEach((collision) => {
+                    xml += `    <collision name='${node.name} collision'>\n`;
+                    xml += `      <pose>${formatVector(collision.position)} ${quaternionToRPY(collision.quaternion)}</pose>\n`;
+                    xml += `      <geometry>\n`;
+                    const geometryType = collision.geometry.type;
+                    if (geometryType === "BoxGeometry") {
+                        xml += `        <box>\n          <size>${formatVector(collision.scale)}</size>\n        </box>\n`;
+                    } else if (geometryType === "SphereGeometry") {
+                        xml += `        <sphere>\n          <radius>${collision.scale.x / 2}</radius>\n        </sphere>\n`;
+                    } else if (geometryType === "CylinderGeometry") {
+                        xml += `        <cylinder>\n          <radius>${collision.scale.x / 2}</radius>\n          <length>${collision.scale.z}</length>\n        </cylinder>\n`;
+                    }
+                    xml += `      </geometry>\n`;
+                    xml += `    </collision>\n`;
+                });
+            }
 
             // Add inertial element
             const mass = node.inertia!.mass || 0;

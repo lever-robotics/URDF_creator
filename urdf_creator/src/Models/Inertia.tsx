@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import Frame, { Frameish } from "./Frame";
 
-export default class Inertia {
+export default class Inertia extends THREE.Object3D {
     frame: Frameish;
     mass: number;
     ixx: number;
@@ -14,7 +14,9 @@ export default class Inertia {
 
 
 
-    constructor(mass = 1, ixx = 0, iyy = 0, izz = 0, ixy = 0, ixz = 0, iyz = 0) {
+    constructor(frame: Frameish, mass = 1, ixx = 0, iyy = 0, izz = 0, ixy = 0, ixz = 0, iyz = 0) {
+        super();
+        this.frame = frame;
         this.customInertia = false;
         this.mass = mass;
         this.ixx = ixx;
@@ -79,6 +81,14 @@ export default class Inertia {
         }
     }
 
+    get objectPosition() {
+        return this.position;
+    }
+
+    get objectRotation() {
+        return this.rotation;
+    }
+
     updateMass(newMass: number, object: Frame) {
         this.mass = newMass;
         if (!this.customInertia) {
@@ -87,7 +97,7 @@ export default class Inertia {
     }
 
     duplicate() {
-        const clone = new Inertia(this.mass, this.ixx, this.iyy, this.izz, this.ixy, this.ixz, this.iyz);
+        const clone = new Inertia(this.frame, this.mass, this.ixx, this.iyy, this.izz, this.ixy, this.ixz, this.iyz);
         clone.customInertia = this.customInertia;
         return clone;
     }

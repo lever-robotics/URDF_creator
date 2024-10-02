@@ -5,17 +5,17 @@ import ItemParameterProps from "../ItemParameterProps";
 
 function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
-    const [tempX, setTempX] = useState(selectedObject.position.x);
-    const [tempY, setTempY] = useState(selectedObject.position.y);
-    const [tempZ, setTempZ] = useState(selectedObject.position.z);
+    const [tempX, setTempX] = useState(selectedItem?.position.x);
+    const [tempY, setTempY] = useState(selectedItem?.position.y);
+    const [tempZ, setTempZ] = useState(selectedItem?.position.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(selectedObject.position.x);
-        setTempY(selectedObject.position.y);
-        setTempZ(selectedObject.position.z);
+        setTempX(selectedItem?.position.x);
+        setTempY(selectedItem?.position.y);
+        setTempZ(selectedItem?.position.z);
 
-    }, [JSON.stringify(selectedObject.position)]);
+    }, [JSON.stringify(selectedItem?.position)]);
 
     const checkNegativeZero = (value: string) => {
 
@@ -48,7 +48,7 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const newValue = parseFloat(checkNegativeZero(e.currentTarget.value));
         if (isNaN(newValue)) return;
-        const newPosition = selectedObject.objectPosition.toArray();
+        const newPosition = selectedItem!.objectPosition.toArray();
         switch (axis) {
             case "x":
                 newPosition[0] = newValue; 
@@ -60,7 +60,7 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                 newPosition[2] = newValue; 
                 break;
         }
-        selectedObject.objectPosition.set(...newPosition);
+        selectedItem!.objectPosition.set(...newPosition);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -6,7 +6,7 @@ import Frame, { Frameish } from "../../Models/Frame";
 
 import { cloneFrame, createFrame, deregisterName, readScene, registerName, UserData } from "./TreeUtils";
 import TransformControls from "../../Models/TransformControls";
-import {Collision, Visual} from "../../Models/VisualCollision";
+import VisualCollision, {Collision, Visual} from "../../Models/VisualCollision";
 import Inertia from "../../Models/Inertia";
 import { CollisionData, VisualData } from "./TreeUtils";
 
@@ -56,9 +56,10 @@ export default class ThreeScene {
         this.raycaster.setFromCamera(new THREE.Vector2(this.mouse.x, this.mouse.y), this.camera);
         const intersects = this.raycaster.intersectObjects(this.scene.children);
 
-        // this will contain all of our objects that are Mesh's
-        const shapes: Mesh[] = intersects.filter((collision) => collision.object instanceof Mesh)
-            .map((collision) => collision.object as Mesh);
+        // Filter for objects that are instances of the common base class VisualCollision
+        const shapes: VisualCollision[] = intersects
+            .filter((collision) => collision.object instanceof VisualCollision)
+            .map((collision) => collision.object as VisualCollision);
 
 
         // if we hit a shape, select the closest
@@ -124,6 +125,7 @@ export default class ThreeScene {
             this.scene.attach(newFrame);
         }
         this.selectObject(newFrame);
+        debugger;
         this.forceUpdateCode();
         this.forceUpdateScene();
     };
@@ -160,15 +162,17 @@ export default class ThreeScene {
         switch (mode) {
             // this case will attach the transform controls to the Frame and move everything together
             case "translate":
-                transformControls.attach(selectedItem);
+                transformControls.attach(selectedItem!);
                 break;
             // will attach to Frame which will rotate the mesh about said origin
             case "rotate":
-                transformControls.attach(selectedItem);
+                transformControls.attach(selectedItem!);
                 break;
-            // will attach to the link and scale nothing else
+            // will attach to the visual, collision, or inertia object but nothing else
             case "scale":
-                transformControls.attach(selectedItem.mesh!);
+                if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
+                    transformControls.attach(selectedItem!);
+                }
                 break;
             default:
                 break;

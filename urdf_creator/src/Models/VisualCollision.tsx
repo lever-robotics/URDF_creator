@@ -171,6 +171,18 @@ export default class VisualCollision extends THREE.Mesh {
         return this.material.color;
     }
 
+    get objectPosition() {
+        return this.position;
+    }
+
+    get objectScale() {
+        return this.scale;
+    }
+
+    get objectRotation() {
+        return this.rotation;
+    }
+
     get scaleVector() {
         return new THREE.Vector3(this._scale.x, this._scale.y, this._scale.z);
     }

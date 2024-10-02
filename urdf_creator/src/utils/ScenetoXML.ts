@@ -41,42 +41,47 @@ export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            xml += `    <visual>\n`;
-            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
-
-            // Geometry
-            const geometryType = node.mesh!.geometry.type;
-            let geometryXML = "";
-            if (geometryType === "BoxGeometry") {
-                const size = `${formatVector(node.objectScale)}`;
-                geometryXML = `      <geometry>\n        <box size="${size}" />\n      </geometry>\n`;
-            } else if (geometryType === "SphereGeometry") {
-                const radius = node.objectScale.x / 2;
-                geometryXML = `      <geometry>\n        <sphere radius="${radius}" />\n      </geometry>\n`;
-            } else if (geometryType === "CylinderGeometry") {
-                const radius = node.objectScale.x / 2; // Assume uniform scaling for the radius
-                const height = node.objectScale.z;
-                geometryXML = `      <geometry>\n        <cylinder radius="${radius}" length="${height}" />\n      </geometry>\n`;
+            // add all the visual and collision tags needed
+            const visuals = node.visuals;
+            const collisions = node.collisions;
+            if (visuals) {
+                visuals.forEach((visual) => {
+                    xml += `    <visual>\n`;
+                    xml += `      <origin xyz="${formatVector(visual.position)}" rpy="${quaternionToRPY(visual.quaternion)}" />\n`;
+                    xml += `      <geometry>\n`;
+                    const geometryType = visual.geometry.type;
+                    if (geometryType === "BoxGeometry") {
+                        xml += `        <box size="${formatVector(visual.scale)}" />\n`;
+                    } else if (geometryType === "SphereGeometry") {
+                        xml += `        <sphere radius="${visual.scale.x / 2}" />\n`;
+                    } else if (geometryType === "CylinderGeometry") {
+                        xml += `        <cylinder radius="${visual.scale.x / 2}" length="${visual.scale.z}" />\n`;
+                    }
+                    xml += `      </geometry>\n`;
+                    xml += `      <material name="${visual.name}-material">\n`;
+                    xml += `        <color rgba="${visual.color.r} ${visual.color.g} ${visual.color.b} 1" />\n`;
+                    xml += `      </material>\n`;
+                    xml += `    </visual>\n`;
+                });
             }
-            xml += geometryXML;
-
-            // Material
-            if (node.mesh!.material && node.mesh!.material.color) {
-                const color = node.mesh!.material.color;
-                xml += `      <material name="${node.mesh!.material.name || node.name + "-material"}">\n`;
-                xml += `        <color rgba="${color.r} ${color.g} ${color.b} 1" />\n`;
-                xml += `      </material>\n`;
+            debugger;
+            if (collisions) {
+                collisions.forEach((collision) => {
+                    xml += `    <collision>\n`;
+                    xml += `      <origin xyz="${formatVector(collision.position)}" rpy="${quaternionToRPY(collision.quaternion)}" />\n`;
+                    xml += `      <geometry>\n`;
+                    const geometryType = collision.geometry.type;
+                    if (geometryType === "BoxGeometry") {
+                        xml += `        <box size="${formatVector(collision.scale)}" />\n`;
+                    } else if (geometryType === "SphereGeometry") {
+                        xml += `        <sphere radius="${collision.scale.x / 2}" />\n`;
+                    } else if (geometryType === "CylinderGeometry") {
+                        xml += `        <cylinder radius="${collision.scale.x / 2}" length="${collision.scale.z}" />\n`;
+                    }
+                    xml += `      </geometry>\n`;
+                    xml += `    </collision>\n`;
+                });
             }
-
-            // End visual
-            xml += `    </visual>\n`;
-
-            // Add collision element with the same geometry
-            xml += `    <collision>\n`;
-            xml += `      <origin xyz="${offset}" rpy="${linkRotation}" />\n`;
-            xml += geometryXML;
-            xml += `    </collision>\n`;
-
             // Add inertial element
             const mass = node.inertia!.mass || 0;
             const { ixx, ixy, ixz, iyy, iyz, izz } = node.inertia!;

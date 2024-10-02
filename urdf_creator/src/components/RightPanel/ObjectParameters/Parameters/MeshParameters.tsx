@@ -2,14 +2,22 @@ import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import { openDB } from "idb";
 import ItemParameterProps from "../ItemParameterProps";
+import { Frameish } from "../../../../Models/Frame";
+import { Collision, Visual } from "../../../../Models/VisualCollision";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 
+type MeshParametersProps = {
+    selectedObject?: Frameish,
+    selectedItem?: Visual | Collision,
+    threeScene: ThreeScene,
+}
 
-function MeshParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
+function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParametersProps) {
     if (!selectedObject) return;
     const [files, setFiles] = useState<any[]>([]);
 
     const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        selectedItem.setMesh(e.target.value);
+        selectedItem!.setMesh(e.target.value);
         threeScene.forceUpdateBoth();
     };
 
@@ -41,7 +49,7 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: ItemParame
     }, []);
 
     return (
-        <Section title="Mesh Parameters">
+        <Section title="Geometry">
             <strong>Mesh (only for visual):</strong>
             <select
                 value={selectedObject.userData.stlfile}
