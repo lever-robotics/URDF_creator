@@ -1,0 +1,25 @@
+.menuModal {
+  position: absolute;
+  /* background: #14252e; */
+  background-color: #24343f;
+  width: 100%;
+  max-width: 200px;
+  z-index: 1000;
+  border-bottom-right-radius: 8px;
+}
+
+.menuList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuItem {
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}.menuItem:hover {
+  background-color: #646cff;
+  border-bottom-right-radius: 8px;
+}
+  

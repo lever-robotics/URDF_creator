@@ -34,7 +34,7 @@ export default function RightPanel({ projectTitle, threeScene, updateCode }: Pro
     }
 
     return (
-        <div className={styles.rightPanel}>
+        <>
             <div className={styles.toolbar}>
                 <button className={styles.toolbarButton} style={selectedStyle("Parameters")} onClick={handleClick}>
                     Parameters
@@ -49,8 +49,10 @@ export default function RightPanel({ projectTitle, threeScene, updateCode }: Pro
                     XACRO
                 </button>
             </div>
-            <CodeBox projectTitle={projectTitle} threeScene={threeScene} selectedFormat={selectedFormat} updateCode={updateCode} />
-            <ObjectParameters threeScene={threeScene} selectedFormat={selectedFormat} />
-        </div>
+            <div className={styles.rightPanel}>
+                <CodeBox projectTitle={projectTitle} threeScene={threeScene} selectedFormat={selectedFormat} updateCode={updateCode} />
+                <ObjectParameters threeScene={threeScene} selectedFormat={selectedFormat} />
+            </div>
+        </>
     );
 }

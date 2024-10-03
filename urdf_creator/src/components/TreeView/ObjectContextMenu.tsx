@@ -19,7 +19,7 @@ export function ObjectContextMenu({
 
     const onDelete = () => {
         if(selectedTreeObject instanceof Frame){
-            threeScene?.duplicateObject(selectedTreeObject);
+            threeScene?.deleteObject(selectedTreeObject);
         }else{
             // threeScene?.duplicateProperty(selectedTreeObject); //TODO
         }
@@ -27,7 +27,7 @@ export function ObjectContextMenu({
 
     const onDuplicate = () => {
         if(selectedTreeObject instanceof Frame){
-            threeScene?.deleteObject(selectedTreeObject);
+            threeScene?.duplicateObject(selectedTreeObject);
         }else{
             // threeScene?.deleteProperty(selectedTreeObject); //TODO
         }

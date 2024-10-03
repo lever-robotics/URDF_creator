@@ -1,5 +1,5 @@
 import React from "react";
-import "./MenuModal.css";
+import styles from "./MenuModal.module.css";
 
 interface MenuItemProps {
     action: () => void;
@@ -9,7 +9,7 @@ interface MenuItemProps {
 const MenuItem: React.FC<MenuItemProps> = ({ action, label }) => {
     return (
         <li
-            className="menu-item"
+            className={styles.menuItem}
             onClick={action}>
             {label}
         </li>

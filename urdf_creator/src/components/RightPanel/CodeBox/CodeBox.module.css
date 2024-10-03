@@ -1,13 +1,15 @@
-.code-container {
+.codeContainer {
     position: relative;
     overflow: auto;
     height: 100%;
     overflow: hidden;
+    background-color: #24343F;
+    padding: 4px;
+    display: flex;
 }
-
-.code-container:hover {
+/* .codeContainer:hover {
     opacity: 0.8;
-}
+} */
 
 .tooltip {
     position: fixed;

@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ScenetoText from "../../../utils/ScenetoText";
-import "./CodeBox.css";
-import Frame from "../../../Models/Frame";
-import {Scene} from "three";
+import styles from "./CodeBox.module.css";
 import ThreeScene from "../../ThreeDisplay/ThreeScene";
 
 /**
@@ -24,10 +22,11 @@ export default function CodeBox({ projectTitle, threeScene, selectedFormat, upda
     const style = {
         fontSize: "12px",
         overflow: "auto",
-        height: "100%",
-        width: "100%",
         flexGrow: 1,
-
+        backgroundColor: "#14252E",
+        borderRadius: "0px",
+        margin: "0",
+        padding: "4px 8px",
     };
     const [copied, setCopied] = useState(false);
     const [mousePosition, setMousePosition] = useState({x: 0, y:0});
@@ -62,7 +61,7 @@ export default function CodeBox({ projectTitle, threeScene, selectedFormat, upda
         return null;
     }
     return (
-        <div onClick={handleClick} className="code-container">
+        <div onClick={handleClick} className={styles.codeContainer}>
             <SyntaxHighlighter language={selectedFormat === "XACRO" ? "text" : "xml"} style={atomDark} customStyle={style}>
                 {code!}
             </SyntaxHighlighter>
@@ -77,7 +76,7 @@ export default function CodeBox({ projectTitle, threeScene, selectedFormat, upda
  */
 function Tooltip({ mousePosition }: {mousePosition: {x: number, y: number}}) {
     return (
-        <div className="tooltip" style={{ left: mousePosition.x, top: mousePosition.y }}>
+        <div className={styles.tooltip} style={{ left: mousePosition.x, top: mousePosition.y }}>
             Copied!
         </div>
     );

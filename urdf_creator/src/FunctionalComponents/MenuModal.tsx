@@ -1,6 +1,6 @@
 import React from "react";
 import { useRef } from "react";
-import "./MenuModal.css";
+import styles from "./MenuModal.module.css";
 import MenuItem from "./MenuItem";
 import useClickOutside from "./useClickOutside";
 
@@ -26,10 +26,10 @@ const MenuModal: React.FC<Props> = ({ onClose, menuItems, buttonRef }) => {
 
     return (
         <div
-            className="menu-modal"
+            className={styles.menuModal}
             ref={wrapperRef}
             style={{ top: position.top , left: position.left }}>
-            <ul className="menu-list">
+            <ul className={styles.menuList}>
                 {menuItems.map((item, index) => (
                     <MenuItem key={index} action={item.action} label={item.label}/>
                 ))}

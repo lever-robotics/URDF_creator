@@ -4,13 +4,18 @@
     row-gap: 5px;
     background-color: #24343f;
     padding: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     margin-left: 3px;
     background-color: #24343f;
     padding: 10px;
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+    /* opacity: 0.6;
+    transition: opacity 0.2s ease-in-out; */
 }
+/* .insertTool:hover {
+    opacity: 1;
+} */
 
 .toolbar {
     display: flex;
@@ -31,6 +36,7 @@
     margin-left: 3px;
     cursor: pointer;
     color: #fff;
+    text-shadow: 1px 1px 2px black;
 }
 
 .button {
@@ -43,6 +49,7 @@
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;
+    text-shadow: 1px 1px 2px black;
 }
 .button:hover {
     border-color: #646cff;
