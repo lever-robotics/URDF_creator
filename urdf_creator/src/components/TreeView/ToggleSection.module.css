@@ -1,7 +1,8 @@
 .toggleSection {
     border-left: 1px solid transparent;
     font-family: inherit;
-    background-color: #1d2a31;
+    /* background-color: #1d2a31; */
+    background: transparent;
     cursor: pointer;
     color: #fff;
     margin-left: 10px;
@@ -16,12 +17,13 @@
 }
 
 .body {
-    background-color: #24343f;
+    /* background-color: #24343f; */
+    background-color: #1d2a31;
     padding: 8px;
     box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 4px;
 }
 
@@ -30,7 +32,27 @@
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1d2a31;
+    /* background-color: #1d2a31; */
+    background: transparent;
     cursor: pointer;
     transition: border-color 0.25s;
 }
+
+/* Colors
+
+Background: 
+#14252e
+
+Dark:
+#1d2a31
+
+Light:
+#24343f
+
+Purple:
+#646cff
+
+Blue:
+#28c2ff
+
+*/

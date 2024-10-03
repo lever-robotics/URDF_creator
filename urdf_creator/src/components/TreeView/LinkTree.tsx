@@ -79,12 +79,12 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
 function NameBar(){
     return(
         <div className={styles.nameBar}>
-            <div className={styles.children}>
+            {/* <div className={styles.children}>
                 children
             </div>
             <div className={styles.name}>
                 Name
-            </div>
+            </div> */}
         </div>
         
     );

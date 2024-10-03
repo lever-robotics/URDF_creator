@@ -1,9 +1,9 @@
 .treeFrame {
     border: 1px solid transparent;
-    border-bottom-right-radius: 8px;
     flex-grow: 1;
     font-family: inherit;
-    background-color: #1d2a31;
+    /* background-color: #1d2a31; */
+    background: transparent;
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;

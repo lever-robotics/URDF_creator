@@ -5,11 +5,12 @@
 
 .toolbarButton {
     font-family: inherit;
-    font-size:medium;
+    font-size: small;
     background-color: #24343f;
     border: none;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
+    padding-left: 8px;
     padding-top: 3px;
     padding-right: 20px;
     margin-right: 3px;
@@ -24,7 +25,7 @@
     row-gap: 5px;
     background-color: #24343f;
     padding: 4px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     margin-left: 3px;
     /* border-bottom: 2px solid #14252e;
     border-left: 3px solid #14252e; */
@@ -37,12 +38,26 @@
 .scrollBox {
     overflow: auto;
     background-color: #14252e;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px inset;
     height: 100%;
 }
 
 .nameBar{
-    display: flex;
-    
+    /* display: flex; */
+    /* align-items: center; */
+    /* gap: 60px; */
+    padding: 4px;
+    background-color: #1d2a31;
+}
+
+.children{
+    font-size:xx-small;
+    padding: 4px;
+}
+
+.name{
+    font-size: small;
+    padding-left: 8px;
 }
 
 .contextMenu {
