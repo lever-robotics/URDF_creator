@@ -28,6 +28,8 @@
 .export-button {
     font-size: 20px;
     background-color: #646cff;
+    padding: 10px 20px;
+    border-radius: 8px;
     border-width: 0;
     justify-content: center;
 }

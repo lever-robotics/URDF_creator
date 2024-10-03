@@ -3,20 +3,16 @@ import Slider from "@mui/material/Slider";
 import Section from "../Section";
 import Parameter from "./Parameter";
 import OffsetParameters from "./OffsetParameters";
-import ParameterProps from "../ParameterProps";
+import ParameterProps, { ParameterValue } from "../ParameterProps";
 
 export default function JointParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
-    const [min, setMin] = useState(selectedObject.min);
-    const [max, setMax] = useState(selectedObject.max);
-    const [maxInput, setMaxInput] = useState(selectedObject.max);
-    const [minInput, setMinInput] = useState(selectedObject.min);
+    const [min, setMin] = useState<ParameterValue>(selectedObject.min);
+    const [max, setMax] = useState<ParameterValue>(selectedObject.max);
     const [jointValue, setJointValue] = useState(selectedObject.jointValue);
     const [jointInput, setJointInput] = useState(selectedObject.jointValue.toString());
 
     useEffect(() => {
-        setMaxInput(selectedObject.max);
-        setMinInput(selectedObject.min);
         setMax(selectedObject.max);
         setMin(selectedObject.min);
         setJointInput(selectedObject.jointValue.toString());
@@ -37,19 +33,26 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
         return v;
     };
 
-    const checkNegativeZero = (value: string) => {
+    const validateInput = (value: string) => {
+        // If you click enter or away with invalid input then reset
+        const newValue = parseFloat(value);
+        if(isNaN(newValue)){
+            setMin(selectedObject.min);
+            setMax(selectedObject.max);
+            return false;
+        }
 
-        if(value === "-0"){
-            return "0";
+        if(Object.is(newValue, -0)){
+            return 0;
         }else{
-            return value;
+            return newValue;
         }
     }
 
     const handleJointValueChange = (valueString: string) => {
         let value = toFloat(valueString);
         //clamp the value to the min and max
-        value = Math.min(Math.max(value, min), max);
+        value = Math.min(Math.max(value, min as number), max as number);
         setJointValue(value);
         setJointInput(value.toString());
         selectedObject.jointValue = value;
@@ -75,21 +78,38 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
         threeScene.startMoveJoint(selectedObject);
     };
 
-    const handleMinValueChange = (valueString: string) => {
-        const value = toFloat(checkNegativeZero(valueString));
-        setMinInput(value);
+    const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
         setMin(value);
-        selectedObject.min = -value;
-        threeScene.forceUpdateBoth();
     };
 
-    const handleMaxValueChange = (valueString: string) => {
-        const value = toFloat(checkNegativeZero(valueString));
-        setMaxInput(value);
+    const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
         setMax(value);
-        selectedObject.max = value;
-        threeScene.forceUpdateBoth();
     };
+
+    const handleMinMaxBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const type = e.currentTarget.title.toLowerCase().replace(":", "");
+        const validValue = validateInput(e.currentTarget.value);
+        if(!validValue) return;
+        switch (type) {
+            case "min":
+                selectedObject.min = validValue;
+                setMin(validValue); 
+                break;
+            case "max":
+                selectedObject.max = validValue;
+                setMax(validValue); 
+                break;
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleMinMaxBlur(e);
+            (e.target as HTMLInputElement).blur();
+        }
+    }
 
     const reattachLink = () => {
         threeScene.reattachLink(selectedObject);
@@ -127,30 +147,18 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
                                 <Parameter
                                     title="Min:"
                                     className="joint-input"
-                                    value={minInput}
-                                    onChange={(e) => {
-                                        setMinInput(Number(e.currentTarget.value));
-                                    }}
-                                    onBlur={(e) => {
-                                        handleMinValueChange(e.target.value);
-                                    }}
-                                    onKeyPress={(e) => {
-                                        if (e.key === "Enter") handleMinValueChange(e.currentTarget.value);
-                                    }}
+                                    value={min}
+                                    onChange={handleMinChange}
+                                    onBlur={handleMinMaxBlur}
+                                    onKeyDown={handleKeyDown}
                                 />
                                 <Parameter
                                     title="Max:"
                                     className="joint-input"
-                                    value={maxInput}
-                                    onChange={(e) => {
-                                        setMaxInput(Number(e.target.value));
-                                    }}
-                                    onBlur={(e) => {
-                                        handleMaxValueChange(e.target.value);
-                                    }}
-                                    onKeyPress={(e) => {
-                                        if (e.key === "Enter") handleMaxValueChange(e.currentTarget.value);
-                                    }}
+                                    value={max}
+                                    onChange={handleMaxChange}
+                                    onBlur={handleMinMaxBlur}
+                                    onKeyDown={handleKeyDown}
                                 />
                                 <Parameter
                                     title="Value:"
@@ -162,7 +170,7 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
                                     onBlur={(e) => {
                                         handleJointValueChange(e.target.value);
                                     }}
-                                    onKeyPress={(e) => {
+                                    onKeyDown={(e) => {
                                         if (e.key === "Enter") handleJointValueChange(e.currentTarget.value);
                                     }}
                                 />
@@ -171,8 +179,8 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
                             <Slider
                                 value={jointValue}
                                 step={0.01}
-                                min={min}
-                                max={max}
+                                min={min as number}
+                                max={max as number}
                                 aria-label="Default"
                                 valueLabelDisplay="auto"
                                 onChange={(e) => {

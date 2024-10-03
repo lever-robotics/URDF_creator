@@ -7,4 +7,6 @@ type ParameterProps = {
     threeScene: ThreeScene,
 }
 
+export type ParameterValue = string | number | undefined;
+
 export default ParameterProps;

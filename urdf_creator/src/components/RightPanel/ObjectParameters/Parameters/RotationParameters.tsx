@@ -2,19 +2,20 @@ import React, { useState, useEffect } from "react";
 import Section from "../Section";
 import Parameter from "./Parameter";
 import ItemParameterProps from "../ItemParameterProps";
+import { ParameterValue } from "../ParameterProps";
 
 function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const radToDeg = (radians: number) => (radians * 180) / Math.PI;
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
-    const [tempX, setTempX] = useState(
+    const [tempX, setTempX] = useState<ParameterValue>(
         radToDeg(selectedItem!.rotation.x).toFixed(2)
     );
-    const [tempY, setTempY] = useState(
+    const [tempY, setTempY] = useState<ParameterValue>(
         radToDeg(selectedItem!.rotation.y).toFixed(2)
     );
-    const [tempZ, setTempZ] = useState(
+    const [tempZ, setTempZ] = useState<ParameterValue>(
         radToDeg(selectedItem!.rotation.z).toFixed(2)
     );
 
@@ -25,12 +26,20 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         setTempZ(radToDeg(selectedItem!.rotation.z).toFixed(2));
     }, [JSON.stringify(selectedItem!.rotation), threeScene?.toolMode]);
 
-    const checkNegativeZero = (value: string) => {
+    const validateInput = (value: string) => {
+        // If you click enter or away with invalid input then reset
+        const newValue = parseFloat(value);
+        if(isNaN(newValue)){
+            setTempX(selectedItem?.rotation.x);
+            setTempY(selectedItem?.rotation.y);
+            setTempZ(selectedItem?.rotation.z);
+            return false;
+        }
 
-        if(value === "-0"){
-            return "0";
+        if(Object.is(newValue, -0)){
+            return 0;
         }else{
-            return value;
+            return newValue;
         }
     }
 
@@ -52,18 +61,18 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
 
     const handleRotationBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
-        const newValue = degToRad(parseFloat(checkNegativeZero(e.currentTarget.value)));
-        if (isNaN(newValue)) return;
+        const validValue = validateInput(e.currentTarget.value);
+        if(!validValue) return;
         const newRotation = selectedItem!.objectRotation.toArray();
         switch (axis) {
             case "x":
-                newRotation[0] = newValue; 
+                newRotation[0] = validValue; 
                 break;
             case "y":
-                newRotation[1] = newValue; 
+                newRotation[1] = validValue; 
                 break;
             case "z":
-                newRotation[2] = newValue; 
+                newRotation[2] = validValue; 
                 break;
         }
         selectedItem!.objectRotation.set(...newRotation);
@@ -72,6 +81,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleRotationBlur(e);
+            (e.target as HTMLInputElement).blur();
         }
     };
 
