@@ -5,6 +5,7 @@ import ItemParameterProps from "../ItemParameterProps";
 import { Frameish } from "../../../../Models/Frame";
 import { Collision, Visual } from "../../../../Models/VisualCollision";
 import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import styles from "../ObjectParameters.module.css";
 
 type MeshParametersProps = {
     selectedObject?: Frameish,
@@ -65,12 +66,13 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParame
     }, []);
 
     return (
-        <Section title="Geometry">
-            <strong>Choose Geometry (computationally intensive if mesh applied as collision geometry):</strong>
+        <Section title="">
+            Choose Geometry (computationally intensive if mesh applied as collision geometry):
             <select
                 value={geometryValue}
                 onChange={handleGeometryChange}
                 onClick={loadFiles} // Load files when the selection bar is clicked
+                className={styles.select}
             >
                 <option value="cube">Cube</option>
                 <option value="sphere">Sphere</option>

@@ -1,0 +1,46 @@
+.parameter{
+    /* padding: 6px; */
+    margin-right: 10px;
+    display:flex;
+    align-items: center;
+    margin: 10px 10px 10px 0px;
+}
+
+.paramLabel{
+    font-family: inherit;
+    color: #fff; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    font-size: x-small;
+    font-weight: 500;
+    margin-right: 4px;
+}
+
+.units {
+    font-family: "Times New Roman", Times, serif;
+    color: #fff; 
+    font-size: xx-small;
+    margin-left: 2px;
+    vertical-align: super;
+}
+
+.large-dot {
+    font-size: 1.5em; /* Makes the dot larger */
+    vertical-align: middle; /* Adjusts the vertical alignment to match surrounding text */
+    display: inline-block;
+}
+
+.input {
+    background-color: #14252e;
+    border: 1px solid transparent;
+    transition: border-color 0.25s;
+    color: #fff;
+    text-align: center;
+    width: 60px;
+    padding: 2px;
+    border-radius: 4px;
+    outline: none;
+}.input:hover {
+    border-color: #646cff;
+}.input:focus {
+    border-color: #646cff;
+}

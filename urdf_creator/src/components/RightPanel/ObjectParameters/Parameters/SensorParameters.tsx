@@ -4,6 +4,7 @@ import CameraParameters from "../Sensors/CameraParameters";
 import LidarParameters from "../Sensors/LidarParameters";
 import React from "react";
 import ParameterProps from "../ParameterProps";
+import styles from "../ObjectParameters.module.css"
 
 function SensorsParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
@@ -15,20 +16,22 @@ function SensorsParameters({ selectedObject, threeScene }: ParameterProps) {
     };
 
     return (
-        <Section title="Sensor Parameters">
-            <strong>Sensor Type:</strong>
-            <select value={selectedObject.sensorType} onChange={handleSensorTypeChange}>
-                <option value="">Not a Sensor</option>
-                <option value="lidar">Lidar</option>
-                <option value="camera">Camera</option>
-                <option value="imu">IMU</option>
-                {/* <option value="gps">GPS</option> */}
-            </select>
-            <SensorParams
-                selectedObject={selectedObject}
-                threeScene={threeScene}
-            />
-        </Section>
+        <div className={styles.basicParams}>
+            <Section title="Sensor Parameters">
+                Sensor Type:
+                <select value={selectedObject.sensorType} onChange={handleSensorTypeChange} className={styles.select}>
+                    <option value="">Not a Sensor</option>
+                    <option value="lidar">Lidar</option>
+                    <option value="camera">Camera</option>
+                    <option value="imu">IMU</option>
+                    {/* <option value="gps">GPS</option> */}
+                </select>
+                <SensorParams
+                    selectedObject={selectedObject}
+                    threeScene={threeScene}
+                />
+            </Section>
+        </div>
     );
 }
 

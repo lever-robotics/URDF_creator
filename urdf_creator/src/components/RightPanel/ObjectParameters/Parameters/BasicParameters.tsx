@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "./parameters_style.css";
-import "../ObjectParameters.css";
 import Parameter from "./Parameter";
-import Section from "../Section";
 import ParameterProps from "../ParameterProps";
 import { deregisterName, registerName } from "../../../ThreeDisplay/TreeUtils";
+import styles from "../ObjectParameters.module.css"
 
 export default function BasicParameters({ threeScene, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
@@ -52,23 +50,28 @@ export default function BasicParameters({ threeScene, selectedObject }: Paramete
         threeScene.forceUpdateScene();
     };
 
-    return (
-        <Section title="Basic Parameters">
-            <ul>
-                <Parameter
-                    title={"Name:"}
-                    type={"text"}
-                    value={tempName}
-                    onChange={handleNameChange}
-                    onBlur={handleNameBlur}
-                    onKeyDown={handleKeyDown}
-                    readOnly={selectedObject.name === "base_link"}
-                    className={"name-input"}
-                />
-            </ul>
+
+    const props = {
+        title: "",
+        type: "text",
+        value: tempName,
+        onChange: handleNameChange,
+        onBlur: handleNameBlur,
+        onKeyDown: handleKeyDown,
+        readOnly: selectedObject.name === "base_link",
+        className: selectedObject.isRootFrame ? styles.rootName : styles.name,
+    }
+
+    return (            
+        <div className={styles.basic}>
+            Name
+            <div className={styles.parameter}>
+                <strong className={styles.paramLabel}>{props.title}</strong>
+                <input {...props} className={props.className}/>
+            </div>
             {error && (
                 <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
             )}{" "}
-        </Section>
+        </div>
     );
 }

@@ -9,7 +9,11 @@
     font-weight: 500;
     font-family: inherit;
     background-color: #1d2a31;
-    border: none;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-bottom: none;
+    transition: border-color 0.25s;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
     padding-top: 3px;
@@ -18,7 +22,9 @@
     margin-right: 5px;
     cursor: pointer;
     color: #fff;
-    text-shadow: 1px 1px 2px black;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}.toolbarButton:hover {
+    border-color: #646cff;
 }
 
 .rightPanel {
@@ -30,6 +36,7 @@
     background: #24343f;
     margin: 0px 3px 6px 4px;
     box-shadow: rgba(0, 0, 0, 0.15) -1px 1px 2.6px;
+    border-top: 2px solid #646cff;
     /* opacity: 0.6;
     transition: opacity 0.2s ease-in-out; */
 }

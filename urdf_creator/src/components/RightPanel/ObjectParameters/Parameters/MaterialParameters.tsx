@@ -1,9 +1,6 @@
 import React from "react";
-import "./parameters_style.css";
-import "../ObjectParameters.css";
 import Parameter from "./Parameter";
 import Section from "../Section";
-import { deregisterName, registerName } from "../../../ThreeDisplay/TreeUtils";
 import ItemParameterProps from "../ItemParameterProps";
 import { Collision, Visual } from "../../../../Models/VisualCollision";
 

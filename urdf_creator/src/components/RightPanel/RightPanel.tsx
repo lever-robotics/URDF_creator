@@ -27,7 +27,8 @@ export default function RightPanel({ projectTitle, threeScene, updateCode }: Pro
     const selectedStyle = (format: string) => {
         if(format === selectedFormat){
             return {
-                backgroundColor: "#24343f",
+                // backgroundColor: "#24343f",
+                backgroundColor: "#646cff",
             }
         }
         return {}

@@ -4,6 +4,7 @@ import Section from "../Section";
 import Parameter from "./Parameter";
 import OffsetParameters from "./OffsetParameters";
 import ParameterProps, { ParameterValue } from "../ParameterProps";
+import styles from "../ObjectParameters.module.css";
 
 export default function JointParameters({ selectedObject, threeScene }: ParameterProps) {
     if (!selectedObject) return;
@@ -116,82 +117,84 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
     };
 
     return (
-        <Section title="Joint Parameters">
-            <div>
-                <strong>Parent Link:</strong>
-                <span> {selectedObject.parentName}</span>
+        <div className={styles.basicParams}>
+            <div className={styles.basic}>
+                Joint
+                <div className={styles.jointParent}>
+                    Parent Link:
+                    {selectedObject.parentName}
+                </div>
             </div>
             <OffsetParameters selectedObject={selectedObject} threeScene={threeScene} />
-            {!selectedObject.isRootFrame && (
-                <>
-                    <div>
-                        <strong>Joint Type:</strong>
-                        <select value={selectedObject.jointType} onChange={handleJointTypeChange}>
-                            <option value="fixed">Fixed</option>
-                            <option value="revolute">Revolute</option>
-                            <option value="continuous">Continuous</option>
-                            <option value="prismatic">Prismatic</option>
-                            {/* <option value="planar">Planar</option>
-                        <option value="floating">Floating</option> */}
-                        </select>
-                    </div>
-                    {selectedObject.jointType !== "fixed" && (
-                        <>
-                            <button className={"button"} onClick={handleChangeAxisAngle} onBlur={reattachLink}>
-                                Change Axis Angle
-                            </button>
-                            <button className={"button"} onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
-                                Change Axis Origin
-                            </button>
-                            <ul>
-                                <Parameter
-                                    title="Min:"
-                                    className="joint-input"
-                                    value={min}
-                                    onChange={handleMinChange}
-                                    onBlur={handleMinMaxBlur}
-                                    onKeyDown={handleKeyDown}
-                                />
-                                <Parameter
-                                    title="Max:"
-                                    className="joint-input"
-                                    value={max}
-                                    onChange={handleMaxChange}
-                                    onBlur={handleMinMaxBlur}
-                                    onKeyDown={handleKeyDown}
-                                />
-                                <Parameter
-                                    title="Value:"
-                                    className="joint-input"
-                                    value={jointInput}
+            <div className={styles.basic}>
+                {!selectedObject.isRootFrame && (
+                    <>
+                        <div>
+                            Joint Type:
+                            <select value={selectedObject.jointType} onChange={handleJointTypeChange} className={styles.select}>
+                                <option value="fixed">Fixed</option>
+                                <option value="revolute">Revolute</option>
+                                <option value="continuous">Continuous</option>
+                                <option value="prismatic">Prismatic</option>
+                                {/* <option value="planar">Planar</option>
+                            <option value="floating">Floating</option> */}
+                            </select>
+                        </div>
+                        {selectedObject.jointType !== "fixed" && (
+                            <>
+                                <button className={styles.button} onClick={handleChangeAxisAngle} onBlur={reattachLink}>
+                                    Change Axis Angle
+                                </button>
+                                <button className={styles.button} onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
+                                    Change Axis Origin
+                                </button>
+                                <ul>
+                                    <Parameter
+                                        title="Min:"
+                                        value={min}
+                                        onChange={handleMinChange}
+                                        onBlur={handleMinMaxBlur}
+                                        onKeyDown={handleKeyDown}
+                                    />
+                                    <Parameter
+                                        title="Max:"
+                                        value={max}
+                                        onChange={handleMaxChange}
+                                        onBlur={handleMinMaxBlur}
+                                        onKeyDown={handleKeyDown}
+                                    />
+                                    <Parameter
+                                        title="Value:"
+                                        value={jointInput}
+                                        onChange={(e) => {
+                                            setJointInput(e.target.value);
+                                        }}
+                                        onBlur={(e) => {
+                                            handleJointValueChange(e.target.value);
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") handleJointValueChange(e.currentTarget.value);
+                                        }}
+                                    />
+                                </ul>
+                                <button className={styles.button} onClick={resetJoint}>Reset</button>
+                                <Slider
+                                    value={jointValue}
+                                    step={0.01}
+                                    min={min as number}
+                                    max={max as number}
+                                    aria-label="Default"
+                                    valueLabelDisplay="auto"
                                     onChange={(e) => {
-                                        setJointInput(e.target.value);
+                                        handleJointValueChange((e.target! as HTMLInputElement).value);
                                     }}
-                                    onBlur={(e) => {
-                                        handleJointValueChange(e.target.value);
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") handleJointValueChange(e.currentTarget.value);
-                                    }}
+                                    onBlur={threeScene.forceUpdateCode}
                                 />
-                            </ul>
-                            <button className={"button"} onClick={resetJoint}>Reset</button>
-                            <Slider
-                                value={jointValue}
-                                step={0.01}
-                                min={min as number}
-                                max={max as number}
-                                aria-label="Default"
-                                valueLabelDisplay="auto"
-                                onChange={(e) => {
-                                    handleJointValueChange((e.target! as HTMLInputElement).value);
-                                }}
-                                onBlur={threeScene.forceUpdateCode}
-                            />
-                        </>
-                    )}
-                </>
-            )}
-        </Section>
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
     );
 }

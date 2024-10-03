@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Inertia from "../../../../Models/Inertia";
 import Parameter from "./Parameter";
 import Section from "../Section";
-import "../ObjectParameters.css"
-import { handleDownload } from "../../../../utils/HandleDownload";
 import ParameterProps from "../ParameterProps";
+import styles from "../ObjectParameters.module.css"
 
 function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
     if (!selectedObject) return;
@@ -95,8 +93,9 @@ function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
     };
 
     return (
-        <Section title="Inertia Parameters">
-            <ul>
+        <div className={styles.section}>
+            <div className={styles.title}>Inertia</div>
+            <div className={styles.mass}>
                 <Parameter
                     title="Mass:"
                     type="text"
@@ -106,11 +105,8 @@ function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
                     onKeyDown={handleKeyDown}
                     units="kg"
                 />
-            </ul>
-            <br />
-            <br />
-            <strong>Moment of Inertia:</strong>
-            <ul>
+            </div>
+            <div className={styles.momentOfInertia}>
                 <Parameter
                     title="Ixx:"
                     type="text"
@@ -189,8 +185,8 @@ function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
                         </>
                     }
                 />
-            </ul>
-        </Section>
+            </div>
+        </div>
     );
 }
 

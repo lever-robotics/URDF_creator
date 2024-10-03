@@ -1,6 +1,5 @@
-.object-parameters {
+.objectParameters {
     font-family: Arial, sans-serif;
-    padding: 10px;
     /* Make box scrollable */
     overflow: auto;
     flex-grow: 1;
@@ -11,11 +10,97 @@
     /* background-color: #1d2a31; */
 }
 
+.section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0px;
+}
+
+.sectionChildren {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.title {
+    font-family: inherit;
+    font-size: small;
+    font-weight: 300;
+    margin-left: 16px;
+}
+
 .object-parameters h3 {
     margin-top: 0;
     font-size: 20px;
 
 }
+
+.basic {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 16px;
+    margin-right: 100px;
+    font-family: inherit;
+    font-size: small;
+    font-weight: 300;
+}
+
+.name {
+    border: 1px solid transparent;
+    transition: border-color 0.25s;
+    background-color: #14252e;
+    color: #fff;
+    text-align: center;
+    width: 150px;
+    border-radius: 4px;
+    outline: none;
+    text-align: center;
+}.name:hover{
+    border-color: #646cff;
+}.name:focus{
+    border-color: #646cff;
+}
+
+.rootName {
+    border: 1px solid transparent;
+    transition: border-color 0.25s;
+    background-color: #3b454a;
+    color: #fff;
+    text-align: center;
+    width: 150px;
+    border-radius: 4px;
+    outline: none;
+    text-align: center;
+    pointer-events: none;
+}
+
+.basicParams{
+    background-color: #1d2a31;
+    padding: 16px 0px;
+    margin: 6px 4px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+}
+
+.momentOfInertia {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.mass {
+    margin: 16px;
+    margin-left: 32px;
+}
+
+.jointParent {
+    color: #fff; 
+    font-size: x-small;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    font-weight: 500;
+}
+
 
 .button {
     border: 1px solid transparent;
@@ -49,9 +134,7 @@
     margin-bottom: 8px;
 }
 
-.section {
-    margin-left: 32px;
-}
+
 h4 {
     font-size: 16px;
     margin-top: 8px;
@@ -67,7 +150,7 @@ h4:hover {
     border-color: #1d2a31;
 } */
 
-.object-parameters input[type="text"],
+/* .object-parameters input[type="text"],
 .object-parameters input[type="number"],
 .object-parameters input[type="color"] {
     width: 80px;
@@ -95,60 +178,11 @@ h4:hover {
     display: block;
     margin-bottom: 8px;
 }
-
-.object-parameters select {
-    background-color: #202020;
-    color: #ffffff;
+*/
+.select {
+    background-color: #14252e;
+    color: #fff;
     display: block;
     margin-top: 4px;
-}
-
-.toggle-section {
-    margin-bottom: 10px;
-}
-
-.toggle-header {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #333842;
-    /* Slight variation of #282c34 */
-    transition: background-color 0.3s ease;
-}
-
-.toggle-header h4 {
-    margin: 0;
-    margin-left: 10px;
-    color: #ffffff;
-    order: 2;
-    /* Ensure the label is after the arrow */
-}
-
-.toggle-header:hover {
-    background-color: #3a3f4a;
-    /* Slightly lighter background color on hover */
-}
-
-.toggle-header .toggle-icon {
-    font-size: 0.9em;
-    /* Make the arrow slightly smaller */
-    transition: transform 0.3s ease;
-    color: #ffffff;
-    order: 1;
-    /* Ensure the arrow is before the label */
-}
-
-.toggle-content {
-    padding: 10px;
-    background-color: #282c34;
-    /* Background color to match the theme */
-    color: #ffffff;
-}
-
-.toggle-header.open {
-    background-color: #3a3f4a;
-    /* Slightly lighter variation for open state */
+    border: none;
 }

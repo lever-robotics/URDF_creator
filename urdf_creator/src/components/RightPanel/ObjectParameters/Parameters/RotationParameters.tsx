@@ -88,7 +88,6 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
 
     return (
         <Section title="Rotation">
-            <ul>
                 <Parameter
                     title="X:"
                     type="text"
@@ -116,7 +115,6 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                     onBlur={handleRotationBlur}
                     onKeyDown={handleKeyDown}
                 />
-            </ul>
         </Section>
     );
 }

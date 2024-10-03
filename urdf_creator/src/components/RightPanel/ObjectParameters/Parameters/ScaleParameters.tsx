@@ -145,7 +145,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
 
     return (
         <Section title="Scale">
-            <ul>{determineParametersFromShape((selectedItem as Visual | Collision))}</ul>
+            {determineParametersFromShape((selectedItem as Visual | Collision))}
         </Section>
     );
 }

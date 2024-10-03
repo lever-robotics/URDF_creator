@@ -85,7 +85,6 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
 
     return (
         <Section title="Offset">
-            <ul>
                 <Parameter
                     title="X:"
                     type="text"
@@ -113,7 +112,6 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
                     onBlur={handleOffsetBlur}
                     onKeyDown={handleKeyDown}
                 />
-            </ul>
         </Section>
     );
 }

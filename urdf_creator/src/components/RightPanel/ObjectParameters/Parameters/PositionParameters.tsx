@@ -84,7 +84,6 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
 
     return (
         <Section title="Position">
-            <ul>
                 <Parameter
                     title="X:"
                     type="text"
@@ -112,7 +111,6 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                     onBlur={handlePositionBlur}
                     onKeyDown={handleKeyDown}
                 />
-            </ul>
         </Section>
     );
 }
