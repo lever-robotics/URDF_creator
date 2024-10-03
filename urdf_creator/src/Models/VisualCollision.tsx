@@ -21,61 +21,61 @@ export default class VisualCollision extends THREE.Mesh {
 
         this.shape = shape;
 
-        this.geometry = defineGeometry(this, shape);
+        this.geometry = this.defineGeometry(shape);
         this.material = new THREE.MeshPhongMaterial();
         this.color = new Color(color);
 
         this.customRenderBehaviors = {};
+    }
 
-        function defineGeometry(context: VisualCollision, shape: string) {
-            switch (shape) {
-                default:
-                case "cube":
-                    Object.defineProperty(context, "scale", {
-                        get() {
-                            return this._scale;
-                        },
-                        set(newVector) {
-                            this._scale.set(...newVector);
-                        },
-                    });
+    private defineGeometry(shape: string) {
+        switch (shape) {
+            default:
+            case "cube":
+                Object.defineProperty(this, "scale", {
+                    get() {
+                        return this._scale;
+                    },
+                    set(newVector) {
+                        this._scale.set(...newVector);
+                    },
+                });
 
-                    return new THREE.BoxGeometry(1, 1, 1);
-                case "sphere":
-                    Object.defineProperty(context, "scale", {
-                        get() {
-                            return this._scale;
-                        },
-                        set(newVector) {
-                            this._scale.set(...newVector);
-                        },
-                    });
+                return new THREE.BoxGeometry(1, 1, 1);
+            case "sphere":
+                Object.defineProperty(this, "scale", {
+                    get() {
+                        return this._scale;
+                    },
+                    set(newVector) {
+                        this._scale.set(...newVector);
+                    },
+                });
 
-                    return new THREE.SphereGeometry(0.5, 32, 32);
-                case "cylinder":
-                    Object.defineProperty(context, "scale", {
-                        get() {
-                            return this._scale;
-                        },
-                        set(newVector) {
-                            this._scale.set(...newVector);
-                        },
-                    });
-                    const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-                    cylinder.rotateX(Math.PI / 2);
-                    return cylinder;
-                case "mesh":
-                    Object.defineProperty(context, "scale", {
-                        get() {
-                            return this._scale;
-                        },
-                        set(newVector) {
-                            this._scale.set(...newVector);
-                        },
-                    });
+                return new THREE.SphereGeometry(0.5, 32, 32);
+            case "cylinder":
+                Object.defineProperty(this, "scale", {
+                    get() {
+                        return this._scale;
+                    },
+                    set(newVector) {
+                        this._scale.set(...newVector);
+                    },
+                });
+                const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                cylinder.rotateX(Math.PI / 2);
+                return cylinder;
+            case "mesh":
+                Object.defineProperty(this, "scale", {
+                    get() {
+                        return this._scale;
+                    },
+                    set(newVector) {
+                        this._scale.set(...newVector);
+                    },
+                });
 
-                    return new THREE.ConeGeometry(0.5, 1, 32); //temporarly show meshes as cones till develop mesh imports
-            }
+                return new THREE.ConeGeometry(0.5, 1, 32); //temporarly show meshes as cones till develop mesh imports
         }
     }
 
@@ -90,15 +90,14 @@ export default class VisualCollision extends THREE.Mesh {
             //set the shape to the new shape
             this.shape = geomertyType;
             //set the geometry to the new geometry
+            this.scale.set(1, 1, 1);
             if (geomertyType === "cube") {
-                this.geometry = new THREE.BoxGeometry(1, 1, 1);
+                this.geometry = this.defineGeometry(geomertyType);
             } else if (geomertyType === "sphere") {
-                this.geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                this.geometry = this.defineGeometry(geomertyType);
             }
             else if (geomertyType === "cylinder") {
-                const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-                cylinder.rotateX(Math.PI / 2);
-                this.geometry = cylinder;
+                this.geometry = this.defineGeometry(geomertyType);
             }
             return;
         }
@@ -112,7 +111,7 @@ export default class VisualCollision extends THREE.Mesh {
 
         // Set the stlfile name to the userData
         this.stlfile = fileName;
-        
+
         //get stl file from openDB
         try {
             // Get the STL file from IndexedDB

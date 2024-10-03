@@ -15,6 +15,14 @@ type MeshParametersProps = {
 function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParametersProps) {
     if (!selectedObject) return;
     const [files, setFiles] = useState<any[]>([]);
+    const [geometryValue, setGeometryValue] = useState(
+        selectedItem!.shape === "mesh" ? selectedItem!.stlfile : selectedItem!.shape
+    );
+
+    useEffect(() => {
+        setGeometryValue(selectedItem!.shape === "mesh" ? selectedItem!.stlfile : selectedItem!.shape);
+    }
+    , [JSON.stringify(selectedItem!.shape)]);
 
     const handleGeometryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         //check if value is cube sphree or cylinder then set geometry as that with blank file name
@@ -60,7 +68,7 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParame
         <Section title="Geometry">
             <strong>Choose Geometry (computationally intensive if mesh applied as collision geometry):</strong>
             <select
-                value={selectedItem!.stlfile}
+                value={geometryValue}
                 onChange={handleGeometryChange}
                 onClick={loadFiles} // Load files when the selection bar is clicked
             >
