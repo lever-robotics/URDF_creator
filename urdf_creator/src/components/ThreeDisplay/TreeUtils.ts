@@ -36,7 +36,7 @@ export function createFrame(params: UserData): Frame {
         collisions?.push({
             shape: shape,
             scale: new THREE.Vector3(1, 1, 1),
-            color: Math.random() * 0xffffff,
+            color: 0x808080,
             position: new THREE.Vector3(0, 0, 0),
             rotation: new THREE.Euler(0, 0, 0),
         });

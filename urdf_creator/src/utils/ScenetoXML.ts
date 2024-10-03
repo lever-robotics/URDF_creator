@@ -58,13 +58,12 @@ export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
                         xml += `        <cylinder radius="${visual.scale.x / 2}" length="${visual.scale.z}" />\n`;
                     }
                     xml += `      </geometry>\n`;
-                    xml += `      <material name="${visual.name}-material">\n`;
+                    xml += `      <material name="${visual.frame!.name}-material">\n`;
                     xml += `        <color rgba="${visual.color.r} ${visual.color.g} ${visual.color.b} 1" />\n`;
                     xml += `      </material>\n`;
                     xml += `    </visual>\n`;
                 });
             }
-            debugger;
             if (collisions) {
                 collisions.forEach((collision) => {
                     xml += `    <collision>\n`;

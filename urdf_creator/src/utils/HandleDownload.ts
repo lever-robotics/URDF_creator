@@ -1,5 +1,5 @@
 // Handle misc download types
-import * as openDB from "idb";
+import { openDB } from "idb";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -62,12 +62,21 @@ export function otherFileDownload(data: string, type: string, title: string) {
     URL.revokeObjectURL(link.href);
 }
 
-export async function GenerateZip(files: { zipPath: string, content: Blob | string }[], title: string) {
+export async function GenerateZip(files: { zipPath: string, content: Blob | string }[], title: string, include_meshes: boolean) {
     const zip = new JSZip();
 
     // Loop over the files to add them to the zip
     for (const file of files) {
         zip.file(file.zipPath, file.content);
+    }
+
+    //Add the meshes to the ZIP if its been asked to be included. So when ever the robot_description package is created
+    if (include_meshes) {
+        const db = await openDB("stlFilesDB", 1);
+        const mesh_files = await db.getAll("files");
+        mesh_files.forEach(async (file) => {
+            zip.file(`${title}_description/meshes/${file.name}`, file.file);
+        });
     }
 
     // Generate the zip file and trigger the download
@@ -150,7 +159,7 @@ export async function GenerateGazeboFiles(sdfContent: string, title: string) {
 
 export async function generateURDFZip(urdfContent: string, title: string) {
     const descriptionFiles = await GenerateDescriptionFiles(urdfContent, title);
-    await GenerateZip(descriptionFiles, title);
+    await GenerateZip(descriptionFiles, title, true);
 }
 
 export async function generateGazeboZip(sdfContent: string, urdfContent: string, title: string) {
@@ -159,7 +168,7 @@ export async function generateGazeboZip(sdfContent: string, urdfContent: string,
 
     // Combine both the description and gazebo files
     const allFiles = [...descriptionFiles, ...gazeboFiles];
-    await GenerateZip(allFiles, title);
+    await GenerateZip(allFiles, title, true);
 }
 
 // Utility function to fetch file content via URL

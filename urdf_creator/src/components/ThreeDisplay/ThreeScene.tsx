@@ -125,7 +125,6 @@ export default class ThreeScene {
             this.scene.attach(newFrame);
         }
         this.selectObject(newFrame);
-        debugger;
         this.forceUpdateCode();
         this.forceUpdateScene();
     };

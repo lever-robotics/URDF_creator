@@ -12,7 +12,7 @@ export default class VisualCollision extends THREE.Mesh {
     frame: Frameish;
     material: THREE.MeshPhongMaterial;
     stlfile?: string;
-    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color = Math.random() * 0xffffff) {
+    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number) {
         super();
 
         this.scale.copy(scale);
@@ -80,26 +80,43 @@ export default class VisualCollision extends THREE.Mesh {
     }
 
 
-    setMesh = async (meshFileName: string) => {
-        if (meshFileName === "") {
-            this.material.wireframe = false;
-            this.stlfile = undefined;
+    setGeometry = async (geomertyType: string, fileName: string) => {
+        //check if geometry type is cube, sphree, or cylinder
+        if (geomertyType === "cube" || geomertyType === "sphere" || geomertyType === "cylinder") {
+            //check if object is already that shape then do nothing
+            if (this.shape === geomertyType) {
+                return;
+            }
+            //set the shape to the new shape
+            this.shape = geomertyType;
+            //set the geometry to the new geometry
+            if (geomertyType === "cube") {
+                this.geometry = new THREE.BoxGeometry(1, 1, 1);
+            } else if (geomertyType === "sphere") {
+                this.geometry = new THREE.SphereGeometry(0.5, 32, 32);
+            }
+            else if (geomertyType === "cylinder") {
+                const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+                cylinder.rotateX(Math.PI / 2);
+                this.geometry = cylinder;
+            }
             return;
         }
+        //Then the geometry type is mesh
+        this.shape = "mesh";
 
-        //check if object already has a mesh and if so remove it and add the new mesh
-        if (this.stlfile === meshFileName) {
+        //check if object is already that shape
+        if (this.stlfile === fileName) {
             return;
         }
 
         // Set the stlfile name to the userData
-        this.stlfile = meshFileName;
-
-        // Add the STL Mesh to the Frame as a child of Frame.joint.link.mesh and apply wireframe to link geometry
+        this.stlfile = fileName;
+        
         //get stl file from openDB
         try {
             // Get the STL file from IndexedDB
-            const file = await getFile(meshFileName);
+            const file = await getFile(fileName);
 
             if (file) {
                 //convert the file to an array buffer
@@ -116,49 +133,21 @@ export default class VisualCollision extends THREE.Mesh {
                 loader.load(
                     url,
                     (geometry) => {
-                        const material = new THREE.MeshPhongMaterial({
-                            color: this.color || Math.random() * 0xffffff,
-                        });
-                        const mesh = new THREE.Mesh(geometry, material);
-                        // Compute the bounding box of the geometry
-                        const boundingBox = new THREE.Box3().setFromObject(
-                            mesh
-                        );
-                        // Define the desired bounding box dimensions
-                        const desiredBox = new THREE.Box3(
-                            new THREE.Vector3(-0.5, -0.5, -0.5),
-                            new THREE.Vector3(0.5, 0.5, 0.5)
-                        );
+                        // Assign the loaded geometry to the current object
+                        this.geometry = geometry;
+                        this.shape = "mesh";
 
-                        // Calculate the size of the bounding box and desired box
-                        const boundingBoxSize = new THREE.Vector3();
-                        boundingBox.getSize(boundingBoxSize);
-                        const desiredBoxSize = new THREE.Vector3();
-                        desiredBox.getSize(desiredBoxSize);
-
-                        // Calculate the scaling factor
-                        const scaleX = desiredBoxSize.x / boundingBoxSize.x;
-                        const scaleY = desiredBoxSize.y / boundingBoxSize.y;
-                        const scaleZ = desiredBoxSize.z / boundingBoxSize.z;
-                        const scale = Math.min(scaleX, scaleY, scaleZ);
-
-                        // Apply the scaling to the mesh
-                        mesh.scale.set(scale, scale, scale);
-
-                        // Add the mesh to the scene
-                        this.link!.add(mesh);
+                        // Scale the mesh geometry to 0.001 on each axis
+                        this.scale.set(0.001, 0.001, 0.001);
 
                         // Revoke the Blob URL after use
                         URL.revokeObjectURL(url);
-                    },
+                        },
                     undefined,
                     (error) => {
                         console.error("Error loading the STL file:", error);
                     }
                 );
-
-                // Make the mesh object a wireframe
-                this.mesh!.material.wireframe = true;
             } else {
                 console.error("File not found in database");
             }
@@ -214,7 +203,11 @@ export class Visual extends VisualCollision {
 }
 
 export class Collision extends VisualCollision {
-    constructor(shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff) {
+    constructor(shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080) {
         super(shape, scale, color);
+        //make the collision boxes transparent
+        this.material.transparent = true;
+        this.material.opacity = 0.5;
+        this.material.wireframe = true;
     }
 }

@@ -3,33 +3,47 @@ import './Import.css';
 import { useRef } from 'react';
 import { openDB } from "idb";
 
-const STLImport = ({ onClose }: {onClose: () => void}) => {
+const STLImport = ({ onClose }: { onClose: () => void }) => {
 
     const inputSTLFile = useRef<HTMLInputElement>(null);
 
-    const onSTLFileUpload = () => inputSTLFile.current!.click();
-    const handleSTLFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files![0];
-        if (selectedFile) {
-            const db = await openDB("stlFilesDB", 1, {
-                upgrade(db) {
-                    if (!db.objectStoreNames.contains("files")) {
-                        db.createObjectStore("files", { keyPath: "name" });
-                    }
-                },
-            });
-            await db.put("files", {
-                name: selectedFile.name,
-                file: selectedFile,
-            });
+    // Function to open the file selector
+    const onSTLFileUpload = () => {
+        inputSTLFile.current!.click();
+    };
 
-            event.target.value = ""; // Clear the input value after upload
+    // Function to handle the selected file
+    const handleSTLFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+            try {
+                const db = await openDB("stlFilesDB", 1, {
+                    upgrade(db) {
+                        if (!db.objectStoreNames.contains("files")) {
+                            db.createObjectStore("files", { keyPath: "name" });
+                        }
+                    },
+                });
+
+                await db.put("files", {
+                    name: selectedFile.name,
+                    file: selectedFile,
+                });
+
+                // Clear the input value after upload
+                event.target.value = ""; 
+                onClose(); //close the modale after complete
+            } catch (error) {
+                console.error("Error during file upload:", error);
+            }
+        } else {
+            console.log("No file selected.");
         }
     };
 
+    // Function to handle button click (file input + close action)
     const onClick = () => {
         onSTLFileUpload();
-        onClose();
     };
 
     return (

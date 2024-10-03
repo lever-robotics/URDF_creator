@@ -16,8 +16,16 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParame
     if (!selectedObject) return;
     const [files, setFiles] = useState<any[]>([]);
 
-    const handleMeshChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        selectedItem!.setMesh(e.target.value);
+    const handleGeometryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        //check if value is cube sphree or cylinder then set geometry as that with blank file name
+        if (e.target.value === "cube" || e.target.value === "sphere" || e.target.value === "cylinder") {
+            selectedItem!.setGeometry(e.target.value, "");
+            threeScene.forceUpdateBoth();
+            return;
+        } else {
+            // Set the geometry type to mesh
+            selectedItem!.setGeometry("mesh", e.target.value);
+        }
         threeScene.forceUpdateBoth();
     };
 
@@ -50,13 +58,15 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParame
 
     return (
         <Section title="Geometry">
-            <strong>Mesh (only for visual):</strong>
+            <strong>Choose Geometry (computationally intensive if mesh applied as collision geometry):</strong>
             <select
-                value={selectedObject.userData.stlfile}
-                onChange={handleMeshChange}
+                value={selectedItem!.stlfile}
+                onChange={handleGeometryChange}
                 onClick={loadFiles} // Load files when the selection bar is clicked
             >
-                <option value="">No Mesh</option>
+                <option value="cube">Cube</option>
+                <option value="sphere">Sphere</option>
+                <option value="cylinder">Cylinder</option>
                 {files.map((file) => (
                     <option key={file.name} value={file.name}>
                         {file.name}
