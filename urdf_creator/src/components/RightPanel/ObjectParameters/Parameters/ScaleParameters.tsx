@@ -58,6 +58,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const tempValue = e.currentTarget.value;
         switch (axis) {
+            case "scale factor":
             case "x":
                 setTempX(tempValue);
                 break;
@@ -85,6 +86,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
         switch (axis) {
             case "radius":
                 validValue = validValue * 2;
+            case "scale factor":
             case "x":
                 newScale[0] = validValue;
                 break;
@@ -120,7 +122,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
             case "sphere":
                 return <Parameter title="Radius:" value={tempRadius} {...props} />;
             case "mesh":
-                return <Parameter title="Scale Factor:" value={tempRadius} {...props} />;
+                return <Parameter title="Scale Factor:" value={tempX} {...props} />;
             case "cylinder":
                 return (
                     <>

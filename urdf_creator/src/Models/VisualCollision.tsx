@@ -103,6 +103,7 @@ export default class VisualCollision extends THREE.Mesh {
         }
         //Then the geometry type is mesh
         this.shape = "mesh";
+        this.objectScale.shape = "mesh";
 
         //check if object is already that shape
         if (this.stlfile === fileName) {
@@ -164,7 +165,7 @@ export default class VisualCollision extends THREE.Mesh {
     }
 
     get objectScale() {
-        return this.scale;
+        return this._scale;
     }
 
     get objectRotation() {

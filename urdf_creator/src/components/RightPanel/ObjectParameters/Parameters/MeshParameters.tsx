@@ -31,7 +31,7 @@ function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParame
             threeScene.forceUpdateBoth();
             return;
         } else {
-            // Set the geometry type to mesh
+            // Set the geometry type to mes
             selectedItem!.setGeometry("mesh", e.target.value);
         }
         threeScene.forceUpdateBoth();
