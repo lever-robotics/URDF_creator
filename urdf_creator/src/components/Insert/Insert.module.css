@@ -4,7 +4,7 @@
     row-gap: 5px;
     background-color: #1d2a31;
     padding: 10px;
-    border-top: 1px solid #fff;
+    margin-top: 1px;
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
 }

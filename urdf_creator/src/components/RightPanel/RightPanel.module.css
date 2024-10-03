@@ -1,26 +1,24 @@
 .toolbar {
     display: flex;
     justify-content: stretch;
-    background-color: #1d2a31;
-    /* padding: 8px; */
 }
 
-.toolbar-button {
+.toolbarButton {
     font-size: 0.8em;
-    border-radius: 0;
-    transition: border-color 0.25s;
-    flex:auto;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
     font-weight: 500;
     font-family: inherit;
     background-color: #1d2a31;
-    border-color: #1d2a31;
+    border: none;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    padding-top: 3px;
+    padding-right: 20px;
+    margin-right: 3px;
     cursor: pointer;
     color: #fff;
 }
 
-.selected {
+/* .selected {
     font-size: 0.8em;
     border-radius: 0;
     border-bottom-right-radius: 8px;
@@ -33,23 +31,33 @@
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;
-}
-
-/* button:focus,
-button:focus-visible {
-    border-bottom-right-radius: 8px;
-    outline: #646cff;
 } */
 
-/* .selected:hover{
-    border-bottom-right-radius: 8px;
-    outline: #646cff
-} */
-
-.right-panel {
+.rightPanel {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     flex-basis: 0;
     overflow: auto;
+    background: transparent;
+    padding: 3px 0px 4px 4px;
 }
+
+/* Colors
+
+Background: 
+#14252e
+
+Dark:
+#1d2a31
+
+Light:
+#24343f
+
+Purple:
+#646cff
+
+Blue:
+#28c2ff
+
+*/

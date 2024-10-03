@@ -43,27 +43,49 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
     const rootFrame = threeScene?.rootFrame;
 
     return (
-        <div
-            className={styles.linkTree}
-            onClick={onClick}
-            onMouseLeave={onMouseLeave}>
-            Link Tree
-            <div className={styles.scrollBox}>
-                {rootFrame && (
-                    <TreeFrame
-                        frame={rootFrame}
-                        handleContextMenu={handleContextMenu}
-                        threeScene={threeScene}
-                        hoveredFrame={hoveredFrame}
-                        setHoveredFrame={setHoveredFrame}
-                    />
-                )}
+        <>
+            <div className={styles.toolbar}>
+                <button className={styles.toolbarButton}>
+                    Link Tree
+                </button>
             </div>
-            <ObjectContextMenu
-                contextMenuPosition={contextMenuPosition}
-                selectedTreeObject={contextMenu}
-                threeScene={threeScene}
-            />
+            <div
+                className={styles.linkTree}
+                onClick={onClick}
+                onMouseLeave={onMouseLeave}>
+                <div className={styles.scrollBox}>
+                    <NameBar/>
+                    {rootFrame && (
+                        <TreeFrame
+                            frame={rootFrame}
+                            handleContextMenu={handleContextMenu}
+                            threeScene={threeScene}
+                            hoveredFrame={hoveredFrame}
+                            setHoveredFrame={setHoveredFrame}
+                        />
+                    )}
+                </div>
+                <ObjectContextMenu
+                    contextMenuPosition={contextMenuPosition}
+                    selectedTreeObject={contextMenu}
+                    threeScene={threeScene}
+                />
+            </div>
+        </>
+        
+    );
+}
+
+function NameBar(){
+    return(
+        <div className={styles.nameBar}>
+            <div className={styles.children}>
+                children
+            </div>
+            <div className={styles.name}>
+                Name
+            </div>
         </div>
+        
     );
 }

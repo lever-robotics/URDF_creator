@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import CodeBox from "./CodeBox/CodeBox";
-import "./RightPanel.css"; // Assuming you have a CSS file for this component
+import styles from "./RightPanel.module.css";
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
-import Frame, { Frameish } from "../../Models/Frame";
-import { Scene } from "three";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
 
 /**
@@ -26,19 +24,28 @@ export default function RightPanel({ projectTitle, threeScene, updateCode }: Pro
         setSelectedFormat(format);
     };
 
+    const selectedStyle = (format: string) => {
+        if(format === selectedFormat){
+            return {
+                backgroundColor: "#24343f",
+            }
+        }
+        return {}
+    }
+
     return (
-        <div className="right-panel">
-            <div className="toolbar">
-                <button className={selectedFormat === "Parameters" ? "selected" : "toolbar-button"} onClick={handleClick}>
+        <div className={styles.rightPanel}>
+            <div className={styles.toolbar}>
+                <button className={styles.toolbarButton} style={selectedStyle("Parameters")} onClick={handleClick}>
                     Parameters
                 </button>
-                <button className={selectedFormat === "URDF" ? "selected" : "toolbar-button"} onClick={handleClick}>
+                <button className={styles.toolbarButton} style={selectedStyle("URDF")} onClick={handleClick}>
                     URDF
                 </button>
-                <button className={selectedFormat === "SDF" ? "selected" : "toolbar-button"} onClick={handleClick}>
+                <button className={styles.toolbarButton} style={selectedStyle("SDF")} onClick={handleClick}>
                     SDF
                 </button>
-                <button className={selectedFormat === "XACRO" ? "selected" : "toolbar-button"} onClick={handleClick}>
+                <button className={styles.toolbarButton} style={selectedStyle("XACRO")} onClick={handleClick}>
                     XACRO
                 </button>
             </div>
