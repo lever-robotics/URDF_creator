@@ -16,12 +16,13 @@
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1d2a31;
-    /* background-color: #24343f; */
+    /* background-color: #1d2a31; */
+    background-color: #24343f;
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;
 }
 .button:hover {
     border-color: #646cff;
+    /* border-color: #28c2ff; */
 }
