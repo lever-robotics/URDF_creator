@@ -117,10 +117,10 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
                     </div>
                     {selectedObject.jointType !== "fixed" && (
                         <>
-                            <button onClick={handleChangeAxisAngle} onBlur={reattachLink}>
+                            <button className={"button"} onClick={handleChangeAxisAngle} onBlur={reattachLink}>
                                 Change Axis Angle
                             </button>
-                            <button onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
+                            <button className={"button"} onClick={handleChangeAxisOrigin} onBlur={reattachLink}>
                                 Change Axis Origin
                             </button>
                             <ul>
@@ -167,7 +167,7 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
                                     }}
                                 />
                             </ul>
-                            <button onClick={resetJoint}>Reset</button>
+                            <button className={"button"} onClick={resetJoint}>Reset</button>
                             <Slider
                                 value={jointValue}
                                 step={0.01}
