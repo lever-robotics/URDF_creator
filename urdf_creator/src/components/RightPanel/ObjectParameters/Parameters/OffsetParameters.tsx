@@ -35,9 +35,9 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
         }
     }
 
-    const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+    const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        const tempValue = e.currentTarget.value;
         switch (axis) {
             case "x":
                 setTempX(tempValue);
@@ -56,7 +56,7 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
     const handleOffsetBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(!validValue) return;
+        if(validValue === false) return;
         const newOffset = selectedObject!.offset.toArray();
         switch (axis) {
             case "x":
@@ -73,6 +73,7 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
                 break;
         }
         selectedObject.offset.set(...newOffset);
+        handleOffsetChange(e);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

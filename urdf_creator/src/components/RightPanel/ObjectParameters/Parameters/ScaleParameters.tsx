@@ -54,9 +54,9 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
         }
     }
 
-    const handleScaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+    const handleScaleChange = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        const tempValue = e.currentTarget.value;
         switch (axis) {
             case "x":
                 setTempX(tempValue);
@@ -79,7 +79,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
     const handleScaleBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         let validValue = validateInput(e.currentTarget.value);
-        if(!validValue) return;
+        if(validValue === false) return;
         
         const newScale = selectedItem!.objectScale.toArray();
         switch (axis) {
@@ -97,11 +97,13 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
                 break;
         }
         selectedItem!.objectScale.set(...newScale);
+        handleScaleChange(e);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleScaleBlur(e);
+            (e.target as HTMLInputElement).blur();
         }
     };
 

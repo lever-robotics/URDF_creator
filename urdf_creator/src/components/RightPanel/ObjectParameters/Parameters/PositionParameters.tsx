@@ -56,7 +56,7 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
     const handlePositionBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(!validValue) return;
+        if(validValue === false) return;
         const newPosition = selectedItem!.objectPosition.toArray();
         switch (axis) {
             case "x":
