@@ -91,7 +91,7 @@ export default function JointParameters({ selectedObject, threeScene }: Paramete
     const handleMinMaxBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const type = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(!validValue) return;
+        if(validValue === false) return;
         switch (type) {
             case "min":
                 selectedObject.min = validValue;

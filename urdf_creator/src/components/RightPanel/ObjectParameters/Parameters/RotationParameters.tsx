@@ -43,9 +43,9 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         }
     }
 
-    const handleRotationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const axis = e.target.title.toLowerCase().replace(":", "");
-        const tempValue = e.target.value;
+    const handleRotationChange = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+        const axis = e.currentTarget.title.toLowerCase().replace(":", "");
+        const tempValue = e.currentTarget.value;
         switch (axis) {
             case "x":
                 setTempX(tempValue);
@@ -62,7 +62,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
     const handleRotationBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(!validValue) return;
+        if(validValue === false) return;
         const newRotation = selectedItem!.objectRotation.toArray();
         switch (axis) {
             case "x":
@@ -76,6 +76,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                 break;
         }
         selectedItem!.objectRotation.set(...newRotation);
+        handleRotationChange(e);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
