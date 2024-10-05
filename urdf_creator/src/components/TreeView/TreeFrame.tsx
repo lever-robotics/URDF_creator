@@ -53,20 +53,28 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderProperties = () => {
-        // const properties = frame.getProperties();
-        // return properties.map((property: any) => (
-        //     <TreeProperty key={property.id} property={property} {...restProps}/>
-        // ));
-        const properties = [{name: "Visual", id: 1}, {name: "Collision", id: 2}, {name: "Inertial", id: 3}];
-        return properties.map((property: Property) => (
+        const visuals = frame.visuals.map((property: any) => (
             <TreeProperty key={property.id} property={property} {...restProps}/>
         ));
+        const collisions = frame.collisions.map((property: any) => (
+            <TreeProperty key={property.id} property={property} {...restProps}/>
+        ));
+
+        return visuals.concat(collisions);
+        // const properties = [{name: "Visual", id: 1}, {name: "Collision", id: 2}, {name: "Inertial", id: 3}];
+        // return properties.map((property: Property) => (
+        //     <TreeProperty key={property.id} property={property} {...restProps}/>
+        // ));
     }
 
     const isSelected = () => {
         const selectedObject = threeScene.selectedObject;
         if (!selectedObject) return false;
-        if (selectedObject.name === frame.name) return true;
+        if (selectedObject instanceof Frame){
+            if (selectedObject.name === frame.name) return true;
+        }else{
+            if (selectedObject.frame.name === frame.name) return true;
+        }
         return false;
     };
 

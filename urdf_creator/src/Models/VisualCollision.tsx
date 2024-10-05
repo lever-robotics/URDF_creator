@@ -12,7 +12,7 @@ export default class VisualCollision extends THREE.Mesh {
     frame!: Frame;
     material: THREE.MeshPhongMaterial;
     stlfile?: string;
-    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number) {
+    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number, name: string) {
         super();
 
         this.scale.copy(scale);
@@ -24,6 +24,8 @@ export default class VisualCollision extends THREE.Mesh {
         this.geometry = this.defineGeometry(shape);
         this.material = new THREE.MeshPhongMaterial();
         this.color = new Color(color);
+
+        this.name = name;
 
         this.customRenderBehaviors = {};
     }
@@ -197,14 +199,14 @@ export default class VisualCollision extends THREE.Mesh {
 }
 
 export class Visual extends VisualCollision {
-    constructor(shape: string = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff) {
-        super(shape, scale, color);
+    constructor(shape: string = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff, number: number) {
+        super(shape, scale, color, "Visual" + number);
     }
 }
 
 export class Collision extends VisualCollision {
-    constructor(shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080) {
-        super(shape, scale, color);
+    constructor(shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080, number: number) {
+        super(shape, scale, color, "Collision" + number);
         //make the collision boxes transparent
         this.material.transparent = true;
         this.material.opacity = 0.5;

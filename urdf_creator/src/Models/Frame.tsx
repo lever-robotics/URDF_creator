@@ -6,6 +6,7 @@ import Link from "./Link";
 import Axis from "./Axis";
 import Collision, {Visual} from "./VisualCollision";
 import { Vector3, Euler } from "three";
+import VisualCollision from "./VisualCollision";
 
 export type Frameish = Frame | null | undefined;
 

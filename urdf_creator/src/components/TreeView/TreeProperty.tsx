@@ -24,7 +24,7 @@ export default function TreeProperty(props: Props) {
 
     //TODO
     const onClick = () => {
-        // threeScene.selectProperty(property);
+        threeScene.selectObject(property);
     };
 
     //TODO

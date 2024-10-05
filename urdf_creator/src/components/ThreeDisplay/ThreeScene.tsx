@@ -153,6 +153,7 @@ export default class ThreeScene {
     };
 
     setToolMode = (mode: string) => {
+        
         if (this.transformControls) {
             this.transformControls.setMode(mode as TransformControlsMode);
             this.toolMode = mode as TransformControlsMode;
@@ -164,31 +165,32 @@ export default class ThreeScene {
         this.forceUpdateScene();
     };
 
-    attachTransformControls = (selectedItem: Selectable) => {
-        if(selectedItem.name === "world_frame") return;
+    attachTransformControls = (object: Selectable) => {
+        if(object.name === "world_frame") return;
+        const selectedObject = object instanceof Frame
         const transformControls = this.transformControls;
 
         const mode = transformControls.mode;
         //depending on the selectedItem and the current mode either attach or not
-
-        switch (mode) {
-            // this case will attach the transform controls to the Frame and move everything together
-            case "translate":
-                transformControls.attach(selectedItem);
-                break;
-            // will attach to Frame which will rotate the mesh about said origin
-            case "rotate":
-                transformControls.attach(selectedItem);
-                break;
-            // will attach to the visual, collision, or inertia object but nothing else
-            case "scale":
-                if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
-                    transformControls.attach(selectedItem!);
-                }
-                break;
-            default:
-                break;
-        }
+        if(object instanceof Frame)
+        // switch (mode) {
+        //     // this case will attach the transform controls to the Frame and move everything together
+        //     case "translate":
+        //         transformControls.attach(selectedItem);
+        //         break;
+        //     // will attach to Frame which will rotate the mesh about said origin
+        //     case "rotate":
+        //         transformControls.attach(selectedItem);
+        //         break;
+        //     // will attach to the visual, collision, or inertia object but nothing else
+        //     case "scale":
+        //         if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
+        //             transformControls.attach(selectedItem!);
+        //         }
+        //         break;
+        //     default:
+        //         break;
+        // }
         this.forceUpdateScene();
     };
 
@@ -197,6 +199,8 @@ export default class ThreeScene {
             this.transformControls.detach();
             return;
         }
+        if(object.name === "world_frame") return;
+
 
         // the link may not be attached correctly, this checks for that case
         // if (this.selectedObject?.linkDetached) {
@@ -204,7 +208,8 @@ export default class ThreeScene {
         // }
         
         this.selectedObject = object;
-        this.attachTransformControls(object);
+        this.transformControls.attach(object);
+        // this.attachTransformControls(object);
         this.forceUpdateScene();
     };
 

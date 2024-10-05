@@ -39,11 +39,11 @@ function ObjectParameters({
         // setcollisions(threeScene?.selectedObject?.collisions);
         // setSelectedItem(threeScene?.selectedItem);
     }, [
-        JSON.stringify(threeScene?.selectedObject.name),
+        JSON.stringify(threeScene?.selectedObject),
         // JSON.stringify(threeScene?.selectedItem),
     ]);
 
-    if (selectedObject.name === "world_frame") {
+    if (selectedObject instanceof Frame && selectedObject.name === "world_frame") {
         return (
             <div className="object-parameters">
                 <h3>Link Parameters</h3>
