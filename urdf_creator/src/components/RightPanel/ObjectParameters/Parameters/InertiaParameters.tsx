@@ -3,9 +3,10 @@ import Parameter from "./Parameter";
 import Section from "../Section";
 import ParameterProps from "../ParameterProps";
 import styles from "../ObjectParameters.module.css"
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Frame from "../../../../Models/Frame";
 
-function InertiaParameters({ threeScene, selectedObject }: ParameterProps) {
-    if (!selectedObject) return;
+function InertiaParameters({ threeScene, selectedObject }: {threeScene: ThreeScene, selectedObject: Frame}) {
     if (!selectedObject.inertia) return;
     const [tempMass, setTempMass] = useState<string>(selectedObject.inertia.mass.toString());
     const [tempIxx, setTempIxx] = useState(selectedObject.inertia.ixx);

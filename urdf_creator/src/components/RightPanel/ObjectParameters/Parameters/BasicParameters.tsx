@@ -3,8 +3,10 @@ import Parameter from "./Parameter";
 import ParameterProps from "../ParameterProps";
 import { deregisterName, registerName } from "../../../ThreeDisplay/TreeUtils";
 import styles from "../ObjectParameters.module.css"
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Frame from "../../../../Models/Frame";
 
-export default function BasicParameters({ threeScene, selectedObject }: ParameterProps) {
+export default function BasicParameters({ threeScene, selectedObject }: {threeScene: ThreeScene, selectedObject: Frame}) {
     if (!selectedObject) return;
     const [error, setError] = useState("");
     const [tempName, setTempName] = useState(selectedObject.name);

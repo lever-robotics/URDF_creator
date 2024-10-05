@@ -3,12 +3,12 @@ import Parameter from "./Parameter";
 import Section from "../Section";
 import ItemParameterProps from "../ItemParameterProps";
 import { Collision, Visual } from "../../../../Models/VisualCollision";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 
-export default function MaterialParameters({ threeScene, selectedItem, selectedObject }: ItemParameterProps) {
-    if (!selectedObject) return;
+export default function MaterialParameters({ threeScene, selectedObject }: {threeScene: ThreeScene, selectedObject: Visual | Collision}) {
 
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        (selectedItem! as Visual | Collision).setColorByHex(e.target.value);
+        (selectedObject as Visual | Collision).setColorByHex(e.target.value);
     };
 
     const handleColorBlur = () => {
@@ -21,7 +21,7 @@ export default function MaterialParameters({ threeScene, selectedItem, selectedO
                 <Parameter
                     title={"Color:"}
                     type="color"
-                    value={"#"+ (selectedItem! as Visual | Collision).color.getHexString()}
+                    value={"#"+ (selectedObject as Visual | Collision).color.getHexString()}
                     onChange={handleColorChange}
                     onBlur={handleColorBlur}
                 />

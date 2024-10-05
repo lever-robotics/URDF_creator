@@ -9,7 +9,7 @@ export default class VisualCollision extends THREE.Mesh {
     private _scale: ScaleVector;
     shape: string;
     customRenderBehaviors: {};
-    frame: Frameish;
+    frame!: Frame;
     material: THREE.MeshPhongMaterial;
     stlfile?: string;
     constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number) {

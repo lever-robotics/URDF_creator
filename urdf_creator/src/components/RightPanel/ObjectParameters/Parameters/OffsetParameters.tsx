@@ -22,9 +22,9 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
         if(isNaN(newValue)){
-            setTempX(selectedObject?.position.x);
-            setTempY(selectedObject?.position.y);
-            setTempZ(selectedObject?.position.z);
+            setTempX(selectedObject.position.x);
+            setTempY(selectedObject.position.y);
+            setTempZ(selectedObject.position.z);
             return false;
         }
 
@@ -57,19 +57,19 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
         if(validValue === false) return;
-        const newOffset = selectedObject!.offset.toArray();
+        const newOffset = selectedObject.offset.toArray();
         switch (axis) {
             case "x":
                 newOffset[0] = validValue;
-                setTempX(selectedObject?.offset.x); 
+                setTempX(selectedObject.offset.x); 
                 break;
             case "y":
                 newOffset[1] = validValue; 
-                setTempY(selectedObject?.offset.y);
+                setTempY(selectedObject.offset.y);
                 break;
             case "z":
                 newOffset[2] = validValue;
-                setTempZ(selectedObject?.offset.z); 
+                setTempZ(selectedObject.offset.z); 
                 break;
         }
         selectedObject.offset.set(...newOffset);

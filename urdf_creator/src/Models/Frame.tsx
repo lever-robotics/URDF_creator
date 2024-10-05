@@ -9,9 +9,9 @@ import { Vector3, Euler } from "three";
 
 export type Frameish = Frame | null | undefined;
 
-export default class Frame extends THREE.Object3D {
-    visuals?: Visual[];
-    collisions?: Collision[];
+export default class Frame extends THREE.Mesh {
+    visuals!: Visual[];
+    collisions!: Collision[];
     link?: Link;
     sensor?: Sensor;
     inertia?: Inertia;
@@ -33,7 +33,15 @@ export default class Frame extends THREE.Object3D {
         public min = -1,
         public max = 1
     ) {
-        super();
+        const matWhite = new THREE.MeshBasicMaterial( {
+			depthTest: false,
+			depthWrite: false,
+			fog: false,
+			toneMapped: false,
+			transparent: true
+		} );
+        matWhite.opacity = 0.25;
+        super(new THREE.OctahedronGeometry( 0.1, 0 ), matWhite);
 
         this.name = name;
 

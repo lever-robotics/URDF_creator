@@ -2,7 +2,7 @@ import * as THREE from "three";
 import Frame, { Frameish } from "./Frame";
 
 export default class Inertia extends THREE.Object3D {
-    frame: Frameish;
+    frame: Frame;
     mass: number;
     ixx: number;
     iyy: number;
@@ -14,7 +14,7 @@ export default class Inertia extends THREE.Object3D {
 
 
 
-    constructor(frame: Frameish, mass = 1, ixx = 0, iyy = 0, izz = 0, ixy = 0, ixz = 0, iyz = 0) {
+    constructor(frame: Frame, mass = 1, ixx = 0, iyy = 0, izz = 0, ixy = 0, ixz = 0, iyz = 0) {
         super();
         this.frame = frame;
         this.customInertia = false;

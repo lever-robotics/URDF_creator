@@ -26,6 +26,7 @@ export default class TransformControl extends TransformControls{
 
     pointerUp(pointer: PointerEvent | null) {
         super.pointerUp(pointer);
+        
         if (this.pointerMoved) {
             console.log("upping");
             this.scene!.forceUpdateCode();

@@ -9,39 +9,38 @@ import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import { ParameterValue } from "../ParameterProps";
 
 type ScaleParametersProps = {
-    selectedObject?: Frameish,
-    selectedItem?: Visual | Collision,
+    selectedObject: Visual | Collision,
     threeScene: ThreeScene,
 }
 
 
-function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScaleParametersProps) {
+function ScaleParameters({ selectedObject, threeScene }: ScaleParametersProps) {
     if (!selectedObject) return;
-    const [tempX, setTempX] = useState<ParameterValue>(selectedItem!.objectScale.x);
-    const [tempY, setTempY] = useState<ParameterValue>(selectedItem!.objectScale.y);
-    const [tempZ, setTempZ] = useState<ParameterValue>(selectedItem!.objectScale.z);
-    const [tempRadius, setTempRadius] = useState<ParameterValue>(selectedItem!.objectScale.x / 2);
-    const [tempHeight, setTempHeight] = useState<ParameterValue>(selectedItem!.objectScale.z);
+    const [tempX, setTempX] = useState<ParameterValue>(selectedObject.scale.x);
+    const [tempY, setTempY] = useState<ParameterValue>(selectedObject.scale.y);
+    const [tempZ, setTempZ] = useState<ParameterValue>(selectedObject.scale.z);
+    const [tempRadius, setTempRadius] = useState<ParameterValue>(selectedObject.scale.x / 2);
+    const [tempHeight, setTempHeight] = useState<ParameterValue>(selectedObject.scale.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
         // debugger;
-        setTempX(selectedItem!.objectScale.x);
-        setTempY(selectedItem!.objectScale.y);
-        setTempZ(selectedItem!.objectScale.z);
-        setTempRadius(selectedItem!.objectScale.x / 2);
-        setTempHeight(selectedItem!.objectScale.z);
-    }, [JSON.stringify(selectedItem!.objectScale), threeScene?.toolMode]);
+        setTempX(selectedObject.scale.x);
+        setTempY(selectedObject.scale.y);
+        setTempZ(selectedObject.scale.z);
+        setTempRadius(selectedObject.scale.x / 2);
+        setTempHeight(selectedObject.scale.z);
+    }, [JSON.stringify(selectedObject.scale), threeScene?.toolMode]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
         if(isNaN(newValue)){
-            setTempX(selectedItem?.objectScale.x);
-            setTempY(selectedItem?.objectScale.y);
-            setTempZ(selectedItem?.objectScale.z);
-            setTempRadius(selectedItem!.objectScale.x / 2);
-            setTempHeight(selectedItem!.objectScale.z);
+            setTempX(selectedObject.scale.x);
+            setTempY(selectedObject.scale.y);
+            setTempZ(selectedObject.scale.z);
+            setTempRadius(selectedObject.scale.x / 2);
+            setTempHeight(selectedObject.scale.z);
             return false;
         }
 
@@ -82,7 +81,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
         let validValue = validateInput(e.currentTarget.value);
         if(validValue === false) return;
         
-        const newScale = selectedItem!.objectScale.toArray();
+        const newScale = selectedObject.scale.toArray();
         switch (axis) {
             case "radius":
                 validValue = validValue * 2;
@@ -98,7 +97,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
                 newScale[2] = validValue;
                 break;
         }
-        selectedItem!.objectScale.set(...newScale);
+        selectedObject.scale.set(...newScale);
         handleScaleChange(e);
     };
 
@@ -145,7 +144,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
 
     return (
         <Section title="Scale">
-            {determineParametersFromShape((selectedItem as Visual | Collision))}
+            {determineParametersFromShape((selectedObject as Visual | Collision))}
         </Section>
     );
 }
