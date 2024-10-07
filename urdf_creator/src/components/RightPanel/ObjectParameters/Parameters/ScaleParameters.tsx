@@ -16,34 +16,34 @@ type ScaleParametersProps = {
 
 function ScaleParameters({ selectedObject, threeScene }: ScaleParametersProps) {
     if (!selectedObject) return;
-    const [tempX, setTempX] = useState<ParameterValue>(selectedItem!.objectScale.x);
-    const [tempY, setTempY] = useState<ParameterValue>(selectedItem!.objectScale.y);
-    const [tempZ, setTempZ] = useState<ParameterValue>(selectedItem!.objectScale.z);
-    const [tempRadius, setTempRadius] = useState<ParameterValue>(selectedItem!.objectScale.x / 2);
-    const [tempHeight, setTempHeight] = useState<ParameterValue>(selectedItem!.objectScale.z);
-    const [tempScaleFactor, setTempScaleFactor] = useState<ParameterValue>(selectedItem!.objectScale.x);
+    const [tempX, setTempX] = useState<ParameterValue>(selectedObject!.objectScale.x);
+    const [tempY, setTempY] = useState<ParameterValue>(selectedObject!.objectScale.y);
+    const [tempZ, setTempZ] = useState<ParameterValue>(selectedObject!.objectScale.z);
+    const [tempRadius, setTempRadius] = useState<ParameterValue>(selectedObject!.objectScale.x / 2);
+    const [tempHeight, setTempHeight] = useState<ParameterValue>(selectedObject!.objectScale.z);
+    const [tempScaleFactor, setTempScaleFactor] = useState<ParameterValue>(selectedObject!.objectScale.x);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
         // debugger;
-        setTempX(selectedItem!.objectScale.x);
-        setTempY(selectedItem!.objectScale.y);
-        setTempZ(selectedItem!.objectScale.z);
-        setTempRadius(selectedItem!.objectScale.x / 2);
-        setTempHeight(selectedItem!.objectScale.z);
-        setTempScaleFactor(selectedItem!.objectScale.x);
-    }, [JSON.stringify(selectedItem!.objectScale), threeScene?.toolMode]);
+        setTempX(selectedObject!.objectScale.x);
+        setTempY(selectedObject!.objectScale.y);
+        setTempZ(selectedObject!.objectScale.z);
+        setTempRadius(selectedObject!.objectScale.x / 2);
+        setTempHeight(selectedObject!.objectScale.z);
+        setTempScaleFactor(selectedObject!.objectScale.x);
+    }, [JSON.stringify(selectedObject!.objectScale), threeScene?.toolMode]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
         if(isNaN(newValue)){
-            setTempX(selectedItem?.objectScale.x);
-            setTempY(selectedItem?.objectScale.y);
-            setTempZ(selectedItem?.objectScale.z);
-            setTempRadius(selectedItem!.objectScale.x / 2);
-            setTempHeight(selectedItem!.objectScale.z);
-            setTempScaleFactor(selectedItem!.objectScale.x);
+            setTempX(selectedObject?.objectScale.x);
+            setTempY(selectedObject?.objectScale.y);
+            setTempZ(selectedObject?.objectScale.z);
+            setTempRadius(selectedObject!.objectScale.x / 2);
+            setTempHeight(selectedObject!.objectScale.z);
+            setTempScaleFactor(selectedObject!.objectScale.x);
             return false;
         }
 
@@ -84,10 +84,10 @@ function ScaleParameters({ selectedObject, threeScene }: ScaleParametersProps) {
         let validValue = validateInput(e.currentTarget.value);
         if (validValue === false) return;
     
-        const newScale = selectedItem!.objectScale.toArray();
+        const newScale = selectedObject!.objectScale.toArray();
         debugger;
         // Handle scaling based on object shape
-        switch (selectedItem!.shape) {
+        switch (selectedObject!.shape) {
             case "cube":
                 // For a cube, scale x, y, and z independently
                 switch (axis) {
@@ -129,11 +129,11 @@ function ScaleParameters({ selectedObject, threeScene }: ScaleParametersProps) {
                 break;
     
             default:
-                throw new Error(`Unsupported shape: ${selectedItem!.shape}`);
+                throw new Error(`Unsupported shape: ${selectedObject!.shape}`);
         }
     
         // Apply the new scale to the object
-        selectedItem!.objectScale.set(...newScale);
+        selectedObject!.objectScale.set(...newScale);
         handleScaleChange(e); // Ensure any other necessary updates happen
     };
     
