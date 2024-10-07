@@ -45,9 +45,10 @@ function ObjectParameters({
 
     if (selectedObject instanceof Frame && selectedObject.name === "world_frame") {
         return (
-            <div className="object-parameters">
-                <h3>Link Parameters</h3>
-                No link selected
+            <div className={styles.objectParameters}>
+                <div className={styles.basicParams}>
+                    <p>No link selected. Add or Select Link.</p>
+                </div>
             </div>
         );
     }

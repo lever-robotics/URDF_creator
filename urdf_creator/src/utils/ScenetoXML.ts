@@ -49,14 +49,16 @@ export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
                     xml += `    <visual>\n`;
                     xml += `      <origin xyz="${formatVector(visual.position)}" rpy="${quaternionToRPY(visual.quaternion)}" />\n`;
                     xml += `      <geometry>\n`;
-                    const geometryType = visual.geometry.type;
-                    if (geometryType === "BoxGeometry") {
+                    const geometryType = visual.shape;
+                    if (geometryType === "cube") {
                         xml += `        <box size="${formatVector(visual.scale)}" />\n`;
-                    } else if (geometryType === "SphereGeometry") {
+                    } else if (geometryType === "sphere") {
                         xml += `        <sphere radius="${visual.scale.x / 2}" />\n`;
-                    } else if (geometryType === "CylinderGeometry") {
+                    } else if (geometryType === "cylinder") {
                         xml += `        <cylinder radius="${visual.scale.x / 2}" length="${visual.scale.z}" />\n`;
-                    }
+                    } else if (geometryType === "mesh") {
+                        xml += `        <mesh filename="package://${projectTitle}_description/meshes/${visual.stlfile}" scale="${visual.scale.x} ${visual.scale.x} ${visual.scale.x}" />\n`;
+                    }  
                     xml += `      </geometry>\n`;
                     xml += `      <material name="${visual.frame!.name}-material">\n`;
                     xml += `        <color rgba="${visual.color.r} ${visual.color.g} ${visual.color.b} 1" />\n`;
@@ -69,14 +71,16 @@ export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
                     xml += `    <collision>\n`;
                     xml += `      <origin xyz="${formatVector(collision.position)}" rpy="${quaternionToRPY(collision.quaternion)}" />\n`;
                     xml += `      <geometry>\n`;
-                    const geometryType = collision.geometry.type;
-                    if (geometryType === "BoxGeometry") {
+                    const geometryType = collision.shape;
+                    if (geometryType === "cube") {
                         xml += `        <box size="${formatVector(collision.scale)}" />\n`;
-                    } else if (geometryType === "SphereGeometry") {
+                    } else if (geometryType === "sphere") {
                         xml += `        <sphere radius="${collision.scale.x / 2}" />\n`;
-                    } else if (geometryType === "CylinderGeometry") {
+                    } else if (geometryType === "cylinder") {
                         xml += `        <cylinder radius="${collision.scale.x / 2}" length="${collision.scale.z}" />\n`;
-                    }
+                    } else if (geometryType === "mesh") {
+                        xml += `        <mesh filename="package://${projectTitle}_description/meshes/${collision.stlfile}" scale="${collision.scale.x} ${collision.scale.x} ${collision.scale.x}" />\n`;
+                    }  
                     xml += `      </geometry>\n`;
                     xml += `    </collision>\n`;
                 });
