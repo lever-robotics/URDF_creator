@@ -43,7 +43,7 @@ const App = () => {
 
     // Initialize the ThreeScene ref, the animation loop, the event listeners, and google analytics
     useEffect(() => {
-        if (!mountRef.current) return;
+        if (mountRef.current === null) return;
 
         initializeAnalytics();
 
@@ -219,7 +219,7 @@ const App = () => {
         // If the lastSelected name exists then select that Object
         const lastSelectedName = currentState!.selectedName;
         const lastSelected = findFrameByName(rootFrame, lastSelectedName);
-        threeScene.selectObject(lastSelected);
+        threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
     };
 
     const popRedo = async () => {
@@ -244,7 +244,7 @@ const App = () => {
         threeScene.scene.attach(rootFrame);
         threeScene.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
-        threeScene.selectObject(null);
+        threeScene.selectObject(threeScene.worldFrame);
 
         pushUndo();
     };

@@ -12,7 +12,7 @@ export default class VisualCollision extends THREE.Mesh {
     frame!: Frame;
     material: THREE.MeshPhongMaterial;
     stlfile?: string;
-    constructor(shape = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number, name: string) {
+    constructor(name: string, shape: string, scale: Vector3, color: number) {
         super();
 
         this.scale.copy(scale);
@@ -187,7 +187,7 @@ export default class VisualCollision extends THREE.Mesh {
     }
 
     duplicate(): this {
-        const clone = new VisualCollision(this.shape, this.scale, this.color.getHex());
+        const clone = new VisualCollision(this.name, this.shape, this.scale, this.color.getHex());
         clone.color.copy(this.color);
         // I added the as this. could potentially cause stupid errors
         return clone as this;
@@ -199,14 +199,15 @@ export default class VisualCollision extends THREE.Mesh {
 }
 
 export class Visual extends VisualCollision {
-    constructor(shape: string = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff, number: number) {
-        super(shape, scale, color, "Visual" + number);
+    constructor(number: number, shape: string = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff) {
+        // scale, color, "Visual" + number
+        super("Visual" + number, shape, scale, color);
     }
 }
 
 export class Collision extends VisualCollision {
-    constructor(shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080, number: number) {
-        super(shape, scale, color, "Collision" + number);
+    constructor(number: number, shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080) {
+        super("Collision" + number, shape, scale, color);
         //make the collision boxes transparent
         this.material.transparent = true;
         this.material.opacity = 0.5;

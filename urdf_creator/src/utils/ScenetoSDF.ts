@@ -3,9 +3,10 @@ import { generateSensorSDF } from "./generateSensorSDF";
 import findRootFrame from "./findRootFrame";
 import Frame from "../Models/Frame";
 import { quaternionToRPY } from "./quaternionToRPY";
+import ThreeScene from "../components/ThreeDisplay/ThreeScene";
 
 // Helper function to convert Scene to SDF-compatible XML
-export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
+export const ScenetoSDF = (scene: ThreeScene, projectTitle: string) => {
     let xml = `<sdf version="1.6">\n`;
     let pub_joint_states = `    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">\n`;
     // plugin for publishing joint states from gazebo
@@ -14,6 +15,10 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
     pub_joint_states += `        </ros>\n`;
     pub_joint_states += `        <update_rate>5</update_rate>\n`;
     if (scene === undefined) {
+        xml += `</sdf>`;
+        return xml;
+    }
+    if (!scene.rootFrame){
         xml += `</sdf>`;
         return xml;
     }
@@ -175,7 +180,7 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
     };
 
     // Find the base node and start processing
-    const rootFrame = findRootFrame(scene);
+    const rootFrame = scene.rootFrame;
     if (rootFrame) processNode(rootFrame);
 
     pub_joint_states += `    </plugin>\n`;

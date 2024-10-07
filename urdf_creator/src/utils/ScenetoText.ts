@@ -2,6 +2,7 @@ import { ScenetoSDF } from "./ScenetoSDF";
 import { ScenetoXML } from "./ScenetoXML";
 import { ScenetoJSON } from "./ScenetoJSON";
 import * as THREE from "three";
+import ThreeScene from "../components/ThreeDisplay/ThreeScene";
 
 /**
  * Returns the scene in text form in the specified format
@@ -10,7 +11,7 @@ import * as THREE from "three";
  * @param {string} projectTitle 
  * @returns Text representation of the scene object in desired format
  */
-export default function ScenetoText(format: string, scene: THREE.Scene, projectTitle: string) {
+export default function ScenetoText(format: string, scene: ThreeScene, projectTitle: string) {
     switch(format){
         case 'URDF': 
             return ScenetoXML(scene, projectTitle);

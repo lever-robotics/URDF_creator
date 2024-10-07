@@ -3,11 +3,16 @@ import { generateSensorXML } from "./generateSensorXML";
 import findRootFrame from "./findRootFrame";
 import Frame from "../Models/Frame";
 import { quaternionToRPY } from "./quaternionToRPY";
+import ThreeScene from "../components/ThreeDisplay/ThreeScene";
 
 // Helper function to convert Scene to URDF-compatible XML
-export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
+export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
     let xml = `<robot name="${projectTitle.replace(" ", "_")}">\n`;
     if (scene === undefined) {
+        xml += `</robot>`;
+        return xml;
+    }
+    if (!scene.rootFrame){
         xml += `</robot>`;
         return xml;
     }
@@ -139,7 +144,7 @@ export const ScenetoXML = (scene: THREE.Object3D, projectTitle: string) => {
     };
 
     // Find the base node and start processing
-    const rootFrame = findRootFrame(scene);
+    const rootFrame = scene.rootFrame;
     if (rootFrame) processNode(rootFrame);
 
     // Close robot tag

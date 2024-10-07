@@ -34,7 +34,7 @@ export default function CodeBox({ projectTitle, threeScene, selectedFormat, upda
 
     useEffect(() => {
         if (selectedFormat !== "Parameters") {
-            const text = ScenetoText(selectedFormat, threeScene.scene, projectTitle);
+            const text = ScenetoText(selectedFormat, threeScene, projectTitle);
             setCode(text);
         }
     }, [updateCode, selectedFormat, projectTitle]);
