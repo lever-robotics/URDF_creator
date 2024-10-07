@@ -166,6 +166,7 @@ const App = () => {
         const { current: threeScene } = threeSceneRef;
         const { current: undoArray } = undo;
         if(threeScene === undefined) return;
+        console.log("push Undo");
 
         const currentScene: UndoState = {
             scene: "",
@@ -178,6 +179,7 @@ const App = () => {
             currentScene.scene = JSON.stringify(gltfScene);
             currentScene.selectedName = threeScene.selectedObject?.name!;
         }
+        console.log(currentScene);
         undoArray.push(currentScene);
     };
 
@@ -205,12 +207,14 @@ const App = () => {
         threeScene.clearScene();
 
         // If the last state was empty then return 
+        console.log(undoArray);
         if (lastState.scene === "") return;
 
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
         const rootFrame = readScene(gltfScene.children[0], threeScene.objectNames);
+        console.log(rootFrame);
 
         threeScene!.scene.attach(rootFrame);
         threeScene!.rootFrame = rootFrame;

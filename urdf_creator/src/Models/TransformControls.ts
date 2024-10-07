@@ -15,12 +15,11 @@ export default class TransformControl extends TransformControls{
     pointerDown(pointer: PointerEvent | null) {
         console.log(pointer);
         super.pointerDown(pointer);
-        this.pointerMoved = true;
     }
 
     pointerMove(pointer: PointerEvent | null) {
         super.pointerMove(pointer);
-        this.pointerMoved = false;
+        this.pointerMoved = true;
         this.scene!.forceUpdateScene();
     }
 
@@ -28,8 +27,8 @@ export default class TransformControl extends TransformControls{
         super.pointerUp(pointer);
         
         if (this.pointerMoved) {
-            console.log("upping");
             this.scene!.forceUpdateCode();
+            this.pointerMoved = false;
         }
     }
 }

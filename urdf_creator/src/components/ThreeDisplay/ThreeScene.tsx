@@ -98,6 +98,7 @@ export default class ThreeScene {
 
     clearScene = () => {
         if (this.rootFrame === null) return;
+        this.transformControls.detach();
         this.rootFrame!.removeFromParent();
         this.rootFrame = null;
         this.objectNames.length = 0;
@@ -146,7 +147,7 @@ export default class ThreeScene {
         this.clearScene();
         const rootFrame = readScene(gltfScene, this.objectNames);
 
-        this.scene.attach(rootFrame);
+        this.worldFrame.attach(rootFrame);
         this.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
         this.forceUpdateBoth();

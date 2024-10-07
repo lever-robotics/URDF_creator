@@ -5,11 +5,10 @@ import React from "react";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 import ThreeScene from "../ThreeDisplay/ThreeScene";
 import { useState, useEffect } from "react";
-import { Collision, Visual } from "../../Models/VisualCollision";
+import VisualCollision, { Collision, Visual } from "../../Models/VisualCollision";
 
 const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, popUndo: () => void, popRedo: () => void }) => {
     const [selectedObject, setSelectedObject] = useState(threeScene?.selectedObject);
-    const [selectedItem, setSelectedItem] = useState(threeScene?.selectedItem);
     const [toolMode, setToolMode] = useState(threeScene?.toolMode);
 
     useEffect(() => {
@@ -22,6 +21,8 @@ const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, pop
         const mode = e.currentTarget.id;
         threeScene.setToolMode(mode);
     };
+
+    const canScale = selectedObject instanceof VisualCollision ? true : false;
 
     // .row-spaced {
     //     display: flex;
@@ -49,7 +50,7 @@ const Toolbar = ({ threeScene, popUndo, popRedo }: { threeScene: ThreeScene, pop
                 <TooltipButton active={toolMode === "rotate"} onClick={handleClick} content={"Rotate"} anchorPosition={"top-right"} label="rotate">
                     <FontAwesomeIcon icon={faRotate} />
                 </TooltipButton>
-                {selectedItem && (selectedItem instanceof Collision || selectedItem instanceof Visual) && (
+                {canScale && (
                     <TooltipButton active={toolMode === "scale"} onClick={handleClick} content={"Scale"} anchorPosition={"top-right"} label="scale">
                         <FontAwesomeIcon icon={faMaximize} />
                     </TooltipButton>
