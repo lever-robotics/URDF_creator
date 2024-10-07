@@ -11,12 +11,12 @@ import Inertia from "../../Models/Inertia";
 import { CollisionData, VisualData } from "./TreeUtils";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
-export type Selectable = Frame | VisualCollision | Inertia;
+export type Selectable = Frame | Visual | Collision;
 
 export default class ThreeScene {
     worldFrame: Frame;
     rootFrame: Frameish;
-    selectedObject: Frame | Visual | Collision | Inertia; //There is no joint type as when selected joint it is detaching the Frame from the link to be moved around.
+    selectedObject: Selectable; //There is no joint type as when selected joint it is detaching the Frame from the link to be moved around.
     // selectedItem?: Frameish | Visual | Collision | Inertia; //There is no joint type as when selected joint it is detaching the Frame from the link to be moved around.
     toolMode: TransformControlsMode;
     objectNames: string[];
@@ -107,7 +107,7 @@ export default class ThreeScene {
 
     addObject = (shape: string) => {
         if (!this.scene) return;
-        if (!(this.selectedObject instanceof Frame)) return;
+        // if (!(this.selectedObject instanceof Frame)) return;
 
 
         const numOfShape = (this.numberOfShapes[shape as keyof numShapes]).toString();
@@ -135,7 +135,11 @@ export default class ThreeScene {
                 this.worldFrame.attach(newFrame);
             }
         } else {
-            this.selectedObject!.attachChild(newFrame);
+            if  (this.selectedObject instanceof Frame){
+                this.selectedObject.attachChild(newFrame);
+            }else{
+                this.selectedObject.frame.attachChild(newFrame);
+            }
         }
         this.selectObject(newFrame);
         this.forceUpdateCode();
@@ -200,7 +204,10 @@ export default class ThreeScene {
             this.transformControls.detach();
             return;
         }
-        if(object.name === "world_frame") return;
+        if(object.name === "world_frame") {
+            this.forceUpdateScene();
+            return;
+        }
 
 
         // the link may not be attached correctly, this checks for that case
@@ -239,21 +246,33 @@ export default class ThreeScene {
         this.forceUpdateScene();
     };
 
-    duplicateObject = (frame: Frame) => {
-        const clone = cloneFrame(frame, this.objectNames);
+    duplicateObject = (object: Selectable) => {
+        if(object instanceof Frame){
+            const clone = cloneFrame(object, this.objectNames);
 
-        if (frame.isRootFrame) {
-            clone.parentFrame = frame;
-            frame.attachChild(clone);
-        } else {
-            clone.parentFrame = frame.parentFrame;
-            frame.parentFrame!.addChild(clone);
+            if (object.isRootFrame) {
+                clone.parentFrame = object;
+                object.attachChild(clone);
+            } else {
+                clone.parentFrame = object.parentFrame;
+                object.parentFrame!.addChild(clone);
+            }
+            this.selectObject(clone);
+        }else { // If object is VisualCollision
+            const clone = object.duplicate();
+            object.frame.addProperty(clone);
+            this.selectObject(clone);
         }
-        this.selectObject(clone);
+
         this.forceUpdateCode();
     };
 
-    deleteObject = (frame: Frame) => {
+    deleteObject = (object: Selectable) => {
+        this.transformControls.detach();
+        if(object instanceof VisualCollision){
+            object.frame.removeProperty(object);
+            return;
+        }
 
         const deleteChildren = (frame: Frame) => {
             frame.getFrameChildren().forEach((child: Frame) => {
@@ -263,13 +282,13 @@ export default class ThreeScene {
             });
         };
 
-        if (frame.isRootFrame) {
+        if (object.isRootFrame) {
             this.rootFrame = null;
         }
         this.selectedObject = this.worldFrame;
-        deleteChildren(frame);
-        frame.removeFromParent();
-        deregisterName(frame.name, this.objectNames);
+        deleteChildren(object);
+        object.removeFromParent();
+        deregisterName(object.name, this.objectNames);
         this.forceUpdateCode();
     };
 

@@ -30,18 +30,17 @@ export default function TreeProperty(props: Props) {
         return false;
     };
 
-    //TODO
     const onClick = () => {
         threeScene.selectObject(property);
     };
 
-    //TODO
     const onDragEnd = (e: React.MouseEvent) => {
-        // if (hoveredFrame) {
-        //     hoveredFrame.attachChild(property);
-        //     threeScene.selectObject(hoveredFrame); // selectItem
-        //     setHoveredFrame(null);
-        // }
+        if (hoveredFrame) {
+            property.frame.removeProperty(property);
+            hoveredFrame.addProperty(property);
+            threeScene.selectObject(hoveredFrame);
+            setHoveredFrame(null);
+        }
     };
 
     const onContextMenu = (e: React.MouseEvent) => {

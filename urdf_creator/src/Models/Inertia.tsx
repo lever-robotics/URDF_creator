@@ -31,7 +31,7 @@ export default class Inertia extends THREE.Object3D {
     updateInertia(threeObject: Frame) {
         if (this.customInertia) return;
 
-        const shape = threeObject.collisions![0].shape;
+        const shape = threeObject.collisions[0]?.shape ?? threeObject.link!.shape;
         if (shape === 'cube') {
             const width = threeObject.link!.scale.x;
             const height = threeObject.link!.scale.y;

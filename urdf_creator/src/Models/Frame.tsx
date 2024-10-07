@@ -4,7 +4,7 @@ import Inertia from "./Inertia";
 import JointVisualizer from "./JointVisualizer";
 import Link from "./Link";
 import Axis from "./Axis";
-import Collision, {Visual} from "./VisualCollision";
+import { Visual, Collision } from "./VisualCollision";
 import { Vector3, Euler } from "three";
 import VisualCollision from "./VisualCollision";
 
@@ -188,6 +188,36 @@ export default class Frame extends THREE.Mesh {
 
     updateInertia() {
         this.inertia!.updateInertia(this);
+    }
+
+    /**
+     * Add a VisualCollision property to the Frame
+     * @param VisualCollision 
+     */
+    addProperty(property: VisualCollision) {
+        if(property instanceof Visual){
+            this.visuals.push(property);
+        }else if (property instanceof Collision){
+            this.collisions.push(property);
+        }else{
+            console.log(property, "Frame addProperty not Visual or Collision");
+        }
+        property.frame = this;
+        this.link?.add(property);
+    }
+
+    removeProperty(property: VisualCollision) {
+        if(property instanceof Visual){
+            const index = this.visuals.indexOf(property);
+            this.visuals.splice(index, 1); // Take the property out of the visuals array
+            property.removeFromParent();
+            return;
+        }else if (property instanceof Collision){
+            const index = this.collisions.indexOf(property);
+            this.collisions.splice(index, 1); // Take the property out of the collisions array
+            property.removeFromParent();
+            return;
+        }
     }
 
     /**

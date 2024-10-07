@@ -4,7 +4,7 @@ import ThreeScene from "../ThreeDisplay/ThreeScene";
 import styles from "./TreeFrame.module.css";
 import ToggleSection from "./ToggleSection";
 import TreeProperty from "./TreeProperty";
-import { ContextMenu, Property } from "./LinkTree";
+import { ContextMenu } from "./LinkTree";
 
 type Props = {
     frame: Frame;

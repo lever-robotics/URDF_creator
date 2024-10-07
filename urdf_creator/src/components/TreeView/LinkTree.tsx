@@ -1,16 +1,12 @@
 import Frame, { Frameish } from "../../Models/Frame";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
-import ThreeScene from "../ThreeDisplay/ThreeScene";
+import ThreeScene, { Selectable } from "../ThreeDisplay/ThreeScene";
 import { ObjectContextMenu } from "./ObjectContextMenu";
 import React, { useState, useEffect } from "react";
 import TreeFrame from "./TreeFrame";
 import styles from "./LinkTree.module.css";
 
-export type ContextMenu = false | Frame | Property;
-export type Property = {
-    name: string,
-    id: number,
-}
+export type ContextMenu = false | Selectable;
 type LinkTreeProps = {
     threeScene: ThreeScene;
 };

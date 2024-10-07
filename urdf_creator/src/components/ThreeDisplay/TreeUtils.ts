@@ -60,7 +60,7 @@ export function createFrame(params: UserData): Frame {
     }) || [];
 
     // Instantiate new objects
-    const link = new Link(offset);
+    const link = new Link(offset, shape);
     const jointVisualizer = new JointVisualizer();
     const axis = new Axis(axisRotation);
     const frame = new Frame(name, position, rotation, jointType, jointMin, jointMax);

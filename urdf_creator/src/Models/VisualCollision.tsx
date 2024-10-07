@@ -186,12 +186,12 @@ export default class VisualCollision extends THREE.Mesh {
         this.color = new THREE.Color(hex);
     }
 
-    duplicate(): this {
-        const clone = new VisualCollision(this.name, this.shape, this.scale, this.color.getHex());
-        clone.color.copy(this.color);
-        // I added the as this. could potentially cause stupid errors
-        return clone as this;
-    }
+    // duplicate() {
+    //     const clone = new VisualCollision(this.name + "copy", this.shape, this.scale, this.color.getHex());
+    //     clone.color.copy(this.color);
+    //     // I added the as this. could potentially cause stupid errors
+    //     return clone;
+    // }
 
     onAfterRender = () => {
         this.frame?.updateInertia();
@@ -203,6 +203,13 @@ export class Visual extends VisualCollision {
         // scale, color, "Visual" + number
         super("Visual" + number, shape, scale, color);
     }
+
+    duplicate() {
+        const clone = new Visual(0, this.shape, this.scale, this.color.getHex());
+        clone.color.copy(this.color);
+        clone.name = this.name + "copy";
+        return clone;
+    }
 }
 
 export class Collision extends VisualCollision {
@@ -212,5 +219,12 @@ export class Collision extends VisualCollision {
         this.material.transparent = true;
         this.material.opacity = 0.5;
         this.material.wireframe = true;
+    }
+
+    duplicate() {
+        const clone = new Collision(0, this.shape, this.scale, this.color.getHex());
+        clone.color.copy(this.color);
+        clone.name = this.name + "copy";
+        return clone;
     }
 }
