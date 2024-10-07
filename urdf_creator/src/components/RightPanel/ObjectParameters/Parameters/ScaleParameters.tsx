@@ -9,13 +9,12 @@ import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import { ParameterValue } from "../ParameterProps";
 
 type ScaleParametersProps = {
-    selectedObject?: Frameish,
-    selectedItem?: Visual | Collision,
+    selectedObject: Visual | Collision,
     threeScene: ThreeScene,
 }
 
 
-function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScaleParametersProps) {
+function ScaleParameters({ selectedObject, threeScene }: ScaleParametersProps) {
     if (!selectedObject) return;
     const [tempX, setTempX] = useState<ParameterValue>(selectedItem!.objectScale.x);
     const [tempY, setTempY] = useState<ParameterValue>(selectedItem!.objectScale.y);
@@ -182,7 +181,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
 
     return (
         <Section title="Scale">
-            {determineParametersFromShape((selectedItem as Visual | Collision))}
+            {determineParametersFromShape((selectedObject as Visual | Collision))}
         </Section>
     );
 }

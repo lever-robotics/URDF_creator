@@ -4,27 +4,27 @@ import Parameter from "./Parameter";
 import ItemParameterProps from "../ItemParameterProps";
 import { ParameterValue } from "../ParameterProps";
 
-function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
+function PositionParameters({ selectedObject, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
-    const [tempX, setTempX] = useState<ParameterValue>(selectedItem?.position.x);
-    const [tempY, setTempY] = useState<ParameterValue>(selectedItem?.position.y);
-    const [tempZ, setTempZ] = useState<ParameterValue>(selectedItem?.position.z);
+    const [tempX, setTempX] = useState<ParameterValue>(selectedObject?.position.x);
+    const [tempY, setTempY] = useState<ParameterValue>(selectedObject?.position.y);
+    const [tempZ, setTempZ] = useState<ParameterValue>(selectedObject?.position.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(selectedItem?.position.x);
-        setTempY(selectedItem?.position.y);
-        setTempZ(selectedItem?.position.z);
+        setTempX(selectedObject?.position.x);
+        setTempY(selectedObject?.position.y);
+        setTempZ(selectedObject?.position.z);
 
-    }, [JSON.stringify(selectedItem?.position)]);
+    }, [JSON.stringify(selectedObject?.position)]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
         if(isNaN(newValue)){
-            setTempX(selectedItem?.position.x);
-            setTempY(selectedItem?.position.y);
-            setTempZ(selectedItem?.position.z);
+            setTempX(selectedObject?.position.x);
+            setTempY(selectedObject?.position.y);
+            setTempZ(selectedObject?.position.z);
             return false;
         }
 
@@ -57,22 +57,22 @@ function PositionParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
         if(validValue === false) return;
-        const newPosition = selectedItem!.objectPosition.toArray();
+        const newPosition = selectedObject!.position.toArray();
         switch (axis) {
             case "x":
                 newPosition[0] = validValue;
-                setTempX(selectedItem?.position.x); 
+                setTempX(selectedObject?.position.x); 
                 break;
             case "y":
                 newPosition[1] = validValue; 
-                setTempY(selectedItem?.position.y);
+                setTempY(selectedObject?.position.y);
                 break;
             case "z":
                 newPosition[2] = validValue;
-                setTempZ(selectedItem?.position.z); 
+                setTempZ(selectedObject?.position.z); 
                 break;
         }
-        selectedItem!.objectPosition.set(...newPosition);
+        selectedObject!.position.set(...newPosition);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

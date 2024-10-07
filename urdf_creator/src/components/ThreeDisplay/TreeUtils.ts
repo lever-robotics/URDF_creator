@@ -50,13 +50,13 @@ export function createFrame(params: UserData): Frame {
     }
 
     // Map all collisions to objects that will be attached to the link
-    const collisionObjects = collisions?.map((collision) => {
-        return new Collision(collision.shape, collision.scale, collision.color);
+    const collisionObjects = collisions?.map((collision, index) => {
+        return new Collision(collision.shape, collision.scale, collision.color, index);
     }) || [];
 
     // Map all visuals to objects that will be attached to the link
-    const visualObjects = visuals?.map((visual) => {
-        return new Visual(visual.shape, visual.scale, visual.color);
+    const visualObjects = visuals?.map((visual, index) => {
+        return new Visual(visual.shape, visual.scale, visual.color, index);
     }) || [];
 
     // Instantiate new objects

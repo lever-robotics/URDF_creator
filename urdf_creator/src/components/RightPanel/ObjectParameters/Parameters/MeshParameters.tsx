@@ -8,32 +8,30 @@ import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import styles from "../ObjectParameters.module.css";
 
 type MeshParametersProps = {
-    selectedObject?: Frameish,
-    selectedItem?: Visual | Collision,
+    selectedObject: Visual | Collision,
     threeScene: ThreeScene,
 }
 
-function MeshParameters({ selectedObject, selectedItem, threeScene }: MeshParametersProps) {
-    if (!selectedObject) return;
+function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
     const [files, setFiles] = useState<any[]>([]);
     const [geometryValue, setGeometryValue] = useState(
-        selectedItem!.shape === "mesh" ? selectedItem!.stlfile : selectedItem!.shape
+        selectedObject.shape === "mesh" ? selectedObject.stlfile : selectedObject.shape
     );
 
     useEffect(() => {
-        setGeometryValue(selectedItem!.shape === "mesh" ? selectedItem!.stlfile : selectedItem!.shape);
+        setGeometryValue(selectedObject.shape === "mesh" ? selectedObject.stlfile : selectedObject.shape);
     }
-    , [JSON.stringify(selectedItem!.shape)]);
+    , [JSON.stringify(selectedObject.shape)]);
 
     const handleGeometryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         //check if value is cube sphree or cylinder then set geometry as that with blank file name
         if (e.target.value === "cube" || e.target.value === "sphere" || e.target.value === "cylinder") {
-            selectedItem!.setGeometry(e.target.value, "");
+            selectedObject.setGeometry(e.target.value, "");
             threeScene.forceUpdateBoth();
             return;
         } else {
             // Set the geometry type to mes
-            selectedItem!.setGeometry("mesh", e.target.value);
+            selectedObject.setGeometry("mesh", e.target.value);
         }
         threeScene.forceUpdateBoth();
     };

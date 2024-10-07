@@ -4,35 +4,35 @@ import Parameter from "./Parameter";
 import ItemParameterProps from "../ItemParameterProps";
 import { ParameterValue } from "../ParameterProps";
 
-function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemParameterProps) {
+function RotationParameters({ selectedObject, threeScene }: ItemParameterProps) {
     if (!selectedObject) return;
     const radToDeg = (radians: number) => (radians * 180) / Math.PI;
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
     const [tempX, setTempX] = useState<ParameterValue>(
-        radToDeg(selectedItem!.rotation.x).toFixed(2)
+        radToDeg(selectedObject.rotation.x).toFixed(2)
     );
     const [tempY, setTempY] = useState<ParameterValue>(
-        radToDeg(selectedItem!.rotation.y).toFixed(2)
+        radToDeg(selectedObject.rotation.y).toFixed(2)
     );
     const [tempZ, setTempZ] = useState<ParameterValue>(
-        radToDeg(selectedItem!.rotation.z).toFixed(2)
+        radToDeg(selectedObject.rotation.z).toFixed(2)
     );
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(radToDeg(selectedItem!.rotation.x).toFixed(2));
-        setTempY(radToDeg(selectedItem!.rotation.y).toFixed(2));
-        setTempZ(radToDeg(selectedItem!.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedItem!.rotation), threeScene?.toolMode]);
+        setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
+        setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
+        setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
+    }, [JSON.stringify(selectedObject.rotation), threeScene?.toolMode]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
         if(isNaN(newValue)){
-            setTempX(selectedItem?.rotation.x);
-            setTempY(selectedItem?.rotation.y);
-            setTempZ(selectedItem?.rotation.z);
+            setTempX(selectedObject.rotation.x);
+            setTempY(selectedObject.rotation.y);
+            setTempZ(selectedObject.rotation.z);
             return false;
         }
 
@@ -63,7 +63,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
         if(validValue === false) return;
-        const newRotation = selectedItem!.objectRotation.toArray();
+        const newRotation = selectedObject.rotation.toArray();
         switch (axis) {
             case "x":
                 newRotation[0] = validValue; 
@@ -75,7 +75,7 @@ function RotationParameters({ selectedObject, selectedItem, threeScene }: ItemPa
                 newRotation[2] = validValue; 
                 break;
         }
-        selectedItem!.objectRotation.set(...newRotation);
+        selectedObject.rotation.set(...newRotation);
         handleRotationChange(e);
     };
 
