@@ -22,6 +22,14 @@ export default function TreeProperty(props: Props) {
         setHoveredFrame,
     } = props;
 
+    const isSelected = () => {
+        const selectedProperty = threeScene.selectedObject;
+        if (!selectedProperty) return false;
+        if (selectedProperty instanceof Frame)return false;
+        if (selectedProperty.id === property.id) return true;
+        return false;
+    };
+
     //TODO
     const onClick = () => {
         threeScene.selectObject(property);
@@ -40,10 +48,13 @@ export default function TreeProperty(props: Props) {
         handleContextMenu(e, property);
     };
 
+    const selectedStyle = isSelected() ? {borderColor: "#646cff"}: {};
+
     return (
         <button
             key={property.id}
             className={styles.treeProperty}
+            style={selectedStyle}
             onContextMenu={onContextMenu}
             draggable={true}
             onClick={onClick}
