@@ -78,6 +78,8 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
                         xml += `        <sphere>\n          <radius>${visual.scale.x / 2}</radius>\n        </sphere>\n`;
                     } else if (geometryType === "CylinderGeometry") {
                         xml += `        <cylinder>\n          <radius>${visual.scale.x / 2}</radius>\n          <length>${visual.scale.z}</length>\n        </cylinder>\n`;
+                    } else if (visual.shape === "mesh") {
+                        xml += `        <mesh>\n          <uri>model://meshes/${visual.stlfile}</uri>\n          <scale>${formatVector(visual.scale)}</scale>\n        </mesh>\n`;
                     }
                     xml += `      </geometry>\n`;
                     xml += materialXML;
@@ -96,6 +98,8 @@ export const ScenetoSDF = (scene: THREE.Object3D, projectTitle: string) => {
                         xml += `        <sphere>\n          <radius>${collision.scale.x / 2}</radius>\n        </sphere>\n`;
                     } else if (geometryType === "CylinderGeometry") {
                         xml += `        <cylinder>\n          <radius>${collision.scale.x / 2}</radius>\n          <length>${collision.scale.z}</length>\n        </cylinder>\n`;
+                    } else if (collision.shape === "mesh") {
+                        xml += `        <mesh>\n          <uri>model://meshes/${collision.stlfile}</uri>\n          <scale>${formatVector(collision.scale)}</scale>\n        </mesh>\n`;
                     }
                     xml += `      </geometry>\n`;
                     xml += `    </collision>\n`;

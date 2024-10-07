@@ -22,6 +22,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
     const [tempZ, setTempZ] = useState<ParameterValue>(selectedItem!.objectScale.z);
     const [tempRadius, setTempRadius] = useState<ParameterValue>(selectedItem!.objectScale.x / 2);
     const [tempHeight, setTempHeight] = useState<ParameterValue>(selectedItem!.objectScale.z);
+    const [tempScaleFactor, setTempScaleFactor] = useState<ParameterValue>(selectedItem!.objectScale.x);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
@@ -31,6 +32,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
         setTempZ(selectedItem!.objectScale.z);
         setTempRadius(selectedItem!.objectScale.x / 2);
         setTempHeight(selectedItem!.objectScale.z);
+        setTempScaleFactor(selectedItem!.objectScale.x);
     }, [JSON.stringify(selectedItem!.objectScale), threeScene?.toolMode]);
 
     const validateInput = (value: string) => {
@@ -42,6 +44,7 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
             setTempZ(selectedItem?.objectScale.z);
             setTempRadius(selectedItem!.objectScale.x / 2);
             setTempHeight(selectedItem!.objectScale.z);
+            setTempScaleFactor(selectedItem!.objectScale.x);
             return false;
         }
 
@@ -80,27 +83,61 @@ function ScaleParameters({ selectedObject, selectedItem, threeScene }: ScalePara
     const handleScaleBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         let validValue = validateInput(e.currentTarget.value);
-        if(validValue === false) return;
-        
+        if (validValue === false) return;
+    
         const newScale = selectedItem!.objectScale.toArray();
-        switch (axis) {
-            case "radius":
-                validValue = validValue * 2;
-            case "scale factor":
-            case "x":
+        debugger;
+        // Handle scaling based on object shape
+        switch (selectedItem!.shape) {
+            case "cube":
+                // For a cube, scale x, y, and z independently
+                switch (axis) {
+                    case "x":
+                        newScale[0] = validValue;
+                        break;
+                    case "y":
+                        newScale[1] = validValue;
+                        break;
+                    case "z":
+                        newScale[2] = validValue;
+                        break;
+                }
+                break;
+    
+            case "cylinder":
+                // For a cylinder, radius affects x and y, height affects z
+                if (axis === "radius") {
+                    // Scale x and y by the radius
+                    newScale[0] = validValue * 2; // x-axis
+                    newScale[1] = validValue * 2; // y-axis
+                } else if (axis === "height") {
+                    newScale[2] = validValue; // z-axis
+                }
+                break;
+    
+            case "sphere":
+                // For a sphere, scale x, y, and z by 2 times the value
+                newScale[0] = validValue * 2;
+                newScale[1] = validValue * 2;
+                newScale[2] = validValue * 2;
+                break;
+    
+            case "mesh":
+                // For a mesh, apply uniform scaling along all axes
                 newScale[0] = validValue;
-                break;
-            case "y":
-                newScale[1] = validValue; 
-                break;
-            case "z":
-            case "height":
+                newScale[1] = validValue;
                 newScale[2] = validValue;
                 break;
+    
+            default:
+                throw new Error(`Unsupported shape: ${selectedItem!.shape}`);
         }
+    
+        // Apply the new scale to the object
         selectedItem!.objectScale.set(...newScale);
-        handleScaleChange(e);
+        handleScaleChange(e); // Ensure any other necessary updates happen
     };
+    
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
