@@ -224,21 +224,19 @@ export default class Frame extends THREE.Mesh {
      * Add a visual to the link of the frame
      * @param shape The shape of the visual (cube, sphere, cylinder, mesh)
      */
-    // addVisual(shape: string) {
-    //     const visual = new Visual(shape);
-    //     this.link!.add(visual);
-    //     this.visuals!.push(visual);
-    // }
+    addVisual(shape: string) {
+        const visual = new Visual(this.visuals.length, shape);
+        this.addProperty(visual);
+    }
 
     /**
      * Add a collision to the link of the frame
      * @param shape The shape of the collision (cube, sphere, cylinder, mesh)
      */
-    // addCollision(shape: string) {
-    //     const collision = new Collision(shape);
-    //     this.link!.add(collision);
-    //     this.collisions!.push(collision);
-    // }
+    addCollision(shape: string) {
+        const collision = new Collision(this.collisions.length, shape);
+        this.addProperty(collision);
+    }
 
     rotateAroundJointAxis = (angle: number) => {
         // Angle must be in radians

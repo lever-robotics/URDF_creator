@@ -10,6 +10,7 @@
     padding: 10px;
     color: #fff;
     box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+    border-top: 2px solid #646cff;
     /* opacity: 0.6;
     transition: opacity 0.2s ease-in-out; */
 }
@@ -36,7 +37,7 @@
     margin-left: 3px;
     cursor: pointer;
     color: #fff;
-    text-shadow: 1px 1px 2px black;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .button {
