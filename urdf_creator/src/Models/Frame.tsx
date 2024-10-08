@@ -9,6 +9,7 @@ import { Vector3, Euler } from "three";
 import VisualCollision from "./VisualCollision";
 
 export type Frameish = Frame | null | undefined;
+export type JointType = "fixed" | "revolute" | "continuous" | "prismatic"
 
 export default class Frame extends THREE.Mesh {
     visuals!: Visual[];
@@ -24,13 +25,13 @@ export default class Frame extends THREE.Mesh {
     isRootFrame: boolean;
 
     stlfile?: string;
-    _jointType: string;
+    _jointType: JointType;
 
     constructor(
         public name = "",
         position: Vector3 = new Vector3(0, 0, 0),
         rotation: Euler = new Euler(0, 0, 0),
-        jointType = "fixed",
+        jointType: JointType = "fixed",
         public min = -1,
         public max = 1
     ) {
@@ -74,7 +75,6 @@ export default class Frame extends THREE.Mesh {
     };
 
     get parentName() {
-        if (this.isRootFrame) return null;
         return this.parentFrame!.name;
     }
 

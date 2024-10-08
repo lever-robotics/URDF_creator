@@ -10,31 +10,13 @@
     /* background-color: #1d2a31; */
 }
 
-.section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 4px 0px;
-}
-
-.sectionChildren {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.title {
-    font-family: inherit;
-    font-size: small;
-    font-weight: 300;
-    margin-left: 16px;
-}
-
 .object-parameters h3 {
     margin-top: 0;
     font-size: 20px;
 
 }
 
+/* Was used on FrameParameters*/
 .basic {
     display: flex;
     gap: 40px;
@@ -76,17 +58,12 @@
     pointer-events: none;
 }
 
-.basicParams{
-    background-color: #1d2a31;
-    padding: 16px 0px;
-    margin: 6px 4px;
-    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
-}
-
 .momentOfInertia {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    /* flex-wrap: wrap;
+    justify-content: center; */
 }
 
 .mass {
@@ -179,10 +156,3 @@ h4:hover {
     margin-bottom: 8px;
 }
 */
-.select {
-    background-color: #14252e;
-    color: #fff;
-    display: block;
-    margin-top: 4px;
-    border: none;
-}

@@ -1,8 +1,10 @@
 import React from "react";
 import ParameterProps from "../ParameterProps";
 import { IMU } from "../../../../Models/SensorsClass";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Frame from "../../../../Models/Frame";
 
-function IMUParameters({ selectedObject, threeScene }: ParameterProps) {
+function IMUParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

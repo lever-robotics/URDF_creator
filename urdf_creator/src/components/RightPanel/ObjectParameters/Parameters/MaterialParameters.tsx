@@ -1,12 +1,17 @@
 import React from "react";
 import Parameter from "./Parameter";
-import Section from "../Section";
-import ItemParameterProps from "../ItemParameterProps";
+import Section from "./Section";
 import { Collision, Visual } from "../../../../Models/VisualCollision";
 import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Property from "./Property";
 
-export default function MaterialParameters({ threeScene, selectedObject }: {threeScene: ThreeScene, selectedObject: Visual | Collision}) {
-
+export default function MaterialParameters({
+    threeScene,
+    selectedObject,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Visual | Collision;
+}) {
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         (selectedObject as Visual | Collision).setColorByHex(e.target.value);
     };
@@ -16,16 +21,17 @@ export default function MaterialParameters({ threeScene, selectedObject }: {thre
     };
 
     return (
-        <Section title="Material Parameters">
-            <ul>
-                <Parameter
-                    title={"Color:"}
-                    type="color"
-                    value={"#"+ (selectedObject as Visual | Collision).color.getHexString()}
-                    onChange={handleColorChange}
-                    onBlur={handleColorBlur}
-                />
-            </ul>
-        </Section>
+        <Property name="Material">
+            <Parameter
+                title={"Color:"}
+                type="color"
+                value={
+                    "#" +
+                    (selectedObject as Visual | Collision).color.getHexString()
+                }
+                onChange={handleColorChange}
+                onBlur={handleColorBlur}
+            />
+        </Property>
     );
 }

@@ -1,7 +1,7 @@
 import Link from "../../Models/Link";
 import JointVisualizer from "../../Models/JointVisualizer";
 import Inertia from "../../Models/Inertia";
-import Frame from "../../Models/Frame";
+import Frame, { JointType } from "../../Models/Frame";
 import { IMU, Camera, Lidar, Sensor, sensorCreator } from "../../Models/SensorsClass";
 import Axis from "../../Models/Axis";
 import * as THREE from "three";
@@ -63,7 +63,7 @@ export function createFrame(params: UserData): Frame {
     const link = new Link(offset, shape);
     const jointVisualizer = new JointVisualizer();
     const axis = new Axis(axisRotation);
-    const frame = new Frame(name, position, rotation, jointType, jointMin, jointMax);
+    const frame = new Frame(name, position, rotation, jointType as JointType, jointMin, jointMax);
     const inertia = new Inertia(frame, mass, ixx, iyy, izz, ixy, ixz, iyz);
 
     // Add link children

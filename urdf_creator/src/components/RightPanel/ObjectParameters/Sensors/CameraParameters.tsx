@@ -1,9 +1,13 @@
 import React from "react";
 import ParameterProps from "../ParameterProps";
 import { Camera } from "../../../../Models/SensorsClass";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Frame from "../../../../Models/Frame";
+import Parameter from "../Parameters/Parameter";
+import Property from "../Parameters/Property";
 
 
-function CameraParameters({ selectedObject, threeScene }: ParameterProps) {
+function CameraParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -14,115 +18,115 @@ function CameraParameters({ selectedObject, threeScene }: ParameterProps) {
     const camera = selectedObject.sensor as Camera
 
     return (
-        <div>
-            <label>
-                Camera Name:
-                <input
+        <>
+            <Property>
+                <Parameter
+                    title="Camera Name:"
                     type="text"
                     name="cameraName"
                     value={camera.cameraName}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Horizontal FOV:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Horizontal FOV:"
                     type="number"
                     name="horizontal_fov"
                     value={camera.horizontal_fov}
                     onChange={handleChange}
-                />
-                <span className="units">&deg; degrees</span>
-            </label>
-            <label>
-                Image Width:
-                <input
+                    units={"&deg"}
+                />  
+            </Property>
+            <Property>
+                <Parameter
+                    title="Image Width:"
                     type="number"
                     name="width"
                     value={camera.width}
                     onChange={handleChange}
+                    units={"px"}
                 />
-                <span className="units">px</span>
-            </label>
-            <label>
-                Image Height:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Image Height:"
                     type="number"
                     name="height"
                     value={camera.height}
                     onChange={handleChange}
+                    units={"px"}
                 />
-                <span className="units">px</span>
-            </label>
-            <label>
-                Image Format:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Image Format:"
                     type="text"
                     name="format"
                     value={camera.format}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Clip Near:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Clip Near:"
                     type="number"
                     name="near"
                     value={camera.near}
                     onChange={handleChange}
+                    units={"m"}
                 />
-                <span className="units">m</span>
-            </label>
-            <label>
-                Clip Far:
-                <input
-                    type="number"
-                    name="far"
-                    value={camera.far}
-                    onChange={handleChange}
-                />
-                <span className="units">m</span>
-            </label>
-            <label>
-                Gaussian Noise:
-                <input
+            </Property>
+            <Property>
+            <Parameter
+                title="Clip Far:"
+                type="number"
+                name="far"
+                value={camera.far}
+                onChange={handleChange}
+                units={"m"}
+            />
+            </Property>
+            <Property>
+                <Parameter
+                    title="Gaussian Noise:"
                     type="number"
                     name="gaussianNoise"
                     value={camera.gaussianNoise}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Update Rate:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Update Rate:"
                     type="number"
                     name="updateRate"
                     value={camera.updateRate}
                     onChange={handleChange}
+                    units={"Hz"}
                 />
-                <span className="units">Hz</span>
-            </label>
-            <label>
-                Image Topic Name:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Image Topic Name:"
                     type="text"
                     name="imageTopicName"
                     style={{ width: "200px" }}
                     value={camera.imageTopicName}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Camera Info Topic Name:
-                <input
+            </Property>
+            <Property>
+                <Parameter
+                    title="Camera Info Topic Name:"
                     type="text"
                     name="cameraInfoTopicName"
                     style={{ width: "200px" }}
                     value={camera.cameraInfoTopicName}
                     onChange={handleChange}
                 />
-            </label>
-        </div>
+            </Property>
+        </>
     );
 }
 

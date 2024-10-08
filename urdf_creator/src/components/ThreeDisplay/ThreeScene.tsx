@@ -131,6 +131,7 @@ export default class ThreeScene {
                 newFrame.objectPosition.set(0, 0, 0.5);
                 newFrame.isRootFrame = true;
                 newFrame.name = "base_link";
+                newFrame.parentFrame = this.worldFrame;
                 this.rootFrame = newFrame;
                 this.worldFrame.attach(newFrame);
             }

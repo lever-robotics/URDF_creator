@@ -1,13 +1,15 @@
-import styles from "../ObjectParameters.module.css";
-import ThreeScene, { Selectable } from "../../../ThreeDisplay/ThreeScene";
-import { Collision, Visual } from "../../../../Models/VisualCollision";
-import Inertia from "../../../../Models/Inertia";
-import Frame from "../../../../Models/Frame";
-import MaterialParameters from "./MaterialParameters";
-import PositionParameters from "./PositionParameters";
-import RotationParameters from "./RotationParameters";
-import ScaleParameters from "./ScaleParameters";
-import MeshParameters from "./MeshParameters";
+import styles from "./ObjectParameters.module.css";
+import ThreeScene, { Selectable } from "../../ThreeDisplay/ThreeScene";
+import { Collision, Visual } from "../../../Models/VisualCollision";
+import Inertia from "../../../Models/Inertia";
+import Frame from "../../../Models/Frame";
+import MaterialParameters from "./Parameters/MaterialParameters";
+import PositionParameters from "./Parameters/PositionParameters";
+import RotationParameters from "./Parameters/RotationParameters";
+import ScaleParameters from "./Parameters/ScaleParameters";
+import MeshParameters from "./Parameters/MeshParameters";
+import Section from "./Parameters/Section";
+import Property from "./Parameters/Property";
 
 function CollisionParameters({
     threeScene,
@@ -21,12 +23,9 @@ function CollisionParameters({
     const collisions = selectedObject instanceof Frame ? selectedObject.collisions : selectedObject.frame.collisions;
 
     return (
-        <div>
+        <Section title={"Collisions"}>
             {collisions.map((collision, index) => (
-                <div
-                    key={`collision-${index}`}
-                    className={styles.basicParams}>
-                    <div className={styles.title}>Collision {index + 1}</div>
+                <Property key={index} name={collision.name}>
                     <MaterialParameters
                         selectedObject={collision}
                         threeScene={threeScene}
@@ -49,9 +48,9 @@ function CollisionParameters({
                         selectedObject={collision}
                         threeScene={threeScene}
                     />
-                </div>
+                </Property>
             ))}
-        </div>
+        </Section>
     );
 }
 

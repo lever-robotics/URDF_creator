@@ -1,8 +1,10 @@
 import React from 'react';
 import ParameterProps from '../ParameterProps';
 import { Lidar } from '../../../../Models/SensorsClass';
+import ThreeScene from '../../../ThreeDisplay/ThreeScene';
+import Frame from '../../../../Models/Frame';
 
-function LidarParameters({ selectedObject, threeScene }: ParameterProps) {
+function LidarParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
     if (!selectedObject) return;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

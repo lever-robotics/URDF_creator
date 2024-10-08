@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Section from "../Section";
+import Section from "./Section";
 import Parameter from "./Parameter";
 import ItemParameterProps from "../ItemParameterProps";
 import { ParameterValue } from "../ParameterProps";
+import Property from "./Property";
 
-function RotationParameters({ selectedObject, threeScene }: ItemParameterProps) {
+function RotationParameters({
+    selectedObject,
+    threeScene,
+}: ItemParameterProps) {
     if (!selectedObject) return;
     const radToDeg = (radians: number) => (radians * 180) / Math.PI;
     const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
@@ -29,21 +33,25 @@ function RotationParameters({ selectedObject, threeScene }: ItemParameterProps) 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
-        if(isNaN(newValue)){
+        if (isNaN(newValue)) {
             setTempX(selectedObject.rotation.x);
             setTempY(selectedObject.rotation.y);
             setTempZ(selectedObject.rotation.z);
             return false;
         }
 
-        if(Object.is(newValue, -0)){
+        if (Object.is(newValue, -0)) {
             return 0;
-        }else{
+        } else {
             return newValue;
         }
-    }
+    };
 
-    const handleRotationChange = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleRotationChange = (
+        e:
+            | React.ChangeEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>
+    ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const tempValue = e.currentTarget.value;
         switch (axis) {
@@ -59,20 +67,24 @@ function RotationParameters({ selectedObject, threeScene }: ItemParameterProps) 
         }
     };
 
-    const handleRotationBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleRotationBlur = (
+        e:
+            | React.FocusEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>
+    ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(validValue === false) return;
+        if (validValue === false) return;
         const newRotation = selectedObject.rotation.toArray();
         switch (axis) {
             case "x":
-                newRotation[0] = validValue; 
+                newRotation[0] = validValue;
                 break;
             case "y":
-                newRotation[1] = validValue; 
+                newRotation[1] = validValue;
                 break;
             case "z":
-                newRotation[2] = validValue; 
+                newRotation[2] = validValue;
                 break;
         }
         selectedObject.rotation.set(...newRotation);
@@ -87,35 +99,35 @@ function RotationParameters({ selectedObject, threeScene }: ItemParameterProps) 
     };
 
     return (
-        <Section title="Rotation">
-                <Parameter
-                    title="X:"
-                    type="text"
-                    units="°degrees"
-                    value={tempX}
-                    onChange={handleRotationChange}
-                    onBlur={handleRotationBlur}
-                    onKeyDown={handleKeyDown}
-                />
-                <Parameter
-                    title="Y:"
-                    type="text"
-                    units="°degrees"
-                    value={tempY}
-                    onChange={handleRotationChange}
-                    onBlur={handleRotationBlur}
-                    onKeyDown={handleKeyDown}
-                />
-                <Parameter
-                    title="Z:"
-                    type="text"
-                    units="°degrees"
-                    value={tempZ}
-                    onChange={handleRotationChange}
-                    onBlur={handleRotationBlur}
-                    onKeyDown={handleKeyDown}
-                />
-        </Section>
+        <Property name="Rotation">
+            <Parameter
+                title="X:"
+                type="text"
+                units="°degrees"
+                value={tempX}
+                onChange={handleRotationChange}
+                onBlur={handleRotationBlur}
+                onKeyDown={handleKeyDown}
+            />
+            <Parameter
+                title="Y:"
+                type="text"
+                units="°degrees"
+                value={tempY}
+                onChange={handleRotationChange}
+                onBlur={handleRotationBlur}
+                onKeyDown={handleKeyDown}
+            />
+            <Parameter
+                title="Z:"
+                type="text"
+                units="°degrees"
+                value={tempZ}
+                onChange={handleRotationChange}
+                onBlur={handleRotationBlur}
+                onKeyDown={handleKeyDown}
+            />
+        </Property>
     );
 }
 

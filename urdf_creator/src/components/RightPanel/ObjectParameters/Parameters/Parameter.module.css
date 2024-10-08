@@ -1,9 +1,8 @@
 .parameter{
     /* padding: 6px; */
-    margin-right: 10px;
     display:flex;
     align-items: center;
-    margin: 10px 10px 10px 0px;
+    /* margin: 10px 5px 10px 5px; */
 }
 
 .paramLabel{
@@ -44,3 +43,70 @@
 }.input:focus {
     border-color: #646cff;
 }
+
+.select {
+    background-color: #14252e;
+    color: #fff;
+    width: 120px;
+    text-align: center;
+    margin-top: 4px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.25s;
+    overflow: visible;
+    outline: none;
+}.select:hover {
+    border-color: #646cff;
+}.select:focus {
+    border-color: #646cff;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* justify-content: space-between; */
+    /* margin: 4px 0px; */
+    background-color: #1d2a31;
+    padding: 16px 0px;
+    margin: 6px 4px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 2.6px;
+}
+
+.sectionChildren {
+    /* display: flex;
+    flex-direction: column; */
+    width: 100%;
+    /* justify-content: space-evenly; */
+}
+
+.title {
+    font-family: inherit;
+    font-size: medium;
+    font-weight: 300;
+    margin-left: 8px;
+}
+
+.name {
+    font-family: inherit;
+    font-size: small;
+    font-weight: 300;
+}
+
+.property {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 10px 6px 10px 16px;
+}
+
+.propertyChildren {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 0px 10px;
+}
+

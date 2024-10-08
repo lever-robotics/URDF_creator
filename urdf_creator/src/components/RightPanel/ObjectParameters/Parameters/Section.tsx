@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import styles from "./ObjectParameters.module.css";
+import styles from "./Parameter.module.css";
 
-const Section = ({ title, children }: {title: string, children: ReactNode}) => {
+const Section = ({ title, children }: {title?: string, children: ReactNode}) => {
 
     return (
         <div className={styles.section}>

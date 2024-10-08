@@ -1,41 +1,65 @@
 import { useState, useEffect } from "react";
-import Section from "../Section";
+import Section from "./Section";
 import Parameter from "./Parameter";
 import ParameterProps, { ParameterValue } from "../ParameterProps";
+import Frame from "../../../../Models/Frame";
+import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import Property from "./Property";
 
-function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
+function OffsetParameters({
+    selectedObject,
+    threeScene,
+}: {
+    selectedObject: Frame;
+    threeScene: ThreeScene;
+}) {
     if (!selectedObject) return;
-    
+
     const [tempX, setTempX] = useState<ParameterValue>(selectedObject.offset.x);
     const [tempY, setTempY] = useState<ParameterValue>(selectedObject.offset.y);
     const [tempZ, setTempZ] = useState<ParameterValue>(selectedObject.offset.z);
 
     //implement use effect to update when selected object changes
     useEffect(() => {
-        setTempX(Math.abs(selectedObject.offset.x) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.x.toFixed(4)));
-        setTempY(Math.abs(selectedObject.offset.y) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.y.toFixed(4)));
-        setTempZ(Math.abs(selectedObject.offset.z) < 0.00001 ? 0.0 : parseFloat(selectedObject.offset.z.toFixed(4)));
-
+        setTempX(
+            Math.abs(selectedObject.offset.x) < 0.00001
+                ? 0.0
+                : parseFloat(selectedObject.offset.x.toFixed(4))
+        );
+        setTempY(
+            Math.abs(selectedObject.offset.y) < 0.00001
+                ? 0.0
+                : parseFloat(selectedObject.offset.y.toFixed(4))
+        );
+        setTempZ(
+            Math.abs(selectedObject.offset.z) < 0.00001
+                ? 0.0
+                : parseFloat(selectedObject.offset.z.toFixed(4))
+        );
     }, [JSON.stringify(selectedObject.offset)]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         const newValue = parseFloat(value);
-        if(isNaN(newValue)){
+        if (isNaN(newValue)) {
             setTempX(selectedObject.position.x);
             setTempY(selectedObject.position.y);
             setTempZ(selectedObject.position.z);
             return false;
         }
 
-        if(Object.is(newValue, -0)){
+        if (Object.is(newValue, -0)) {
             return 0;
-        }else{
+        } else {
             return newValue;
         }
-    }
+    };
 
-    const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleOffsetChange = (
+        e:
+            | React.ChangeEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>
+    ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const tempValue = e.currentTarget.value;
         switch (axis) {
@@ -53,23 +77,27 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
         }
     };
 
-    const handleOffsetBlur = (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleOffsetBlur = (
+        e:
+            | React.FocusEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>
+    ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
-        if(validValue === false) return;
+        if (validValue === false) return;
         const newOffset = selectedObject.offset.toArray();
         switch (axis) {
             case "x":
                 newOffset[0] = validValue;
-                setTempX(selectedObject.offset.x); 
+                setTempX(selectedObject.offset.x);
                 break;
             case "y":
-                newOffset[1] = validValue; 
+                newOffset[1] = validValue;
                 setTempY(selectedObject.offset.y);
                 break;
             case "z":
                 newOffset[2] = validValue;
-                setTempZ(selectedObject.offset.z); 
+                setTempZ(selectedObject.offset.z);
                 break;
         }
         selectedObject.offset.set(...newOffset);
@@ -77,42 +105,42 @@ function OffsetParameters({ selectedObject, threeScene }: ParameterProps) {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if(e.key === "Enter"){
+        if (e.key === "Enter") {
             handleOffsetBlur(e);
             (e.target as HTMLInputElement).blur();
         }
-    }
+    };
 
     return (
-        <Section title="Offset">
-                <Parameter
-                    title="X:"
-                    type="text"
-                    units="m"
-                    value={tempX}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
-                    onKeyDown={handleKeyDown}
-                />
-                <Parameter
-                    title="Y:"
-                    type="text"
-                    units="m"
-                    value={tempY}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
-                    onKeyDown={handleKeyDown}
-                />
-                <Parameter
-                    title="Z:"
-                    type="text"
-                    units="m"
-                    value={tempZ}
-                    onChange={handleOffsetChange}
-                    onBlur={handleOffsetBlur}
-                    onKeyDown={handleKeyDown}
-                />
-        </Section>
+        <Property name="Offset">
+            <Parameter
+                title="X:"
+                type="text"
+                units="m"
+                value={tempX}
+                onChange={handleOffsetChange}
+                onBlur={handleOffsetBlur}
+                onKeyDown={handleKeyDown}
+            />
+            <Parameter
+                title="Y:"
+                type="text"
+                units="m"
+                value={tempY}
+                onChange={handleOffsetChange}
+                onBlur={handleOffsetBlur}
+                onKeyDown={handleKeyDown}
+            />
+            <Parameter
+                title="Z:"
+                type="text"
+                units="m"
+                value={tempZ}
+                onChange={handleOffsetChange}
+                onBlur={handleOffsetBlur}
+                onKeyDown={handleKeyDown}
+            />
+        </Property>
     );
 }
 

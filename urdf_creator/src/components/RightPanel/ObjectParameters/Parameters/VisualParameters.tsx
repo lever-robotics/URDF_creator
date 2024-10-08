@@ -8,6 +8,8 @@ import PositionParameters from "./PositionParameters";
 import RotationParameters from "./RotationParameters";
 import ScaleParameters from "./ScaleParameters";
 import MeshParameters from "./MeshParameters";
+import Section from "./Section";
+import Property from "./Property";
 
 function VisualParameters({
     threeScene,
@@ -21,10 +23,9 @@ function VisualParameters({
     const visuals = selectedObject instanceof Frame ? selectedObject.visuals : selectedObject.frame.visuals;
 
     return (
-        <div>
+        <Section title="Visuals">
             {visuals.map((visual, index) => (
-                    <div key={`visual-${index}`} className={styles.basicParams}>
-                        <div className={styles.title}>Visual {index + 1}</div>
+                    <Property key={index} name={visual.name}>
                         <MaterialParameters
                             selectedObject={visual}
                             threeScene={threeScene}
@@ -45,9 +46,9 @@ function VisualParameters({
                             selectedObject={visual}
                             threeScene={threeScene}
                         />
-                    </div>
+                    </Property>
                 ))}
-        </div>
+        </Section>
     );
 }
 
