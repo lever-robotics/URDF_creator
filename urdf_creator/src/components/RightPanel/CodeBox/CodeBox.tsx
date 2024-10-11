@@ -39,6 +39,11 @@ export default function CodeBox({
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [code, setCode] = useState<string>(text);
 
+    useEffect(() => {
+        const text = ScenetoText(selectedFormat, threeScene, projectTitle);
+        setCode(text);
+    }, [selectedFormat, threeScene, projectTitle]);
+
     // Copies the text to the clipboard and displays a tooltip saying copied for two seconds
     const copyToClipboard = () => {
         navigator.clipboard.writeText(code).then(

@@ -3,6 +3,8 @@ import type Frame from "../../../../Models/Frame";
 import { IMU } from "../../../../Models/SensorsClass";
 import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import ParameterProps from "../ParameterProps";
+import Parameter from "../Parameters/Parameter";
+import Property from "../Parameters/Property";
 
 function IMUParameters({
     selectedObject,
@@ -35,45 +37,45 @@ function IMUParameters({
     };
 
     return (
-        <div>
-            <label>
-                Update Rate:
-                <input
-                    type="number"
+        <>
+            <Property>
+                <Parameter
+                    title="Update Rate:"
+                    type="text"
                     name="updateRate"
                     value={imu.updateRate}
+                    units="Hz"
                     onChange={handleChange}
                 />
-                <span className="units">Hz</span>
-            </label>
-            <label>
-                Mean:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Mean:"
+                    type="text"
                     name="mean"
                     value={imu.mean}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Standard Deviation:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Standard Deviation:"
+                    type="text"
                     name="stddev"
                     value={imu.stddev}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Gaussian Noise:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Gaussian Noise:"
+                    type="text"
                     name="gaussianNoise"
                     value={imu.gaussianNoise}
                     onChange={handleChange}
                 />
-            </label>
-        </div>
+            </Property>
+        </>
     );
 }
 

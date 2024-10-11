@@ -3,6 +3,8 @@ import type Frame from "../../../../Models/Frame";
 import { Lidar } from "../../../../Models/SensorsClass";
 import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import ParameterProps from "../ParameterProps";
+import Parameter from "../Parameters/Parameter";
+import Property from "../Parameters/Property";
 
 function LidarParameters({
     selectedObject,
@@ -53,113 +55,113 @@ function LidarParameters({
     };
 
     return (
-        <div>
-            <label>
-                Update Rate:
-                <input
-                    type="number"
+        <>
+            <Property>
+                <Parameter
+                    title="Update Rate:"
+                    type="text"
                     name="updateRate"
                     value={lidar.updateRate}
+                    units="Hz"
                     onChange={handleChange}
                 />
-                <span className="units">Hz</span>
-            </label>
-            <label>
-                Samples:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Samples:"
+                    type="text"
                     name="samples"
                     value={lidar.samples}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Resolution:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Resolution:"
+                    type="text"
                     step="0.000001"
                     name="resolution"
                     value={lidar.resolution}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">&deg; degrees</span>
-            </label>
-            <label>
-                Min Angle:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Min Angle:"
+                    type="text"
                     step="0.000001"
                     name="minAngle"
                     value={lidar.minAngle}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">&deg; degrees</span>
-            </label>
-            <label>
-                Max Angle:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Max Angle:"
+                    type="text"
                     step="0.000001"
                     name="maxAngle"
                     value={lidar.maxAngle}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">&deg; degrees</span>
-            </label>
-            <label>
-                Min Range:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Min Range:"
+                    type="text"
                     step="0.000001"
                     name="minRange"
                     value={lidar.minRange}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">m</span>
-            </label>
-            <label>
-                Max Range:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Max Range:"
+                    type="text"
                     step="0.000001"
                     name="maxRange"
                     value={lidar.maxRange}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">m</span>
-            </label>
-            <label>
-                Range Resolution:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Range Resolution:"
+                    type="text"
                     step="0.000001"
                     name="rangeResolution"
                     value={lidar.rangeResolution}
+                    units="&deg; degrees"
                     onChange={handleChange}
                 />
-                <span className="units">&deg; degrees</span>
-            </label>
-            <label>
-                Gaussian Noise Mean:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Gaussian Noise Mean:"
+                    type="text"
                     step="0.000001"
                     name="mean"
                     value={lidar.mean}
                     onChange={handleChange}
                 />
-            </label>
-            <label>
-                Gaussian Noise Stddev:
-                <input
-                    type="number"
+            </Property>
+            <Property>
+                <Parameter
+                    title="Gaussian Noise Stddev:"
+                    type="text"
                     step="0.000001"
                     name="stddev"
                     value={lidar.stddev}
                     onChange={handleChange}
                 />
-            </label>
-        </div>
+            </Property>
+        </>
     );
 }
 

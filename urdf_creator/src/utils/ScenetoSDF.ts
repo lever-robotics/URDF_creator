@@ -19,7 +19,7 @@ export const ScenetoSDF = (scene: ThreeScene, projectTitle: string) => {
         xml += "</sdf>";
         return xml;
     }
-    if (scene.rootFrame) {
+    if (!scene.rootFrame) {
         xml += "</sdf>";
         return xml;
     }
