@@ -47,7 +47,7 @@
     height: 100%;
 }
 
-.nameBar{
+.nameBar {
     /* display: flex; */
     /* align-items: center; */
     /* gap: 60px; */
@@ -55,12 +55,12 @@
     background-color: #1d2a31;
 }
 
-.children{
-    font-size:xx-small;
+.children {
+    font-size: xx-small;
     padding: 4px;
 }
 
-.name{
+.name {
     font-size: small;
     padding-left: 8px;
 }
@@ -85,7 +85,7 @@
     padding: 10px;
 }
 
-.button{
+.button {
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;

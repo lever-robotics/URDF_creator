@@ -1,11 +1,15 @@
-import Frame, { Frameish } from "../../Models/Frame";
-import ThreeScene from "../ThreeDisplay/ThreeScene";
-import { ContextMenu } from "./LinkTree";
+import Frame, { type Frameish } from "../../Models/Frame";
+import VisualCollision, {
+    type Collision,
+    type Visual,
+} from "../../Models/VisualCollision";
+import type ThreeScene from "../ThreeDisplay/ThreeScene";
+import type { ContextMenu } from "./LinkTree";
 import styles from "./TreeFrame.module.css";
 
 // TODO all Framish types need to become the superset selectedObject type
 type Props = {
-    property: any;
+    property: Visual | Collision;
     handleContextMenu: (e: React.MouseEvent, treeObject: ContextMenu) => void;
     threeScene: ThreeScene;
     hoveredFrame: Frameish;
@@ -25,13 +29,13 @@ export default function TreeProperty(props: Props) {
     const isSelected = () => {
         const selectedProperty = threeScene.selectedObject;
         if (!selectedProperty) return false;
-        if (selectedProperty instanceof Frame)return false;
+        if (selectedProperty instanceof Frame) return false;
         if (selectedProperty.id === property.id) return true;
         return false;
     };
 
     const onClick = () => {
-        threeScene.selectObject(property);
+        if (!(property instanceof Frame)) threeScene.selectObject(property);
     };
 
     const onDragEnd = (e: React.MouseEvent) => {
@@ -47,7 +51,7 @@ export default function TreeProperty(props: Props) {
         handleContextMenu(e, property);
     };
 
-    const selectedStyle = isSelected() ? {borderColor: "#646cff"}: {};
+    const selectedStyle = isSelected() ? { borderColor: "#646cff" } : {};
 
     return (
         <button
@@ -57,7 +61,9 @@ export default function TreeProperty(props: Props) {
             onContextMenu={onContextMenu}
             draggable={true}
             onClick={onClick}
-            onDragEnd={onDragEnd}>
+            onDragEnd={onDragEnd}
+            type="button"
+        >
             {property.name}
         </button>
     );

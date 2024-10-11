@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import styles from "./ScreenTools.module.css";
 
 interface RowProps {
@@ -14,7 +14,8 @@ export default function Row({ children, width = "", height = "" }: RowProps) {
             style={{
                 width: width === "" ? "auto" : width,
                 height: height === "" ? "auto" : height,
-            }}>
+            }}
+        >
             {children}
         </div>
     );

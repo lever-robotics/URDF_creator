@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import Section from "./Section";
 import { openDB } from "idb";
-import { Collision, Visual } from "../../../../Models/VisualCollision";
-import ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Collision, Visual } from "../../../../Models/VisualCollision";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import styles from "./Parameter.module.css";
 import Property from "./Property";
+import Section from "./Section";
 
 type MeshParametersProps = {
     selectedObject: Visual | Collision;
@@ -12,20 +13,20 @@ type MeshParametersProps = {
 };
 
 function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
-    const [files, setFiles] = useState<any[]>([]);
+    const [files, setFiles] = useState<File[]>([]);
     const [geometryValue, setGeometryValue] = useState(
         selectedObject.shape === "mesh"
             ? selectedObject.stlfile
-            : selectedObject.shape
+            : selectedObject.shape,
     );
 
     useEffect(() => {
         setGeometryValue(
             selectedObject.shape === "mesh"
                 ? selectedObject.stlfile
-                : selectedObject.shape
+                : selectedObject.shape,
         );
-    }, [JSON.stringify(selectedObject.shape)]);
+    }, [selectedObject.shape, selectedObject.stlfile]);
 
     const handleGeometryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         //check if value is cube sphree or cylinder then set geometry as that with blank file name
@@ -37,10 +38,9 @@ function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
             selectedObject.setGeometry(e.target.value, "");
             threeScene.forceUpdateBoth();
             return;
-        } else {
-            // Set the geometry type to mes
-            selectedObject.setGeometry("mesh", e.target.value);
         }
+        // Set the geometry type to mes
+        selectedObject.setGeometry("mesh", e.target.value);
         threeScene.forceUpdateBoth();
     };
 
@@ -66,20 +66,20 @@ function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
         }
     };
 
-    useEffect(() => {
-        // Load files when the component is first rendered
-        loadFiles();
-    }, []);
+    // useEffect(() => {
+    //     // Load files when the component is first rendered
+    //     loadFiles();
+    // }, []);
 
     return (
         <Property name="Choose Geometry">
-            (computationally intensive if mesh applied as
-            collision geometry):
+            (computationally intensive if mesh applied as collision geometry):
             <select
                 value={geometryValue}
                 onChange={handleGeometryChange}
                 onClick={loadFiles} // Load files when the selection bar is clicked
-                className={styles.select}>
+                className={styles.select}
+            >
                 <option value="cube">Cube</option>
                 <option value="sphere">Sphere</option>
                 <option value="cylinder">Cylinder</option>

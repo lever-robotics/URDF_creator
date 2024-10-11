@@ -1,23 +1,23 @@
 export class Sensor {
     type: string;
-    constructor(type = ""){
+    constructor(type = "") {
         this.type = type;
     }
 
-    update(name: string, value: number | string){
-        (this as any)[name] = value; //hotfix for Typescript, code as all possible values in future
-    }
+    // update(name: string, value: number | string) {
+    //     const key: keyof Sensor = name;
+    //     this[key] = value; //hotfix for Typescript, code as all possible values in future
+    // }
 
     duplicate() {
-        const clone: Sensor = sensorCreator({type: this.type});
+        const clone: Sensor = sensorCreator({ type: this.type });
         Object.assign(clone, this);
         return clone;
     }
-    
 }
 
-export function sensorCreator(sensor = {type: ""}) {
-    let newSensor;
+export function sensorCreator(sensor = { type: "" }) {
+    let newSensor: Sensor;
     switch (sensor.type) {
         case "imu":
             newSensor = new IMU(sensor);
@@ -35,8 +35,7 @@ export function sensorCreator(sensor = {type: ""}) {
     return newSensor;
 }
 
-
-export class IMU extends Sensor{
+export class IMU extends Sensor {
     gaussianNoise: number;
     xyzOffsets: string;
     rpyOffsets: string;
@@ -65,7 +64,7 @@ export class IMU extends Sensor{
     }
 }
 
-export class Camera extends Sensor{
+export class Camera extends Sensor {
     gaussianNoise: number;
     xyzOffsets: string;
     rpyOffsets: string;
@@ -119,10 +118,9 @@ export class Camera extends Sensor{
         this.mean = mean;
         this.stddev = stddev;
     }
-
 }
 
-export class Lidar extends Sensor{
+export class Lidar extends Sensor {
     alwaysOn: boolean;
     updateRate: number;
     pose: string;
@@ -135,7 +133,7 @@ export class Lidar extends Sensor{
     rangeResolution: number;
     mean: number;
     stddev: number;
-    
+
     constructor({
         type = "lidar",
         alwaysOn = true,
@@ -165,5 +163,4 @@ export class Lidar extends Sensor{
         this.mean = mean;
         this.stddev = stddev;
     }
-
 }

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import Section from "./Section";
+import { useEffect, useState } from "react";
+import type Frame from "../../../../Models/Frame";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import ParameterProps, { type ParameterValue } from "../ParameterProps";
 import Parameter from "./Parameter";
-import ParameterProps, { ParameterValue } from "../ParameterProps";
-import Frame from "../../../../Models/Frame";
-import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import Property from "./Property";
+import Section from "./Section";
 
 function OffsetParameters({
     selectedObject,
@@ -24,24 +24,28 @@ function OffsetParameters({
         setTempX(
             Math.abs(selectedObject.offset.x) < 0.00001
                 ? 0.0
-                : parseFloat(selectedObject.offset.x.toFixed(4))
+                : Number.parseFloat(selectedObject.offset.x.toFixed(4)),
         );
         setTempY(
             Math.abs(selectedObject.offset.y) < 0.00001
                 ? 0.0
-                : parseFloat(selectedObject.offset.y.toFixed(4))
+                : Number.parseFloat(selectedObject.offset.y.toFixed(4)),
         );
         setTempZ(
             Math.abs(selectedObject.offset.z) < 0.00001
                 ? 0.0
-                : parseFloat(selectedObject.offset.z.toFixed(4))
+                : Number.parseFloat(selectedObject.offset.z.toFixed(4)),
         );
-    }, [JSON.stringify(selectedObject.offset)]);
+    }, [
+        selectedObject.offset.x,
+        selectedObject.offset.y,
+        selectedObject.offset.z,
+    ]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
-        const newValue = parseFloat(value);
-        if (isNaN(newValue)) {
+        const newValue = Number.parseFloat(value);
+        if (Number.isNaN(newValue)) {
             setTempX(selectedObject.position.x);
             setTempY(selectedObject.position.y);
             setTempZ(selectedObject.position.z);
@@ -50,15 +54,14 @@ function OffsetParameters({
 
         if (Object.is(newValue, -0)) {
             return 0;
-        } else {
-            return newValue;
         }
+        return newValue;
     };
 
     const handleOffsetChange = (
         e:
             | React.ChangeEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const tempValue = e.currentTarget.value;
@@ -80,7 +83,7 @@ function OffsetParameters({
     const handleOffsetBlur = (
         e:
             | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);

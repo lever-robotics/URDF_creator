@@ -1,14 +1,14 @@
 import * as THREE from "three";
-import ScaleVector from "./ScaleVector";
-import Frame, { Frameish } from "./Frame";
 import { Color, Vector3 } from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { blobToArrayBuffer, getFile } from "../utils/localdb";
+import type Frame from "./Frame";
+import { Frameish } from "./Frame";
+import ScaleVector from "./ScaleVector";
 
 export default class VisualCollision extends THREE.Mesh {
     private _scale: ScaleVector;
     shape: string;
-    customRenderBehaviors: {};
     frame!: Frame;
     material: THREE.MeshPhongMaterial;
     stlfile?: string;
@@ -26,24 +26,10 @@ export default class VisualCollision extends THREE.Mesh {
         this.color = new Color(color);
 
         this.name = name;
-
-        this.customRenderBehaviors = {};
     }
 
     private defineGeometry(shape: string) {
         switch (shape) {
-            default:
-            case "cube":
-                Object.defineProperty(this, "scale", {
-                    get() {
-                        return this._scale;
-                    },
-                    set(newVector) {
-                        this._scale.set(...newVector);
-                    },
-                });
-
-                return new THREE.BoxGeometry(1, 1, 1);
             case "sphere":
                 Object.defineProperty(this, "scale", {
                     get() {
@@ -55,7 +41,8 @@ export default class VisualCollision extends THREE.Mesh {
                 });
 
                 return new THREE.SphereGeometry(0.5, 32, 32);
-            case "cylinder":
+
+            case "cylinder": {
                 Object.defineProperty(this, "scale", {
                     get() {
                         return this._scale;
@@ -67,6 +54,7 @@ export default class VisualCollision extends THREE.Mesh {
                 const cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
                 cylinder.rotateX(Math.PI / 2);
                 return cylinder;
+            }
             case "mesh":
                 Object.defineProperty(this, "scale", {
                     get() {
@@ -76,15 +64,29 @@ export default class VisualCollision extends THREE.Mesh {
                         this._scale.set(...newVector);
                     },
                 });
-
                 return new THREE.ConeGeometry(0.5, 1, 32); //temporarly show meshes as cones till develop mesh imports
+
+            default: //Default to a Cube
+                Object.defineProperty(this, "scale", {
+                    get() {
+                        return this._scale;
+                    },
+                    set(newVector) {
+                        this._scale.set(...newVector);
+                    },
+                });
+
+                return new THREE.BoxGeometry(1, 1, 1);
         }
     }
 
-
     setGeometry = async (geomertyType: string, fileName: string) => {
         //check if geometry type is cube, sphree, or cylinder
-        if (geomertyType === "cube" || geomertyType === "sphere" || geomertyType === "cylinder") {
+        if (
+            geomertyType === "cube" ||
+            geomertyType === "sphere" ||
+            geomertyType === "cylinder"
+        ) {
             //check if object is already that shape then do nothing
             if (this.shape === geomertyType) {
                 return;
@@ -97,8 +99,7 @@ export default class VisualCollision extends THREE.Mesh {
                 this.geometry = this.defineGeometry(geomertyType);
             } else if (geomertyType === "sphere") {
                 this.geometry = this.defineGeometry(geomertyType);
-            }
-            else if (geomertyType === "cylinder") {
+            } else if (geomertyType === "cylinder") {
                 this.geometry = this.defineGeometry(geomertyType);
             }
             return;
@@ -144,11 +145,11 @@ export default class VisualCollision extends THREE.Mesh {
 
                         // Revoke the Blob URL after use
                         URL.revokeObjectURL(url);
-                        },
+                    },
                     undefined,
                     (error) => {
                         console.error("Error loading the STL file:", error);
-                    }
+                    },
                 );
             } else {
                 console.error("File not found in database");
@@ -199,22 +200,37 @@ export default class VisualCollision extends THREE.Mesh {
 }
 
 export class Visual extends VisualCollision {
-    constructor(number: number, shape: string = "cube", scale: Vector3 = new Vector3(1, 1, 1), color: number = Math.random() * 0xffffff) {
+    constructor(
+        number: number,
+        shape = "cube",
+        scale: Vector3 = new Vector3(1, 1, 1),
+        color: number = Math.random() * 0xffffff,
+    ) {
         // scale, color, "Visual" + number
-        super("Visual" + number, shape, scale, color);
+        super(`Visual ${number}`, shape, scale, color);
     }
 
     duplicate() {
-        const clone = new Visual(0, this.shape, this.scale, this.color.getHex());
+        const clone = new Visual(
+            0,
+            this.shape,
+            this.scale,
+            this.color.getHex(),
+        );
         clone.color.copy(this.color);
-        clone.name = this.name + "copy";
+        clone.name = `${this.name} copy`;
         return clone;
     }
 }
 
 export class Collision extends VisualCollision {
-    constructor(number: number, shape: string = "mesh", scale: Vector3 = new Vector3(1, 1, 1), color: number = 0x808080) {
-        super("Collision" + number, shape, scale, color);
+    constructor(
+        number: number,
+        shape = "mesh",
+        scale: Vector3 = new Vector3(1, 1, 1),
+        color = 0x808080,
+    ) {
+        super(`Collision ${number}`, shape, scale, color);
         //make the collision boxes transparent
         this.material.transparent = true;
         this.material.opacity = 0.5;
@@ -222,9 +238,14 @@ export class Collision extends VisualCollision {
     }
 
     duplicate() {
-        const clone = new Collision(0, this.shape, this.scale, this.color.getHex());
+        const clone = new Collision(
+            0,
+            this.shape,
+            this.scale,
+            this.color.getHex(),
+        );
         clone.color.copy(this.color);
-        clone.name = this.name + "copy";
+        clone.name = `${this.name} copy`;
         return clone;
     }
 }

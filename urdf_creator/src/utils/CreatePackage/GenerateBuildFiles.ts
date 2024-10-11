@@ -24,8 +24,7 @@ export function GeneratePackageXMLFile(title: string) {
   </export>
 </package>
 `;
-};
-
+}
 
 export function GenerateCMakelistsFile(title: string) {
     // Generate the CMakeLists.txt file for the ROS package
@@ -60,10 +59,10 @@ install(DIRECTORY rviz
 
 ament_package()
 `;
-};
+}
 
 export function GenerateSimPackageXMLFile(title: string) {
-  return `<?xml version="1.0"?>
+    return `<?xml version="1.0"?>
 <package format="3">
 <name>${title}_gazebo</name>
 <version>0.0.0</version>
@@ -89,12 +88,11 @@ export function GenerateSimPackageXMLFile(title: string) {
 </export>
 </package>
 `;
-};
-
+}
 
 export function GenerateSimCMakelistsFile(title: string) {
-  // Generate the CMakeLists.txt file for the ROS package
-  return `cmake_minimum_required(VERSION 3.5)
+    // Generate the CMakeLists.txt file for the ROS package
+    return `cmake_minimum_required(VERSION 3.5)
 project(${title}_gazebo)
 
 # Default to C11
@@ -126,4 +124,4 @@ DESTINATION share/\${PROJECT_NAME}
 
 ament_package()
 `;
-};
+}

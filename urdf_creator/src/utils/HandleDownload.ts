@@ -1,22 +1,35 @@
+import { saveAs } from "file-saver";
 // Handle misc download types
 import { openDB } from "idb";
-import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 import JSZip from "jszip";
-import { saveAs } from "file-saver";
-import { ScenetoXML } from "./ScenetoXML";
-import { ScenetoSDF } from "./ScenetoSDF";
+import type * as THREE from "three";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
+import type ThreeScene from "../components/ThreeDisplay/ThreeScene";
+import {
+    GenerateCMakelistsFile,
+    GeneratePackageXMLFile,
+    GenerateSimCMakelistsFile,
+    GenerateSimPackageXMLFile,
+} from "./CreatePackage/GenerateBuildFiles";
+import {
+    GenerateRealLaunchFile,
+    GenerateSimLaunchFile,
+} from "./CreatePackage/GenerateLaunchFile";
 import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesContained";
-import { GenerateRealLaunchFile, GenerateSimLaunchFile } from "./CreatePackage/GenerateLaunchFile";
-import { GeneratePackageXMLFile, GenerateCMakelistsFile, GenerateSimCMakelistsFile, GenerateSimPackageXMLFile } from "./CreatePackage/GenerateBuildFiles";
-import * as THREE from "three";
+import { ScenetoSDF } from "./ScenetoSDF";
+import { ScenetoXML } from "./ScenetoXML";
 
-export async function handleDownload(scene: THREE.Object3D, type: string, title: string) {
+export async function handleDownload(
+    scene: ThreeScene,
+    type: string,
+    title: string,
+) {
     // export the robot descrition pacakge containing the URDF
     if (type === "urdfpackage") {
         const urdf = ScenetoXML(scene, title);
         const projectProperties = LaunchPropertiesContained(scene); // Function that returns array of which sensors are used so it can configure the launch file
         await generateURDFZip(urdf, title);
-    // export the gazebo simulation package containing the SDF
+        // export the gazebo simulation package containing the SDF
     } else if (type === "gazebopackage") {
         const sdf = ScenetoSDF(scene, title);
         const urdf = ScenetoXML(scene, title);
@@ -28,13 +41,13 @@ export async function handleDownload(scene: THREE.Object3D, type: string, title:
     } else if (type === "gltf") {
         const exporter = new GLTFExporter();
         exporter.parse(
-            scene,
+            scene.scene,
             (gltf) => {
                 otherFileDownload(JSON.stringify(gltf), type, title);
             },
             (error) => {
                 console.error("An error occurred during GLTF export:", error);
-            }
+            },
         );
         // const json = scene.toJSON();
         // otherFileDownload(JSON.stringify(json), type, title);
@@ -62,7 +75,11 @@ export function otherFileDownload(data: string, type: string, title: string) {
     URL.revokeObjectURL(link.href);
 }
 
-export async function GenerateZip(files: { zipPath: string, content: Blob | string }[], title: string, include_meshes: boolean) {
+export async function GenerateZip(
+    files: { zipPath: string; content: Blob | string }[],
+    title: string,
+    include_meshes: boolean,
+) {
     const zip = new JSZip();
 
     // Loop over the files to add them to the zip
@@ -74,23 +91,28 @@ export async function GenerateZip(files: { zipPath: string, content: Blob | stri
     if (include_meshes) {
         const db = await openDB("stlFilesDB", 1);
         const mesh_files = await db.getAll("files");
-        mesh_files.forEach(async (file) => {
+        for (const file of mesh_files) {
             zip.file(`${title}_description/meshes/${file.name}`, file.file);
-        });
+        }
     }
 
     // Generate the zip file and trigger the download
-    zip.generateAsync({ type: 'blob' }).then(function (content) {
+    zip.generateAsync({ type: "blob" }).then((content) => {
         saveAs(content, `${title}_package.zip`);
     });
 }
 
-export async function GenerateDescriptionFiles(urdfContent: string, title: string) {
+export async function GenerateDescriptionFiles(
+    urdfContent: string,
+    title: string,
+) {
     // Prepare file list for robot_description folder
     const descriptionFiles = [
         {
             zipPath: `${title}_description/config/example_config.yaml`,
-            content: await fetchFileContent("robot_package/config/example_config.yaml"),
+            content: await fetchFileContent(
+                "robot_package/config/example_config.yaml",
+            ),
         },
         {
             zipPath: `${title}_description/rviz/my_robot.rviz`,
@@ -128,7 +150,9 @@ export async function GenerateGazeboFiles(sdfContent: string, title: string) {
     const gazeboFiles = [
         {
             zipPath: `${title}_gazebo/worlds/example.world`,
-            content: await fetchFileContent("robot_gazebo/worlds/example.world"),
+            content: await fetchFileContent(
+                "robot_gazebo/worlds/example.world",
+            ),
         },
         {
             zipPath: `${title}_gazebo/package.xml`,
@@ -162,7 +186,11 @@ export async function generateURDFZip(urdfContent: string, title: string) {
     await GenerateZip(descriptionFiles, title, true);
 }
 
-export async function generateGazeboZip(sdfContent: string, urdfContent: string, title: string) {
+export async function generateGazeboZip(
+    sdfContent: string,
+    urdfContent: string,
+    title: string,
+) {
     const descriptionFiles = await GenerateDescriptionFiles(urdfContent, title);
     const gazeboFiles = await GenerateGazeboFiles(sdfContent, title);
 

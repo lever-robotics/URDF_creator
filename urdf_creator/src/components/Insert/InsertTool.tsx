@@ -1,9 +1,13 @@
-import { useState } from "react";
-import ThreeScene from "../ThreeDisplay/ThreeScene";
-import styles from "./Insert.module.css";
+import { type MutableRefObject, useState } from "react";
 import Frame from "../../Models/Frame";
+import type ThreeScene from "../ThreeDisplay/ThreeScene";
+import styles from "./Insert.module.css";
 
-export default function InsertTool({ threeScene }: { threeScene: ThreeScene }) {
+export default function InsertTool({
+    threeSceneRef,
+}: { threeSceneRef: MutableRefObject<ThreeScene | undefined> }) {
+    if (!threeSceneRef.current) return;
+    const threeScene = threeSceneRef.current;
     type Mode = "Frame" | "Visual" | "Collision";
     const [selectedMode, setSelectedMode] = useState<Mode>("Frame");
 
@@ -13,14 +17,17 @@ export default function InsertTool({ threeScene }: { threeScene: ThreeScene }) {
     };
 
     const handleClick = (shape: string) => {
-        if(selectedMode === "Frame"){
+        if (selectedMode === "Frame") {
             threeScene.addObject(shape);
-            return
+            return;
         }
-        const selectedObject = threeScene.selectedObject instanceof Frame ? threeScene.selectedObject : threeScene.selectedObject.frame;
-        if(selectedMode === "Visual"){
+        const selectedObject =
+            threeScene.selectedObject instanceof Frame
+                ? threeScene.selectedObject
+                : threeScene.selectedObject.frame;
+        if (selectedMode === "Visual") {
             selectedObject.addVisual(shape);
-        }else if (selectedMode === "Collision"){
+        } else if (selectedMode === "Collision") {
             selectedObject.addCollision(shape);
         }
         threeScene.forceUpdateBoth();
@@ -43,36 +50,48 @@ export default function InsertTool({ threeScene }: { threeScene: ThreeScene }) {
                 <button
                     className={styles.toolbarButton}
                     onClick={handleModeClick}
-                    style={selectedStyle("Frame")}>
+                    style={selectedStyle("Frame")}
+                    type="button"
+                >
                     Frame
                 </button>
                 <button
                     className={styles.toolbarButton}
                     onClick={handleModeClick}
-                    style={selectedStyle("Visual")}>
+                    style={selectedStyle("Visual")}
+                    type="button"
+                >
                     Visual
                 </button>
                 <button
                     className={styles.toolbarButton}
                     onClick={handleModeClick}
-                    style={selectedStyle("Collision")}>
+                    style={selectedStyle("Collision")}
+                    type="button"
+                >
                     Collision
                 </button>
             </div>
             <div className={styles.insertTool}>
                 <button
                     className={styles.button}
-                    onClick={() => handleClick("cube")}>
+                    onClick={() => handleClick("cube")}
+                    type="button"
+                >
                     Add Cube
                 </button>
                 <button
                     className={styles.button}
-                    onClick={() => handleClick("sphere")}>
+                    onClick={() => handleClick("sphere")}
+                    type="button"
+                >
                     Add Sphere
                 </button>
                 <button
                     className={styles.button}
-                    onClick={() => handleClick("cylinder")}>
+                    onClick={() => handleClick("cylinder")}
+                    type="button"
+                >
                     Add Cylinder
                 </button>
             </div>

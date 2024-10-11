@@ -16,6 +16,7 @@
     cursor: pointer;
     transition: border-color 0.25s;
     color: #fff;
-}.treeProperty:hover {
+}
+.treeProperty:hover {
     border-color: #646cff;
 }

@@ -1,26 +1,26 @@
 import * as THREE from "three";
+import { Euler, Vector3 } from "three";
+import type Axis from "./Axis";
+import type Inertia from "./Inertia";
+import type JointVisualizer from "./JointVisualizer";
+import type Link from "./Link";
 import { Camera, IMU, Lidar, Sensor } from "./SensorsClass";
-import Inertia from "./Inertia";
-import JointVisualizer from "./JointVisualizer";
-import Link from "./Link";
-import Axis from "./Axis";
-import { Visual, Collision } from "./VisualCollision";
-import { Vector3, Euler } from "three";
-import VisualCollision from "./VisualCollision";
+import { Collision, Visual } from "./VisualCollision";
+import type VisualCollision from "./VisualCollision";
 
 export type Frameish = Frame | null | undefined;
-export type JointType = "fixed" | "revolute" | "continuous" | "prismatic"
+export type JointType = "fixed" | "revolute" | "continuous" | "prismatic";
 
 export default class Frame extends THREE.Mesh {
     visuals!: Visual[];
     collisions!: Collision[];
-    link?: Link;
-    sensor?: Sensor;
-    inertia?: Inertia;
-    jointVisualizer?: JointVisualizer;
-    axis?: Axis;
-    parentFrame?: Frame;
-    
+    link!: Link;
+    sensor!: Sensor;
+    inertia!: Inertia;
+    jointVisualizer!: JointVisualizer;
+    axis!: Axis;
+    parentFrame!: Frame;
+
     linkDetached: boolean;
     isRootFrame: boolean;
 
@@ -33,23 +33,23 @@ export default class Frame extends THREE.Mesh {
         rotation: Euler = new Euler(0, 0, 0),
         jointType: JointType = "fixed",
         public min = -1,
-        public max = 1
+        public max = 1,
     ) {
-        const matWhite = new THREE.MeshBasicMaterial( {
-			depthTest: false,
-			depthWrite: false,
-			fog: false,
-			toneMapped: false,
-			transparent: true
-		} );
+        const matWhite = new THREE.MeshBasicMaterial({
+            depthTest: false,
+            depthWrite: false,
+            fog: false,
+            toneMapped: false,
+            transparent: true,
+        });
         matWhite.opacity = 0.25;
-        super(new THREE.OctahedronGeometry( 0.1, 0 ), matWhite);
+        super(new THREE.OctahedronGeometry(0.1, 0), matWhite);
 
         this.name = name;
 
         this.position.copy(position);
         this.rotation.copy(rotation);
-        
+
         this.linkDetached = false;
         this.isRootFrame = false;
 
@@ -69,13 +69,13 @@ export default class Frame extends THREE.Mesh {
      **/
 
     getFrameChildren = () => {
-        return this.jointVisualizer!.children.filter(
-            (child) => child instanceof Frame
+        return this.jointVisualizer.children.filter(
+            (child) => child instanceof Frame,
         );
     };
 
     get parentName() {
-        return this.parentFrame!.name;
+        return this.parentFrame.name;
     }
 
     get objectVisuals() {
@@ -87,7 +87,7 @@ export default class Frame extends THREE.Mesh {
     }
 
     get objectScale() {
-        return this.link!.scale;
+        return this.link.scale;
     }
 
     get objectPosition() {
@@ -106,18 +106,18 @@ export default class Frame extends THREE.Mesh {
         this._jointType = type;
         switch (type) {
             case "fixed":
-                this.axis!.material.visible = false;
+                this.axis.material.visible = false;
                 break;
             case "revolute":
             case "prismatic":
                 this.min = -1;
                 this.max = 1;
-                this.axis!.material.visible = true;
+                this.axis.material.visible = true;
                 break;
             case "continuous":
                 this.min = -3.14;
                 this.max = 3.14;
-                this.axis!.material.visible = true;
+                this.axis.material.visible = true;
                 break;
             default:
                 break;
@@ -125,45 +125,47 @@ export default class Frame extends THREE.Mesh {
     }
 
     get jointValue() {
-        return this.jointVisualizer!.value;
+        return this.jointVisualizer.value;
     }
 
     set jointValue(value) {
-        this.jointVisualizer!.value = value;
+        this.jointVisualizer.value = value;
     }
 
     get offset() {
-        return this.link!.position;
+        return this.link.position;
     }
 
     set mass(mass) {
-        this.inertia!.updateMass(mass, this);
+        this.inertia.updateMass(mass, this);
     }
 
     get mass() {
-        return this.inertia!.mass;
+        return this.inertia.mass;
     }
 
     get axisRotation() {
-        return this.axis!.rotation;
+        return this.axis.rotation;
     }
 
     set axisRotation(rotation: Euler) {
-        this.axis!.rotation.copy(rotation);
+        this.axis.rotation.copy(rotation);
     }
 
     attachChild(child: Frame) {
-        this.jointVisualizer!.attach(child);
+        if (!this.jointVisualizer) return;
+        this.jointVisualizer.attach(child);
         child.parentFrame = this;
     }
 
     addChild(child: Frame) {
-        this.jointVisualizer!.add(child);
+        if (!this.jointVisualizer) return;
+        this.jointVisualizer.add(child);
         child.parentFrame = this;
     }
 
     get sensorType() {
-        return this?.sensor?.type ?? "";
+        return this.sensor.type ?? "";
     }
 
     set sensorType(type) {
@@ -187,19 +189,20 @@ export default class Frame extends THREE.Mesh {
     }
 
     updateInertia() {
-        this.inertia!.updateInertia(this);
+        if (!this.inertia) return;
+        this.inertia.updateInertia(this);
     }
 
     /**
      * Add a VisualCollision property to the Frame
-     * @param VisualCollision 
+     * @param VisualCollision
      */
     addProperty(property: VisualCollision) {
-        if(property instanceof Visual){
+        if (property instanceof Visual) {
             this.visuals.push(property);
-        }else if (property instanceof Collision){
+        } else if (property instanceof Collision) {
             this.collisions.push(property);
-        }else{
+        } else {
             console.log(property, "Frame addProperty not Visual or Collision");
         }
         property.frame = this;
@@ -207,12 +210,13 @@ export default class Frame extends THREE.Mesh {
     }
 
     removeProperty(property: VisualCollision) {
-        if(property instanceof Visual){
+        if (property instanceof Visual) {
             const index = this.visuals.indexOf(property);
             this.visuals.splice(index, 1); // Take the property out of the visuals array
             property.removeFromParent();
             return;
-        }else if (property instanceof Collision){
+        }
+        if (property instanceof Collision) {
             const index = this.collisions.indexOf(property);
             this.collisions.splice(index, 1); // Take the property out of the collisions array
             property.removeFromParent();
@@ -239,33 +243,33 @@ export default class Frame extends THREE.Mesh {
     }
 
     rotateAroundJointAxis = (angle: number) => {
+        if (!this.axis || !this.jointVisualizer) return;
         // Angle must be in radians
         // a quaternion is basically how to get from one rotation to another
         const quaternion = new THREE.Quaternion();
 
         // this function calculates how to get from <0, 0, 0> (no rotation), to whatever the axis is currently rotated to in quaternions
-        quaternion.setFromEuler(this.axis!.rotation);
+        quaternion.setFromEuler(this.axis.rotation);
 
         // the joint axis is always set to <1, 0, 0>, but it rotates around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
 
         // the joint's rotation is then set to be a rotation around the new axis by this angle
-        this.jointVisualizer!.setRotationFromAxisAngle(newAxis, angle);
-        
+        this.jointVisualizer.setRotationFromAxisAngle(newAxis, angle);
     };
 
     translateAlongJointAxis = (distance: number) => {
         const quaternion = new THREE.Quaternion();
         // a quaternion is basically how to get from one rotation to another
         // this function says how to get from <0, 0, 0> (no rotation), to whatever the joint axis is currently rotated to
-        quaternion.setFromEuler(this.axis!.rotation);
+        quaternion.setFromEuler(this.axis.rotation);
         // the joint axis is always set to <1, 0, 0>, but it still moves around as the user rotates it
         // this function looks at the rotation of the axis and calculates what it would be if it was visually the same but rotation is set to <0, 0, 0>
         const newAxis = new THREE.Vector3(0, 0, 1).applyQuaternion(quaternion);
         // the shimmy's rotation is then set to be a rotation around the new axis by this angle
-        this.jointVisualizer!.position.set(0, 0, 0);
-        this.jointVisualizer!.translateOnAxis(newAxis, distance);
+        this.jointVisualizer.position.set(0, 0, 0);
+        this.jointVisualizer.translateOnAxis(newAxis, distance);
     };
 
     duplicate() {
@@ -275,7 +279,7 @@ export default class Frame extends THREE.Mesh {
             this.rotation,
             this.jointType,
             this.min,
-            this.max
+            this.max,
         );
     }
 

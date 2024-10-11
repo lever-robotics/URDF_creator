@@ -1,17 +1,38 @@
-import React from "react";
-import ParameterProps from "../ParameterProps";
+import type React from "react";
+import type Frame from "../../../../Models/Frame";
 import { IMU } from "../../../../Models/SensorsClass";
-import ThreeScene from "../../../ThreeDisplay/ThreeScene";
-import Frame from "../../../../Models/Frame";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import ParameterProps from "../ParameterProps";
 
-function IMUParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
+function IMUParameters({
+    selectedObject,
+    threeScene,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) {
     if (!selectedObject) return;
+    const imu = selectedObject.sensor;
+    if (!(imu instanceof IMU)) return;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        (selectedObject!.sensor as any)[name] = parseFloat(value);
+        const newValue = Number.parseFloat(value);
+        switch (name) {
+            case "updateRate":
+                imu.updateRate = newValue;
+                break;
+            case "gaussianNoise":
+                imu.gaussianNoise = newValue;
+                break;
+            case "mean":
+                imu.mean = newValue;
+                break;
+            case "stddev":
+                imu.stddev = newValue;
+                break;
+        }
     };
-
-    const imu = selectedObject.sensor as IMU
 
     return (
         <div>

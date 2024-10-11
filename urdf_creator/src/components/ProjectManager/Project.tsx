@@ -1,12 +1,12 @@
-import React from "react";
+import type React from "react";
 
-import { ProjectType } from "./ProjectDisplayer";
+import type { ProjectType } from "./ProjectDisplayer";
 
 type Props = {
-    project: ProjectType,
-    handleProjectClick: (path: string, title: string) => void,
-    onClose: () => void
-}
+    project: ProjectType;
+    handleProjectClick: (path: string, title: string) => void;
+    onClose: () => void;
+};
 
 const Project: React.FC<Props> = ({ project, handleProjectClick, onClose }) => {
     const handleClick = () => {
@@ -22,7 +22,13 @@ const Project: React.FC<Props> = ({ project, handleProjectClick, onClose }) => {
             <div className="project-info">
                 <p className="project-description">{project.description}</p>
             </div>
-            <img className="project-image" src={project.image} alt="Project Image" width={project.width} height={project.height} />
+            <img
+                className="project-image"
+                src={project.image}
+                alt="Project"
+                width={project.width}
+                height={project.height}
+            />
             <div className="project-title">{project.title}</div>
         </div>
     );

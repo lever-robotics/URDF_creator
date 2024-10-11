@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import type * as THREE from "three";
 
 export function quaternionToRPY(quaternion: THREE.Quaternion): string {
     // Extract the quaternion components

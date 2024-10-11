@@ -1,15 +1,16 @@
-import styles from "./ObjectParameters.module.css";
-import ThreeScene, { Selectable } from "../../ThreeDisplay/ThreeScene";
-import { Collision, Visual } from "../../../Models/VisualCollision";
-import Inertia from "../../../Models/Inertia";
 import Frame from "../../../Models/Frame";
+import Inertia from "../../../Models/Inertia";
+import { Collision, Visual } from "../../../Models/VisualCollision";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
+import type { Selectable } from "../../ThreeDisplay/ThreeScene";
+import styles from "./ObjectParameters.module.css";
 import MaterialParameters from "./Parameters/MaterialParameters";
+import MeshParameters from "./Parameters/MeshParameters";
 import PositionParameters from "./Parameters/PositionParameters";
+import Property from "./Parameters/Property";
 import RotationParameters from "./Parameters/RotationParameters";
 import ScaleParameters from "./Parameters/ScaleParameters";
-import MeshParameters from "./Parameters/MeshParameters";
 import Section from "./Parameters/Section";
-import Property from "./Parameters/Property";
 
 function CollisionParameters({
     threeScene,
@@ -18,14 +19,18 @@ function CollisionParameters({
     threeScene: ThreeScene;
     selectedObject: Selectable;
 }) {
-    if((selectedObject instanceof Visual) || (selectedObject instanceof Inertia)) return null;
-    
-    const collisions = selectedObject instanceof Frame ? selectedObject.collisions : selectedObject.frame.collisions;
+    if (selectedObject instanceof Visual || selectedObject instanceof Inertia)
+        return null;
+
+    const collisions =
+        selectedObject instanceof Frame
+            ? selectedObject.collisions
+            : selectedObject.frame.collisions;
 
     return (
         <Section title={"Collisions"}>
             {collisions.map((collision, index) => (
-                <Property key={index} name={collision.name}>
+                <Property key={collision.name} name={collision.name}>
                     <MaterialParameters
                         selectedObject={collision}
                         threeScene={threeScene}

@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from "react";
-import Section from "./Section";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type ItemParameterProps from "../ItemParameterProps";
+import type { ParameterValue } from "../ParameterProps";
 import Parameter from "./Parameter";
-import ItemParameterProps from "../ItemParameterProps";
-import { ParameterValue } from "../ParameterProps";
 import Property from "./Property";
+import Section from "./Section";
+
+const radToDeg = (radians: number) => (radians * 180) / Math.PI;
+const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
 function RotationParameters({
     selectedObject,
     threeScene,
 }: ItemParameterProps) {
     if (!selectedObject) return;
-    const radToDeg = (radians: number) => (radians * 180) / Math.PI;
-    const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
 
     const [tempX, setTempX] = useState<ParameterValue>(
-        radToDeg(selectedObject.rotation.x).toFixed(2)
+        radToDeg(selectedObject.rotation.x).toFixed(2),
     );
     const [tempY, setTempY] = useState<ParameterValue>(
-        radToDeg(selectedObject.rotation.y).toFixed(2)
+        radToDeg(selectedObject.rotation.y).toFixed(2),
     );
     const [tempZ, setTempZ] = useState<ParameterValue>(
-        radToDeg(selectedObject.rotation.z).toFixed(2)
+        radToDeg(selectedObject.rotation.z).toFixed(2),
     );
 
     //implement use effect to update when selected object changes
@@ -28,12 +30,16 @@ function RotationParameters({
         setTempX(radToDeg(selectedObject.rotation.x).toFixed(2));
         setTempY(radToDeg(selectedObject.rotation.y).toFixed(2));
         setTempZ(radToDeg(selectedObject.rotation.z).toFixed(2));
-    }, [JSON.stringify(selectedObject.rotation), threeScene?.toolMode]);
+    }, [
+        selectedObject.rotation.x,
+        selectedObject.rotation.y,
+        selectedObject.rotation.z,
+    ]);
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
-        const newValue = parseFloat(value);
-        if (isNaN(newValue)) {
+        const newValue = Number.parseFloat(value);
+        if (Number.isNaN(newValue)) {
             setTempX(selectedObject.rotation.x);
             setTempY(selectedObject.rotation.y);
             setTempZ(selectedObject.rotation.z);
@@ -42,15 +48,15 @@ function RotationParameters({
 
         if (Object.is(newValue, -0)) {
             return 0;
-        } else {
-            return newValue;
         }
+
+        return newValue;
     };
 
     const handleRotationChange = (
         e:
             | React.ChangeEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const tempValue = e.currentTarget.value;
@@ -70,7 +76,7 @@ function RotationParameters({
     const handleRotationBlur = (
         e:
             | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const axis = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);

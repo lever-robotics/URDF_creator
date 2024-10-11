@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.3",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "urdf_creator/**/*": "npx @biomejs/biome check --write"
+  }
+}

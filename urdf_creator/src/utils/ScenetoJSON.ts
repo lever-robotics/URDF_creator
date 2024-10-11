@@ -3,10 +3,10 @@ import * as THREE from "three";
 export const ScenetoJSON = (scene: THREE.Scene, filename: string) => {
     const jsonObject = scene.toJSON();
     const blob = new Blob([JSON.stringify(jsonObject)], {
-        type: 'application/json',
+        type: "application/json",
     });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `${filename}.json`;
     a.click();
@@ -16,8 +16,6 @@ export const ScenetoJSON = (scene: THREE.Scene, filename: string) => {
 export async function JSONtoScene(jsonstring: string) {
     const json = JSON.parse(jsonstring);
     const loader = new THREE.ObjectLoader();
-    const scene = loader.parse(jsonstring, () => {
-
-    });
+    const scene = loader.parse(jsonstring, () => {});
     return scene;
-};
+}

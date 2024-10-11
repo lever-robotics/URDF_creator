@@ -1,39 +1,45 @@
-import Section from "./Parameters/Section";
-import IMUParameters from "./Sensors/IMUParameters";
-import CameraParameters from "./Sensors/CameraParameters";
-import LidarParameters from "./Sensors/LidarParameters";
-import React from "react";
-import ParameterProps from "./ParameterProps";
+import type React from "react";
+import type Frame from "../../../Models/Frame";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 import styles from "./ObjectParameters.module.css";
-import ThreeScene from "../../ThreeDisplay/ThreeScene";
-import Frame from "../../../Models/Frame";
-import Property from "./Parameters/Property";
+import ParameterProps from "./ParameterProps";
 import Parameter from "./Parameters/Parameter";
+import Property from "./Parameters/Property";
+import Section from "./Parameters/Section";
+import CameraParameters from "./Sensors/CameraParameters";
+import IMUParameters from "./Sensors/IMUParameters";
+import LidarParameters from "./Sensors/LidarParameters";
 
-function SensorsParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
+function SensorsParameters({
+    selectedObject,
+    threeScene,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) {
     if (!selectedObject) return;
 
     const handleSensorTypeChange = (
-        e: React.ChangeEvent<HTMLSelectElement>
+        e: React.ChangeEvent<HTMLSelectElement>,
     ) => {
         const type = e.target.value;
         selectedObject.sensorType = type;
         threeScene.forceUpdateBoth();
     };
 
-// <Parameter
-//                         title=""
-//                         type="select"
-//                         value={selectedObject.jointType}
-//                         onSelectChange={handleJointTypeChange}
-//                         className={styles.select}
-//                         options={[
-//                             "Fixed",
-//                             "Revolute",
-//                             "Continuous",
-//                             "Prismatic",
-//                         ]}>
-//                     </Parameter>
+    // <Parameter
+    //                         title=""
+    //                         type="select"
+    //                         value={selectedObject.jointType}
+    //                         onSelectChange={handleJointTypeChange}
+    //                         className={styles.select}
+    //                         options={[
+    //                             "Fixed",
+    //                             "Revolute",
+    //                             "Continuous",
+    //                             "Prismatic",
+    //                         ]}>
+    //                     </Parameter>
 
     return (
         <Section title="Sensor Parameters">
@@ -44,13 +50,12 @@ function SensorsParameters({ selectedObject, threeScene }: {threeScene: ThreeSce
                     value={selectedObject.sensorType}
                     onSelectChange={handleSensorTypeChange}
                     options={[
-                        {value: "", option: "Not a Sensor"},
-                        {value: "lidar", option: "Lidar"},
-                        {value: "camera", option: "Camera"},
-                        {value: "imu", option: "IMU"},
+                        { value: "", option: "Not a Sensor" },
+                        { value: "lidar", option: "Lidar" },
+                        { value: "camera", option: "Camera" },
+                        { value: "imu", option: "IMU" },
                     ]}
-                    >
-                </Parameter>
+                />
             </Property>
             <SensorParams
                 selectedObject={selectedObject}
@@ -60,7 +65,13 @@ function SensorsParameters({ selectedObject, threeScene }: {threeScene: ThreeSce
     );
 }
 
-function SensorParams({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
+function SensorParams({
+    selectedObject,
+    threeScene,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) {
     if (!selectedObject) return;
     switch (selectedObject.sensorType) {
         case "imu":
@@ -86,7 +97,7 @@ function SensorParams({ selectedObject, threeScene }: {threeScene: ThreeScene, s
             );
         // Add cases for other sensor types here
         default:
-            return <div></div>;
+            return <div />;
     }
 }
 

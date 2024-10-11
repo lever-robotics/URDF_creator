@@ -1,17 +1,56 @@
-import React from 'react';
-import ParameterProps from '../ParameterProps';
-import { Lidar } from '../../../../Models/SensorsClass';
-import ThreeScene from '../../../ThreeDisplay/ThreeScene';
-import Frame from '../../../../Models/Frame';
+import type React from "react";
+import type Frame from "../../../../Models/Frame";
+import { Lidar } from "../../../../Models/SensorsClass";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import ParameterProps from "../ParameterProps";
 
-function LidarParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
+function LidarParameters({
+    selectedObject,
+    threeScene,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) {
     if (!selectedObject) return;
+    const lidar = selectedObject.sensor;
+    if (!(lidar instanceof Lidar)) return;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        (selectedObject!.sensor as any)[name] = parseFloat(value);
+        const newValue = Number.parseFloat(value);
+        switch (name) {
+            case "updateRate":
+                lidar.updateRate = newValue;
+                break;
+            case "samples":
+                lidar.samples = newValue;
+                break;
+            case "resolution":
+                lidar.resolution = newValue;
+                break;
+            case "minAngle":
+                lidar.minAngle = newValue;
+                break;
+            case "maxAngle":
+                lidar.maxAngle = newValue;
+                break;
+            case "minRange":
+                lidar.minRange = newValue;
+                break;
+            case "maxRange":
+                lidar.maxRange = newValue;
+                break;
+            case "rangeResolution":
+                lidar.rangeResolution = newValue;
+                break;
+            case "mean":
+                lidar.mean = newValue;
+                break;
+            case "stddev":
+                lidar.stddev = newValue;
+                break;
+        }
     };
-
-    const lidar = selectedObject.sensor as Lidar
 
     return (
         <div>

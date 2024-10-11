@@ -1,19 +1,25 @@
 import "./Export.css";
+import Frame, { type Frameish } from "../../../Models/Frame";
 import { handleDownload } from "../../../utils/HandleDownload";
-import Frame, { Frameish } from "../../../Models/Frame";
-import ThreeScene from "../../ThreeDisplay/ThreeScene";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 import { compressScene } from "../../ThreeDisplay/TreeUtils";
 
 type Props = {
-    onClose: () => void, 
-    rootFrame: Frameish, 
-    projectTitle: string, 
-    threeScene: ThreeScene,
-}
+    onClose: () => void;
+    rootFrame: Frameish;
+    projectTitle: string;
+    threeScene: ThreeScene;
+};
 
-const ExportGLTF: React.FC<Props> = ({ onClose, rootFrame, projectTitle, threeScene }) => {
+const ExportGLTF: React.FC<Props> = ({
+    onClose,
+    rootFrame,
+    projectTitle,
+    threeScene,
+}) => {
     const handleGLTFExport = () => {
-        const compressedScene = compressScene(rootFrame!);
+        if (!rootFrame) return;
+        const compressedScene = compressScene(rootFrame);
         handleDownload(compressedScene, "gltf", projectTitle);
     };
 
@@ -30,6 +36,7 @@ const ExportGLTF: React.FC<Props> = ({ onClose, rootFrame, projectTitle, threeSc
                             handleGLTFExport();
                             onClose();
                         }}
+                        type="button"
                     >
                         Export a GLTF file
                     </button>
@@ -38,19 +45,31 @@ const ExportGLTF: React.FC<Props> = ({ onClose, rootFrame, projectTitle, threeSc
             <div className="description-container">
                 <h3>Description: </h3>
                 <p>
-                    A GLTF file is a local file that you would have exported from this URDF creator to save a local copy of your project. It takes all the information from your
-                    defined robot and condenses it into a small file that can be import back into this tool from anywhere.
+                    A GLTF file is a local file that you would have exported
+                    from this URDF creator to save a local copy of your project.
+                    It takes all the information from your defined robot and
+                    condenses it into a small file that can be import back into
+                    this tool from anywhere.
                 </p>
             </div>
             <div className="image-description-container">
                 <div className="image-container">
-                    <img src={"/statics/gltf_share.png"} alt="gltf Share" className="gltfgraphic" />
+                    <img
+                        src={"/statics/gltf_share.png"}
+                        alt="gltf Share"
+                        className="gltfgraphic"
+                    />
                 </div>
-                <div className="image-description">Share your robot description in this software with developer teams to modify the same robot description</div>
+                <div className="image-description">
+                    Share your robot description in this software with developer
+                    teams to modify the same robot description
+                </div>
             </div>
             <div className="description-container">
                 <p>
-                    For understanding the capabilities of GLTF files in versioning your defined robot, refer to the <a href="https://roboeverything.com">documentation</a>.
+                    For understanding the capabilities of GLTF files in
+                    versioning your defined robot, refer to the{" "}
+                    <a href="https://roboeverything.com">documentation</a>.
                 </p>
             </div>
         </div>

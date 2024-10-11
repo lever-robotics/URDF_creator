@@ -1,15 +1,14 @@
-import * as THREE from "three";
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import ThreeScene from "../components/ThreeDisplay/ThreeScene";
+import type * as THREE from "three";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls";
+import type ThreeScene from "../components/ThreeDisplay/ThreeScene";
 
-export default class TransformControl extends TransformControls{
+export default class TransformControl extends TransformControls {
     pointerMoved: boolean;
-    scene: ThreeScene | undefined;
+    scene!: ThreeScene;
 
     constructor(camera: THREE.Camera, domElement: HTMLElement) {
         super(camera, domElement);
         this.pointerMoved = false;
-        this.scene = undefined;
     }
 
     pointerDown(pointer: PointerEvent | null) {
@@ -20,14 +19,14 @@ export default class TransformControl extends TransformControls{
     pointerMove(pointer: PointerEvent | null) {
         super.pointerMove(pointer);
         this.pointerMoved = true;
-        this.scene!.forceUpdateScene();
+        this.scene.forceUpdateScene();
     }
 
     pointerUp(pointer: PointerEvent | null) {
         super.pointerUp(pointer);
-        
+
         if (this.pointerMoved) {
-            this.scene!.forceUpdateCode();
+            this.scene.forceUpdateCode();
             this.pointerMoved = false;
         }
     }

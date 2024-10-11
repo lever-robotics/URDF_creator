@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type React from "react";
+import { useState } from "react";
 import styles from "./ToggleSection.module.css";
 
 type ToggleSectionProps = {
@@ -34,19 +35,19 @@ function ToggleSection({
         : {};
 
     const headerSelectedStyle = () => {
-        if(isSelected()){
-            return {
-              borderColor: "#646cff",
-              backgroundColor: "#646cff",
-          }
-        }
-        if(isHovered()){
+        if (isSelected()) {
             return {
                 borderColor: "#646cff",
-            }
+                backgroundColor: "#646cff",
+            };
+        }
+        if (isHovered()) {
+            return {
+                borderColor: "#646cff",
+            };
         }
         return {};
-    }
+    };
 
     const iconStyle = isSelected()
         ? {
@@ -77,14 +78,16 @@ export default ToggleSection;
 type ToggleIconProps = {
     onClick: (e: React.MouseEvent) => void;
     visible: boolean;
-    selectedStyle?: {};
+    selectedStyle?: React.CSSProperties;
 };
 function ToggleIcon(props: ToggleIconProps) {
     return (
         <button
             className={styles.toggleIcon}
             onClick={props.onClick}
-            style={props.selectedStyle}>
+            style={props.selectedStyle}
+            type="button"
+        >
             <FontAwesomeIcon
                 icon={props.visible ? faCaretDown : faCaretRight}
             />

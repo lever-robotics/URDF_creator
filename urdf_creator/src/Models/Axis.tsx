@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import Frame, { Frameish } from "./Frame";
 import { Euler } from "three";
+import Frame, { type Frameish } from "./Frame";
 
 export default class Axis extends THREE.Line {
     declare material: THREE.LineBasicMaterial;
@@ -11,8 +11,12 @@ export default class Axis extends THREE.Line {
         const originPoint = new THREE.Vector3();
         const lineAxis = new THREE.Vector3(0, 0, 1);
         const length = 10;
-        const startPoint = originPoint.clone().sub(lineAxis.clone().multiplyScalar(length / 2));
-        const endPoint = originPoint.clone().add(lineAxis.clone().multiplyScalar(length / 2));
+        const startPoint = originPoint
+            .clone()
+            .sub(lineAxis.clone().multiplyScalar(length / 2));
+        const endPoint = originPoint
+            .clone()
+            .add(lineAxis.clone().multiplyScalar(length / 2));
         const points = [];
         points.push(startPoint, endPoint);
 

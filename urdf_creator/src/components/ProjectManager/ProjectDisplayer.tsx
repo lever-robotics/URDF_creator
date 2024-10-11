@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import Project from './Project';
-import './Project.css';
+import type React from "react";
+import { useState } from "react";
+import Project from "./Project";
+import "./Project.css";
 
 type Props = {
-  handleProjectClick: (projectPath: string, title: string) => Promise<void>,
-  onClose: () => void
-}
+    handleProjectClick: (projectPath: string, title: string) => Promise<void>;
+    onClose: () => void;
+};
 
 export type ProjectType = {
-  title: string;
-  description: string;
-  image: string;
-  width: string;
-  height: string;
-  path: string;
-}
+    title: string;
+    description: string;
+    image: string;
+    width: string;
+    height: string;
+    path: string;
+};
 
 // h1 {
 //   font-size: 3.2em;
@@ -22,23 +23,53 @@ export type ProjectType = {
 // }
 
 const ProjectDisplayer: React.FC<Props> = ({ handleProjectClick, onClose }) => {
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [projects, setProjects] : [ProjectType[], (set: ProjectType[]) => void] = useState([
-      { title: 'Turtlebot3 Burger', description: 'Turtlebot Designed by ROBOTIS', path: '/statics/turtlebot3_burger.gltf', image: '/statics/turtlebot3_burger.png', width: '100', height: '200' },
-      { title: 'Turtlebot3 Waffle', description: 'Turtlebot Designed by ROBOTIS', path: '/statics/turtlebot3_burger.gltf', image: '/statics/turtlebot3_waffle.png', width: '100', height: '200' },
-      { title: 'Fun Robot', description: 'Test out the functionality of ROS2', path: '/statics/green_robot.gltf', image: '/statics/green_robot.png', width: '200', height: '200' },
-      // Add more projects
+    const [selectedProject, setSelectedProject] = useState(null);
+    const [projects, setProjects]: [
+        ProjectType[],
+        (set: ProjectType[]) => void,
+    ] = useState([
+        {
+            title: "Turtlebot3 Burger",
+            description: "Turtlebot Designed by ROBOTIS",
+            path: "/statics/turtlebot3_burger.gltf",
+            image: "/statics/turtlebot3_burger.png",
+            width: "100",
+            height: "200",
+        },
+        {
+            title: "Turtlebot3 Waffle",
+            description: "Turtlebot Designed by ROBOTIS",
+            path: "/statics/turtlebot3_burger.gltf",
+            image: "/statics/turtlebot3_waffle.png",
+            width: "100",
+            height: "200",
+        },
+        {
+            title: "Fun Robot",
+            description: "Test out the functionality of ROS2",
+            path: "/statics/green_robot.gltf",
+            image: "/statics/green_robot.png",
+            width: "200",
+            height: "200",
+        },
+        // Add more projects
     ]);
-    
-      return (
+
+    return (
         <>
-          <h1>Project Manager</h1>
-          <div className="project-displayer">
-          {projects.map((project, index) => (
-            <Project key={index} project={project} handleProjectClick={handleProjectClick} onClose={onClose}/>))}
-          </div>
+            <h1>Project Manager</h1>
+            <div className="project-displayer">
+                {projects.map((project) => (
+                    <Project
+                        key={project.title}
+                        project={project}
+                        handleProjectClick={handleProjectClick}
+                        onClose={onClose}
+                    />
+                ))}
+            </div>
         </>
-      );
+    );
 };
 
 export default ProjectDisplayer;

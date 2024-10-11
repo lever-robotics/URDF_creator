@@ -1,15 +1,16 @@
-import styles from "../ObjectParameters.module.css";
-import ThreeScene, { Selectable } from "../../../ThreeDisplay/ThreeScene";
-import { Collision, Visual } from "../../../../Models/VisualCollision";
-import Inertia from "../../../../Models/Inertia";
 import Frame from "../../../../Models/Frame";
+import Inertia from "../../../../Models/Inertia";
+import { Collision, Visual } from "../../../../Models/VisualCollision";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import type { Selectable } from "../../../ThreeDisplay/ThreeScene";
+import styles from "../ObjectParameters.module.css";
 import MaterialParameters from "./MaterialParameters";
+import MeshParameters from "./MeshParameters";
 import PositionParameters from "./PositionParameters";
+import Property from "./Property";
 import RotationParameters from "./RotationParameters";
 import ScaleParameters from "./ScaleParameters";
-import MeshParameters from "./MeshParameters";
 import Section from "./Section";
-import Property from "./Property";
 
 function VisualParameters({
     threeScene,
@@ -18,36 +19,43 @@ function VisualParameters({
     threeScene: ThreeScene;
     selectedObject: Selectable;
 }) {
-    if((selectedObject instanceof Collision) || (selectedObject instanceof Inertia)) return null;
-    
-    const visuals = selectedObject instanceof Frame ? selectedObject.visuals : selectedObject.frame.visuals;
+    if (
+        selectedObject instanceof Collision ||
+        selectedObject instanceof Inertia
+    )
+        return null;
+
+    const visuals =
+        selectedObject instanceof Frame
+            ? selectedObject.visuals
+            : selectedObject.frame.visuals;
 
     return (
         <Section title="Visuals">
             {visuals.map((visual, index) => (
-                    <Property key={index} name={visual.name}>
-                        <MaterialParameters
-                            selectedObject={visual}
-                            threeScene={threeScene}
-                        />
-                        <PositionParameters
-                            selectedObject={visual}
-                            threeScene={threeScene}
-                        />
-                        <RotationParameters
-                            selectedObject={visual}
-                            threeScene={threeScene}
-                        />
-                        <ScaleParameters
-                            selectedObject={visual}
-                            threeScene={threeScene}
-                        />
-                        <MeshParameters
-                            selectedObject={visual}
-                            threeScene={threeScene}
-                        />
-                    </Property>
-                ))}
+                <Property key={visual.name} name={visual.name}>
+                    <MaterialParameters
+                        selectedObject={visual}
+                        threeScene={threeScene}
+                    />
+                    <PositionParameters
+                        selectedObject={visual}
+                        threeScene={threeScene}
+                    />
+                    <RotationParameters
+                        selectedObject={visual}
+                        threeScene={threeScene}
+                    />
+                    <ScaleParameters
+                        selectedObject={visual}
+                        threeScene={threeScene}
+                    />
+                    <MeshParameters
+                        selectedObject={visual}
+                        threeScene={threeScene}
+                    />
+                </Property>
+            ))}
         </Section>
     );
 }

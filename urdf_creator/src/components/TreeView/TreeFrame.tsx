@@ -1,10 +1,11 @@
-import React, { ReactNode, useRef, useState } from "react";
-import Frame, { Frameish } from "../../Models/Frame";
-import ThreeScene from "../ThreeDisplay/ThreeScene";
-import styles from "./TreeFrame.module.css";
+import type React from "react";
+import { ReactNode, useRef, useState } from "react";
+import Frame, { type Frameish } from "../../Models/Frame";
+import type ThreeScene from "../ThreeDisplay/ThreeScene";
+import type { ContextMenu } from "./LinkTree";
 import ToggleSection from "./ToggleSection";
+import styles from "./TreeFrame.module.css";
 import TreeProperty from "./TreeProperty";
-import { ContextMenu } from "./LinkTree";
 
 type Props = {
     frame: Frame;
@@ -22,11 +23,11 @@ export default function TreeFrame(props: Props) {
 
     const onClick = () => {
         threeScene.selectObject(frame);
-    }
+    };
 
     const onContextMenu = (e: React.MouseEvent) => {
         handleContextMenu(e, frame);
-    }
+    };
 
     const onDragEnter = () => {
         setHoveredFrame(frame);
@@ -53,11 +54,19 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderProperties = () => {
-        const visuals = frame.visuals.map((property: any) => (
-            <TreeProperty key={property.id} property={property} {...restProps}/>
+        const visuals = frame.visuals.map((property) => (
+            <TreeProperty
+                key={property.id}
+                property={property}
+                {...restProps}
+            />
         ));
-        const collisions = frame.collisions.map((property: any) => (
-            <TreeProperty key={property.id} property={property} {...restProps}/>
+        const collisions = frame.collisions.map((property) => (
+            <TreeProperty
+                key={property.id}
+                property={property}
+                {...restProps}
+            />
         ));
 
         return visuals.concat(collisions);
@@ -65,43 +74,50 @@ export default function TreeFrame(props: Props) {
         // return properties.map((property: Property) => (
         //     <TreeProperty key={property.id} property={property} {...restProps}/>
         // ));
-    }
+    };
 
     const isSelected = () => {
         const selectedObject = threeScene.selectedObject;
         if (!selectedObject) return false;
-        if (selectedObject instanceof Frame){
+        if (selectedObject instanceof Frame) {
             if (selectedObject.name === frame.name) return true;
-        }else{
+        } else {
             if (selectedObject.frame.name === frame.name) return true;
         }
         return false;
     };
 
     const isHovered = () => {
-        if(hoveredFrame){
-            if(hoveredFrame.name === frame.name) return true;
+        if (hoveredFrame) {
+            if (hoveredFrame.name === frame.name) return true;
         }
         return false;
-    }
+    };
 
-    const selectedStyle = isSelected() ? {backgroundColor: "#646cff"}: {};
+    const selectedStyle = isSelected() ? { backgroundColor: "#646cff" } : {};
 
     // Display the current node's data and render its children
     return (
-        <ToggleSection renderChildren={renderChildren} renderProperties={renderProperties} isSelected={isSelected} isHovered={isHovered}>
-                <button
-                    key={frame.id}
-                    className={styles.treeFrame}
-                    style={selectedStyle}
-                    // className={className}
-                    onContextMenu={onContextMenu}
-                    draggable={true}
-                    onClick={onClick}
-                    onDragEnd={onDragEnd}
-                    onDragEnter={onDragEnter}>
-                    {frame.name}
-                </button>
+        <ToggleSection
+            renderChildren={renderChildren}
+            renderProperties={renderProperties}
+            isSelected={isSelected}
+            isHovered={isHovered}
+        >
+            <button
+                key={frame.id}
+                className={styles.treeFrame}
+                style={selectedStyle}
+                // className={className}
+                onContextMenu={onContextMenu}
+                draggable={true}
+                onClick={onClick}
+                onDragEnd={onDragEnd}
+                onDragEnter={onDragEnter}
+                type="button"
+            >
+                {frame.name}
+            </button>
         </ToggleSection>
     );
 }
@@ -115,5 +131,5 @@ export default function TreeFrame(props: Props) {
 function isAncestor(ancestor: Frame, descendant: Frame) {
     if (descendant === ancestor) return true;
     if (ancestor.isRootFrame || descendant.isRootFrame) return false;
-    return isAncestor(ancestor, descendant.parentFrame!);
+    return isAncestor(ancestor, descendant.parentFrame);
 }

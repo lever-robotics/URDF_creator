@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
-import Section from "./Parameters/Section";
-import Parameter from "./Parameters/Parameter";
-import OffsetParameters from "./Parameters/OffsetParameters";
-import ParameterProps, { ParameterValue } from "./ParameterProps";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type Frame from "../../../Models/Frame";
+import type { JointType } from "../../../Models/Frame";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 import styles from "./ObjectParameters.module.css";
-import Frame, { JointType } from "../../../Models/Frame";
-import ThreeScene from "../../ThreeDisplay/ThreeScene";
+import ParameterProps, { type ParameterValue } from "./ParameterProps";
+import OffsetParameters from "./Parameters/OffsetParameters";
+import Parameter from "./Parameters/Parameter";
 import Property from "./Parameters/Property";
+import Section from "./Parameters/Section";
 
 export default function JointParameters({
     selectedObject,
@@ -21,7 +23,7 @@ export default function JointParameters({
     const [max, setMax] = useState<ParameterValue>(selectedObject.max);
     const [jointValue, setJointValue] = useState(selectedObject.jointValue);
     const [jointInput, setJointInput] = useState(
-        selectedObject.jointValue.toString()
+        selectedObject.jointValue.toString(),
     );
 
     useEffect(() => {
@@ -38,8 +40,8 @@ export default function JointParameters({
     };
 
     const toFloat = (value: string) => {
-        let v = parseFloat(value);
-        if (isNaN(v)) {
+        let v = Number.parseFloat(value);
+        if (Number.isNaN(v)) {
             v = 0;
         }
         return v;
@@ -47,8 +49,8 @@ export default function JointParameters({
 
     const validateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
-        const newValue = parseFloat(value);
-        if (isNaN(newValue)) {
+        const newValue = Number.parseFloat(value);
+        if (Number.isNaN(newValue)) {
             setMin(selectedObject.min);
             setMax(selectedObject.max);
             return false;
@@ -56,9 +58,9 @@ export default function JointParameters({
 
         if (Object.is(newValue, -0)) {
             return 0;
-        } else {
-            return newValue;
         }
+
+        return newValue;
     };
 
     const handleJointValueChange = (valueString: string) => {
@@ -103,7 +105,7 @@ export default function JointParameters({
     const handleMinMaxBlur = (
         e:
             | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const type = e.currentTarget.title.toLowerCase().replace(":", "");
         const validValue = validateInput(e.currentTarget.value);
@@ -134,66 +136,69 @@ export default function JointParameters({
     const determineJointFromType = (jointType: JointType) => {
         if (jointType === "fixed") {
             return <></>;
-        } else {
-            return (
-                <>
-                    <Property name="Joint Limits">
-                        <Parameter
-                            title="Min:"
-                            value={min}
-                            onChange={handleMinChange}
-                            onBlur={handleMinMaxBlur}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <Parameter
-                            title="Max:"
-                            value={max}
-                            onChange={handleMaxChange}
-                            onBlur={handleMinMaxBlur}
-                            onKeyDown={handleKeyDown}
-                        />
-                    </Property>
-                    <Property>
-                        <Parameter
-                            title="Slider Value:"
-                            value={jointInput}
-                            onChange={(e) => {
-                                setJointInput(e.target.value);
-                            }}
-                            onBlur={(e) => {
-                                handleJointValueChange(e.target.value);
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter")
-                                    handleJointValueChange(e.currentTarget.value);
-                            }}
-                        />
-                        <button className={styles.button} onClick={resetJoint}>
-                            Reset Slider Value
-                        </button>
-                    </Property>
-                    <Slider
-                        value={jointValue}
-                        step={0.01}
-                        min={min as number}
-                        max={max as number}
-                        aria-label="Default"
-                        valueLabelDisplay="auto"
-                        onChange={(e) => {
-                            handleJointValueChange(
-                                (e.target! as HTMLInputElement).value
-                            );
-                        }}
-                        onBlur={threeScene.forceUpdateCode}
-                    />
-                </>
-            );
         }
+        return (
+            <>
+                <Property name="Joint Limits">
+                    <Parameter
+                        title="Min:"
+                        value={min}
+                        onChange={handleMinChange}
+                        onBlur={handleMinMaxBlur}
+                        onKeyDown={handleKeyDown}
+                    />
+                    <Parameter
+                        title="Max:"
+                        value={max}
+                        onChange={handleMaxChange}
+                        onBlur={handleMinMaxBlur}
+                        onKeyDown={handleKeyDown}
+                    />
+                </Property>
+                <Property>
+                    <Parameter
+                        title="Slider Value:"
+                        value={jointInput}
+                        onChange={(e) => {
+                            setJointInput(e.target.value);
+                        }}
+                        onBlur={(e) => {
+                            handleJointValueChange(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter")
+                                handleJointValueChange(e.currentTarget.value);
+                        }}
+                    />
+                    <button
+                        className={styles.button}
+                        onClick={resetJoint}
+                        type="button"
+                    >
+                        Reset Slider Value
+                    </button>
+                </Property>
+                <Slider
+                    value={jointValue}
+                    step={0.01}
+                    min={min as number}
+                    max={max as number}
+                    aria-label="Default"
+                    valueLabelDisplay="auto"
+                    onChange={(e) => {
+                        handleJointValueChange(
+                            (e.target as HTMLInputElement).value,
+                        );
+                    }}
+                    onBlur={threeScene.forceUpdateCode}
+                />
+            </>
+        );
     };
 
     return (
         <Section title="Joint">
-            <Property>{"Parent Link: " + selectedObject.parentName}</Property>
+            <Property>{`Parent Link: ${selectedObject.parentName}`}</Property>
             {!selectedObject.isRootFrame && (
                 <Property name="Joint Type">
                     <Parameter
@@ -203,28 +208,32 @@ export default function JointParameters({
                         onSelectChange={handleJointTypeChange}
                         className={styles.select}
                         options={[
-                            {value: "fixed", option: "Fixed"},
-                            {value: "revolute", option: "Revolute"},
-                            {value: "continuous", option: "Continuous"},
-                            {value: "prismatic", option: "Prismatic"},
-                        ]}>
-                    </Parameter>
+                            { value: "fixed", option: "Fixed" },
+                            { value: "revolute", option: "Revolute" },
+                            { value: "continuous", option: "Continuous" },
+                            { value: "prismatic", option: "Prismatic" },
+                        ]}
+                    />
                 </Property>
             )}
             <Property>
-                        <button
-                            className={styles.button}
-                            onClick={handleChangeAxisAngle}
-                            onBlur={reattachLink}>
-                            Change Axis Angle
-                        </button>
-                        <button
-                            className={styles.button}
-                            onClick={handleChangeAxisOrigin}
-                            onBlur={reattachLink}>
-                            Change Axis Origin
-                        </button>
-                    </Property>
+                <button
+                    className={styles.button}
+                    onClick={handleChangeAxisAngle}
+                    onBlur={reattachLink}
+                    type="button"
+                >
+                    Change Axis Angle
+                </button>
+                <button
+                    className={styles.button}
+                    onClick={handleChangeAxisOrigin}
+                    onBlur={reattachLink}
+                    type="button"
+                >
+                    Change Axis Origin
+                </button>
+            </Property>
             <OffsetParameters
                 selectedObject={selectedObject}
                 threeScene={threeScene}

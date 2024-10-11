@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 /**
  * @param {*} mousePosition
@@ -6,19 +6,28 @@ import React, { ReactNode } from "react";
  */
 
 type Props = {
-    mousePosition: {x: number, y: number},
-    anchorPosition: string,
-    children: ReactNode
-} 
+    mousePosition: { x: number; y: number };
+    anchorPosition: string;
+    children: ReactNode;
+};
 
-export default function Tooltip({ mousePosition, anchorPosition = "center", children }: Props) {
+export default function Tooltip({
+    mousePosition,
+    anchorPosition = "center",
+    children,
+}: Props) {
     return (
         <div
             className="tooltip"
             style={{
                 left: mousePosition.x,
                 top: mousePosition.y,
-                transform: anchorPosition === "center" ? "translate(-50%, -50%)" : anchorPosition === "top-right" ? "translate(15px, 15px)" : "translate(-50%, -50%)",
+                transform:
+                    anchorPosition === "center"
+                        ? "translate(-50%, -50%)"
+                        : anchorPosition === "top-right"
+                          ? "translate(15px, 15px)"
+                          : "translate(-50%, -50%)",
             }}
         >
             {children}

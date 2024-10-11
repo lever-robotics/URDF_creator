@@ -82,13 +82,13 @@
     background-color: #2d2d2d; /* Dark background similar to Docusaurus */
     border-radius: 5px;
     padding: 10px 15px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 14px;
     color: #f8f8f2; /* Light text color */
     display: flex;
     align-items: center;
-  }
-  
-  .steps-container li {
+}
+
+.steps-container li {
     margin-bottom: 10px;
-  }
+}

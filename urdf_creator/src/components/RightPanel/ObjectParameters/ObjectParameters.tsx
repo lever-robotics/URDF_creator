@@ -1,13 +1,13 @@
+import { useEffect, useState } from "react";
+import Frame from "../../../Models/Frame";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
+import CollisionParameters from "./CollisionParameters";
 import FrameParameters from "./FrameParameters";
 import InertiaParameters from "./InertiaParameters";
-import SensorsParameters from "./SensorParameters";
-import ThreeScene from "../../ThreeDisplay/ThreeScene";
-import { useEffect, useState } from "react";
-import styles from "./ObjectParameters.module.css";
-import CollisionParameters from "./CollisionParameters";
-import VisualParameters from "./Parameters/VisualParameters";
-import Frame from "../../../Models/Frame";
 import JointParameters from "./JointParameters";
+import styles from "./ObjectParameters.module.css";
+import VisualParameters from "./Parameters/VisualParameters";
+import SensorsParameters from "./SensorParameters";
 
 function ObjectParameters({
     threeScene,
@@ -30,7 +30,7 @@ function ObjectParameters({
                 ? threeScene.selectedObject
                 : threeScene.selectedObject.frame;
         setSelectedObject(selected);
-    }, [JSON.stringify(threeScene?.selectedObject)]);
+    }, [threeScene.selectedObject]);
 
     if (
         selectedObject instanceof Frame &&

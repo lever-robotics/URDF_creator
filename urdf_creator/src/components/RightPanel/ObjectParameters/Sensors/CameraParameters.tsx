@@ -1,21 +1,65 @@
-import React from "react";
-import ParameterProps from "../ParameterProps";
+import type React from "react";
+import type Frame from "../../../../Models/Frame";
 import { Camera } from "../../../../Models/SensorsClass";
-import ThreeScene from "../../../ThreeDisplay/ThreeScene";
-import Frame from "../../../../Models/Frame";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
+import ParameterProps from "../ParameterProps";
 import Parameter from "../Parameters/Parameter";
 import Property from "../Parameters/Property";
 
-
-function CameraParameters({ selectedObject, threeScene }: {threeScene: ThreeScene, selectedObject: Frame}) {
+function CameraParameters({
+    selectedObject,
+    threeScene,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) {
     if (!selectedObject) return;
+    const camera = selectedObject.sensor;
+    if (!(camera instanceof Camera)) return;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        selectedObject.sensor?.update(name, value);
+        switch (name) {
+            case "cameraName":
+                camera.cameraName = value;
+                break;
+            case "imageTopicName":
+                camera.imageTopicName = value;
+                break;
+            case "cameraInfoTopicName":
+                camera.cameraInfoTopicName = value;
+                break;
+            case "format":
+                camera.format = value;
+                break;
+        }
+        const newValue = Number.parseFloat(value);
+        switch (name) {
+            case "horizontalFov":
+                camera.horizontal_fov = newValue;
+                break;
+            case "width":
+                camera.width = newValue;
+                break;
+            case "height":
+                camera.height = newValue;
+                break;
+            case "near":
+                camera.near = newValue;
+                break;
+            case "far":
+                camera.far = newValue;
+                break;
+            case "gaussianNoise":
+                camera.gaussianNoise = newValue;
+                break;
+            case "updateRate":
+                camera.updateRate = newValue;
+                break;
+        }
+
         threeScene.forceUpdateBoth();
     };
-
-    const camera = selectedObject.sensor as Camera
 
     return (
         <>
@@ -32,11 +76,11 @@ function CameraParameters({ selectedObject, threeScene }: {threeScene: ThreeScen
                 <Parameter
                     title="Horizontal FOV:"
                     type="number"
-                    name="horizontal_fov"
+                    name="horizontalFov"
                     value={camera.horizontal_fov}
                     onChange={handleChange}
                     units={"&deg"}
-                />  
+                />
             </Property>
             <Property>
                 <Parameter
@@ -78,14 +122,14 @@ function CameraParameters({ selectedObject, threeScene }: {threeScene: ThreeScen
                 />
             </Property>
             <Property>
-            <Parameter
-                title="Clip Far:"
-                type="number"
-                name="far"
-                value={camera.far}
-                onChange={handleChange}
-                units={"m"}
-            />
+                <Parameter
+                    title="Clip Far:"
+                    type="number"
+                    name="far"
+                    value={camera.far}
+                    onChange={handleChange}
+                    units={"m"}
+                />
             </Property>
             <Property>
                 <Parameter

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type Frame from "../../../Models/Frame";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 import { deregisterName, registerName } from "../../ThreeDisplay/TreeUtils";
-import styles from "./ObjectParameters.module.css";
-import ThreeScene from "../../ThreeDisplay/ThreeScene";
-import Frame from "../../../Models/Frame";
 import JointParameters from "./JointParameters";
+import styles from "./ObjectParameters.module.css";
+import Parameter from "./Parameters/Parameter";
 import PositionParameters from "./Parameters/PositionParameters";
+import Property from "./Parameters/Property";
 import RotationParameters from "./Parameters/RotationParameters";
 import Section from "./Parameters/Section";
-import Property from "./Parameters/Property";
-import Parameter from "./Parameters/Parameter";
 
 export default function FrameParameters({
     threeScene,
@@ -25,7 +26,7 @@ export default function FrameParameters({
     useEffect(() => {
         setTempName(selectedObject.name);
         setError("");
-    }, [JSON.stringify(selectedObject.name)]);
+    }, [selectedObject.name]);
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newName = e.target.value;
@@ -39,7 +40,7 @@ export default function FrameParameters({
     const handleNameBlur = (
         e:
             | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>
+            | React.KeyboardEvent<HTMLInputElement>,
     ) => {
         const newName = e.currentTarget.value;
         if (newName === selectedObject.name) {

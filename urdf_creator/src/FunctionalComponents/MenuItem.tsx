@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import styles from "./MenuModal.module.css";
 
 interface MenuItemProps {
@@ -8,9 +8,7 @@ interface MenuItemProps {
 
 const MenuItem: React.FC<MenuItemProps> = ({ action, label }) => {
     return (
-        <li
-            className={styles.menuItem}
-            onClick={action}>
+        <li className={styles.menuItem} onClick={action}>
             {label}
         </li>
     );

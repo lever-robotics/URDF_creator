@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import type React from "react";
+import { type MutableRefObject, useState } from "react";
+import type ThreeScene from "../ThreeDisplay/ThreeScene";
 import CodeBox from "./CodeBox/CodeBox";
-import styles from "./RightPanel.module.css";
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
-import ThreeScene from "../ThreeDisplay/ThreeScene";
+import styles from "./RightPanel.module.css";
 
 /**
  * @param {Scene} scene
@@ -10,13 +11,19 @@ import ThreeScene from "../ThreeDisplay/ThreeScene";
  */
 
 type Props = {
-    projectTitle: string,
-    threeScene: ThreeScene,
-    updateCode: number,
-    className: string
-}
+    projectTitle: string;
+    threeSceneRef: MutableRefObject<ThreeScene | undefined>;
+    updateCode: number;
+    className: string;
+};
 
-export default function RightPanel({ projectTitle, threeScene, updateCode }: Props) {
+export default function RightPanel({
+    projectTitle,
+    threeSceneRef,
+    updateCode,
+}: Props) {
+    if (!threeSceneRef.current) return;
+    const threeScene = threeSceneRef.current;
     const [selectedFormat, setSelectedFormat] = useState("Parameters");
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -25,34 +32,62 @@ export default function RightPanel({ projectTitle, threeScene, updateCode }: Pro
     };
 
     const selectedStyle = (format: string) => {
-        if(format === selectedFormat){
+        if (format === selectedFormat) {
             return {
                 // backgroundColor: "#24343f",
                 backgroundColor: "#646cff",
-            }
+            };
         }
-        return {}
-    }
+        return {};
+    };
 
     return (
         <>
             <div className={styles.toolbar}>
-                <button className={styles.toolbarButton} style={selectedStyle("Parameters")} onClick={handleClick}>
+                <button
+                    className={styles.toolbarButton}
+                    style={selectedStyle("Parameters")}
+                    onClick={handleClick}
+                    type="button"
+                >
                     Parameters
                 </button>
-                <button className={styles.toolbarButton} style={selectedStyle("URDF")} onClick={handleClick}>
+                <button
+                    className={styles.toolbarButton}
+                    style={selectedStyle("URDF")}
+                    onClick={handleClick}
+                    type="button"
+                >
                     URDF
                 </button>
-                <button className={styles.toolbarButton} style={selectedStyle("SDF")} onClick={handleClick}>
+                <button
+                    className={styles.toolbarButton}
+                    style={selectedStyle("SDF")}
+                    onClick={handleClick}
+                    type="button"
+                >
                     SDF
                 </button>
-                <button className={styles.toolbarButton} style={selectedStyle("XACRO")} onClick={handleClick}>
+                <button
+                    className={styles.toolbarButton}
+                    style={selectedStyle("XACRO")}
+                    onClick={handleClick}
+                    type="button"
+                >
                     XACRO
                 </button>
             </div>
             <div className={styles.rightPanel}>
-                <CodeBox projectTitle={projectTitle} threeScene={threeScene} selectedFormat={selectedFormat} updateCode={updateCode} />
-                <ObjectParameters threeScene={threeScene} selectedFormat={selectedFormat} />
+                <CodeBox
+                    projectTitle={projectTitle}
+                    threeScene={threeScene}
+                    selectedFormat={selectedFormat}
+                    updateCode={updateCode}
+                />
+                <ObjectParameters
+                    threeScene={threeScene}
+                    selectedFormat={selectedFormat}
+                />
             </div>
         </>
     );

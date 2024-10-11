@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import Link from "./Link";
-import Frame, { Frameish } from "./Frame";
+import Frame, { type Frameish } from "./Frame";
+import type Link from "./Link";
 
 export default class JointVisualizer extends THREE.Object3D {
-    link?: Link
+    link?: Link;
     value: number;
     frame: Frameish;
 

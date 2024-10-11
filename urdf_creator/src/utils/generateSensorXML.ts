@@ -1,20 +1,19 @@
-import Frame from "../Models/Frame";
+import type Frame from "../Models/Frame";
 import { Camera, IMU, Lidar } from "../Models/SensorsClass";
 import { quaternionToRPY } from "./quaternionToRPY";
 
 // generateSensorXML.js
 export const generateSensorXML = (selectedObject: Frame) => {
-
-    const sensorType = selectedObject.sensor!.type;
-    let sensorXML = '';
+    const sensorType = selectedObject.sensor.type;
+    let sensorXML = "";
     switch (sensorType) {
-        case 'imu':
+        case "imu":
             sensorXML = generateIMUXML(selectedObject);
             break;
-        case 'camera':
+        case "camera":
             sensorXML = generateCameraXML(selectedObject);
             break;
-        case 'lidar':
+        case "lidar":
             sensorXML = generateLidarXML(selectedObject);
             break;
         // Add cases for other sensor types here
@@ -29,7 +28,15 @@ export const generateSensorXML = (selectedObject: Frame) => {
 const generateIMUXML = (selectedObject: Frame) => {
     const { sensor } = selectedObject;
     if (sensor instanceof IMU) {
-        const { type, xyzOffsets, rpyOffsets, alwaysOn, updateRate, mean, stddev } = sensor;
+        const {
+            type,
+            xyzOffsets,
+            rpyOffsets,
+            alwaysOn,
+            updateRate,
+            mean,
+            stddev,
+        } = sensor;
 
         const { x, y, z } = selectedObject.position;
         const xyzOffsets_mesh = `${x} ${y} ${z}`;
@@ -50,16 +57,32 @@ const generateIMUXML = (selectedObject: Frame) => {
                 </noise>
             </imu>
         </sensor>
-    `;} else {
-        return '';
+    `;
     }
-};
 
+    return "";
+};
 
 const generateCameraXML = (selectedObject: Frame) => {
     const { sensor } = selectedObject;
     if (sensor instanceof Camera) {
-        const { type, gaussianNoise, xyzOffsets, rpyOffsets, alwaysOn, updateRate, cameraName, imageTopicName, cameraInfoTopicName, horizontal_fov, width, height, format, near, far } = sensor;
+        const {
+            type,
+            gaussianNoise,
+            xyzOffsets,
+            rpyOffsets,
+            alwaysOn,
+            updateRate,
+            cameraName,
+            imageTopicName,
+            cameraInfoTopicName,
+            horizontal_fov,
+            width,
+            height,
+            format,
+            near,
+            far,
+        } = sensor;
 
         //currently settinng the origin of the sensor to that of the mesh
         const { x, y, z } = selectedObject.position;
@@ -88,15 +111,29 @@ const generateCameraXML = (selectedObject: Frame) => {
                 </noise>
             </camera>
         </sensor>
-    `;} else {
-        return '';
+    `;
     }
+
+    return "";
 };
 
 const generateLidarXML = (selectedObject: Frame) => {
     const { sensor } = selectedObject;
     if (sensor instanceof Lidar) {
-        const { type, alwaysOn, updateRate, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
+        const {
+            type,
+            alwaysOn,
+            updateRate,
+            samples,
+            resolution,
+            minAngle,
+            maxAngle,
+            minRange,
+            maxRange,
+            rangeResolution,
+            mean,
+            stddev,
+        } = sensor;
 
         //currently settinng the origin of the sensor to that of the mesh
 
@@ -130,7 +167,8 @@ const generateLidarXML = (selectedObject: Frame) => {
                 </noise>
             </ray>
         </sensor>
-    `;} else {
-        return '';
+    `;
     }
+
+    return "";
 };

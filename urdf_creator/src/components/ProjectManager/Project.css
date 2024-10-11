@@ -1,66 +1,65 @@
 /* CSS for ProjectDisplayer.jsx */
-.project-displayer{
-  display: flex;
-  /* flex-wrap: wrap; */
-  align-content: space-around;
-  overflow: none;
-  /* gap: 20px; */
+.project-displayer {
+    display: flex;
+    /* flex-wrap: wrap; */
+    align-content: space-around;
+    overflow: none;
+    /* gap: 20px; */
 }
 
 /* CSS for Project.jsx */
-.project{
-  position: relative;
-  margin: 16px;
-  border-bottom-right-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.259);
-  transition: border-color 0.25s;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 250px;
-  height: 275px;
-  overflow: hidden;
-  :hover{
-    border-color: #646cff;
-  }
+.project {
+    position: relative;
+    margin: 16px;
+    border-bottom-right-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.259);
+    transition: border-color 0.25s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    height: 275px;
+    overflow: hidden;
+    :hover {
+        border-color: #646cff;
+    }
 }
 
-
-.project-image{
-  width: 100%;
-  display: block;
-  transition: transform 0.5s ease;
+.project-image {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease;
 }
 
-.project-info{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  opacity: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  transition: opacity 0.5s ease;
-  z-index: 3;
+.project-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    z-index: 3;
 }
 
-.project-title{
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  text-align: center;
-  font-size: 1.5em;
-  background-color: rgba(255, 255, 255, 0.118);
+.project-title {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    background-color: rgba(255, 255, 255, 0.118);
 }
 
-.project:hover .project-image{
-  transform: scale(1.1);
+.project:hover .project-image {
+    transform: scale(1.1);
 }
 
-.project:hover .project-info{
-  opacity: 1;
+.project:hover .project-info {
+    opacity: 1;
 }

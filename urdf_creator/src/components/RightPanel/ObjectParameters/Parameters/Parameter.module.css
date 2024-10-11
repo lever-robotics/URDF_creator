@@ -1,13 +1,13 @@
-.parameter{
+.parameter {
     /* padding: 6px; */
-    display:flex;
+    display: flex;
     align-items: center;
     /* margin: 10px 5px 10px 5px; */
 }
 
-.paramLabel{
+.paramLabel {
     font-family: inherit;
-    color: #fff; 
+    color: #fff;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     font-size: x-small;
     font-weight: 500;
@@ -16,7 +16,7 @@
 
 .units {
     font-family: "Times New Roman", Times, serif;
-    color: #fff; 
+    color: #fff;
     font-size: xx-small;
     margin-left: 2px;
     vertical-align: super;
@@ -38,9 +38,11 @@
     padding: 2px;
     border-radius: 4px;
     outline: none;
-}.input:hover {
+}
+.input:hover {
     border-color: #646cff;
-}.input:focus {
+}
+.input:focus {
     border-color: #646cff;
 }
 
@@ -55,9 +57,11 @@
     transition: border-color 0.25s;
     overflow: visible;
     outline: none;
-}.select:hover {
+}
+.select:hover {
     border-color: #646cff;
-}.select:focus {
+}
+.select:focus {
     border-color: #646cff;
 }
 
@@ -109,4 +113,3 @@
     flex-wrap: wrap;
     gap: 0px 10px;
 }
-

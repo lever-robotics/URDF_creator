@@ -1,30 +1,39 @@
-import React, { StrictMode, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { StrictMode, useEffect, useRef, useState } from "react";
 import Modal from "./FunctionalComponents/Modal";
-import AbsolutePosition from "./utils/ScreenTools/AbsolutePosition";
-import Row from "./utils/ScreenTools/Row";
-import Column from "./utils/ScreenTools/Column";
-import MenuBar from "./components/Menu/MenuBar";
-import { LinkTree } from "./components/TreeView/LinkTree";
+import type Frame from "./Models/Frame";
+import initializeAnalytics from "./analytics";
+import Onboarding from "./components/ApplicationHelp/Onboarding";
 import InsertTool from "./components/Insert/InsertTool";
-import Toolbar from "./components/Toolbar/ToolBar";
-import RightPanel from "./components/RightPanel/RightPanel";
-import ProjectDisplayer from "./components/ProjectManager/ProjectDisplayer";
 import ExportDisplayer from "./components/Menu/ExportModal/ExportDisplayer";
 import ImportDisplayer from "./components/Menu/ImportModal/ImportDisplayer";
-import Onboarding from "./components/ApplicationHelp/Onboarding";
-import initializeAnalytics from "./analytics";
-import ThreeScene from "./components/ThreeDisplay/ThreeScene";
+import MenuBar from "./components/Menu/MenuBar";
+import ProjectDisplayer from "./components/ProjectManager/ProjectDisplayer";
+import RightPanel from "./components/RightPanel/RightPanel";
+import type ThreeScene from "./components/ThreeDisplay/ThreeScene";
+import { constructThreeScene } from "./components/ThreeDisplay/ThreeSceneUtils";
+import {
+    compressScene,
+    findFrameByName,
+    readScene,
+} from "./components/ThreeDisplay/TreeUtils";
+import Toolbar from "./components/Toolbar/ToolBar";
+import { LinkTree } from "./components/TreeView/LinkTree";
 import { handleProject, loadFileToObject } from "./utils/HandleUpload";
 import ScenetoGLTF from "./utils/ScenetoGLTF";
-import { compressScene, findFrameByName, readScene } from "./components/ThreeDisplay/TreeUtils";
-import { constructThreeScene } from "./components/ThreeDisplay/ThreeSceneUtils";
+import AbsolutePosition from "./utils/ScreenTools/AbsolutePosition";
+import Column from "./utils/ScreenTools/Column";
+import Row from "./utils/ScreenTools/Row";
 
 const App = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const threeSceneRef = useRef<ThreeScene>();
+    const [threeSceneLoaded, setThreeSceneLoaded] = useState<boolean>(false);
 
     const [isModalOpen, setIsModalOpen] = useState(true);
-    const [modalContent, setModalContent] = useState(<Onboarding closeOnboarding={closeOnboarding} />);
+    const [modalContent, setModalContent] = useState(
+        <Onboarding closeOnboarding={closeOnboarding} />,
+    );
     const [projectTitle, setProjectTitle] = useState("robot");
 
     const [updateCode, setUpdateCode] = useState(0);
@@ -47,23 +56,32 @@ const App = () => {
 
         initializeAnalytics();
 
-        const [sceneCallback, setUpMouseCallback] = initThreeScene(mountRef);
+        const [sceneCallback, setUpMouseCallback] = initThreeScene(
+            mountRef.current,
+        );
+        setThreeSceneLoaded(true);
 
         // Add EventListeners
         window.addEventListener("keydown", keydown);
         window.addEventListener("keyup", keyup);
-        window.addEventListener('wheel', handleWheel, { passive: false });
-        mountRef.current!.addEventListener("updateScene", forceUpdateScene);
-        mountRef.current!.addEventListener("updateCode", forceUpdateCode);
+        window.addEventListener("wheel", handleWheel, { passive: false });
+        mountRef.current.addEventListener("updateScene", forceUpdateScene);
+        mountRef.current.addEventListener("updateCode", forceUpdateCode);
 
         return () => {
             sceneCallback();
             setUpMouseCallback();
             window.removeEventListener("keydown", keydown);
             window.removeEventListener("keyup", keyup);
-            window.removeEventListener('wheel', handleWheel);
-            mountRef.current?.removeEventListener("updateScene", forceUpdateScene);
-            mountRef.current?.removeEventListener("updateCode", forceUpdateCode);
+            window.removeEventListener("wheel", handleWheel);
+            mountRef.current?.removeEventListener(
+                "updateScene",
+                forceUpdateScene,
+            );
+            mountRef.current?.removeEventListener(
+                "updateCode",
+                forceUpdateCode,
+            );
         };
     }, []);
 
@@ -107,23 +125,23 @@ const App = () => {
      * Handles wheel events globally across the application
      * @param e WheelEvent
      */
-    function handleWheel(e: WheelEvent): void{
+    function handleWheel(e: WheelEvent): void {
         if (e.ctrlKey) {
             e.preventDefault();
         }
-    };
+    }
 
     /**
      * Initializes the the ThreeScene
      * @param mountRef Reference to the DOM element the ThreeScene will attach to
      * @returns Callback functions for the useEffect to remove upon closure
      */
-    function initThreeScene(mountRef: React.RefObject<HTMLDivElement>){
-        const threeScene = constructThreeScene(mountRef);
+    function initThreeScene(mountDiv: HTMLDivElement) {
+        const threeScene = constructThreeScene(mountDiv);
         threeSceneRef.current = threeScene;
 
-        const sceneCallback = threeSceneRef.current!.callback;
-        const setUpMouseCallback = threeSceneRef.current!.mouse.callback;
+        const sceneCallback = threeSceneRef.current.callback;
+        const setUpMouseCallback = threeSceneRef.current.mouse.callback;
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -133,7 +151,7 @@ const App = () => {
 
         animate();
 
-        return [sceneCallback, setUpMouseCallback]
+        return [sceneCallback, setUpMouseCallback];
     }
 
     /*
@@ -143,29 +161,29 @@ const App = () => {
      * Increments the state value updateScene by 1.
      * This causes a gobal rerender ensuring the react components are up to date with the changes made to THREE
      */
-    function forceUpdateScene(){
+    function forceUpdateScene() {
         setUpdateScene((prev) => prev + 1);
-    };
+    }
 
     /**
      * Increments the state value updateCode by 1.
      * This causes a gobal rerender to keep react components up to date, to update the codeBox, and to update the undo array
      */
-    function forceUpdateCode(){
+    function forceUpdateCode() {
         pushUndo();
         redo.current = [];
         setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
-    };
+    }
 
     /**
      * Pushes a compressed scene tree into the undo array
-     * @returns Returns early if threeScene is undefined 
+     * @returns Returns early if threeScene is undefined
      */
     const pushUndo = async () => {
         // pushUndo gets called from forceCodeUpdate
         const { current: threeScene } = threeSceneRef;
         const { current: undoArray } = undo;
-        if(threeScene === undefined) return;
+        if (threeScene === undefined) return;
         console.log("push Undo");
 
         const currentScene: UndoState = {
@@ -174,10 +192,12 @@ const App = () => {
         };
         // If the rootFrame is not null then it actually has objects so compress it
         if (threeScene.rootFrame !== null) {
-            const compressedScene = compressScene(threeScene.rootFrame!);
+            const compressedScene = compressScene(
+                threeScene.rootFrame as Frame,
+            );
             const gltfScene = await ScenetoGLTF(compressedScene);
             currentScene.scene = JSON.stringify(gltfScene);
-            currentScene.selectedName = threeScene.selectedObject?.name!;
+            currentScene.selectedName = threeScene.selectedObject.name;
         }
         console.log(currentScene);
         undoArray.push(currentScene);
@@ -191,46 +211,53 @@ const App = () => {
         const { current: threeScene } = threeSceneRef;
         const { current: undoArray } = undo;
         const { current: redoArray } = redo;
-        if(threeScene === undefined) return;
+        if (threeScene === undefined) return;
 
         // There should always be an empty state as the first element
         if (undoArray.length === 1) return;
 
         // Pop the current state and push to the redoArray
         const currentState = undoArray.pop();
-        redoArray.push(currentState!);
+        if (currentState) redoArray.push(currentState);
 
         // Get the last state before scene is cleared
-        const lastState = undoArray[undoArray.length -1];
+        const lastState = undoArray[undoArray.length - 1];
 
         // clear the scene
         threeScene.clearScene();
 
-        // If the last state was empty then return 
+        // If the last state was empty then return
         console.log(undoArray);
         if (lastState.scene === "") return;
 
         // Load the last state
         const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
-        const rootFrame = readScene(gltfScene.children[0], threeScene.objectNames);
+        const rootFrame = readScene(
+            gltfScene.children[0],
+            threeScene.objectNames,
+        );
         console.log(rootFrame);
 
-        threeScene!.scene.attach(rootFrame);
-        threeScene!.rootFrame = rootFrame;
+        threeScene.scene.attach(rootFrame);
+        threeScene.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
 
         // If the lastSelected name exists then select that Object
-        const lastSelectedName = currentState!.selectedName;
-        const lastSelected = findFrameByName(rootFrame, lastSelectedName);
-        threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
+        if (currentState) {
+            const lastSelectedName = currentState.selectedName;
+            const lastSelected = findFrameByName(rootFrame, lastSelectedName);
+            threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
+            return;
+        }
+        threeScene.selectObject(threeScene.worldFrame);
     };
 
     const popRedo = async () => {
         // Redo stack gets destroyed when forceCodeUpdate gets called
         const { current: redoArray } = redo;
         const { current: threeScene } = threeSceneRef;
-        if(threeScene === undefined) return;
+        if (threeScene === undefined) return;
 
         if (redoArray.length === 0) return;
 
@@ -239,11 +266,15 @@ const App = () => {
         threeScene.clearScene();
 
         // If the last state was empty then return;
-        if (lastState!.scene === "") return;
+        if (!lastState) return;
+        if (lastState.scene === "") return;
 
-        const lastScene = await loadFileToObject(lastState!.scene, "gltf");
+        const lastScene = await loadFileToObject(lastState.scene, "gltf");
         const gltfScene = lastScene.scene;
-        const rootFrame = readScene(gltfScene.children[0], threeScene.objectNames);
+        const rootFrame = readScene(
+            gltfScene.children[0],
+            threeScene.objectNames,
+        );
 
         threeScene.scene.attach(rootFrame);
         threeScene.rootFrame = rootFrame;
@@ -253,9 +284,13 @@ const App = () => {
         pushUndo();
     };
 
-
     const openProjectManager = () => {
-        setModalContent(<ProjectDisplayer handleProjectClick={handleProjectClick} onClose={closeProjectManager} />);
+        setModalContent(
+            <ProjectDisplayer
+                handleProjectClick={handleProjectClick}
+                onClose={closeProjectManager}
+            />,
+        );
         setIsModalOpen(true);
     };
 
@@ -265,11 +300,11 @@ const App = () => {
 
     const closeModal = () => setIsModalOpen(false);
 
-    function closeOnboarding(){
+    function closeOnboarding() {
         // Close the onboarding Modal and launch the project manager
         setIsModalOpen(false);
         openProjectManager();
-    };
+    }
 
     const openOnboarding = () => {
         setModalContent(<Onboarding closeOnboarding={closeOnboarding} />);
@@ -281,8 +316,13 @@ const App = () => {
     };
 
     const openExportDisplayer = () => {
+        if (!threeSceneRef.current) return;
         setModalContent(
-            <ExportDisplayer onClose={closeExportDisplayer} projectTitle={projectTitle} threeScene={threeSceneRef.current!} />
+            <ExportDisplayer
+                onClose={closeExportDisplayer}
+                projectTitle={projectTitle}
+                threeScene={threeSceneRef.current}
+            />,
         );
         setIsModalOpen(true);
     };
@@ -292,31 +332,39 @@ const App = () => {
     };
 
     const openImportDisplayer = () => {
-        setModalContent(<ImportDisplayer handleSensorClick={handleSensorClick} onImportClose={closeImportDisplayer} loadScene={threeSceneRef.current!.loadScene} />);
+        if (!threeSceneRef.current) return;
+        setModalContent(
+            <ImportDisplayer
+                handleSensorClick={handleSensorClick}
+                onImportClose={closeImportDisplayer}
+                loadScene={threeSceneRef.current.loadScene}
+            />,
+        );
         setIsModalOpen(true);
     };
 
-    const changeProjectTitle = (e: React.ChangeEvent<HTMLInputElement>) => setProjectTitle(e.target!.value);
+    const changeProjectTitle = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setProjectTitle(e.target.value);
 
     const handleProjectClick = async (projectPath: string, title: string) => {
         const { current: threeScene } = threeSceneRef;
-        threeScene!.clearScene();
+        if (!threeScene) return;
+        threeScene.clearScene();
         const group = await handleProject(projectPath);
         const rootFrame = group.scene.children[0];
-        threeScene!.loadScene(rootFrame);
+        threeScene.loadScene(rootFrame);
         setProjectTitle(title);
         setIsModalOpen(false);
     };
 
     const handleSensorClick = async (gltfpath: string) => {
         const { current: threeScene } = threeSceneRef;
+        if (!threeScene) return;
         const group = await handleProject(gltfpath);
         const link = group.scene.children[0];
-        threeScene!.loadSingleObject(link);
+        threeScene.loadSingleObject(link);
         closeImportDisplayer();
     };
-
-    
 
     const modalFunctions: ModalFunctionsType = {
         openProjectManager,
@@ -326,23 +374,38 @@ const App = () => {
         openImportDisplayer,
         closeImportDisplayer,
         changeProjectTitle,
-    }
+    };
 
     return (
-        <div className="display" ref={mountRef} style={{ width: "100%", height: "100%" }}>
-            <Modal isOpen={isModalOpen} onClose={closeModal} modalContent={modalContent} />
+        <div
+            className="display"
+            ref={mountRef}
+            style={{ width: "100%", height: "100%" }}
+        >
+            <Modal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                modalContent={modalContent}
+            />
             <AbsolutePosition>
                 <Row width="100%" height="100%">
                     <Column height="100%" width="20%" pointerEvents="auto">
-                        <MenuBar modalFunctions={modalFunctions} projectTitle={projectTitle} />
-                        <LinkTree threeScene={threeSceneRef.current!} />
-                        <InsertTool threeScene={threeSceneRef.current!} />
+                        <MenuBar
+                            modalFunctions={modalFunctions}
+                            projectTitle={projectTitle}
+                        />
+                        <LinkTree threeSceneRef={threeSceneRef} />
+                        <InsertTool threeSceneRef={threeSceneRef} />
                     </Column>
-                    <Toolbar threeScene={threeSceneRef.current!} popRedo={popRedo} popUndo={popUndo} />
+                    <Toolbar
+                        threeSceneRef={threeSceneRef}
+                        popRedo={popRedo}
+                        popUndo={popUndo}
+                    />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <RightPanel
                             projectTitle={projectTitle}
-                            threeScene={threeSceneRef.current!}
+                            threeSceneRef={threeSceneRef}
                             updateCode={updateCode}
                             className={"right-panel"}
                         />
@@ -361,6 +424,6 @@ export type ModalFunctionsType = {
     openImportDisplayer: () => void;
     closeImportDisplayer: () => void;
     changeProjectTitle: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+};
 
 export default App;

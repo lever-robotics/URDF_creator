@@ -1,5 +1,5 @@
+import type * as THREE from "three";
 import Frame from "../Models/Frame";
-import * as THREE from "three";
 
 export default function findRootFrame(scene: THREE.Object3D) {
     if (scene) {

@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import Frame, { Frameish } from "./Frame";
+import type Frame from "./Frame";
+import { Frameish } from "./Frame";
 
 export default class Inertia extends THREE.Object3D {
     frame: Frame;
@@ -12,9 +13,16 @@ export default class Inertia extends THREE.Object3D {
     iyz: number;
     customInertia: boolean;
 
-
-
-    constructor(frame: Frame, mass = 1, ixx = 0, iyy = 0, izz = 0, ixy = 0, ixz = 0, iyz = 0) {
+    constructor(
+        frame: Frame,
+        mass = 1,
+        ixx = 0,
+        iyy = 0,
+        izz = 0,
+        ixy = 0,
+        ixz = 0,
+        iyz = 0,
+    ) {
         super();
         this.frame = frame;
         this.customInertia = false;
@@ -30,54 +38,56 @@ export default class Inertia extends THREE.Object3D {
     // call every time the scaleing of the shape is changed
     updateInertia(threeObject: Frame) {
         if (this.customInertia) return;
+        if (!threeObject.link) return;
 
-        const shape = threeObject.collisions[0]?.shape ?? threeObject.link!.shape;
-        if (shape === 'cube') {
-            const width = threeObject.link!.scale.x;
-            const height = threeObject.link!.scale.y;
-            const depth = threeObject.link!.scale.z;
+        const shape =
+            threeObject.collisions[0]?.shape ?? threeObject.link.shape;
+        if (shape === "cube") {
+            const width = threeObject.link.scale.x;
+            const height = threeObject.link.scale.y;
+            const depth = threeObject.link.scale.z;
             this.ixx = (1 / 12) * this.mass * (height ** 2 + depth ** 2);
             this.iyy = (1 / 12) * this.mass * (width ** 2 + depth ** 2);
             this.izz = (1 / 12) * this.mass * (width ** 2 + height ** 2);
-        } else if (shape === 'cylinder') {
-            const radius = threeObject.link!.scale.x;
-            const height = threeObject.link!.scale.y;
+        } else if (shape === "cylinder") {
+            const radius = threeObject.link.scale.x;
+            const height = threeObject.link.scale.y;
             this.ixx = (1 / 12) * this.mass * (3 * radius ** 2 + height ** 2);
             this.iyy = (1 / 2) * this.mass * radius ** 2;
             this.izz = this.ixx;
-        } else if (shape === 'sphere' || shape === 'mesh') {
-            const radius = threeObject.link!.scale.x;
+        } else if (shape === "sphere" || shape === "mesh") {
+            const radius = threeObject.link.scale.x;
             this.ixx = (2 / 5) * this.mass * radius ** 2;
             this.iyy = this.ixx;
             this.izz = this.ixx;
         } else {
-            console.error('Invalid shape input');
+            console.error("Invalid shape input");
         }
     }
 
     setCustomInertia(type: string, inertia: number) {
         this.customInertia = true;
         switch (type) {
-            case 'ixx':
-            this.ixx = inertia;
-            break;
-            case 'iyy':
-            this.iyy = inertia;
-            break;
-            case 'izz':
-            this.izz = inertia;
-            break;
-            case 'ixy':
-            this.ixy = inertia;
-            break;
-            case 'ixz':
-            this.ixz = inertia;
-            break;
-            case 'iyz':
-            this.iyz = inertia;
-            break;
+            case "ixx":
+                this.ixx = inertia;
+                break;
+            case "iyy":
+                this.iyy = inertia;
+                break;
+            case "izz":
+                this.izz = inertia;
+                break;
+            case "ixy":
+                this.ixy = inertia;
+                break;
+            case "ixz":
+                this.ixz = inertia;
+                break;
+            case "iyz":
+                this.iyz = inertia;
+                break;
             default:
-            console.error('Invalid inertia type');
+                console.error("Invalid inertia type");
         }
     }
 
@@ -97,7 +107,16 @@ export default class Inertia extends THREE.Object3D {
     }
 
     duplicate() {
-        const clone = new Inertia(this.frame, this.mass, this.ixx, this.iyy, this.izz, this.ixy, this.ixz, this.iyz);
+        const clone = new Inertia(
+            this.frame,
+            this.mass,
+            this.ixx,
+            this.iyy,
+            this.izz,
+            this.ixy,
+            this.ixz,
+            this.iyz,
+        );
         clone.customInertia = this.customInertia;
         return clone;
     }

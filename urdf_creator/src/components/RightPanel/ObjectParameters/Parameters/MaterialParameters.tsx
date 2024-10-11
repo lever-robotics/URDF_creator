@@ -1,9 +1,9 @@
-import React from "react";
+import type React from "react";
+import type { Collision, Visual } from "../../../../Models/VisualCollision";
+import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import Parameter from "./Parameter";
-import Section from "./Section";
-import { Collision, Visual } from "../../../../Models/VisualCollision";
-import ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import Property from "./Property";
+import Section from "./Section";
 
 export default function MaterialParameters({
     threeScene,
@@ -25,10 +25,7 @@ export default function MaterialParameters({
             <Parameter
                 title={"Color:"}
                 type="color"
-                value={
-                    "#" +
-                    (selectedObject as Visual | Collision).color.getHexString()
-                }
+                value={`#${(selectedObject as Visual | Collision).color.getHexString()}`}
                 onChange={handleColorChange}
                 onBlur={handleColorBlur}
             />

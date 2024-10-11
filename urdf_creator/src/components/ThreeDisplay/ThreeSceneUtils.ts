@@ -5,35 +5,49 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { Mouse } from "./Mouse";
 import ThreeScene from "./ThreeScene";
 
+import type { RefObject } from "react";
+import { Vector3 } from "three";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 //For putting letters in the scene
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-import { RefObject } from "react";
-import { Vector3 } from "three";
 import TransformControls from "../../Models/TransformControls";
 
-export function constructThreeScene(mountRef: React.MutableRefObject<HTMLDivElement | null>) {
-    const camera = setupCamera(mountRef.current!);
-    const renderer = setupRenderer(mountRef.current!);
+export function constructThreeScene(mountDiv: HTMLDivElement) {
+    const camera = setupCamera(mountDiv);
+    const renderer = setupRenderer(mountDiv);
     const orbitControls = setupOrbitControls(camera, renderer);
     const transformControls = setupTransformControls(camera, renderer);
     const lights: THREE.Light[] = setupLights();
     const gridHelper = setupGridHelper();
     const axesHelper = setupAxesHelper();
-    const scene = setupScene([transformControls, lights[0], lights[1], lights[2], lights[3], gridHelper, axesHelper]);
+    const scene = setupScene([
+        transformControls,
+        lights[0],
+        lights[1],
+        lights[2],
+        lights[3],
+        gridHelper,
+        axesHelper,
+    ]);
     const renderPass = setupRenderPass(scene, camera);
     const composer = setupComposer(renderer, renderPass);
     const background = setupBackground();
     const raycaster = setupRaycaster();
-    const mouse = setupMouse(mountRef);
-    const callback = setupCallback(orbitControls, transformControls, renderer, scene, mountRef);
+    const mouse = setupMouse(mountDiv);
+    const callback = setupCallback(
+        orbitControls,
+        transformControls,
+        renderer,
+        scene,
+        mountDiv,
+    );
 
-    const font = setupFont(scene, camera)
+    const font = setupFont(scene, camera);
 
     scene.background = background;
 
     const three = new ThreeScene(
-        mountRef,
+        mountDiv,
         scene,
         camera,
         orbitControls,
@@ -41,28 +55,36 @@ export function constructThreeScene(mountRef: React.MutableRefObject<HTMLDivElem
         composer,
         raycaster,
         mouse,
-        callback
+        callback,
     );
 
     transformControls.scene = three;
 
-    three.transformControls.addEventListener("dragging-changed", (event: {value: unknown}) => {
-        three.orbitControls.enabled = !event.value;
-    });
+    three.transformControls.addEventListener(
+        "dragging-changed",
+        (event: { value: unknown }) => {
+            three.orbitControls.enabled = !event.value;
+        },
+    );
 
     return three;
 }
 
 function setupScene(objects: THREE.Object3D[]) {
     const scene = new THREE.Scene();
-    objects.forEach((object) => {
+    for (const object of objects) {
         scene.add(object);
-    });
+    }
     return scene;
 }
 
 function setupCamera(mount: HTMLDivElement) {
-    const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+        75,
+        mount.clientWidth / mount.clientHeight,
+        0.1,
+        1000,
+    );
     camera.position.set(5, 5, 5);
     camera.up.set(0, 0, 1);
     return camera;
@@ -75,11 +97,17 @@ function setupRenderer(mount: HTMLElement) {
     return renderer;
 }
 
-function setupOrbitControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer) {
+function setupOrbitControls(
+    camera: THREE.Camera,
+    renderer: THREE.WebGLRenderer,
+) {
     return new OrbitControls(camera, renderer.domElement);
 }
 
-function setupTransformControls(camera: THREE.Camera, renderer: THREE.WebGLRenderer) {
+function setupTransformControls(
+    camera: THREE.Camera,
+    renderer: THREE.WebGLRenderer,
+) {
     return new TransformControls(camera, renderer.domElement);
 }
 
@@ -106,7 +134,6 @@ function setupFont(scene: THREE.Scene, camera: THREE.Camera) {
         const textMaterial = new THREE.MeshBasicMaterial({
             color: 0xffffff,
         }); // Change color to blue
-
 
         const textGemetry = (title: string, position: Vector3) => {
             const textGeo = new TextGeometry(title, {
@@ -165,21 +192,24 @@ function setupRaycaster() {
     return new THREE.Raycaster();
 }
 
-function setupMouse(mountRef: React.MutableRefObject<HTMLDivElement | null>) {
-    const mouse = new Mouse(mountRef);
+function setupMouse(mountDiv: HTMLDivElement) {
+    const mouse = new Mouse(mountDiv);
     mouse.addListeners();
     return mouse;
 }
 
-function setupCallback(orbitControls: OrbitControls, transformControls: TransformControls, renderer: THREE.WebGLRenderer, scene: THREE.Scene, mountRef: RefObject<HTMLElement>) {
+function setupCallback(
+    orbitControls: OrbitControls,
+    transformControls: TransformControls,
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    mountDiv: HTMLElement,
+) {
     return () => {
         orbitControls.dispose();
         transformControls.dispose();
         renderer.dispose();
         scene.clear();
-        if (mountRef.current) {
-            mountRef.current.removeChild(renderer.domElement);
-        }
+        mountDiv.removeChild(renderer.domElement);
     };
 }
-

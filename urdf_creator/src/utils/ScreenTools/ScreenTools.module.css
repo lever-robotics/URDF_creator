@@ -1,4 +1,4 @@
-.absolutePosition{
+.absolutePosition {
     position: absolute;
     pointer-events: none;
     display: flex;
@@ -21,4 +21,3 @@
     flex-grow: 1 1 auto;
     justify-content: space-between;
 }
-

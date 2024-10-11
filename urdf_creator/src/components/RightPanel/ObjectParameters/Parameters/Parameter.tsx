@@ -1,11 +1,14 @@
-import { ChangeEventHandler, InputHTMLAttributes, ReactNode } from "react";
+import type { ChangeEventHandler, InputHTMLAttributes, ReactNode } from "react";
 import styles from "./Parameter.module.css";
 
 type Props = React.DetailedHTMLProps<
     InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-> & { units?: ReactNode; options?: {value:string, option:string}[], onSelectChange?: ChangeEventHandler<HTMLSelectElement>
-    | undefined };
+> & {
+    units?: ReactNode;
+    options?: { value: string; option: string }[];
+    onSelectChange?: ChangeEventHandler<HTMLSelectElement> | undefined;
+};
 
 export default function Parameter(props: Props) {
     // <select
@@ -27,20 +30,22 @@ export default function Parameter(props: Props) {
                 <select
                     value={props.value}
                     onChange={props.onSelectChange}
-                    className={props.className ?? styles.select}>
+                    className={props.className ?? styles.select}
+                >
                     {props.options?.map((option, index) => (
-                        <option key={index} value={option.value}>{option.option}</option>
+                        <option key={option.value} value={option.value}>
+                            {option.option}
+                        </option>
                     ))}
                 </select>
             </div>
         );
-    } else {
-        return (
-            <div className={styles.parameter}>
-                <strong className={styles.paramLabel}>{props.title}</strong>
-                <input {...props} className={props.className ?? styles.input} />
-                {/* <span className={styles.units}>{props.units}</span> */}
-            </div>
-        );
     }
+    return (
+        <div className={styles.parameter}>
+            <strong className={styles.paramLabel}>{props.title}</strong>
+            <input {...props} className={props.className ?? styles.input} />
+            {/* <span className={styles.units}>{props.units}</span> */}
+        </div>
+    );
 }

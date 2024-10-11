@@ -1,4 +1,4 @@
-.insertTool{
+.insertTool {
     display: flex;
     flex-direction: column;
     row-gap: 5px;
@@ -51,7 +51,8 @@
     transition: border-color 0.25s;
     color: #fff;
     text-shadow: 1px 1px 2px black;
-}.button:hover {
+}
+.button:hover {
     border-color: #646cff;
 }
 

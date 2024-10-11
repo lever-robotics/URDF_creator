@@ -14,13 +14,13 @@
     opacity: 0;
     transition: opacity 0.3s ease-in-out; /* Animate opacity */
     display: flex;
-  }
-  
-  .modal-overlay.open {
+}
+
+.modal-overlay.open {
     opacity: 1;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;

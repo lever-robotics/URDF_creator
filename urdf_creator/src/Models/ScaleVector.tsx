@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { Vector3 } from "three";
+import type { Vector3 } from "three";
 
 export default class ScaleVector extends THREE.Vector3 {
     shape: string;
 
     constructor(shape: string, scale: Vector3) {
-        const {x, y, z} = scale;
+        const { x, y, z } = scale;
         super(x, y, z);
 
         this.shape = shape;
@@ -49,14 +49,16 @@ export default class ScaleVector extends THREE.Vector3 {
             case "cube":
                 super.set(x, y, z);
                 return this;
-            case "sphere":
+            case "sphere": {
                 const averageSphere = (x + y + z) / 3;
                 super.set(averageSphere, averageSphere, averageSphere);
                 return this;
-            case "cylinder":
+            }
+            case "cylinder": {
                 const averageCylinder = (x + y) / 2;
                 super.set(averageCylinder, averageCylinder, z);
                 return this;
+            }
             default:
                 throw Error("shape provided to scale vector is not supported");
         }
@@ -70,7 +72,7 @@ export default class ScaleVector extends THREE.Vector3 {
             case "cube":
                 super.multiply(vector);
                 return this;
-            case "sphere":
+            case "sphere": {
                 const x = vector.getComponent(0);
                 const y = vector.getComponent(1);
                 const z = vector.getComponent(2);
@@ -84,7 +86,8 @@ export default class ScaleVector extends THREE.Vector3 {
                     super.multiply(new THREE.Vector3(z, z, z));
                 }
                 return this;
-            case "cylinder":
+            }
+            case "cylinder": {
                 const a = Math.abs(vector.getComponent(0));
                 const b = Math.abs(vector.getComponent(1));
                 const c = vector.getComponent(2);
@@ -98,6 +101,7 @@ export default class ScaleVector extends THREE.Vector3 {
                     super.multiply(vector);
                 }
                 return this;
+            }
             default:
                 throw Error("shape provided to scale vector is not supported");
         }

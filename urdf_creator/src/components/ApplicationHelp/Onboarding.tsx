@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import Page1 from './Page1';
-import Page2 from './Page2';
-import Page3 from './Page3';
-import './onboardstyle.css';
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
+import Page1 from "./Page1";
+import Page2 from "./Page2";
+import Page3 from "./Page3";
+import "./onboardstyle.css";
 
-const Onboarding = ( { closeOnboarding }: { closeOnboarding: () => void }) => {
+const Onboarding = ({ closeOnboarding }: { closeOnboarding: () => void }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = 3;
 
@@ -42,9 +42,9 @@ const Onboarding = ( { closeOnboarding }: { closeOnboarding: () => void }) => {
             <div className="dots-container">
                 {[...Array(totalPages)].map((_, index) => (
                     <span
-                        key={index}
-                        className={`dot ${currentPage === index + 1 ? 'active' : ''}`}
-                    ></span>
+                        key={index.toString()}
+                        className={`dot ${currentPage === index + 1 ? "active" : ""}`}
+                    />
                 ))}
             </div>
         );
@@ -56,16 +56,18 @@ const Onboarding = ( { closeOnboarding }: { closeOnboarding: () => void }) => {
             <div className="bottom-section">
                 <div className="arrow-container">
                     <button
-                        className={`previous-button ${currentPage === 1 ? 'hidden' : ''}`}
+                        className={`previous-button ${currentPage === 1 ? "hidden" : ""}`}
                         onClick={handlePreviousPage}
                         disabled={currentPage === 1}
+                        type="button"
                     >
                         <FontAwesomeIcon icon={faArrowLeft} />
                     </button>
                     {renderDots()}
                     <button
-                        className={`next-button`}
+                        className={"next-button"}
                         onClick={handleNextPage}
+                        type="button"
                     >
                         <FontAwesomeIcon icon={faArrowRight} />
                     </button>

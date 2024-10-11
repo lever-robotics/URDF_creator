@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import type React from "react";
+import type { ReactNode } from "react";
 import styles from "./ScreenTools.module.css";
 
 type Props = {
@@ -20,7 +21,8 @@ const Column: React.FC<Props> = ({
             style={{
                 maxWidth: width === "" ? "auto" : width,
                 height: height === "" ? "auto" : height,
-            }}>
+            }}
+        >
             {children}
         </div>
     );

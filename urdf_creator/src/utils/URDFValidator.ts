@@ -20,7 +20,10 @@ export function isValidURDF(urdfString: string): boolean {
     }
 
     // Additionally, you can check if the document element is what you expect (e.g., <robot>)
-    if (xmlDoc.documentElement.nodeName === "parsererror" || xmlDoc.documentElement.nodeName !== "robot") {
+    if (
+        xmlDoc.documentElement.nodeName === "parsererror" ||
+        xmlDoc.documentElement.nodeName !== "robot"
+    ) {
         return false;
     }
 

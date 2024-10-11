@@ -37,7 +37,6 @@ def generate_launch_description():
 `;
 }
 
-
 export function GenerateVisualLaunchFile(title: string) {
     return `
 import os

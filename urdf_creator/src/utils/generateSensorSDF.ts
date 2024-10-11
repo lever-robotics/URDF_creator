@@ -1,18 +1,17 @@
-import Frame from "../Models/Frame";
+import type Frame from "../Models/Frame";
 import { Camera, IMU, Lidar } from "../Models/SensorsClass";
 
 export const generateSensorSDF = (selectedObject: Frame) => {
-
-    const sensorType = selectedObject.sensor!.type;
-    let sensorXML = '';
+    const sensorType = selectedObject.sensor.type;
+    let sensorXML = "";
     switch (sensorType) {
-        case 'imu':
+        case "imu":
             sensorXML = generateIMUPluginXML(selectedObject);
             break;
-        case 'camera':
+        case "camera":
             sensorXML = generateCameraPluginXML(selectedObject);
             break;
-        case 'lidar':
+        case "lidar":
             sensorXML = generateLidarPluginXML(selectedObject);
             break;
         // Add cases for other sensor types heres
@@ -80,17 +79,29 @@ const generateIMUPluginXML = (selectedObject: Frame) => {
                 </ros>
             </plugin>
         </sensor>
-    `;} else {
-    console.error('Sensor is not an instance of IMU');
-    return '';
+    `;
     }
+    console.error("Sensor is not an instance of IMU");
+    return "";
 };
 
 const generateCameraPluginXML = (selectedObject: Frame) => {
     const { sensor, name } = selectedObject;
 
     if (sensor instanceof Camera) {
-        const { cameraName, alwaysOn, updateRate, horizontal_fov, width, height, format, near, far, mean, stddev } = sensor;
+        const {
+            cameraName,
+            alwaysOn,
+            updateRate,
+            horizontal_fov,
+            width,
+            height,
+            format,
+            near,
+            far,
+            mean,
+            stddev,
+        } = sensor;
 
         return `
             <sensor name="${name.replace("-", "_")}_${cameraName}" type="camera">
@@ -125,16 +136,30 @@ const generateCameraPluginXML = (selectedObject: Frame) => {
                     <!-- <hack_baseline>0.07</hack_baseline> -->
                 </plugin>
             </sensor>
-        `;} else {
-    console.error('Sensor is not an instance of Camera');
-    return '';
+        `;
     }
+    console.error("Sensor is not an instance of Camera");
+    return "";
 };
 
 const generateLidarPluginXML = (selectedObject: Frame) => {
     const { sensor, name } = selectedObject;
     if (sensor instanceof Lidar) {
-        const { type, alwaysOn, updateRate, pose, samples, resolution, minAngle, maxAngle, minRange, maxRange, rangeResolution, mean, stddev } = sensor;
+        const {
+            type,
+            alwaysOn,
+            updateRate,
+            pose,
+            samples,
+            resolution,
+            minAngle,
+            maxAngle,
+            minRange,
+            maxRange,
+            rangeResolution,
+            mean,
+            stddev,
+        } = sensor;
 
         return `
         <sensor name="${name.replace("-", "_")}_${type}" type="ray">
@@ -170,8 +195,9 @@ const generateLidarPluginXML = (selectedObject: Frame) => {
                 <frame_name>${name}</frame_name>
             </plugin>
         </sensor>
-    `;} else {
-    console.error('Sensor is not an instance of Lidar');
-    return '';
+    `;
     }
+
+    console.error("Sensor is not an instance of Lidar");
+    return "";
 };

@@ -1,16 +1,20 @@
-import Frame, { Frameish } from "../../Models/Frame";
+import type React from "react";
+import { type MutableRefObject, useEffect, useState } from "react";
+import Frame, { type Frameish } from "../../Models/Frame";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
-import ThreeScene, { Selectable } from "../ThreeDisplay/ThreeScene";
-import { ObjectContextMenu } from "./ObjectContextMenu";
-import React, { useState, useEffect } from "react";
-import TreeFrame from "./TreeFrame";
+import type ThreeScene from "../ThreeDisplay/ThreeScene";
+import type { Selectable } from "../ThreeDisplay/ThreeScene";
 import styles from "./LinkTree.module.css";
+import { ObjectContextMenu } from "./ObjectContextMenu";
+import TreeFrame from "./TreeFrame";
 
 export type ContextMenu = false | Selectable;
 type LinkTreeProps = {
-    threeScene: ThreeScene;
+    threeSceneRef: MutableRefObject<ThreeScene | undefined>;
 };
-export function LinkTree({ threeScene }: LinkTreeProps) {
+export function LinkTree({ threeSceneRef }: LinkTreeProps) {
+    if (!threeSceneRef.current) return;
+    const threeScene = threeSceneRef.current;
     const [contextMenuPosition, setContextMenuPosition] = useState({
         left: -1000,
         top: -10000,
@@ -18,8 +22,10 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
     const [hoveredFrame, setHoveredFrame] = useState<Frameish>(null);
     const [contextMenu, setContextMenu] = useState<ContextMenu>(false);
 
-
-    const handleContextMenu = (e: React.MouseEvent, treeObject: ContextMenu) => {
+    const handleContextMenu = (
+        e: React.MouseEvent,
+        treeObject: ContextMenu,
+    ) => {
         e.preventDefault();
         setContextMenu(treeObject);
         setContextMenuPosition({
@@ -41,16 +47,17 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
     return (
         <>
             <div className={styles.toolbar}>
-                <button className={styles.toolbarButton}>
+                <button className={styles.toolbarButton} type="button">
                     Link Tree
                 </button>
             </div>
             <div
                 className={styles.linkTree}
                 onClick={onClick}
-                onMouseLeave={onMouseLeave}>
+                onMouseLeave={onMouseLeave}
+            >
                 <div className={styles.scrollBox}>
-                    <NameBar/>
+                    <NameBar />
                     {rootFrame && (
                         <TreeFrame
                             frame={rootFrame}
@@ -68,12 +75,11 @@ export function LinkTree({ threeScene }: LinkTreeProps) {
                 />
             </div>
         </>
-        
     );
 }
 
-function NameBar(){
-    return(
+function NameBar() {
+    return (
         <div className={styles.nameBar}>
             {/* <div className={styles.children}>
                 children
@@ -82,6 +88,5 @@ function NameBar(){
                 Name
             </div> */}
         </div>
-        
     );
 }

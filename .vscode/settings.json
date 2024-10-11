@@ -1,4 +1,10 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "cmake.sourceDirectory": "/home/yocto/work/URDF_creator/urdf_creator/dist/robot_package"
+	"editor.defaultFormatter": "biomejs.biome",
+	"cmake.sourceDirectory": "/home/yocto/work/URDF_creator/urdf_creator/dist/robot_package",
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }
