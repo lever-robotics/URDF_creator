@@ -23,6 +23,7 @@ export default class Frame extends THREE.Mesh {
 
     linkDetached: boolean;
     isRootFrame: boolean;
+    isWorldFrame: boolean;
 
     stlfile?: string;
     _jointType: JointType;
@@ -52,6 +53,7 @@ export default class Frame extends THREE.Mesh {
 
         this.linkDetached = false;
         this.isRootFrame = false;
+        this.isWorldFrame = false;
 
         this._jointType = jointType;
     }

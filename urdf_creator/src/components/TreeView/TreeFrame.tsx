@@ -35,7 +35,7 @@ export default function TreeFrame(props: Props) {
 
     // put the button that is dragged as the child of the hovered button
     const onDragEnd = (e: React.MouseEvent) => {
-        if (frame.isRootFrame) return; // Do not let the rootFrame be reparented
+        if (frame.isWorldFrame) return; // Do not let the world frame to be reparented
 
         if (hoveredFrame) {
             if (!isAncestor(frame, hoveredFrame)) {
@@ -47,6 +47,7 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderChildren = () => {
+        if (frame.isWorldFrame) return; // Do not render childreen of the world frame
         const children = frame.getFrameChildren();
         return children.map((child: Frame) => (
             <TreeFrame key={child.id} frame={child} {...restProps} />
@@ -54,6 +55,7 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderProperties = () => {
+        if (frame.isWorldFrame) return; // Do not render properties of the world frame
         const visuals = frame.visuals.map((property) => (
             <TreeProperty
                 key={property.id}
@@ -96,6 +98,8 @@ export default function TreeFrame(props: Props) {
 
     const selectedStyle = isSelected() ? { backgroundColor: "#646cff" } : {};
 
+    const draggable = !frame.isWorldFrame;
+
     // Display the current node's data and render its children
     return (
         <ToggleSection
@@ -110,7 +114,7 @@ export default function TreeFrame(props: Props) {
                 style={selectedStyle}
                 // className={className}
                 onContextMenu={onContextMenu}
-                draggable={true}
+                draggable={draggable}
                 onClick={onClick}
                 onDragEnd={onDragEnd}
                 onDragEnter={onDragEnter}

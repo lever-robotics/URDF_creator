@@ -25,7 +25,7 @@ import {
 import type { CollisionData, VisualData } from "./TreeUtils";
 
 export type TransformControlsMode = "translate" | "rotate" | "scale";
-export type Selectable = Frame | Visual | Collision;
+export type Selectable = Frame | Visual | Collision | null;
 type EventType = "updateCode" | "updateScene" | "toolMode" | "selectedObject";
 
 export default class ThreeScene {
@@ -50,7 +50,8 @@ export default class ThreeScene {
         public callback: () => void,
     ) {
         this.worldFrame = new Frame();
-        this.worldFrame.name = "world_frame";
+        this.worldFrame.isWorldFrame = true;
+        this.worldFrame.name = "origin";
         this.scene.add(this.worldFrame);
         this.rootFrame = null;
         this.selectedObject = this.worldFrame;
@@ -101,7 +102,7 @@ export default class ThreeScene {
             }
             // if we don't hit any mesh
         } else {
-            // this.selectObject(null);
+            this.selectObject(null);
         }
     };
 
@@ -166,7 +167,11 @@ export default class ThreeScene {
 
         newFrame.objectPosition.set(2.5, 2.5, 0.5);
 
-        if (this.selectedObject.name === "world_frame") {
+        if (
+            this.selectedObject === null ||
+            (this.selectedObject instanceof Frame &&
+                this.selectedObject.isWorldFrame)
+        ) {
             if (this.rootFrame) {
                 this.rootFrame.attachChild(newFrame);
             } else {
@@ -214,7 +219,7 @@ export default class ThreeScene {
     };
 
     attachTransformControls = (object: Selectable) => {
-        if (object.name === "world_frame") return;
+        if (object instanceof Frame && object.isWorldFrame) return;
         const selectedObject = object instanceof Frame;
         const transformControls = this.transformControls;
 
@@ -244,10 +249,14 @@ export default class ThreeScene {
 
     selectObject = (object: Selectable) => {
         if (!object) {
+            this.selectedObject = null;
             this.transformControls.detach();
             return;
         }
-        if (object.name === "world_frame") {
+        if (object instanceof Frame && object.isWorldFrame) {
+            this.selectedObject = object;
+            this.transformControls.detach();
+            this.dispatchEvent("selectedObject");
             this.forceUpdateScene();
             return;
         }

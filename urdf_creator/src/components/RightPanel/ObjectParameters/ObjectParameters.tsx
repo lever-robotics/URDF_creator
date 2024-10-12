@@ -32,23 +32,21 @@ function ObjectParameters({
         setSelectedObject(selected);
     }, [threeScene.selectedObject]);
 
-    if (
-        selectedObject instanceof Frame &&
-        selectedObject.name === "world_frame"
-    ) {
-        return (
-            <div className={styles.objectParameters}>
-                <div className={styles.basicParams}>
-                    <p>No link selected. Add or Select Link.</p>
-                </div>
-            </div>
-        );
-    }
-
     const props = {
         threeScene: threeScene,
         selectedObject: selectedObject,
     };
+
+    //check if the selected object is the origin or that no object is selected
+    if (selectedObject instanceof Frame && selectedObject.isWorldFrame) {
+        return (
+            <div className={styles.objectParameters}>
+                <div className={styles.basicParams}>
+                    <FrameParameters {...props} />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.objectParameters}>

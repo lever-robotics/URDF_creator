@@ -41,7 +41,7 @@ export function LinkTree({ threeSceneRef }: LinkTreeProps) {
     const onClick = () => {
         setContextMenu(false);
     };
-
+    const worldFrame = threeScene?.worldFrame;
     const rootFrame = threeScene?.rootFrame;
 
     return (
@@ -58,6 +58,15 @@ export function LinkTree({ threeSceneRef }: LinkTreeProps) {
             >
                 <div className={styles.scrollBox}>
                     <NameBar />
+                    {worldFrame && (
+                        <TreeFrame
+                            frame={worldFrame}
+                            handleContextMenu={handleContextMenu}
+                            threeScene={threeScene}
+                            hoveredFrame={hoveredFrame}
+                            setHoveredFrame={setHoveredFrame}
+                        />
+                    )}
                     {rootFrame && (
                         <TreeFrame
                             frame={rootFrame}
