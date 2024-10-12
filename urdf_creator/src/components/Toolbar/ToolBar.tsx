@@ -15,6 +15,10 @@ import VisualCollision, {
 } from "../../Models/VisualCollision";
 import ParameterProps from "../RightPanel/ObjectParameters/ParameterProps";
 import type ThreeScene from "../ThreeDisplay/ThreeScene";
+import type {
+    Selectable,
+    TransformControlsMode,
+} from "../ThreeDisplay/ThreeScene";
 
 const Toolbar = ({
     threeSceneRef,
@@ -25,19 +29,46 @@ const Toolbar = ({
     popUndo: () => void;
     popRedo: () => void;
 }) => {
-    if (!threeSceneRef.current) return;
     const threeScene = threeSceneRef.current;
-    const [selectedObject, setSelectedObject] = useState(
-        threeScene?.selectedObject,
-    );
-    const [toolMode, setToolMode] = useState(threeScene?.toolMode);
+    const [selectedObject, setSelectedObject] = useState<Selectable>();
+    const [toolMode, setToolMode] = useState<TransformControlsMode>();
+
+    // useEffect(() => {
+    //     setSelectedObject(threeScene.selectedObject);
+    //     setToolMode(threeScene.toolMode);
+    // }, [threeScene.selectedObject, threeScene.toolMode]);
 
     useEffect(() => {
-        setSelectedObject(threeScene.selectedObject);
-        setToolMode(threeScene.toolMode);
-    }, [threeScene.selectedObject, threeScene.toolMode]);
+        if (!threeScene) return;
+
+        const handleToolModeChange = () => {
+            setToolMode(threeScene.toolMode);
+        };
+
+        const handleSelectedObjectChange = () => {
+            setSelectedObject(threeScene.selectedObject);
+        };
+
+        handleToolModeChange();
+        handleSelectedObjectChange();
+
+        threeScene.addEventListener("toolMode", handleToolModeChange);
+        threeScene.addEventListener(
+            "selectedObject",
+            handleSelectedObjectChange,
+        );
+
+        return () => {
+            threeScene.removeEventListener("toolMode", handleToolModeChange);
+            threeScene.removeEventListener(
+                "selectedObject",
+                handleSelectedObjectChange,
+            );
+        };
+    }, [threeScene]);
 
     const handleClick = (e: React.MouseEvent<Element>) => {
+        if (!threeScene) return;
         const mode = e.currentTarget.id;
         threeScene.setToolMode(mode);
     };
@@ -54,6 +85,8 @@ const Toolbar = ({
     //     flex-direction: row;
     //     justify-content: space-between;
     // }
+
+    if (!threeSceneRef.current) return null;
 
     return (
         <div

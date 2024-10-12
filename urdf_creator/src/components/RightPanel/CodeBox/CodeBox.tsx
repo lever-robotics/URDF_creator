@@ -24,7 +24,6 @@ export default function CodeBox({
     selectedFormat,
     // updateCode,
 }: Props) {
-    if (selectedFormat === "Parameters") return;
     const style = {
         fontSize: "12px",
         overflow: "auto",
@@ -71,9 +70,8 @@ export default function CodeBox({
         copyToClipboard();
     };
 
-    if (selectedFormat === "Parameters") {
-        return null;
-    }
+    if (selectedFormat === "Parameters") return null;
+
     return (
         <div onClick={handleClick} className={styles.codeContainer}>
             <SyntaxHighlighter

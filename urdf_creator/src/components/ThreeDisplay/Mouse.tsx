@@ -1,13 +1,9 @@
 import type React from "react";
 
-type EventFunctions = (event: React.MouseEvent<HTMLDivElement>) => void;
+type EventFunctions = (event: PointerEvent) => void;
 
 export class Mouse {
     mountDiv: HTMLDivElement;
-    eventFunctions: {
-        type: string;
-        func: (event: React.MouseEvent<HTMLDivElement>) => void;
-    }[];
     previousUpTime: number;
     currentDownTime: number;
     startPos: [number, number];
@@ -18,10 +14,6 @@ export class Mouse {
 
     constructor(mountDiv: HTMLDivElement) {
         this.mountDiv = mountDiv;
-        this.eventFunctions = [
-            { type: "pointerdown", func: this.onMouseDown.bind(this) },
-            { type: "pointerup", func: this.onMouseUp.bind(this) },
-        ];
         this.previousUpTime = 0;
         this.currentDownTime = 0;
         this.startPos = [0, 0];
@@ -33,34 +25,36 @@ export class Mouse {
     }
 
     addListeners() {
-        for (const event of this.eventFunctions) {
-            this.mountDiv.addEventListener(
-                event.type,
-                event.func as unknown as (e: Event) => void,
-            );
-        }
+        this.mountDiv.addEventListener(
+            "pointerdown",
+            this.onMouseDown.bind(this),
+        );
+        this.mountDiv.addEventListener("pointerup", this.onMouseUp.bind(this));
     }
 
-    callback() {
-        for (const event of this.eventFunctions) {
-            this.mountDiv.removeEventListener(
-                event.type,
-                event.func as unknown as (e: Event) => void,
-            );
-        }
+    removeListeners() {
+        this.mountDiv.removeEventListener(
+            "pointerdown",
+            this.onMouseDown.bind(this),
+        );
+        this.mountDiv.removeEventListener(
+            "pointerup",
+            this.onMouseUp.bind(this),
+        );
     }
 
-    onMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    onMouseDown(event: PointerEvent) {
         if ((event.target as HTMLElement).localName !== "canvas") return;
+        console.log(this);
 
         event.preventDefault();
         this.currentDownTime = Date.now();
         this.startPos = [event.clientX, event.clientY];
     }
 
-    onMouseUp(event: React.MouseEvent<HTMLDivElement>) {
+    onMouseUp(event: PointerEvent) {
         if ((event.target as HTMLElement).localName !== "canvas") return;
-
+        console.log("onmouseup");
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;
@@ -87,29 +81,23 @@ export class Mouse {
         this.previousUpTime = Date.now();
     }
 
-    onDoubleClick(event: React.MouseEvent<HTMLDivElement>) {
+    onDoubleClick(event: PointerEvent) {
         for (const func of this.onDoubleClickFunctions) {
             func(event);
         }
     }
 
-    addOnDoubleClickFunctions(
-        func: (event: React.MouseEvent<HTMLDivElement>) => void,
-    ) {
+    addOnDoubleClickFunctions(func: (event: PointerEvent) => void) {
         this.onDoubleClickFunctions.push(func);
     }
 
-    addOnClickFunctions(
-        func: (event: React.MouseEvent<HTMLDivElement>) => void,
-    ) {
+    addOnClickFunctions(func: (event: PointerEvent) => void) {
         this.onClickFunctions.push(func);
     }
 
-    onClick(event: React.MouseEvent<HTMLDivElement>) {
+    onClick(event: PointerEvent | PointerEvent) {
         for (const func of this.onClickFunctions) {
             func(event);
         }
     }
 }
-
-// in react i have a function in one component A. This component has a ref to another component B, and there is a variable foo in B that A sets to a function bar. When B calls foo, it is calling bar in A. Bar reads a state of A, when A calls bar it reads the state correctly. But when B calls foo, it reads the state as it was when foo was set to bar. How can I fix this?

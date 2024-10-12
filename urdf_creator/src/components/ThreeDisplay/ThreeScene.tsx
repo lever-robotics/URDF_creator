@@ -24,9 +24,9 @@ import {
 } from "./TreeUtils";
 import type { CollisionData, VisualData } from "./TreeUtils";
 
-type TransformControlsMode = "translate" | "rotate" | "scale";
+export type TransformControlsMode = "translate" | "rotate" | "scale";
 export type Selectable = Frame | Visual | Collision;
-type EventType = "updateCode" | "updateScene";
+type EventType = "updateCode" | "updateScene" | "toolMode" | "selectedObject";
 
 export default class ThreeScene {
     worldFrame: Frame;
@@ -67,7 +67,8 @@ export default class ThreeScene {
     }
 
     // Function added to the Mouse object to allow clicking of meshes
-    clickObject = (event: React.MouseEvent<HTMLDivElement>) => {
+    clickObject = (event: PointerEvent) => {
+        console.log("clickObject");
         const rect = this.mountDiv.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -112,18 +113,22 @@ export default class ThreeScene {
         this.eventDispatcher.removeEventListener(type, listener);
     }
 
-    dispatchEvent(event: ListenerEvent) {
-        this.eventDispatcher.dispatchEvent(event);
+    dispatchEvent(type: EventType) {
+        const formattedEvent = {
+            type: type,
+            message: "",
+        };
+        this.eventDispatcher.dispatchEvent(formattedEvent);
     }
 
     forceUpdateCode = () => {
-        this.dispatchEvent({ type: "updateCode", message: "" });
+        this.dispatchEvent("updateCode");
         const customEvent = new Event("updateCode");
         this.mountDiv.dispatchEvent(customEvent);
     };
 
     forceUpdateScene = () => {
-        this.dispatchEvent({ type: "updateScene", message: "" });
+        this.dispatchEvent("updateScene");
         const customEvent = new Event("updateScene");
         this.mountDiv.dispatchEvent(customEvent);
     };
@@ -204,6 +209,7 @@ export default class ThreeScene {
         if (this.selectedObject) {
             this.attachTransformControls(this.selectedObject);
         }
+        this.dispatchEvent("toolMode");
         this.forceUpdateScene();
     };
 
@@ -254,6 +260,7 @@ export default class ThreeScene {
         this.selectedObject = object;
         this.transformControls.attach(object);
         // this.attachTransformControls(object);
+        this.dispatchEvent("selectedObject");
         this.forceUpdateScene();
     };
 

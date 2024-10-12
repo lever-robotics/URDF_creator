@@ -39,6 +39,7 @@ export function constructThreeScene(mountDiv: HTMLDivElement) {
         transformControls,
         renderer,
         scene,
+        mouse,
         mountDiv,
     );
 
@@ -203,6 +204,7 @@ function setupCallback(
     transformControls: TransformControls,
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
+    mouse: Mouse,
     mountDiv: HTMLElement,
 ) {
     return () => {
@@ -210,6 +212,7 @@ function setupCallback(
         transformControls.dispose();
         renderer.dispose();
         scene.clear();
+        mouse.removeListeners();
         mountDiv.removeChild(renderer.domElement);
     };
 }

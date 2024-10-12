@@ -28,7 +28,6 @@ import Row from "./utils/ScreenTools/Row";
 const App = () => {
     const mountRef = useRef<HTMLDivElement>(null);
     const threeSceneRef = useRef<ThreeScene>();
-    const [threeSceneLoaded, setThreeSceneLoaded] = useState<boolean>(false);
 
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [modalContent, setModalContent] = useState(
@@ -56,10 +55,7 @@ const App = () => {
 
         initializeAnalytics();
 
-        const [sceneCallback, setUpMouseCallback] = initThreeScene(
-            mountRef.current,
-        );
-        setThreeSceneLoaded(true);
+        const sceneCallback = initThreeScene(mountRef.current);
 
         // Add EventListeners
         window.addEventListener("keydown", keydown);
@@ -70,7 +66,7 @@ const App = () => {
 
         return () => {
             sceneCallback();
-            setUpMouseCallback();
+            // setUpMouseCallback();
             window.removeEventListener("keydown", keydown);
             window.removeEventListener("keyup", keyup);
             window.removeEventListener("wheel", handleWheel);
@@ -141,7 +137,6 @@ const App = () => {
         threeSceneRef.current = threeScene;
 
         const sceneCallback = threeSceneRef.current.callback;
-        const setUpMouseCallback = threeSceneRef.current.mouse.callback;
 
         const animate = () => {
             requestAnimationFrame(animate);
@@ -151,7 +146,7 @@ const App = () => {
 
         animate();
 
-        return [sceneCallback, setUpMouseCallback];
+        return sceneCallback;
     }
 
     /*
