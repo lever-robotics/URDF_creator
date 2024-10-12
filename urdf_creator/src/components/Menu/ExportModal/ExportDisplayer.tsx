@@ -4,7 +4,6 @@ import ExportGLTF from "./ExportGLTF";
 import ExportURDF from "./ExportURDF";
 import ExportURDFPackage from "./ExportURDFPackage";
 import "./exportDisplayer.css";
-import { Scene } from "three";
 import { JsxElement } from "typescript";
 import Frame, { Frameish } from "../../../Models/Frame";
 import type ThreeScene from "../../ThreeDisplay/ThreeScene";
@@ -24,7 +23,7 @@ const ExportDisplayer: React.FC<Props> = ({
     threeScene,
 }) => {
     const [selectedIndex, setSelectedIndex] = useState(1);
-    const scene = threeScene.scene;
+    const scene = threeScene;
     const rootFrame = threeScene.rootFrame;
     const [content, setContent] = useState(
         <ExportURDFPackage

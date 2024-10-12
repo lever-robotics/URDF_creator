@@ -158,6 +158,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     # Get the package share directory
     package_share_directory = get_package_share_directory("${title}_description")
+    simulation_pacakge = get_package_share_directory("${title}_gazebo")
 
     # Define the path to the URDF and RViz files
     urdf_file = os.path.join(package_share_directory, "urdf", "${title}.urdf")
@@ -165,7 +166,7 @@ def generate_launch_description():
     gazebo_launch_file = os.path.join(
         get_package_share_directory("gazebo_ros"), "launch", "gazebo.launch.py"
     )
-    sdf_file = os.path.join(package_share_directory, "model", "${title}.sdf")
+    sdf_file = os.path.join(simulation_pacakge, "model", "${title}.sdf")
 
     # Define the robot_state_publisher node
     robot_state_publisher_node = Node(

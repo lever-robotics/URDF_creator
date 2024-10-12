@@ -1,11 +1,11 @@
 import type React from "react";
 import "./Export.css";
-import type { Scene } from "three";
 import { handleDownload } from "../../../utils/HandleDownload";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 
 type Props = {
     onClose: () => void;
-    scene: Scene;
+    scene: ThreeScene;
     projectTitle: string;
 };
 
