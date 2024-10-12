@@ -22,7 +22,7 @@ export default function CodeBox({
     projectTitle,
     threeScene,
     selectedFormat,
-    updateCode,
+    // updateCode,
 }: Props) {
     if (selectedFormat === "Parameters") return;
     const style = {
@@ -34,14 +34,23 @@ export default function CodeBox({
         margin: "0",
         padding: "4px 8px",
     };
-    const text = ScenetoText(selectedFormat, threeScene, projectTitle);
     const [copied, setCopied] = useState(false);
+    const [code, setCode] = useState("");
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [code, setCode] = useState<string>(text);
 
+    // Writing text to the screen can be costly and a huge perfomance hit. This useEffect ensures that the urdf text is only updated on it's dependencies and when the ThreeScene calls for a code update
     useEffect(() => {
-        const text = ScenetoText(selectedFormat, threeScene, projectTitle);
-        setCode(text);
+        const updateCode = () => {
+            const text = ScenetoText(selectedFormat, threeScene, projectTitle);
+            setCode(text);
+        };
+
+        updateCode();
+        threeScene.addEventListener("updateCode", updateCode);
+
+        return () => {
+            threeScene.removeEventListener("updateCode", updateCode);
+        };
     }, [selectedFormat, threeScene, projectTitle]);
 
     // Copies the text to the clipboard and displays a tooltip saying copied for two seconds

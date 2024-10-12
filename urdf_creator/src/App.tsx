@@ -163,6 +163,7 @@ const App = () => {
      */
     function forceUpdateScene() {
         setUpdateScene((prev) => prev + 1);
+        console.log("forceUptate");
     }
 
     /**

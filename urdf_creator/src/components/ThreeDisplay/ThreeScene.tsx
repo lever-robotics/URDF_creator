@@ -4,6 +4,10 @@ import type { EffectComposer } from "three/examples/jsm/postprocessing/EffectCom
 import Frame, { type Frameish } from "../../Models/Frame";
 import type { Mouse } from "./Mouse";
 
+import EventDispatcher, {
+    type ListenerEvent,
+    type ListenerEventLambda,
+} from "../../Models/EventDispatcher";
 import Inertia from "../../Models/Inertia";
 import type TransformControls from "../../Models/TransformControls";
 import VisualCollision, {
@@ -22,6 +26,7 @@ import type { CollisionData, VisualData } from "./TreeUtils";
 
 type TransformControlsMode = "translate" | "rotate" | "scale";
 export type Selectable = Frame | Visual | Collision;
+type EventType = "updateCode" | "updateScene";
 
 export default class ThreeScene {
     worldFrame: Frame;
@@ -31,6 +36,7 @@ export default class ThreeScene {
     toolMode: TransformControlsMode;
     objectNames: string[];
     numberOfShapes: numShapes;
+    eventDispatcher: EventDispatcher;
 
     constructor(
         public mountDiv: HTMLElement,
@@ -57,6 +63,7 @@ export default class ThreeScene {
             mesh: 0,
         };
         this.mouse.addOnClickFunctions(this.clickObject);
+        this.eventDispatcher = new EventDispatcher();
     }
 
     // Function added to the Mouse object to allow clicking of meshes
@@ -97,12 +104,26 @@ export default class ThreeScene {
         }
     };
 
+    addEventListener(type: EventType, listener: ListenerEventLambda) {
+        this.eventDispatcher.addEventListener(type, listener);
+    }
+
+    removeEventListener(type: EventType, listener: ListenerEventLambda) {
+        this.eventDispatcher.removeEventListener(type, listener);
+    }
+
+    dispatchEvent(event: ListenerEvent) {
+        this.eventDispatcher.dispatchEvent(event);
+    }
+
     forceUpdateCode = () => {
+        this.dispatchEvent({ type: "updateCode", message: "" });
         const customEvent = new Event("updateCode");
         this.mountDiv.dispatchEvent(customEvent);
     };
 
     forceUpdateScene = () => {
+        this.dispatchEvent({ type: "updateScene", message: "" });
         const customEvent = new Event("updateScene");
         this.mountDiv.dispatchEvent(customEvent);
     };
