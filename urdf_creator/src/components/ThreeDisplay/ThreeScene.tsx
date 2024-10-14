@@ -200,47 +200,44 @@ export default class ThreeScene {
         this.forceUpdateBoth();
     };
 
-    setToolMode = (mode: string) => {
+    setToolMode = (mode: TransformControlsMode) => {
         if (this.transformControls) {
-            this.transformControls.setMode(mode as TransformControlsMode);
-            this.toolMode = mode as TransformControlsMode;
+            this.transformControls.setMode(mode);
+            this.toolMode = mode;
         }
 
-        if (this.selectedObject) {
-            this.attachTransformControls(this.selectedObject);
-        }
         this.dispatchEvent("toolMode");
         this.forceUpdateScene();
     };
 
-    attachTransformControls = (object: Selectable) => {
-        if (object.name === "world_frame") return;
-        const selectedObject = object instanceof Frame;
-        const transformControls = this.transformControls;
+    // attachTransformControls = (object: Selectable) => {
+    //     if (object.name === "world_frame") return;
+    //     const selectedObject = object instanceof Frame;
+    //     const transformControls = this.transformControls;
 
-        const mode = transformControls.mode;
-        //depending on the selectedItem and the current mode either attach or not
-        if (object instanceof Frame)
-            // switch (mode) {
-            //     // this case will attach the transform controls to the Frame and move everything together
-            //     case "translate":
-            //         transformControls.attach(selectedItem);
-            //         break;
-            //     // will attach to Frame which will rotate the mesh about said origin
-            //     case "rotate":
-            //         transformControls.attach(selectedItem);
-            //         break;
-            //     // will attach to the visual, collision, or inertia object but nothing else
-            //     case "scale":
-            //         if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
-            //             transformControls.attach(selectedItem!);
-            //         }
-            //         break;
-            //     default:
-            //         break;
-            // }
-            this.forceUpdateScene();
-    };
+    //     const mode = transformControls.mode;
+    //     //depending on the selectedItem and the current mode either attach or not
+    //     if (object instanceof Frame)
+    //         // switch (mode) {
+    //         //     // this case will attach the transform controls to the Frame and move everything together
+    //         //     case "translate":
+    //         //         transformControls.attach(selectedItem);
+    //         //         break;
+    //         //     // will attach to Frame which will rotate the mesh about said origin
+    //         //     case "rotate":
+    //         //         transformControls.attach(selectedItem);
+    //         //         break;
+    //         //     // will attach to the visual, collision, or inertia object but nothing else
+    //         //     case "scale":
+    //         //         if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
+    //         //             transformControls.attach(selectedItem!);
+    //         //         }
+    //         //         break;
+    //         //     default:
+    //         //         break;
+    //         // }
+    //         this.forceUpdateScene();
+    // };
 
     selectObject = (object: Selectable) => {
         if (!object) {
@@ -252,28 +249,13 @@ export default class ThreeScene {
             return;
         }
 
-        // the link may not be attached correctly, this checks for that case
-        // if (this.selectedObject?.linkDetached) {
-        //     this.reattachLink(this.selectedObject!);
-        // }
-
         this.selectedObject = object;
+        this.setToolMode("translate");
         this.transformControls.attach(object);
         // this.attachTransformControls(object);
         this.dispatchEvent("selectedObject");
         this.forceUpdateScene();
     };
-
-    // selectItem = (item: Frameish | Visual | Collision | Inertia) => {
-    //     this.selectedItem = item;
-    //     //Get the frame of the item and set to selectedObject
-    //     if (item instanceof Frame) {
-    //         this.selectObject(item);
-    //     } else {
-    //         this.selectObject(item!.frame);
-    //     }
-    //     this.forceUpdateScene();
-    // }
 
     loadSingleObject = (gltfScene: THREE.Object3D) => {
         const frame = readScene(gltfScene, this.objectNames);

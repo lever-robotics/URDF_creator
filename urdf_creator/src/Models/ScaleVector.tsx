@@ -11,58 +11,58 @@ export default class ScaleVector extends THREE.Vector3 {
         this.shape = shape;
     }
 
-    set(x: number, y: number, z: number) {
-        switch (this.shape) {
-            case "cube":
-                super.set(x, y, z);
-                return this;
-            case "sphere":
-            case "mesh":
-                if (x !== this.getComponent(0)) {
-                    super.set(x, x, x);
-                } else if (y !== this.getComponent(1)) {
-                    super.set(y, y, y);
-                } else if (z !== this.getComponent(2)) {
-                    super.set(z, z, z);
-                }
-                return this;
-            case "cylinder":
-                if (x !== this.getComponent(0)) {
-                    super.set(x, x, z);
-                } else if (y !== this.getComponent(1)) {
-                    super.set(y, y, z);
-                } else if (z !== this.getComponent(2)) {
-                    super.set(x, y, z);
-                }
-                return this;
-            default:
-                throw Error("shape provided to scale vector is not supported");
-        }
-    }
+    // set(x: number, y: number, z: number) {
+    //     switch (this.shape) {
+    //         case "cube":
+    //             super.set(x, y, z);
+    //             return this;
+    //         case "sphere":
+    //         case "mesh":
+    //             if (x !== this.getComponent(0)) {
+    //                 super.set(x, x, x);
+    //             } else if (y !== this.getComponent(1)) {
+    //                 super.set(y, y, y);
+    //             } else if (z !== this.getComponent(2)) {
+    //                 super.set(z, z, z);
+    //             }
+    //             return this;
+    //         case "cylinder":
+    //             if (x !== this.getComponent(0)) {
+    //                 super.set(x, x, z);
+    //             } else if (y !== this.getComponent(1)) {
+    //                 super.set(y, y, z);
+    //             } else if (z !== this.getComponent(2)) {
+    //                 super.set(x, y, z);
+    //             }
+    //             return this;
+    //         default:
+    //             throw Error("shape provided to scale vector is not supported");
+    //     }
+    // }
 
-    copy(scale: ScaleVector) {
-        const x = scale.x;
-        const y = scale.y;
-        const z = scale.z;
+    // copy(scale: ScaleVector) {
+    //     const x = scale.x;
+    //     const y = scale.y;
+    //     const z = scale.z;
 
-        switch (this.shape) {
-            case "cube":
-                super.set(x, y, z);
-                return this;
-            case "sphere": {
-                const averageSphere = (x + y + z) / 3;
-                super.set(averageSphere, averageSphere, averageSphere);
-                return this;
-            }
-            case "cylinder": {
-                const averageCylinder = (x + y) / 2;
-                super.set(averageCylinder, averageCylinder, z);
-                return this;
-            }
-            default:
-                throw Error("shape provided to scale vector is not supported");
-        }
-    }
+    //     switch (this.shape) {
+    //         case "cube":
+    //             super.set(x, y, z);
+    //             return this;
+    //         case "sphere": {
+    //             const averageSphere = (x + y + z) / 3;
+    //             super.set(averageSphere, averageSphere, averageSphere);
+    //             return this;
+    //         }
+    //         case "cylinder": {
+    //             const averageCylinder = (x + y) / 2;
+    //             super.set(averageCylinder, averageCylinder, z);
+    //             return this;
+    //         }
+    //         default:
+    //             throw Error("shape provided to scale vector is not supported");
+    //     }
+    // }
 
     // THREE.Vector3 has a function called multiply that is called if the vector 3 is a scene object's scale whenever the object is scaled by transform controls
     // this function hijacks the normal scale function and ensures that spheres and cylinders scale uniformly
@@ -72,32 +72,47 @@ export default class ScaleVector extends THREE.Vector3 {
             case "cube":
                 super.multiply(vector);
                 return this;
+            case "mesh":
             case "sphere": {
-                const x = vector.getComponent(0);
-                const y = vector.getComponent(1);
-                const z = vector.getComponent(2);
+                const x = vector.x;
+                const y = vector.y;
+                const z = vector.z;
 
                 // check to see if x, y, or z have changed, if so update the shape accordingly
-                if (x !== this.getComponent(0) && x !== 1) {
+                // if (x !== this.getComponent(0) && x !== 1) {
+                //     super.multiply(new THREE.Vector3(x, x, x));
+                // } else if (y !== this.getComponent(1) && y !== 1) {
+                //     super.multiply(new THREE.Vector3(y, y, y));
+                // } else if (z !== this.getComponent(2) && z !== 1) {
+                //     super.multiply(new THREE.Vector3(z, z, z));
+                // }
+                if (vector.x !== 1) {
                     super.multiply(new THREE.Vector3(x, x, x));
-                } else if (y !== this.getComponent(1) && y !== 1) {
+                } else if (vector.y !== 1) {
                     super.multiply(new THREE.Vector3(y, y, y));
-                } else if (z !== this.getComponent(2) && z !== 1) {
+                } else if (vector.z !== 1) {
                     super.multiply(new THREE.Vector3(z, z, z));
                 }
                 return this;
             }
             case "cylinder": {
-                const a = Math.abs(vector.getComponent(0));
-                const b = Math.abs(vector.getComponent(1));
-                const c = vector.getComponent(2);
+                const x = vector.x;
+                const y = vector.y;
+                const z = vector.z;
 
                 // check to see if x, y, or z have changed, if so update the shape accordingly
-                if (a !== this.getComponent(0) && a !== 1) {
-                    super.multiply(new THREE.Vector3(a, a, c));
-                } else if (b !== this.getComponent(1) && b !== 1) {
-                    super.multiply(new THREE.Vector3(b, b, c));
-                } else if (c !== this.getComponent(2)) {
+                // if (a !== this.getComponent(0) && a !== 1) {
+                //     super.multiply(new THREE.Vector3(a, a, c));
+                // } else if (b !== this.getComponent(1) && b !== 1) {
+                //     super.multiply(new THREE.Vector3(b, b, c));
+                // } else if (c !== this.getComponent(2)) {
+                //     super.multiply(vector);
+                // }
+                if (vector.x !== 1) {
+                    super.multiply(new THREE.Vector3(x, x, z));
+                } else if (vector.y !== 1) {
+                    super.multiply(new THREE.Vector3(y, y, z));
+                } else if (vector.z !== 1) {
                     super.multiply(vector);
                 }
                 return this;

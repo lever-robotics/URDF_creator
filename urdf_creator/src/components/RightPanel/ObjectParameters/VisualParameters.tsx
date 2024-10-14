@@ -1,16 +1,16 @@
-import Frame from "../../../../Models/Frame";
-import Inertia from "../../../../Models/Inertia";
-import { Collision, Visual } from "../../../../Models/VisualCollision";
-import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
-import type { Selectable } from "../../../ThreeDisplay/ThreeScene";
-import styles from "../ObjectParameters.module.css";
-import MaterialParameters from "./MaterialParameters";
-import MeshParameters from "./MeshParameters";
-import PositionParameters from "./PositionParameters";
-import Property from "./Property";
-import RotationParameters from "./RotationParameters";
-import ScaleParameters from "./ScaleParameters";
-import Section from "./Section";
+import Frame from "../../../Models/Frame";
+import Inertia from "../../../Models/Inertia";
+import { Collision, Visual } from "../../../Models/VisualCollision";
+import type ThreeScene from "../../ThreeDisplay/ThreeScene";
+import type { Selectable } from "../../ThreeDisplay/ThreeScene";
+import styles from "./ObjectParameters.module.css";
+import MaterialParameters from "./Parameters/MaterialParameters";
+import MeshParameters from "./Parameters/MeshParameters";
+import PositionParameters from "./Parameters/PositionParameters";
+import Property from "./Parameters/Property";
+import RotationParameters from "./Parameters/RotationParameters";
+import ScaleParameters from "./Parameters/ScaleParameters";
+import Section from "./Parameters/Section";
 
 function VisualParameters({
     threeScene,

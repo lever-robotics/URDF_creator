@@ -21,55 +21,25 @@ export default function JointParameters({
     if (!selectedObject) return;
     const [min, setMin] = useState<ParameterValue>(selectedObject.min);
     const [max, setMax] = useState<ParameterValue>(selectedObject.max);
-    const [jointValue, setJointValue] = useState(selectedObject.jointValue);
-    const [jointInput, setJointInput] = useState(
-        selectedObject.jointValue.toString(),
-    );
-
-    useEffect(() => {
-        setMax(selectedObject.max);
-        setMin(selectedObject.min);
-        setJointInput(selectedObject.jointValue.toString());
-        setJointValue(selectedObject.jointValue);
-    }, [selectedObject]);
+    const [jointValue, setJointValue] = useState(0);
 
     const handleJointTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.currentTarget.value;
         selectedObject.jointType = value as JointType;
-        threeScene.forceUpdateBoth();
+        threeScene.forceUpdateCode();
     };
 
-    const toFloat = (value: string) => {
-        let v = Number.parseFloat(value);
-        if (Number.isNaN(v)) {
-            v = 0;
-        }
-        return v;
-    };
-
-    const validateInput = (value: string) => {
-        // If you click enter or away with invalid input then reset
-        const newValue = Number.parseFloat(value);
-        if (Number.isNaN(newValue)) {
-            setMin(selectedObject.min);
-            setMax(selectedObject.max);
-            return false;
-        }
-
-        if (Object.is(newValue, -0)) {
-            return 0;
-        }
-
-        return newValue;
-    };
+    // const toFloat = (value: string) => {
+    //     let v = Number.parseFloat(value);
+    //     if (Number.isNaN(v)) {
+    //         v = 0;
+    //     }
+    //     return v;
+    // };
 
     const handleJointValueChange = (valueString: string) => {
-        let value = toFloat(valueString);
-        //clamp the value to the min and max
-        value = Math.min(Math.max(value, min as number), max as number);
+        const value = Number.parseFloat(valueString);
         setJointValue(value);
-        setJointInput(value.toString());
-        selectedObject.jointValue = value;
         switch (selectedObject.jointType) {
             case "prismatic":
                 selectedObject.translateAlongJointAxis(value);
@@ -80,120 +50,28 @@ export default function JointParameters({
         }
     };
 
-    const resetJoint = () => {
-        handleJointValueChange("0");
-    };
-
-    const handleChangeAxisAngle = () => {
+    const handleChangeJointAngle = () => {
         threeScene.startRotateJoint(selectedObject);
     };
 
-    const handleChangeAxisOrigin = () => {
+    const handleChangeJointOrigin = () => {
         threeScene.startMoveJoint(selectedObject);
-    };
-
-    const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setMin(value);
-    };
-
-    const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setMax(value);
-    };
-
-    const handleMinMaxBlur = (
-        e:
-            | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>,
-    ) => {
-        const type = e.currentTarget.title.toLowerCase().replace(":", "");
-        const validValue = validateInput(e.currentTarget.value);
-        if (validValue === false) return;
-        switch (type) {
-            case "min":
-                selectedObject.min = validValue;
-                setMin(validValue);
-                break;
-            case "max":
-                selectedObject.max = validValue;
-                setMax(validValue);
-                break;
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleMinMaxBlur(e);
-            (e.target as HTMLInputElement).blur();
-        }
     };
 
     const reattachLink = () => {
         threeScene.reattachLink(selectedObject);
     };
 
-    const determineJointFromType = (jointType: JointType) => {
-        if (jointType === "fixed") {
-            return <></>;
+    const handleBlur = (parameter: string, value: number) => {
+        switch (parameter) {
+            case "min":
+                selectedObject.min = value;
+                break;
+            case "max":
+                selectedObject.max = value;
+                break;
         }
-        return (
-            <>
-                <Property name="Joint Limits">
-                    <Parameter
-                        title="Min:"
-                        value={min}
-                        onChange={handleMinChange}
-                        onBlur={handleMinMaxBlur}
-                        onKeyDown={handleKeyDown}
-                    />
-                    <Parameter
-                        title="Max:"
-                        value={max}
-                        onChange={handleMaxChange}
-                        onBlur={handleMinMaxBlur}
-                        onKeyDown={handleKeyDown}
-                    />
-                </Property>
-                <Property>
-                    <Parameter
-                        title="Slider Value:"
-                        value={jointInput}
-                        onChange={(e) => {
-                            setJointInput(e.target.value);
-                        }}
-                        onBlur={(e) => {
-                            handleJointValueChange(e.target.value);
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter")
-                                handleJointValueChange(e.currentTarget.value);
-                        }}
-                    />
-                    <button
-                        className={styles.button}
-                        onClick={resetJoint}
-                        type="button"
-                    >
-                        Reset Slider Value
-                    </button>
-                </Property>
-                <Slider
-                    value={jointValue}
-                    step={0.01}
-                    min={min as number}
-                    max={max as number}
-                    aria-label="Default"
-                    valueLabelDisplay="auto"
-                    onChange={(e) => {
-                        handleJointValueChange(
-                            (e.target as HTMLInputElement).value,
-                        );
-                    }}
-                    onBlur={threeScene.forceUpdateCode}
-                />
-            </>
-        );
+        threeScene.forceUpdateCode();
     };
 
     return (
@@ -203,15 +81,15 @@ export default function JointParameters({
                 <Property name="Joint Type">
                     <Parameter
                         title=""
-                        type="select"
+                        kind="select"
+                        parameter="jointType"
                         value={selectedObject.jointType}
-                        onSelectChange={handleJointTypeChange}
-                        className={styles.select}
+                        handleChange={handleJointTypeChange}
                         options={[
-                            { value: "fixed", option: "Fixed" },
-                            { value: "revolute", option: "Revolute" },
-                            { value: "continuous", option: "Continuous" },
-                            { value: "prismatic", option: "Prismatic" },
+                            { value: "fixed", optionType: "Fixed" },
+                            { value: "revolute", optionType: "Revolute" },
+                            { value: "continuous", optionType: "Continuous" },
+                            { value: "prismatic", optionType: "Prismatic" },
                         ]}
                     />
                 </Property>
@@ -219,26 +97,59 @@ export default function JointParameters({
             <Property>
                 <button
                     className={styles.button}
-                    onClick={handleChangeAxisAngle}
+                    onClick={handleChangeJointAngle}
                     onBlur={reattachLink}
                     type="button"
                 >
-                    Change Axis Angle
+                    Change Joint Angle
                 </button>
                 <button
                     className={styles.button}
-                    onClick={handleChangeAxisOrigin}
+                    onClick={handleChangeJointOrigin}
                     onBlur={reattachLink}
                     type="button"
                 >
-                    Change Axis Origin
+                    Change Joint Origin
                 </button>
             </Property>
             <OffsetParameters
                 selectedObject={selectedObject}
                 threeScene={threeScene}
             />
-            {determineJointFromType(selectedObject.jointType)}
+            {selectedObject.jointType !== "fixed" && (
+                <>
+                    <Property name="Joint Limits">
+                        <Parameter
+                            title="Min:"
+                            kind="number"
+                            parameter="min"
+                            value={selectedObject.min}
+                            handleBlur={handleBlur}
+                        />
+                        <Parameter
+                            title="Max:"
+                            kind="number"
+                            parameter="max"
+                            value={selectedObject.max}
+                            handleBlur={handleBlur}
+                        />
+                    </Property>
+                    <Slider
+                        value={jointValue}
+                        step={0.01}
+                        min={-2}
+                        max={2}
+                        aria-label="Default"
+                        valueLabelDisplay="auto"
+                        onChange={(e) => {
+                            handleJointValueChange(
+                                (e.target as HTMLInputElement).value,
+                            );
+                        }}
+                        onBlur={() => handleJointValueChange("0")}
+                    />
+                </>
+            )}
         </Section>
     );
 }

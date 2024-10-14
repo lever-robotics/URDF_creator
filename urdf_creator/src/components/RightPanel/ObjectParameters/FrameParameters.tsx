@@ -20,74 +20,64 @@ export default function FrameParameters({
 }) {
     if (!selectedObject) return;
     const [error, setError] = useState("");
-    const [tempName, setTempName] = useState(selectedObject.name);
 
     //implement use effect to update when selected object changes
-    useEffect(() => {
-        setTempName(selectedObject.name);
-        setError("");
-    }, [selectedObject.name]);
+    // useEffect(() => {
+    //     setTempName(selectedObject.name);
+    //     setError("");
+    // }, [selectedObject.name]);
 
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newName = e.target.value;
-        if (newName.includes(" ")) {
+    const validateInput = (input: string) => {
+        if (input.includes(" ")) {
             setError("Name must have no spaces");
-        } else {
-            setTempName(newName);
         }
+        return input;
     };
 
-    const handleNameBlur = (
-        e:
-            | React.FocusEvent<HTMLInputElement>
-            | React.KeyboardEvent<HTMLInputElement>,
-    ) => {
-        const newName = e.currentTarget.value;
-        if (newName === selectedObject.name) {
+    const handleBlur = (parameter: string, value: string) => {
+        if (value === selectedObject.name) {
             setError("");
-        } else if (threeScene.objectNames.includes(newName)) {
+        } else if (threeScene.objectNames.includes(value)) {
             setError("Name must be unique");
-        } else if (newName === "") {
+        } else if (value === "") {
             setError("Name cannot be empty");
         } else {
             deregisterName(selectedObject.name, threeScene.objectNames);
-            selectedObject.name = registerName(newName, threeScene.objectNames);
+            selectedObject.name = registerName(value, threeScene.objectNames);
             threeScene.forceUpdateBoth();
             setError("");
         }
+        threeScene.forceUpdateCode();
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleNameBlur(e);
-        }
-    };
-
-    const props = {
-        title: "",
-        type: "text",
-        value: tempName,
-        onChange: handleNameChange,
-        onBlur: handleNameBlur,
-        onKeyDown: handleKeyDown,
-        readOnly: selectedObject.name === "base_link",
-        className: selectedObject.isRootFrame ? styles.rootName : styles.name,
-    };
-
-    // <Parameter
-    //             title="X:"
-    //             type="text"
-    //             units="m"
-    //             value={tempX}
-    //             onChange={handlePositionChange}
-    //             onBlur={handlePositionBlur}
-    //             onKeyDown={handleKeyDown}
-    //         />
+    // const props = {
+    //     title: "",
+    //     type: "text",
+    //     value: tempName,
+    //     onChange: handleNameChange,
+    //     onBlur: handleNameBlur,
+    //     onKeyDown: handleKeyDown,
+    //     readOnly: selectedObject.name === "base_link",
+    //     className: selectedObject.isRootFrame ? styles.rootName : styles.name,
+    // };
 
     return (
         <Section>
             <Property name={"Name"}>
-                <Parameter {...props} />
+                <Parameter
+                    title=""
+                    kind="text"
+                    parameter="name"
+                    value={selectedObject.name}
+                    handleBlur={handleBlur}
+                    validateInput={validateInput}
+                    readOnly={selectedObject.name === "base_link"}
+                    className={
+                        selectedObject.isRootFrame
+                            ? styles.rootName
+                            : styles.name
+                    }
+                />
             </Property>
             {error && (
                 <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
