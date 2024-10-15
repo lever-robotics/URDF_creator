@@ -126,14 +126,6 @@ export default class Frame extends THREE.Mesh {
         }
     }
 
-    get jointValue() {
-        return this.jointVisualizer.value;
-    }
-
-    set jointValue(value) {
-        this.jointVisualizer.value = value;
-    }
-
     get offset() {
         return this.link.position;
     }

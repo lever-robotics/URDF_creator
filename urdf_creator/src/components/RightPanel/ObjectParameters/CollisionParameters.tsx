@@ -37,12 +37,10 @@ function CollisionParameters({
                     />
                     <PositionParameters
                         selectedObject={collision}
-                        selectedItem={collision}
                         threeScene={threeScene}
                     />
                     <RotationParameters
                         selectedObject={collision}
-                        selectedItem={collision}
                         threeScene={threeScene}
                     />
                     <ScaleParameters

@@ -17,17 +17,18 @@ export default function MaterialParameters({
     };
 
     const handleColorBlur = () => {
-        threeScene.forceUpdateScene();
+        threeScene.forceUpdateCode();
     };
 
     return (
         <Property name="Material">
             <Parameter
                 title={"Color:"}
-                type="color"
+                kind="color"
+                parameter="color"
                 value={`#${(selectedObject as Visual | Collision).color.getHexString()}`}
-                onChange={handleColorChange}
-                onBlur={handleColorBlur}
+                handleChange={handleColorChange}
+                handleBlur={handleColorBlur}
             />
         </Property>
     );

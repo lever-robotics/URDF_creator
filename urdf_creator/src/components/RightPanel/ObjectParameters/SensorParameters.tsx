@@ -27,34 +27,23 @@ function SensorsParameters({
         threeScene.forceUpdateBoth();
     };
 
-    // <Parameter
-    //                         title=""
-    //                         type="select"
-    //                         value={selectedObject.jointType}
-    //                         onSelectChange={handleJointTypeChange}
-    //                         className={styles.select}
-    //                         options={[
-    //                             "Fixed",
-    //                             "Revolute",
-    //                             "Continuous",
-    //                             "Prismatic",
-    //                         ]}>
-    //                     </Parameter>
+    const sensorOptions = [
+        { value: "", optionType: "Not a Sensor" },
+        { value: "lidar", optionType: "Lidar" },
+        { value: "camera", optionType: "Camera" },
+        { value: "imu", optionType: "IMU" },
+    ];
 
     return (
         <Section title="Sensor Parameters">
             <Property name="Sensor Type:">
                 <Parameter
                     title=""
-                    type="select"
+                    kind="select"
+                    parameter="sensors"
                     value={selectedObject.sensorType}
-                    onSelectChange={handleSensorTypeChange}
-                    options={[
-                        { value: "", option: "Not a Sensor" },
-                        { value: "lidar", option: "Lidar" },
-                        { value: "camera", option: "Camera" },
-                        { value: "imu", option: "IMU" },
-                    ]}
+                    handleChange={handleSensorTypeChange}
+                    options={sensorOptions}
                 />
             </Property>
             <SensorParams

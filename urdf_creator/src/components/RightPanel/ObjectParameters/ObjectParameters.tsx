@@ -6,8 +6,8 @@ import FrameParameters from "./FrameParameters";
 import InertiaParameters from "./InertiaParameters";
 import JointParameters from "./JointParameters";
 import styles from "./ObjectParameters.module.css";
-import VisualParameters from "./Parameters/VisualParameters";
 import SensorsParameters from "./SensorParameters";
+import VisualParameters from "./VisualParameters";
 
 function ObjectParameters({
     threeScene,

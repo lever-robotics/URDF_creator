@@ -95,13 +95,9 @@ export default class VisualCollision extends THREE.Mesh {
             this.shape = geomertyType;
             //set the geometry to the new geometry
             this.scale.set(1, 1, 1);
-            if (geomertyType === "cube") {
-                this.geometry = this.defineGeometry(geomertyType);
-            } else if (geomertyType === "sphere") {
-                this.geometry = this.defineGeometry(geomertyType);
-            } else if (geomertyType === "cylinder") {
-                this.geometry = this.defineGeometry(geomertyType);
-            }
+            this.geometry = this.defineGeometry(geomertyType);
+            this._scale.shape = geomertyType;
+            console.log(this.scale);
             return;
         }
         //Then the geometry type is mesh
