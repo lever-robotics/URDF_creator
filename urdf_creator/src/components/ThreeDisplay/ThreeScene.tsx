@@ -333,7 +333,7 @@ export default class ThreeScene {
 
     reparentObject = (parent: Frame, child: Frame) => {
         parent.attachChild(child);
-        this.forceUpdateScene();
+        this.forceUpdateBoth();
     };
 
     /*

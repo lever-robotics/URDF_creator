@@ -35,6 +35,8 @@ export default class Axis extends THREE.Line {
     }
 
     normalize() {
-        return new THREE.Vector3().setFromEuler(this.rotation).normalize();
+        return new THREE.Vector3(0, 0, 1)
+            .applyQuaternion(this.quaternion)
+            .normalize();
     }
 }

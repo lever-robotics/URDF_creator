@@ -138,7 +138,9 @@ export default function JointParameters({
                                 (e.target as HTMLInputElement).value,
                             );
                         }}
-                        onBlur={() => handleJointValueChange("0")}
+                        onChangeCommitted={() => {
+                            handleJointValueChange("0");
+                        }}
                     />
                 </>
             )}

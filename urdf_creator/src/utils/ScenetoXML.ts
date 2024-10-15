@@ -1,4 +1,4 @@
-import type * as THREE from "three";
+import * as THREE from "three";
 import Frame from "../Models/Frame";
 import type ThreeScene from "../components/ThreeDisplay/ThreeScene";
 import findRootFrame from "./findRootFrame";
@@ -33,26 +33,7 @@ export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
 
             // Add Link info
             xml += generateLink(node, linkName, projectTitle);
-
-            // Add joint if there's a parent link
-            if (parentName) {
-                // node.getWorldPosition(node.position);
-                const origin = node.position;
-                const quaternion = node.quaternion;
-                const jointType = node.jointType;
-                const normalizedAxis = node.axis.normalize();
-                xml += `  <joint name="${parentName}_to_${linkName}" type="${jointType}">\n`;
-                xml += `    <parent link="${parentName}" />\n`;
-                xml += `    <child link="${linkName}" />\n`;
-                xml += `    <origin xyz="${formatVector(origin)}" rpy="${quaternion}" />\n`;
-                if (node.jointType !== "fixed") {
-                    xml += `    <axis xyz="${formatVector(normalizedAxis)}"/>\n`;
-                    if (node.jointType !== "continuous") {
-                        xml += `    <limit effort="1000.0" lower="${node.min}" upper="${node.max}" velocity="0.5"/>`;
-                    }
-                }
-                xml += "  </joint>\n";
-            }
+            xml += generateJoint(node, linkName, parentName);
 
             // Recursively process children with the correct parent name
             for (const child of node.getFrameChildren()) {
@@ -101,7 +82,7 @@ function generateLink(
     // Visual, Collision, and Inertial properties position are all based off their Parent Reference Frame
     // In URDF That is the Joint, in SDF that is the Link. We implemented an Offset feature to make SDF easier
     // but that means we need to add that offset to each link children in URDF
-    const offset = node.offset;
+    const offset = new THREE.Vector3().copy(node.offset);
 
     let xml = "";
 
@@ -126,6 +107,37 @@ function generateLink(
     return xml;
 }
 
+function generateJoint(
+    node: Frame,
+    linkName: string,
+    parentName: string | null,
+): string {
+    // Add joint if there's a parent link
+    let xml = "";
+    if (parentName) {
+        // node.getWorldPosition(node.position);
+        const origin = node.position;
+        const quaternion = node.quaternion;
+        const jointType = node.jointType;
+        const normalizedAxis = node.axis.normalize();
+        const min = node.min;
+        const max = node.max;
+
+        xml += `  <joint name="${parentName}_to_${linkName}" type="${jointType}">\n`;
+        xml += `    <parent link="${parentName}" />\n`;
+        xml += `    <child link="${linkName}" />\n`;
+        xml += `    <origin xyz="${formatVector(origin)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
+        if (node.jointType !== "fixed") {
+            xml += `    <axis xyz="${formatVector(normalizedAxis)}"/>\n`;
+            if (node.jointType !== "continuous") {
+                xml += `    <limit effort="1000.0" lower="${min}" upper="${max}" velocity="0.5"/>`;
+            }
+        }
+        xml += "  </joint>\n";
+    }
+    return xml;
+}
+
 function generateVisuals(
     node: Frame,
     offset: THREE.Vector3,
@@ -134,12 +146,12 @@ function generateVisuals(
     let xml = "";
     const visuals = node.visuals;
     for (const visual of visuals) {
-        const position = offset.add(visual.position);
+        const origin = offset.add(visual.position);
         const quaternion = visual.quaternion;
         const scale = visual.scale;
 
         xml += "    <visual>\n";
-        xml += `      <origin xyz="${formatVector(position)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
+        xml += `      <origin xyz="${formatVector(origin)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
         xml += "      <geometry>\n";
         const geometryType = visual.shape;
         if (geometryType === "cube") {
@@ -168,12 +180,12 @@ function generateCollisions(
     let xml = "";
     const collisions = node.collisions;
     for (const collision of collisions) {
-        const position = offset.add(collision.position);
+        const origin = offset.add(collision.position);
         const quaternion = collision.quaternion;
         const scale = collision.scale;
 
         xml += "    <collision>\n";
-        xml += `      <origin xyz="${formatVector(position)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
+        xml += `      <origin xyz="${formatVector(origin)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
         xml += "      <geometry>\n";
         const geometryType = collision.shape;
         if (geometryType === "cube") {
