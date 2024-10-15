@@ -12,10 +12,10 @@ export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
         xml += "</robot>";
         return xml;
     }
-    if (!scene.rootFrame) {
-        xml += "</robot>";
-        return xml;
-    }
+
+    // World Frame Link
+    const worldFrame = scene.worldFrame;
+    xml += `  <link name="${worldFrame.name}"></link>\n`;
 
     // Variables to keep track of link naming
     let linkIndex = 0;
@@ -26,14 +26,14 @@ export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
     };
 
     // Function to process a single node
-    const processNode = (node: Frame, parentName: string | null = null) => {
+    const processNode = (node: Frame, parentName: string) => {
         if (node instanceof Frame) {
             const linkName = generateLinkName(node);
             linkIndex += 1;
 
-            // Add Link info
-            xml += generateLink(node, linkName, projectTitle);
+            // Add Joint then Link info
             xml += generateJoint(node, linkName, parentName);
+            xml += generateLink(node, linkName, projectTitle);
 
             // Recursively process children with the correct parent name
             for (const child of node.getFrameChildren()) {
@@ -43,8 +43,7 @@ export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
     };
 
     // Find the base node and start processing
-    const rootFrame = scene.rootFrame;
-    if (rootFrame) processNode(rootFrame);
+    if (scene.rootFrame) processNode(scene.rootFrame, worldFrame.name);
 
     // Close robot tag
     xml += "</robot>";
@@ -57,15 +56,19 @@ function formatVector(vec: THREE.Vector3): string {
     return `${vec.x} ${vec.y} ${vec.z}`;
 }
 
+/**
+ *
+ * @param node
+ * @param linkName
+ * @param projectTitle
+ * @returns The XML for a single Link, collision, visual, and inertial data included
+ */
 function generateLink(
     node: Frame,
     linkName: string,
     projectTitle: string,
 ): string {
-    // let offset = formatVector(node.link.position);
-    // let rotation = quaternionToRPY(node.quaternion);
-    // let linkRotation = "0 0 0";
-
+    // I didn't want to delete this code even though we don't need it anymore i think...
     // if (node.isRootFrame) {
     //     offset = formatVector(node.position);
     //     linkRotation = quaternionToRPY(node.quaternion);
@@ -106,7 +109,13 @@ function generateLink(
     xml += "  </link>\n";
     return xml;
 }
-
+/**
+ *
+ * @param node
+ * @param linkName
+ * @param parentName
+ * @returns The XML for a single Joint
+ */
 function generateJoint(
     node: Frame,
     linkName: string,
@@ -137,7 +146,13 @@ function generateJoint(
     }
     return xml;
 }
-
+/**
+ *
+ * @param node
+ * @param offset
+ * @param projectTitle
+ * @returns XML for all the Visual properties within a single link tag
+ */
 function generateVisuals(
     node: Frame,
     offset: THREE.Vector3,
@@ -171,7 +186,13 @@ function generateVisuals(
     }
     return xml;
 }
-
+/**
+ *
+ * @param node
+ * @param offset
+ * @param projectTitle
+ * @returns XML for all the Collision properties within a single link tag
+ */
 function generateCollisions(
     node: Frame,
     offset: THREE.Vector3,
@@ -202,7 +223,12 @@ function generateCollisions(
     }
     return xml;
 }
-
+/**
+ *
+ * @param node
+ * @param offset
+ * @returns The inertia property for a single link tag
+ */
 function generateInertials(node: Frame, offset: THREE.Vector3): string {
     let xml = "";
     const inertia = node.inertia;

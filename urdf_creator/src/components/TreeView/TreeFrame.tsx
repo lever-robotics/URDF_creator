@@ -47,7 +47,7 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderChildren = () => {
-        if (frame.isWorldFrame) return; // Do not render childreen of the world frame
+        if (frame.isWorldFrame) return; // Do not render children of the world frame
         const children = frame.getFrameChildren();
         return children.map((child: Frame) => (
             <TreeFrame key={child.id} frame={child} {...restProps} />
@@ -55,7 +55,7 @@ export default function TreeFrame(props: Props) {
     };
 
     const renderProperties = () => {
-        if (frame.isWorldFrame) return; // Do not render properties of the world frame
+        if (frame.isWorldFrame) return null; // Do not render properties of the world frame
         const visuals = frame.visuals.map((property) => (
             <TreeProperty
                 key={property.id}

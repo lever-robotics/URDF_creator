@@ -24,6 +24,8 @@ export default function FrameParameters({
     const validateInput = (input: string) => {
         if (input.includes(" ")) {
             setError("Name must have no spaces");
+        } else {
+            setError("");
         }
         return input;
     };
@@ -76,3 +78,63 @@ export default function FrameParameters({
         </Section>
     );
 }
+
+export const WorldFrameParameters = ({
+    threeScene,
+    selectedObject,
+}: {
+    threeScene: ThreeScene;
+    selectedObject: Frame;
+}) => {
+    if (!selectedObject) return;
+    const [error, setError] = useState("");
+
+    const validateInput = (input: string) => {
+        if (input.includes(" ")) {
+            setError("Name must have no spaces");
+        } else {
+            setError("");
+        }
+        return input;
+    };
+
+    const handleBlur = (parameter: string, value: string) => {
+        if (value === selectedObject.name) {
+            setError("");
+        } else if (threeScene.objectNames.includes(value)) {
+            setError("Name must be unique");
+        } else if (value === "") {
+            setError("Name cannot be empty");
+        } else {
+            deregisterName(selectedObject.name, threeScene.objectNames);
+            selectedObject.name = registerName(value, threeScene.objectNames);
+            threeScene.forceUpdateBoth();
+            setError("");
+        }
+        threeScene.forceUpdateCode();
+    };
+
+    return (
+        <Section>
+            <Property name={"Name"}>
+                <Parameter
+                    title=""
+                    kind="text"
+                    parameter="name"
+                    value={selectedObject.name}
+                    handleBlur={handleBlur}
+                    validateInput={validateInput}
+                    readOnly={selectedObject.name === "base_link"}
+                    className={
+                        selectedObject.isRootFrame
+                            ? styles.rootName
+                            : styles.name
+                    }
+                />
+            </Property>
+            {error && (
+                <span style={{ color: "red", marginLeft: "5px" }}>{error}</span>
+            )}{" "}
+        </Section>
+    );
+};

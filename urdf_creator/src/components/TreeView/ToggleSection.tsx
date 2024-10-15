@@ -58,14 +58,14 @@ function ToggleSection({
     return (
         <div className={styles.toggleSection} style={toggleSectionStyle}>
             <div className={styles.header} style={headerSelectedStyle()}>
-                <ToggleIcon
+                {/* <ToggleIcon
                     onClick={handleClick}
                     visible={visible}
                     selectedStyle={iconStyle}
-                />
+                /> */}
                 {children}
             </div>
-            {isSelected() && (
+            {isSelected() && renderProperties() && (
                 <div className={styles.body}>{renderProperties()}</div>
             )}
             {visible && renderChildren()}

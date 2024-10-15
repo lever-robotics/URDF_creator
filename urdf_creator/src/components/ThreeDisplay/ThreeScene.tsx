@@ -25,6 +25,7 @@ import {
 import type { CollisionData, VisualData } from "./TreeUtils";
 
 export type TransformControlsMode = "translate" | "rotate" | "scale";
+export type UserSelectable = Frame | Visual | Collision;
 export type Selectable = Frame | Visual | Collision | null;
 type EventType = "updateCode" | "updateScene" | "toolMode" | "selectedObject";
 
@@ -84,13 +85,13 @@ export default class ThreeScene {
         const intersects = this.raycaster.intersectObjects(this.scene.children);
 
         // Filter for objects that are instances of the common base class VisualCollision or Frame
-        const shapes: Selectable[] = intersects
+        const shapes: UserSelectable[] = intersects
             .filter(
                 (collision) =>
                     collision.object instanceof VisualCollision ||
                     collision.object instanceof Frame,
             )
-            .map((collision) => collision.object as Selectable);
+            .map((collision) => collision.object as UserSelectable);
 
         // if we hit a shape, select the closest
         if (shapes.length > 0) {
@@ -195,8 +196,12 @@ export default class ThreeScene {
     };
 
     addProperty = (shape: Shape, kind: "visual" | "collision") => {
-        if (this.selectedObject.name === "world_frame") return;
-
+        if (
+            this.selectedObject instanceof Frame &&
+            this.selectedObject.isWorldFrame
+        )
+            return;
+        if (!this.selectedObject) return;
         const property =
             kind === "visual" ? new Visual(0, shape) : new Collision(0, shape);
         if (this.selectedObject instanceof Frame) {
@@ -294,6 +299,7 @@ export default class ThreeScene {
     };
 
     duplicateObject = (object: Selectable) => {
+        if (!object) return;
         if (object instanceof Frame) {
             const clone = cloneFrame(object, this.objectNames);
 
@@ -317,6 +323,8 @@ export default class ThreeScene {
 
     deleteObject = (object: Selectable) => {
         this.transformControls.detach();
+        if (!object) return;
+
         if (object instanceof VisualCollision) {
             object.frame.removeProperty(object);
             return;

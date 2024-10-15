@@ -150,6 +150,7 @@ function TextParameter(props: TextParameterProps) {
     const validate = validateInput ?? ((input: string) => input);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(validate);
         const validatedInput = validate(e.target.value);
         setTemp(validatedInput);
     };
