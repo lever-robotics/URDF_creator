@@ -33,4 +33,8 @@ export default class Axis extends THREE.Line {
     duplicate() {
         return new Axis(this.rotation);
     }
+
+    normalize() {
+        return new THREE.Vector3().setFromEuler(this.rotation).normalize();
+    }
 }

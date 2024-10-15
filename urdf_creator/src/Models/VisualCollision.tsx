@@ -11,8 +11,14 @@ export default class VisualCollision extends THREE.Mesh {
     shape: string;
     frame!: Frame;
     material: THREE.MeshPhongMaterial;
-    stlfile?: string;
-    constructor(name: string, shape: string, scale: Vector3, color: number) {
+    stlfile: string;
+    constructor(
+        name: string,
+        shape: string,
+        scale: Vector3,
+        color: number,
+        stlfile = "",
+    ) {
         super();
 
         this.scale.copy(scale);
@@ -24,6 +30,7 @@ export default class VisualCollision extends THREE.Mesh {
         this.geometry = this.defineGeometry(shape);
         this.material = new THREE.MeshPhongMaterial();
         this.color = new Color(color);
+        this.stlfile = stlfile;
 
         this.name = name;
     }
@@ -80,29 +87,21 @@ export default class VisualCollision extends THREE.Mesh {
         }
     }
 
-    setGeometry = async (geomertyType: string, fileName: string) => {
+    setGeometry = async (geometryType: string, fileName: string) => {
         //check if geometry type is cube, sphree, or cylinder
-        if (
-            geomertyType === "cube" ||
-            geomertyType === "sphere" ||
-            geomertyType === "cylinder"
-        ) {
-            //check if object is already that shape then do nothing
-            if (this.shape === geomertyType) {
-                return;
-            }
+        if (geometryType !== "mesh") {
             //set the shape to the new shape
-            this.shape = geomertyType;
+            this.shape = geometryType;
             //set the geometry to the new geometry
             this.scale.set(1, 1, 1);
-            this.geometry = this.defineGeometry(geomertyType);
-            this._scale.shape = geomertyType;
-            console.log(this.scale);
+            this.geometry = this.defineGeometry(geometryType);
+            this._scale.shape = geometryType;
             return;
         }
+
         //Then the geometry type is mesh
         this.shape = "mesh";
-        this.objectScale.shape = "mesh";
+        this._scale.shape = "mesh";
 
         //check if object is already that shape
         if (this.stlfile === fileName) {
@@ -111,7 +110,10 @@ export default class VisualCollision extends THREE.Mesh {
 
         // Set the stlfile name to the userData
         this.stlfile = fileName;
+        this.loadSTL(fileName);
+    };
 
+    loadSTL = async (fileName: string) => {
         //get stl file from openDB
         try {
             // Get the STL file from IndexedDB
@@ -159,18 +161,6 @@ export default class VisualCollision extends THREE.Mesh {
         return this.material.color;
     }
 
-    get objectPosition() {
-        return this.position;
-    }
-
-    get objectScale() {
-        return this._scale;
-    }
-
-    get objectRotation() {
-        return this.rotation;
-    }
-
     get scaleVector() {
         return new THREE.Vector3(this._scale.x, this._scale.y, this._scale.z);
     }
@@ -201,9 +191,10 @@ export class Visual extends VisualCollision {
         shape = "cube",
         scale: Vector3 = new Vector3(1, 1, 1),
         color: number = Math.random() * 0xffffff,
+        stlfile?: string,
     ) {
         // scale, color, "Visual" + number
-        super(`Visual ${number}`, shape, scale, color);
+        super(`Visual ${number}`, shape, scale, color, stlfile);
     }
 
     duplicate() {
@@ -212,9 +203,13 @@ export class Visual extends VisualCollision {
             this.shape,
             this.scale,
             this.color.getHex(),
+            this.stlfile,
         );
         clone.color.copy(this.color);
         clone.name = `${this.name} copy`;
+        if (clone.shape === "mesh") {
+            clone.geometry = this.geometry;
+        }
         return clone;
     }
 }
@@ -225,8 +220,9 @@ export class Collision extends VisualCollision {
         shape = "mesh",
         scale: Vector3 = new Vector3(1, 1, 1),
         color = 0x808080,
+        stlfile?: string,
     ) {
-        super(`Collision ${number}`, shape, scale, color);
+        super(`Collision ${number}`, shape, scale, color, stlfile);
         //make the collision boxes transparent
         this.material.transparent = true;
         this.material.opacity = 0.5;
@@ -239,9 +235,13 @@ export class Collision extends VisualCollision {
             this.shape,
             this.scale,
             this.color.getHex(),
+            this.stlfile,
         );
         clone.color.copy(this.color);
         clone.name = `${this.name} copy`;
+        if (clone.shape === "mesh") {
+            clone.geometry = this.geometry;
+        }
         return clone;
     }
 }

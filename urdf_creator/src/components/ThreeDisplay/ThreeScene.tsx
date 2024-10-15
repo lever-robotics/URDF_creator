@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import type { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
-import Frame, { type Frameish } from "../../Models/Frame";
+import Frame, { type Shape, type Frameish } from "../../Models/Frame";
 import type { Mouse } from "./Mouse";
 
 import EventDispatcher, {
@@ -11,8 +11,8 @@ import EventDispatcher, {
 import Inertia from "../../Models/Inertia";
 import type TransformControls from "../../Models/TransformControls";
 import VisualCollision, {
-    type Collision,
-    type Visual,
+    Collision,
+    Visual,
 } from "../../Models/VisualCollision";
 import {
     type UserData,
@@ -149,7 +149,6 @@ export default class ThreeScene {
 
     addObject = (shape: string) => {
         if (!this.scene) return;
-        // if (!(this.selectedObject instanceof Frame)) return;
 
         const numOfShape =
             this.numberOfShapes[shape as keyof numShapes].toString();
@@ -173,6 +172,7 @@ export default class ThreeScene {
                 newFrame.objectPosition.set(0, 0, 0.5);
                 newFrame.isRootFrame = true;
                 newFrame.name = "base_link";
+                this.objectNames.push("base_link");
                 newFrame.parentFrame = this.worldFrame;
                 this.rootFrame = newFrame;
                 this.worldFrame.attach(newFrame);
@@ -187,6 +187,19 @@ export default class ThreeScene {
         this.selectObject(newFrame);
         this.forceUpdateCode();
         this.forceUpdateScene();
+    };
+
+    addProperty = (shape: Shape, kind: "visual" | "collision") => {
+        if (this.selectedObject.name === "world_frame") return;
+
+        const property =
+            kind === "visual" ? new Visual(0, shape) : new Collision(0, shape);
+        if (this.selectedObject instanceof Frame) {
+            this.selectedObject.addProperty(property);
+        } else {
+            this.selectedObject.frame.addProperty(property);
+        }
+        this.forceUpdateCode();
     };
 
     // TODO Close modal after loading scene
