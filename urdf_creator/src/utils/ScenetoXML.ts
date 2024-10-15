@@ -119,31 +119,33 @@ function generateLink(
 function generateJoint(
     node: Frame,
     linkName: string,
-    parentName: string | null,
+    parentName: string,
 ): string {
     // Add joint if there's a parent link
     let xml = "";
-    if (parentName) {
-        // node.getWorldPosition(node.position);
-        const origin = node.position;
-        const quaternion = node.quaternion;
-        const jointType = node.jointType;
-        const normalizedAxis = node.axis.normalize();
-        const min = node.min;
-        const max = node.max;
+    // node.getWorldPosition(node.position);
+    const origin = node.position;
+    const quaternion = node.quaternion;
+    const jointType = node.jointType;
+    const normalizedAxis = node.axis.normalize();
+    const min = node.min;
+    const max = node.max;
+    const name =
+        linkName === "base_link"
+            ? "base_joint"
+            : `${parentName}_to_${linkName}`;
 
-        xml += `  <joint name="${parentName}_to_${linkName}" type="${jointType}">\n`;
-        xml += `    <parent link="${parentName}" />\n`;
-        xml += `    <child link="${linkName}" />\n`;
-        xml += `    <origin xyz="${formatVector(origin)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
-        if (node.jointType !== "fixed") {
-            xml += `    <axis xyz="${formatVector(normalizedAxis)}"/>\n`;
-            if (node.jointType !== "continuous") {
-                xml += `    <limit effort="1000.0" lower="${min}" upper="${max}" velocity="0.5"/>`;
-            }
+    xml += `  <joint name="${name}" type="${jointType}">\n`;
+    xml += `    <parent link="${parentName}" />\n`;
+    xml += `    <child link="${linkName}" />\n`;
+    xml += `    <origin xyz="${formatVector(origin)}" rpy="${quaternionToRPY(quaternion)}" />\n`;
+    if (node.jointType !== "fixed") {
+        xml += `    <axis xyz="${formatVector(normalizedAxis)}"/>\n`;
+        if (node.jointType !== "continuous") {
+            xml += `    <limit effort="1000.0" lower="${min}" upper="${max}" velocity="0.5"/>`;
         }
-        xml += "  </joint>\n";
     }
+    xml += "  </joint>\n";
     return xml;
 }
 /**

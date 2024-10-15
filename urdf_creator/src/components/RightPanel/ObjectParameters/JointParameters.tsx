@@ -89,14 +89,6 @@ export default function JointParameters({
             <Property>
                 <button
                     className={styles.button}
-                    onClick={handleChangeJointAngle}
-                    onBlur={reattachLink}
-                    type="button"
-                >
-                    Change Joint Angle
-                </button>
-                <button
-                    className={styles.button}
                     onClick={handleChangeJointOrigin}
                     onBlur={reattachLink}
                     type="button"
@@ -110,6 +102,16 @@ export default function JointParameters({
             />
             {selectedObject.jointType !== "fixed" && (
                 <>
+                    <Property>
+                        <button
+                            className={styles.button}
+                            onClick={handleChangeJointAngle}
+                            onBlur={reattachLink}
+                            type="button"
+                        >
+                            Change Joint Angle
+                        </button>
+                    </Property>
                     <Property name="Joint Limits">
                         <Parameter
                             title="Min:"
