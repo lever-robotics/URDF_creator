@@ -33,4 +33,10 @@ export default class Axis extends THREE.Line {
     duplicate() {
         return new Axis(this.rotation);
     }
+
+    normalize() {
+        return new THREE.Vector3(0, 0, 1)
+            .applyQuaternion(this.quaternion)
+            .normalize();
+    }
 }

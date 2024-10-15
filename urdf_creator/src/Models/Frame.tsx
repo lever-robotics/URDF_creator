@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Euler, Vector3 } from "three";
+import { registerName } from "../components/ThreeDisplay/TreeUtils";
 import type Axis from "./Axis";
 import type Inertia from "./Inertia";
 import type JointVisualizer from "./JointVisualizer";
@@ -10,6 +11,7 @@ import type VisualCollision from "./VisualCollision";
 
 export type Frameish = Frame | null | undefined;
 export type JointType = "fixed" | "revolute" | "continuous" | "prismatic";
+export type Shape = "cube" | "sphere" | "cylinder" | "mesh";
 
 export default class Frame extends THREE.Mesh {
     visuals!: Visual[];
@@ -82,6 +84,11 @@ export default class Frame extends THREE.Mesh {
 
     get objectVisuals() {
         return this.visuals;
+    }
+
+    get propertyNames() {
+        const properties = this.visuals.concat(this.collisions);
+        return properties.map((property) => property.name);
     }
 
     get objectCollisions() {
@@ -191,16 +198,15 @@ export default class Frame extends THREE.Mesh {
      * Add a VisualCollision property to the Frame
      * @param VisualCollision
      */
-    addProperty(property: VisualCollision) {
+    addProperty(property: Visual | Collision) {
         if (property instanceof Visual) {
             this.visuals.push(property);
         } else if (property instanceof Collision) {
             this.collisions.push(property);
-        } else {
-            console.log(property, "Frame addProperty not Visual or Collision");
         }
+        property.name = registerName(property.name, this.propertyNames);
         property.frame = this;
-        this.link?.add(property);
+        this.link.add(property);
     }
 
     removeProperty(property: VisualCollision) {
@@ -216,24 +222,6 @@ export default class Frame extends THREE.Mesh {
             property.removeFromParent();
             return;
         }
-    }
-
-    /**
-     * Add a visual to the link of the frame
-     * @param shape The shape of the visual (cube, sphere, cylinder, mesh)
-     */
-    addVisual(shape: string) {
-        const visual = new Visual(this.visuals.length, shape);
-        this.addProperty(visual);
-    }
-
-    /**
-     * Add a collision to the link of the frame
-     * @param shape The shape of the collision (cube, sphere, cylinder, mesh)
-     */
-    addCollision(shape: string) {
-        const collision = new Collision(this.collisions.length, shape);
-        this.addProperty(collision);
     }
 
     rotateAroundJointAxis = (angle: number) => {

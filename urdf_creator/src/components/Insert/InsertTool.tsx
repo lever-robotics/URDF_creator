@@ -1,5 +1,5 @@
 import { type MutableRefObject, useState } from "react";
-import Frame from "../../Models/Frame";
+import Frame, { type Shape } from "../../Models/Frame";
 import type ThreeScene from "../ThreeDisplay/ThreeScene";
 import styles from "./Insert.module.css";
 
@@ -21,14 +21,11 @@ export default function InsertTool({
             threeScene.addObject(shape);
             return;
         }
-        const selectedObject =
-            threeScene.selectedObject instanceof Frame
-                ? threeScene.selectedObject
-                : threeScene.selectedObject.frame;
+
         if (selectedMode === "Visual") {
-            selectedObject.addVisual(shape);
+            threeScene.addProperty(shape as Shape, "visual");
         } else if (selectedMode === "Collision") {
-            selectedObject.addCollision(shape);
+            threeScene.addProperty(shape as Shape, "collision");
         }
         threeScene.forceUpdateBoth();
         return;

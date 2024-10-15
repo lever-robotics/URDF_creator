@@ -93,6 +93,7 @@ export function createFrame(params: UserData): Frame {
     for (const visual of visualObjects) {
         link.add(visual);
     }
+    link.add(inertia);
 
     // Add jV children
     jointVisualizer.add(link);
@@ -120,6 +121,7 @@ export function createFrame(params: UserData): Frame {
     for (const collision of collisionObjects) {
         collision.frame = frame;
     }
+    inertia.frame = frame;
 
     return frame;
 }
@@ -152,6 +154,7 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
     for (const visual of visuals) {
         link.add(visual);
     }
+    link.add(inertia);
     clone.add(jointVisualizer);
     clone.add(axis);
 
@@ -164,6 +167,7 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
     for (const collision of collisions) {
         collision.frame = frame;
     }
+    inertia.frame = clone;
 
     const children = frame.getFrameChildren();
 

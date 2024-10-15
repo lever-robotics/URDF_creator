@@ -21,12 +21,6 @@ export default function FrameParameters({
     if (!selectedObject) return;
     const [error, setError] = useState("");
 
-    //implement use effect to update when selected object changes
-    // useEffect(() => {
-    //     setTempName(selectedObject.name);
-    //     setError("");
-    // }, [selectedObject.name]);
-
     const validateInput = (input: string) => {
         if (input.includes(" ")) {
             setError("Name must have no spaces");
@@ -49,17 +43,6 @@ export default function FrameParameters({
         }
         threeScene.forceUpdateCode();
     };
-
-    // const props = {
-    //     title: "",
-    //     type: "text",
-    //     value: tempName,
-    //     onChange: handleNameChange,
-    //     onBlur: handleNameBlur,
-    //     onKeyDown: handleKeyDown,
-    //     readOnly: selectedObject.name === "base_link",
-    //     className: selectedObject.isRootFrame ? styles.rootName : styles.name,
-    // };
 
     return (
         <Section>

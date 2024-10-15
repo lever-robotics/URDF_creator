@@ -29,14 +29,6 @@ export default function JointParameters({
         threeScene.forceUpdateCode();
     };
 
-    // const toFloat = (value: string) => {
-    //     let v = Number.parseFloat(value);
-    //     if (Number.isNaN(v)) {
-    //         v = 0;
-    //     }
-    //     return v;
-    // };
-
     const handleJointValueChange = (valueString: string) => {
         const value = Number.parseFloat(valueString);
         setJointValue(value);
@@ -146,7 +138,9 @@ export default function JointParameters({
                                 (e.target as HTMLInputElement).value,
                             );
                         }}
-                        onBlur={() => handleJointValueChange("0")}
+                        onChangeCommitted={() => {
+                            handleJointValueChange("0");
+                        }}
                     />
                 </>
             )}
