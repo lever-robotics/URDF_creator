@@ -13,12 +13,27 @@ type LinkTreeProps = {
     threeSceneRef: MutableRefObject<ThreeScene | undefined>;
 };
 export function LinkTree({ threeSceneRef }: LinkTreeProps) {
-    if (!threeSceneRef.current) return;
     const threeScene = threeSceneRef.current;
+
+    useEffect(() => {
+        if (!threeScene) return;
+        const update = () => {
+            setUpdate((prev) => prev + 1);
+        };
+
+        threeScene.addEventListener("addObject", update);
+
+        return () => {
+            threeScene.removeEventListener("addObject", update);
+        };
+    }, [threeScene]);
+
     const [contextMenuPosition, setContextMenuPosition] = useState({
         left: -1000,
         top: -10000,
     });
+    const [update, setUpdate] = useState(0);
+
     const [hoveredFrame, setHoveredFrame] = useState<Frameish>(null);
     const [contextMenu, setContextMenu] = useState<ContextMenu>(false);
 
@@ -44,6 +59,7 @@ export function LinkTree({ threeSceneRef }: LinkTreeProps) {
     const worldFrame = threeScene?.worldFrame;
     const rootFrame = threeScene?.rootFrame;
 
+    if (!threeScene) return;
     return (
         <>
             <div className={styles.toolbar}>

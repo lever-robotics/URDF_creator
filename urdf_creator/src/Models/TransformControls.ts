@@ -28,7 +28,8 @@ export default class TransformControl extends TransformControls {
         if (this.scene.linkDetached) this.scene.reattachLink();
 
         if (this.pointerMoved) {
-            this.scene.dispatchEvent("updateCode");
+            console.log("update code");
+            this.scene.forceUpdateCode();
             this.pointerMoved = false;
         }
     }

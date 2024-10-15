@@ -34,6 +34,7 @@ function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
             setGeometryValue("mesh");
         }
         threeScene.dispatchEvent("parameters");
+        threeScene.forceUpdateCode();
     };
 
     const loadFiles = async () => {

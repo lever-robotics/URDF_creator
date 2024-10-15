@@ -1,5 +1,6 @@
 import type React from "react";
 import { StrictMode, useEffect, useRef, useState } from "react";
+import { Euler, Vector3 } from "three";
 import Modal from "./FunctionalComponents/Modal";
 import type Frame from "./Models/Frame";
 import initializeAnalytics from "./analytics";
@@ -38,14 +39,18 @@ const App = () => {
     const [updateCode, setUpdateCode] = useState(0);
     const [updateScene, setUpdateScene] = useState(0);
 
-    type UndoState = { scene: string; selectedName: string };
-    const undo: React.MutableRefObject<UndoState[]> = useRef([
-        {
-            scene: "",
-            selectedName: "",
-        },
-    ]);
-    const redo: React.MutableRefObject<UndoState[]> = useRef([]);
+    // type UndoState = { scene: string; selectedName: string };
+    // const undo: React.MutableRefObject<StoredScene[]> = useRef([
+    //     {
+    //         scene: "",
+    //         selectedName: "",
+    //         camera: {
+    //             position: new Vector3(),
+    //             rotation: new Euler(),
+    //         }
+    //     },
+    // ]);
+    // const redo: React.MutableRefObject<StoredScene[]> = useRef([]);
 
     const pressedKeys = useRef<string[]>([]);
 
@@ -61,7 +66,7 @@ const App = () => {
         window.addEventListener("keydown", keydown);
         window.addEventListener("keyup", keyup);
         window.addEventListener("wheel", handleWheel, { passive: false });
-        mountRef.current.addEventListener("updateCode", forceUpdateCode);
+        // mountRef.current.addEventListener("updateCode", undoRedoStack);
 
         return () => {
             sceneCallback();
@@ -69,10 +74,10 @@ const App = () => {
             window.removeEventListener("keydown", keydown);
             window.removeEventListener("keyup", keyup);
             window.removeEventListener("wheel", handleWheel);
-            mountRef.current?.removeEventListener(
-                "updateCode",
-                forceUpdateCode,
-            );
+            // mountRef.current?.removeEventListener(
+            //     "updateCode",
+            //     undoRedoStack,
+            // );
         };
     }, []);
 
@@ -92,14 +97,14 @@ const App = () => {
         const z = pressed.includes("z");
 
         // check for undo
-        if (control && !shift && z) {
-            popUndo();
-        }
+        // if (control && !shift && z) {
+        //     undoRedo("pop");
+        // }
 
-        // check for redo
-        if (control && shift && z) {
-            popRedo();
-        }
+        // // check for redo
+        // if (control && shift && z) {
+        //     undoRedo("redo");
+        // }
     }
 
     /**
@@ -148,119 +153,236 @@ const App = () => {
      * Increments the state value updateCode by 1.
      * This causes a gobal rerender to keep react components up to date, to update the codeBox, and to update the undo array
      */
-    function forceUpdateCode() {
-        pushUndo();
-        redo.current = [];
-        setUpdateCode((prevUpdateCode) => prevUpdateCode + 1);
-    }
+    // function undoRedoStack() {
+    //     undoRedo("push");
+    //     redo.current = [];
+    // }
 
-    /**
-     * Pushes a compressed scene tree into the undo array
-     * @returns Returns early if threeScene is undefined
-     */
-    const pushUndo = async () => {
-        // pushUndo gets called from forceCodeUpdate
-        const { current: threeScene } = threeSceneRef;
-        const { current: undoArray } = undo;
-        if (threeScene === undefined) return;
-        console.log("push Undo");
+    // type StoredScene = {
+    //     scene: string,
+    //     camera: {
+    //         position: Vector3,
+    //         rotation: Euler,
+    //     }
+    //     selectedName: string,
+    // }
+    // const undoRedo = async (type: "push" | "pop" | "redo") => {
+    //     const { current: threeScene } = threeSceneRef;
+    //     const { current: undoArray } = undo;
+    //     const { current: redoArray } = redo;
+    //     if (threeScene === undefined) return;
 
-        const currentScene: UndoState = {
-            scene: "",
-            selectedName: "",
-        };
-        // If the rootFrame is not null then it actually has objects so compress it
-        if (threeScene.rootFrame !== null) {
-            const compressedScene = compressScene(
-                threeScene.rootFrame as Frame,
-            );
-            const gltfScene = await ScenetoGLTF(compressedScene);
-            currentScene.scene = JSON.stringify(gltfScene);
-            currentScene.selectedName = threeScene.selectedObject.name;
-        }
-        console.log(currentScene);
-        undoArray.push(currentScene);
-    };
+    //     switch(type){
+    //         case "push":{
+    //             console.log("push Undo");
 
-    /**
-     * Pops the last compressed scene tree from the undo array and loads it into THREE
-     * @returns Returns early if threeScene is undefined, the undoArray is empty, or if the last scene tree was empty
-     */
-    const popUndo = async () => {
-        const { current: threeScene } = threeSceneRef;
-        const { current: undoArray } = undo;
-        const { current: redoArray } = redo;
-        if (threeScene === undefined) return;
+    //             const currentScene: StoredScene = {
+    //                 scene: "",
+    //                 camera: {
+    //                     position: new Vector3(),
+    //                     rotation: new Euler(),
+    //                 },
+    //                 selectedName: "",
+    //             };
 
-        // There should always be an empty state as the first element
-        if (undoArray.length === 1) return;
+    //             // If the rootFrame is not null then it actually has objects so compress it
+    //             if (threeScene.rootFrame) {
+    //                 const compressedScene = compressScene(
+    //                     threeScene.rootFrame,
+    //                 );
+    //                 const gltfScene = await ScenetoGLTF(compressedScene);
+    //                 currentScene.scene = JSON.stringify(gltfScene);
+    //                 currentScene.selectedName = threeScene.selectedObject?.name ?? "";
+    //                 currentScene.camera.position.copy(threeScene.camera.position);
+    //                 currentScene.camera.rotation.copy(threeScene.camera.rotation);
+    //             }
+    //             console.log(currentScene);
+    //             undoArray.push(currentScene);
+    //             break;
+    //         }
+    //         case "pop":{
+    //             // There should always be an empty state as the first element
+    //             if (undoArray.length === 1) return;
 
-        // Pop the current state and push to the redoArray
-        const currentState = undoArray.pop();
-        if (currentState) redoArray.push(currentState);
+    //             // Pop the current state and push to the redoArray
+    //             const currentState = undoArray.pop();
+    //             if (currentState) redoArray.push(currentState);
 
-        // Get the last state before scene is cleared
-        const lastState = undoArray[undoArray.length - 1];
+    //             // Get the last state before scene is cleared
+    //             const lastState = undoArray[undoArray.length - 1];
 
-        // clear the scene
-        threeScene.clearScene();
+    //             // clear the scene
+    //             threeScene.clearScene();
 
-        // If the last state was empty then return
-        console.log(undoArray);
-        if (lastState.scene === "") return;
+    //             // If the last state was empty then return
+    //             console.log(undoArray);
+    //             if (lastState.scene === "") return;
 
-        // Load the last state
-        const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        const gltfScene = lastScene.scene;
-        const rootFrame = readScene(
-            gltfScene.children[0],
-            threeScene.objectNames,
-        );
+    //             // Load the last state
+    //             const lastScene = await loadFileToObject(lastState.scene, "gltf");
+    //             const gltfScene = lastScene.scene;
+    //             const rootFrame = readScene(
+    //                 gltfScene.children[0],
+    //                 threeScene.objectNames,
+    //             );
 
-        threeScene.scene.attach(rootFrame);
-        threeScene.rootFrame = rootFrame;
-        rootFrame.isRootFrame = true;
+    //             threeScene.scene.attach(rootFrame);
+    //             threeScene.rootFrame = rootFrame;
+    //             rootFrame.isRootFrame = true;
 
-        // If the lastSelected name exists then select that Object
-        if (currentState) {
-            const lastSelectedName = currentState.selectedName;
-            const lastSelected = findFrameByName(rootFrame, lastSelectedName);
-            threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
-            return;
-        }
-        threeScene.selectObject(threeScene.worldFrame);
-    };
+    //             threeScene.camera.position.copy(lastState.camera.position);
+    //             threeScene.camera.rotation.copy(lastState.camera.rotation);
 
-    const popRedo = async () => {
-        // Redo stack gets destroyed when forceCodeUpdate gets called
-        const { current: redoArray } = redo;
-        const { current: threeScene } = threeSceneRef;
-        if (threeScene === undefined) return;
+    //             // If the lastSelected name exists then select that Object
+    //             if (currentState) {
+    //                 const lastSelectedName = currentState.selectedName;
+    //                 const lastSelected = findFrameByName(rootFrame, lastSelectedName);
+    //                 threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
+    //                 return;
+    //             }
+    //             threeScene.selectObject(null);
+    //             break;
+    //         }
+    //         case 'redo':{
+    //             // Redo stack gets destroyed when forceCodeUpdate gets called
+    //             if (redoArray.length === 0) return;
 
-        if (redoArray.length === 0) return;
+    //             const lastState = redoArray.pop();
 
-        const lastState = redoArray.pop();
+    //             threeScene.clearScene();
 
-        threeScene.clearScene();
+    //             // If the last state was empty then return;
+    //             if (!lastState) return;
+    //             if (lastState.scene === "") return;
 
-        // If the last state was empty then return;
-        if (!lastState) return;
-        if (lastState.scene === "") return;
+    //             const lastScene = await loadFileToObject(lastState.scene, "gltf");
+    //             const gltfScene = lastScene.scene;
+    //             const rootFrame = readScene(
+    //                 gltfScene.children[0],
+    //                 threeScene.objectNames,
+    //             );
 
-        const lastScene = await loadFileToObject(lastState.scene, "gltf");
-        const gltfScene = lastScene.scene;
-        const rootFrame = readScene(
-            gltfScene.children[0],
-            threeScene.objectNames,
-        );
+    //             threeScene.scene.attach(rootFrame);
+    //             threeScene.rootFrame = rootFrame;
+    //             rootFrame.isRootFrame = true;
+    //             threeScene.camera.position.copy(lastState.camera.position);
+    //             threeScene.camera.rotation.copy(lastState.camera.rotation);
+    //             threeScene.selectObject(null);
 
-        threeScene.scene.attach(rootFrame);
-        threeScene.rootFrame = rootFrame;
-        rootFrame.isRootFrame = true;
-        threeScene.selectObject(threeScene.worldFrame);
+    //             undoRedo("push");
+    //             break;
+    //         }
 
-        pushUndo();
-    };
+    //     }
+    // }
+
+    // /**
+    //  * Pushes a compressed scene tree into the undo array
+    //  * @returns Returns early if threeScene is undefined
+    //  */
+    // const pushUndo = async () => {
+    //     // pushUndo gets called from forceCodeUpdate
+    //     const { current: threeScene } = threeSceneRef;
+    //     const { current: undoArray } = undo;
+    //     if (threeScene === undefined) return;
+    //     console.log("push Undo");
+
+    //     const currentScene: UndoState = {
+    //         scene: "",
+    //         selectedName: "",
+    //     };
+    //     // If the rootFrame is not null then it actually has objects so compress it
+    //     if (threeScene.rootFrame !== null) {
+    //         const compressedScene = compressScene(
+    //             threeScene.rootFrame as Frame,
+    //         );
+    //         const gltfScene = await ScenetoGLTF(compressedScene);
+    //         currentScene.scene = JSON.stringify(gltfScene);
+    //         currentScene.selectedName = threeScene.selectedObject.name;
+    //     }
+    //     console.log(currentScene);
+    //     undoArray.push(currentScene);
+    // };
+
+    // /**
+    //  * Pops the last compressed scene tree from the undo array and loads it into THREE
+    //  * @returns Returns early if threeScene is undefined, the undoArray is empty, or if the last scene tree was empty
+    //  */
+    // const popUndo = async () => {
+    //     const { current: threeScene } = threeSceneRef;
+    //     const { current: undoArray } = undo;
+    //     const { current: redoArray } = redo;
+    //     if (threeScene === undefined) return;
+
+    //     // There should always be an empty state as the first element
+    //     if (undoArray.length === 1) return;
+
+    //     // Pop the current state and push to the redoArray
+    //     const currentState = undoArray.pop();
+    //     if (currentState) redoArray.push(currentState);
+
+    //     // Get the last state before scene is cleared
+    //     const lastState = undoArray[undoArray.length - 1];
+
+    //     // clear the scene
+    //     threeScene.clearScene();
+
+    //     // If the last state was empty then return
+    //     console.log(undoArray);
+    //     if (lastState.scene === "") return;
+
+    //     // Load the last state
+    //     const lastScene = await loadFileToObject(lastState.scene, "gltf");
+    //     const gltfScene = lastScene.scene;
+    //     const rootFrame = readScene(
+    //         gltfScene.children[0],
+    //         threeScene.objectNames,
+    //     );
+
+    //     threeScene.scene.attach(rootFrame);
+    //     threeScene.rootFrame = rootFrame;
+    //     rootFrame.isRootFrame = true;
+
+    //     // If the lastSelected name exists then select that Object
+    //     if (currentState) {
+    //         const lastSelectedName = currentState.selectedName;
+    //         const lastSelected = findFrameByName(rootFrame, lastSelectedName);
+    //         threeScene.selectObject(lastSelected ?? threeScene.worldFrame);
+    //         return;
+    //     }
+    //     threeScene.selectObject(threeScene.worldFrame);
+    // };
+
+    // const popRedo = async () => {
+    //     // Redo stack gets destroyed when forceCodeUpdate gets called
+    //     const { current: redoArray } = redo;
+    //     const { current: threeScene } = threeSceneRef;
+    //     if (threeScene === undefined) return;
+
+    //     if (redoArray.length === 0) return;
+
+    //     const lastState = redoArray.pop();
+
+    //     threeScene.clearScene();
+
+    //     // If the last state was empty then return;
+    //     if (!lastState) return;
+    //     if (lastState.scene === "") return;
+
+    //     const lastScene = await loadFileToObject(lastState.scene, "gltf");
+    //     const gltfScene = lastScene.scene;
+    //     const rootFrame = readScene(
+    //         gltfScene.children[0],
+    //         threeScene.objectNames,
+    //     );
+
+    //     threeScene.scene.attach(rootFrame);
+    //     threeScene.rootFrame = rootFrame;
+    //     rootFrame.isRootFrame = true;
+    //     threeScene.selectObject(threeScene.worldFrame);
+
+    //     pushUndo();
+    // };
 
     const openProjectManager = () => {
         setModalContent(
@@ -379,8 +501,8 @@ const App = () => {
                     </Column>
                     <Toolbar
                         threeSceneRef={threeSceneRef}
-                        popRedo={popRedo}
-                        popUndo={popUndo}
+                        // popRedo={() => undoRedo("redo")}
+                        // popUndo={() => undoRedo("pop")}
                     />
                     <Column height="100%" width="25%" pointerEvents="auto">
                         <RightPanel

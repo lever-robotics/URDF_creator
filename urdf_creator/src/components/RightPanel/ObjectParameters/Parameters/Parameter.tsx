@@ -138,7 +138,7 @@ export function NumberParameter(props: NumberParameterProps) {
         </div>
     );
 }
-// TODO make sure className isn't getting overridden
+// TODO Do I still need the useEffect?
 function TextParameter(props: TextParameterProps) {
     const { value, handleBlur, validateInput, ...restProps } = props;
     const [temp, setTemp] = useState(value);

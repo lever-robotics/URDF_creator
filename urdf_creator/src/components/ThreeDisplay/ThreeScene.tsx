@@ -29,6 +29,7 @@ export type UserSelectable = Frame | Visual | Collision;
 export type Selectable = Frame | Visual | Collision | null;
 type EventType =
     | "updateCode"
+    | "addObject"
     | "updateScene"
     | "toolMode"
     | "selectedObject"
@@ -149,7 +150,7 @@ export default class ThreeScene {
         this.rootFrame.removeFromParent();
         this.rootFrame = null;
         this.objectNames.length = 0;
-        this.selectedObject = this.worldFrame;
+        this.selectedObject = null;
     };
 
     addObject = (shape: string) => {
@@ -194,6 +195,7 @@ export default class ThreeScene {
             }
         }
         this.selectObject(newFrame);
+        this.dispatchEvent("addObject");
         this.forceUpdateCode();
     };
 
@@ -222,7 +224,7 @@ export default class ThreeScene {
         rootFrame.parentFrame = this.worldFrame;
         this.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
-        // this.forceUpdateBoth();
+        this.forceUpdateCode();
     };
 
     setToolMode = (mode: TransformControlsMode) => {
@@ -268,6 +270,7 @@ export default class ThreeScene {
             this.rootFrame = frame;
             frame.isRootFrame = true;
         }
+        this.forceUpdateCode();
     };
 
     duplicateObject = (object: Selectable) => {
@@ -322,7 +325,7 @@ export default class ThreeScene {
 
     reparentObject = (parent: Frame, child: Frame) => {
         parent.attachChild(child);
-        // this.forceUpdateBoth();
+        this.forceUpdateCode();
     };
 
     /*

@@ -37,6 +37,24 @@ export function createFrame(params: UserData): Frame {
         visuals,
     } = params;
 
+    // Take in the shape if available and create a single collision and visual with that shape
+    if (shape) {
+        collisions?.push({
+            shape: shape,
+            scale: new THREE.Vector3(1, 1, 1),
+            color: 0x808080,
+            position: new THREE.Vector3(0, 0, 0),
+            rotation: new THREE.Euler(0, 0, 0),
+        });
+        visuals?.push({
+            shape: shape,
+            scale: new THREE.Vector3(1, 1, 1),
+            color: Math.random() * 0xffffff,
+            position: new THREE.Vector3(0, 0, 0),
+            rotation: new THREE.Euler(0, 0, 0),
+        });
+    }
+
     // Map all collisions to objects that will be attached to the link
     const collisionObjects =
         collisions?.map((collision, index) => {
@@ -47,6 +65,7 @@ export function createFrame(params: UserData): Frame {
                 collision.color,
             );
         }) || [];
+    console.log(collisionObjects);
 
     // Map all visuals to objects that will be attached to the link
     const visualObjects =

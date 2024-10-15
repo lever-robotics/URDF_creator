@@ -27,7 +27,7 @@ export default function InsertTool({
         } else if (selectedMode === "Collision") {
             threeScene.addProperty(shape as Shape, "collision");
         }
-        threeScene.forceUpdateBoth();
+        threeScene.forceUpdateCode();
         return;
     };
 

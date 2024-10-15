@@ -22,12 +22,12 @@ import type {
 
 const Toolbar = ({
     threeSceneRef,
-    popUndo,
-    popRedo,
+    // popUndo,
+    // popRedo,
 }: {
     threeSceneRef: MutableRefObject<ThreeScene | undefined>;
-    popUndo: () => void;
-    popRedo: () => void;
+    // popUndo: () => void;
+    // popRedo: () => void;
 }) => {
     const threeScene = threeSceneRef.current;
     const [selectedObject, setSelectedObject] = useState<Selectable>();
@@ -70,7 +70,7 @@ const Toolbar = ({
     const handleClick = (e: React.MouseEvent<Element>) => {
         if (!threeScene) return;
         const mode = e.currentTarget.id;
-        threeScene.setToolMode(mode);
+        threeScene.setToolMode(mode as TransformControlsMode);
     };
 
     const canScale = selectedObject instanceof VisualCollision;
@@ -94,7 +94,7 @@ const Toolbar = ({
             className="row-space-between"
         >
             <div className="row-spaced">
-                <TooltipButton
+                {/* <TooltipButton
                     onClick={popUndo}
                     content={"Undo (ctrl + z)"}
                     anchorPosition={"top-right"}
@@ -111,7 +111,7 @@ const Toolbar = ({
                     active={false}
                 >
                     <FontAwesomeIcon icon={faRotateRight} />
-                </TooltipButton>
+                </TooltipButton> */}
                 <TooltipButton
                     active={toolMode === "translate"}
                     onClick={handleClick}

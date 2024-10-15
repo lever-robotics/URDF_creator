@@ -24,6 +24,7 @@ function SensorsParameters({
     ) => {
         const type = e.target.value;
         selectedObject.sensorType = type;
+        threeScene.forceUpdateCode();
     };
 
     const sensorOptions = [

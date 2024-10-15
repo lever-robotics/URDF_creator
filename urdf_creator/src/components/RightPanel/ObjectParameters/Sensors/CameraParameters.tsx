@@ -58,7 +58,7 @@ function CameraParameters({
                 break;
         }
 
-        threeScene.forceUpdateBoth();
+        threeScene.forceUpdateCode();
     };
 
     return (

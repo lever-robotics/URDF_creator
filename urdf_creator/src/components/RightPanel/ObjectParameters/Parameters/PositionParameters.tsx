@@ -43,6 +43,7 @@ const PositionParameters: React.FC<ParameterProps> = ({
                 break;
             }
         }
+        threeScene.forceUpdateCode();
     };
 
     return (

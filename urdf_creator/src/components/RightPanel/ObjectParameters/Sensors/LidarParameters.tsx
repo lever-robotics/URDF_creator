@@ -52,6 +52,7 @@ function LidarParameters({
                 lidar.stddev = newValue;
                 break;
         }
+        threeScene.forceUpdateCode();
     };
 
     return (

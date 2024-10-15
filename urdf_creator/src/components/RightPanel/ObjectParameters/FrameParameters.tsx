@@ -43,6 +43,7 @@ export default function FrameParameters({
             setError("");
             threeScene.dispatchEvent("name");
         }
+        threeScene.forceUpdateCode();
     };
 
     return (
@@ -107,10 +108,9 @@ export const WorldFrameParameters = ({
         } else {
             deregisterName(selectedObject.name, threeScene.objectNames);
             selectedObject.name = registerName(value, threeScene.objectNames);
-            threeScene.forceUpdateBoth();
+            threeScene.forceUpdateCode();
             setError("");
         }
-        threeScene.forceUpdateCode();
     };
 
     return (

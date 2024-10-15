@@ -34,6 +34,7 @@ function IMUParameters({
                 imu.stddev = newValue;
                 break;
         }
+        threeScene.forceUpdateCode();
     };
 
     return (

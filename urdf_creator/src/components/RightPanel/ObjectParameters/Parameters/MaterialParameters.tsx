@@ -21,6 +21,7 @@ export default function MaterialParameters({
 
     const handleBlur = () => {
         setUpdate((prev) => prev + 1);
+        threeScene.forceUpdateCode();
     };
 
     return (
