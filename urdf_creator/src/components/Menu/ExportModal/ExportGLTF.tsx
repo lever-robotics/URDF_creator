@@ -1,6 +1,9 @@
 import "./Export.css";
 import Frame, { type Frameish } from "../../../Models/Frame";
-import { handleDownload } from "../../../utils/HandleDownload";
+import {
+    handleDownload,
+    handleProjectDownload,
+} from "../../../utils/HandleDownload";
 import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 import { compressScene } from "../../ThreeDisplay/TreeUtils";
 
@@ -20,7 +23,7 @@ const ExportGLTF: React.FC<Props> = ({
     const handleGLTFExport = () => {
         if (!rootFrame) return;
         const compressedScene = compressScene(rootFrame);
-        handleDownload(compressedScene, "gltf", projectTitle);
+        handleProjectDownload(compressedScene, projectTitle);
     };
 
     return (

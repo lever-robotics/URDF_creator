@@ -19,6 +19,38 @@ import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesConta
 import { ScenetoSDF } from "./ScenetoSDF";
 import { ScenetoXML } from "./ScenetoXML";
 
+export async function handleProjectDownload(
+    scene: THREE.Object3D,
+    title: string,
+) {
+    const exporter = new GLTFExporter();
+    exporter.parse(
+        scene,
+        (gltf) => {
+            // Create Blob
+            const blob = new Blob([JSON.stringify(gltf)], {
+                type: "application/gltf",
+            });
+
+            // Create a link element and set href to blob
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${title}.gltf`;
+
+            // Append the file, click it, then remove it
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Free up resources
+            URL.revokeObjectURL(link.href);
+        },
+        (error) => {
+            console.error("An error occurred during GLTF export:", error);
+        },
+    );
+}
+
 export async function handleDownload(
     scene: ThreeScene,
     type: string,

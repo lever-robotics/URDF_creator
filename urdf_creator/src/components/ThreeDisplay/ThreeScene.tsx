@@ -206,8 +206,8 @@ export default class ThreeScene {
     loadScene = (gltfScene: THREE.Object3D) => {
         this.clearScene();
         const rootFrame = readScene(gltfScene, this.objectNames);
-
         this.worldFrame.attach(rootFrame);
+        rootFrame.parentFrame = this.worldFrame;
         this.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
         this.forceUpdateBoth();
