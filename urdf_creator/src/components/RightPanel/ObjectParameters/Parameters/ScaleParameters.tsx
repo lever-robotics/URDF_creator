@@ -23,7 +23,6 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
     useEffect(() => {
         const updateScale = () => {
             setUpdate((prev) => prev + 1);
-            console.log("scale");
         };
 
         threeScene.addEventListener("parameters", updateScale);

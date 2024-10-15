@@ -98,7 +98,6 @@ export default class ThreeScene {
         );
         const intersects = this.raycaster.intersectObjects(this.scene.children);
         console.log(intersects);
-
         // Filter for objects that are instances of the common base class VisualCollision or Frame
         const shapes: UserSelectable[] = intersects
             .filter(
@@ -142,17 +141,6 @@ export default class ThreeScene {
         this.dispatchEvent("updateCode");
         const customEvent = new Event("updateCode");
         this.mountDiv.dispatchEvent(customEvent);
-    };
-
-    forceUpdateScene = () => {
-        this.dispatchEvent("updateScene");
-        const customEvent = new Event("updateScene");
-        this.mountDiv.dispatchEvent(customEvent);
-    };
-
-    forceUpdateBoth = () => {
-        this.forceUpdateCode();
-        this.forceUpdateScene();
     };
 
     clearScene = () => {
@@ -207,7 +195,6 @@ export default class ThreeScene {
         }
         this.selectObject(newFrame);
         this.forceUpdateCode();
-        this.forceUpdateScene();
     };
 
     addProperty = (shape: Shape, kind: "visual" | "collision") => {
@@ -235,7 +222,7 @@ export default class ThreeScene {
         rootFrame.parentFrame = this.worldFrame;
         this.rootFrame = rootFrame;
         rootFrame.isRootFrame = true;
-        this.forceUpdateBoth();
+        // this.forceUpdateBoth();
     };
 
     setToolMode = (mode: TransformControlsMode) => {
@@ -245,7 +232,6 @@ export default class ThreeScene {
         }
 
         this.dispatchEvent("toolMode");
-        this.forceUpdateScene();
     };
 
     selectObject = (object: Selectable) => {
@@ -258,7 +244,6 @@ export default class ThreeScene {
             this.selectedObject = object;
             this.transformControls.detach();
             this.dispatchEvent("selectedObject");
-            this.forceUpdateScene();
             return;
         }
 
@@ -267,13 +252,15 @@ export default class ThreeScene {
         this.transformControls.attach(object);
         // this.attachTransformControls(object);
         this.dispatchEvent("selectedObject");
-        this.forceUpdateScene();
     };
 
     loadSingleObject = (gltfScene: THREE.Object3D) => {
         const frame = readScene(gltfScene, this.objectNames);
         if (this.selectedObject instanceof Frame) {
-            this.selectedObject.attachChild(frame);
+            if (this.selectedObject.isWorldFrame) {
+                this.addObject("cube"); // Make a base_link in case there isn't one
+                this.selectedObject.attachChild(frame);
+            }
         } else if (this.rootFrame) {
             this.rootFrame.attachChild(frame);
         } else {
@@ -281,7 +268,6 @@ export default class ThreeScene {
             this.rootFrame = frame;
             frame.isRootFrame = true;
         }
-        this.forceUpdateScene();
     };
 
     duplicateObject = (object: Selectable) => {
@@ -336,7 +322,7 @@ export default class ThreeScene {
 
     reparentObject = (parent: Frame, child: Frame) => {
         parent.attachChild(child);
-        this.forceUpdateBoth();
+        // this.forceUpdateBoth();
     };
 
     /*
