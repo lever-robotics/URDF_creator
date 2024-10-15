@@ -44,10 +44,6 @@ export default function JointParameters({
         threeScene.startRotateJoint(selectedObject);
     };
 
-    const reattachLink = () => {
-        threeScene.reattachLink(selectedObject);
-    };
-
     const handleBlur = (parameter: string, value: number) => {
         switch (parameter) {
             case "min":
@@ -90,7 +86,6 @@ export default function JointParameters({
                         <button
                             className={styles.button}
                             onClick={handleChangeJointAngle}
-                            onBlur={reattachLink}
                             type="button"
                         >
                             Change Joint Angle

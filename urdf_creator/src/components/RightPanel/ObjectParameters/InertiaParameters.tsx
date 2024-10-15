@@ -24,7 +24,6 @@ function InertiaParameters({
         } else {
             selectedObject.inertia.setCustomInertia(parameter, value);
         }
-        threeScene.forceUpdateCode();
     };
 
     return (

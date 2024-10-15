@@ -27,7 +27,21 @@ import type { CollisionData, VisualData } from "./TreeUtils";
 export type TransformControlsMode = "translate" | "rotate" | "scale";
 export type UserSelectable = Frame | Visual | Collision;
 export type Selectable = Frame | Visual | Collision | null;
-type EventType = "updateCode" | "updateScene" | "toolMode" | "selectedObject";
+type EventType =
+    | "updateCode"
+    | "updateScene"
+    | "toolMode"
+    | "selectedObject"
+    | "parameters"
+    | "linkAttached"
+    | "name"
+    | "shape";
+type numShapes = {
+    cube: number;
+    sphere: number;
+    cylinder: number;
+    mesh: number;
+};
 
 export default class ThreeScene {
     worldFrame: Frame;
@@ -38,6 +52,7 @@ export default class ThreeScene {
     objectNames: string[];
     numberOfShapes: numShapes;
     eventDispatcher: EventDispatcher;
+    linkDetached = false;
 
     constructor(
         public mountDiv: HTMLElement,
@@ -70,7 +85,6 @@ export default class ThreeScene {
 
     // Function added to the Mouse object to allow clicking of meshes
     clickObject = (event: PointerEvent) => {
-        console.log("clickObject");
         const rect = this.mountDiv.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -83,6 +97,7 @@ export default class ThreeScene {
             this.camera,
         );
         const intersects = this.raycaster.intersectObjects(this.scene.children);
+        console.log(intersects);
 
         // Filter for objects that are instances of the common base class VisualCollision or Frame
         const shapes: UserSelectable[] = intersects
@@ -233,35 +248,6 @@ export default class ThreeScene {
         this.forceUpdateScene();
     };
 
-    // attachTransformControls = (object: Selectable) => {
-    //     if (object.name === "world_frame") return;
-    //     const selectedObject = object instanceof Frame;
-    //     const transformControls = this.transformControls;
-
-    //     const mode = transformControls.mode;
-    //     //depending on the selectedItem and the current mode either attach or not
-    //     if (object instanceof Frame)
-    //         // switch (mode) {
-    //         //     // this case will attach the transform controls to the Frame and move everything together
-    //         //     case "translate":
-    //         //         transformControls.attach(selectedItem);
-    //         //         break;
-    //         //     // will attach to Frame which will rotate the mesh about said origin
-    //         //     case "rotate":
-    //         //         transformControls.attach(selectedItem);
-    //         //         break;
-    //         //     // will attach to the visual, collision, or inertia object but nothing else
-    //         //     case "scale":
-    //         //         if (selectedItem instanceof Visual || selectedItem instanceof Collision || selectedItem instanceof Inertia) {
-    //         //             transformControls.attach(selectedItem!);
-    //         //         }
-    //         //         break;
-    //         //     default:
-    //         //         break;
-    //         // }
-    //         this.forceUpdateScene();
-    // };
-
     selectObject = (object: Selectable) => {
         if (!object) {
             this.selectedObject = null;
@@ -358,29 +344,27 @@ export default class ThreeScene {
     */
     startRotateJoint = (frame: Frame) => {
         this.transformControls.setMode("rotate");
+        this.selectedObject = frame;
         this.transformControls.attach(frame.axis);
-        this.forceUpdateScene();
+        this.linkDetached = true;
     };
 
     startMoveJoint = (frame: Frame) => {
         this.transformControls.setMode("translate");
-        frame.tempOffset.copy(frame.position);
+        this.selectedObject = frame;
         frame.parentFrame.attach(frame.link);
-        frame.linkDetached = true;
+        this.linkDetached = true;
         this.transformControls.attach(frame);
     };
 
-    reattachLink = (frame: Frame) => {
+    reattachLink = () => {
         this.transformControls.detach();
+        if (!(this.selectedObject instanceof Frame) || !this.selectedObject)
+            return;
+        const frame = this.selectedObject;
         frame.jointVisualizer.attach(frame.link);
-        frame.linkDetached = false;
+        this.linkDetached = false;
         frame.attach(frame.axis);
+        this.dispatchEvent("linkAttached");
     };
 }
-
-type numShapes = {
-    cube: number;
-    sphere: number;
-    cylinder: number;
-    mesh: number;
-};

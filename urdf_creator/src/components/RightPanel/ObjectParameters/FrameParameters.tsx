@@ -40,10 +40,9 @@ export default function FrameParameters({
         } else {
             deregisterName(selectedObject.name, threeScene.objectNames);
             selectedObject.name = registerName(value, threeScene.objectNames);
-            threeScene.forceUpdateBoth();
             setError("");
+            threeScene.dispatchEvent("name");
         }
-        threeScene.forceUpdateCode();
     };
 
     return (

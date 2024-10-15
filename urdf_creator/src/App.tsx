@@ -157,7 +157,7 @@ const App = () => {
      * This causes a gobal rerender ensuring the react components are up to date with the changes made to THREE
      */
     function forceUpdateScene() {
-        setUpdateScene((prev) => prev + 1);
+        // setUpdateScene((prev) => prev + 1);
         console.log("forceUptate");
     }
 
@@ -377,6 +377,7 @@ const App = () => {
             className="display"
             ref={mountRef}
             style={{ width: "100%", height: "100%" }}
+            tabIndex={-1}
         >
             <Modal
                 isOpen={isModalOpen}

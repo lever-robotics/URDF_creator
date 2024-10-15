@@ -13,7 +13,20 @@ const RotationParameters: React.FC<ParameterProps> = ({
     selectedObject,
     threeScene,
 }) => {
-    if (!selectedObject) return;
+    const [update, setUpdate] = useState(0);
+
+    useEffect(() => {
+        const updateRotation = () => {
+            setUpdate((prev) => prev + 1);
+        };
+
+        threeScene.addEventListener("parameters", updateRotation);
+
+        return () => {
+            threeScene.removeEventListener("parameters", updateRotation);
+        };
+    }, [threeScene]);
+
     const x = radToDeg(selectedObject.rotation.x);
     const y = radToDeg(selectedObject.rotation.y);
     const z = radToDeg(selectedObject.rotation.z);

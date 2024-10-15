@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Frame from "../../../../Models/Frame";
 import styles from "../ObjectParameters.module.css";
 import type ParameterProps from "../ParameterProps";
@@ -11,12 +11,31 @@ const OffsetParameters: React.FC<ParameterProps> = ({
     threeScene,
 }) => {
     const [linkDetached, setLinkDetached] = useState(false);
+    const [offset, setOffset] = useState(0);
+
+    useEffect(() => {
+        const updateOffset = () => {
+            setOffset((prev) => prev + 1);
+        };
+
+        const updateLinkDetached = () => {
+            setLinkDetached(threeScene.linkDetached);
+        };
+
+        threeScene.addEventListener("parameters", updateOffset);
+        threeScene.addEventListener("linkAttached", updateLinkDetached);
+
+        return () => {
+            threeScene.removeEventListener("parameters", updateOffset);
+            threeScene.removeEventListener("linkAttached", updateLinkDetached);
+        };
+    }, [threeScene]);
 
     if (!selectedObject) return;
     if (!(selectedObject instanceof Frame)) return;
 
     const calculateOffset = () => {
-        const originalJointPosition = selectedObject.tempOffset.clone(); // Clone to avoid modifying the original position
+        const originalJointPosition = selectedObject.offset.clone(); // Clone to avoid modifying the original position
         const newJointPosition = selectedObject.position;
         return originalJointPosition.sub(newJointPosition);
     };
@@ -24,8 +43,6 @@ const OffsetParameters: React.FC<ParameterProps> = ({
     const x = linkDetached ? calculateOffset().x : selectedObject.offset.x;
     const y = linkDetached ? calculateOffset().y : selectedObject.offset.y;
     const z = linkDetached ? calculateOffset().z : selectedObject.offset.z;
-    console.log(calculateOffset());
-    console.log(x, y, z);
 
     const handleBlur = (parameter: string, value: number) => {
         switch (parameter) {
@@ -50,18 +67,12 @@ const OffsetParameters: React.FC<ParameterProps> = ({
         setLinkDetached(true);
     };
 
-    const reattachLink = () => {
-        threeScene.reattachLink(selectedObject);
-        setLinkDetached(false);
-    };
-
     return (
         <>
             <Property>
                 <button
                     className={styles.button}
                     onClick={handleChangeJointOrigin}
-                    onBlur={reattachLink}
                     type="button"
                 >
                     Change Joint Origin

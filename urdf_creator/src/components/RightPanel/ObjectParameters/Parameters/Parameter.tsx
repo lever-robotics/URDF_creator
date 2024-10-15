@@ -53,7 +53,7 @@ interface SelectParameterProps extends InputProps {
 interface ColorParameterProps extends InputProps {
     kind: "color";
     value: string;
-    handleBlur: () => void;
+    handleBlur?: () => void;
     handleChange: ChangeEventHandler<HTMLInputElement>;
     parameter: string;
     title?: string;

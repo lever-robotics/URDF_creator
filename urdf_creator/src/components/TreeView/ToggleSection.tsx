@@ -4,11 +4,12 @@ import type React from "react";
 import { useState } from "react";
 import styles from "./ToggleSection.module.css";
 
+// TODO wrap this in a forward ref
 type ToggleSectionProps = {
     children: React.ReactNode;
     renderChildren: () => React.ReactNode;
     renderProperties: () => React.ReactNode;
-    isSelected: () => boolean;
+    isSelected: boolean;
     isHovered: () => boolean;
 };
 function ToggleSection({
@@ -18,24 +19,24 @@ function ToggleSection({
     isSelected,
     isHovered,
 }: ToggleSectionProps) {
-    const [visible, setVisible] = useState(isSelected());
+    // const [visible, setVisible] = useState(isSelected());
 
-    const handleClick = (e: React.MouseEvent) => {
-        if (visible) {
-            setVisible(false);
-        } else {
-            setVisible(true);
-        }
-    };
+    // const handleClick = (e: React.MouseEvent) => {
+    //     if (visible) {
+    //         setVisible(false);
+    //     } else {
+    //         setVisible(true);
+    //     }
+    // };
 
-    const toggleSectionStyle = isSelected()
+    const toggleSectionStyle = isSelected
         ? {
               borderColor: "#646cff",
           }
         : {};
 
     const headerSelectedStyle = () => {
-        if (isSelected()) {
+        if (isSelected) {
             return {
                 borderColor: "#646cff",
                 backgroundColor: "#646cff",
@@ -49,7 +50,7 @@ function ToggleSection({
         return {};
     };
 
-    const iconStyle = isSelected()
+    const iconStyle = isSelected
         ? {
               backgroundColor: "#646cff",
           }
@@ -65,10 +66,11 @@ function ToggleSection({
                 /> */}
                 {children}
             </div>
-            {isSelected() && renderProperties() && (
+            {isSelected && renderProperties() && (
                 <div className={styles.body}>{renderProperties()}</div>
             )}
-            {visible && renderChildren()}
+            {/* {visible && renderChildren()} */}
+            {renderChildren()}
         </div>
     );
 }

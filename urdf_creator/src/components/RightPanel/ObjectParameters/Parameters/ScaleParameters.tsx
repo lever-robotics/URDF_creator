@@ -18,7 +18,21 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
     selectedObject,
     threeScene,
 }) => {
-    if (!selectedObject) return;
+    const [update, setUpdate] = useState(0);
+
+    useEffect(() => {
+        const updateScale = () => {
+            setUpdate((prev) => prev + 1);
+            console.log("scale");
+        };
+
+        threeScene.addEventListener("parameters", updateScale);
+
+        return () => {
+            threeScene.removeEventListener("parameters", updateScale);
+        };
+    }, [threeScene]);
+
     const shape = selectedObject.shape;
     const x = selectedObject.scale.x;
     const y = selectedObject.scale.y;

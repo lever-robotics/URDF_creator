@@ -23,7 +23,6 @@ export default class Frame extends THREE.Mesh {
     axis!: Axis;
     parentFrame!: Frame;
 
-    linkDetached: boolean;
     isRootFrame: boolean;
     isWorldFrame: boolean;
 
@@ -53,7 +52,6 @@ export default class Frame extends THREE.Mesh {
         this.position.copy(position);
         this.rotation.copy(rotation);
 
-        this.linkDetached = false;
         this.isRootFrame = false;
         this.isWorldFrame = false;
 
@@ -123,10 +121,6 @@ export default class Frame extends THREE.Mesh {
 
     get offset() {
         return this.link.position;
-    }
-
-    get tempOffset() {
-        return this.link.tempOffset;
     }
 
     set mass(mass) {

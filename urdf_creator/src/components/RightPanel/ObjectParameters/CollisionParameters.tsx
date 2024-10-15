@@ -1,9 +1,5 @@
-import Frame from "../../../Models/Frame";
-import Inertia from "../../../Models/Inertia";
-import { Collision, Visual } from "../../../Models/VisualCollision";
+import type Frame from "../../../Models/Frame";
 import type ThreeScene from "../../ThreeDisplay/ThreeScene";
-import type { Selectable } from "../../ThreeDisplay/ThreeScene";
-import styles from "./ObjectParameters.module.css";
 import MaterialParameters from "./Parameters/MaterialParameters";
 import MeshParameters from "./Parameters/MeshParameters";
 import PositionParameters from "./Parameters/PositionParameters";
@@ -17,15 +13,9 @@ function CollisionParameters({
     selectedObject,
 }: {
     threeScene: ThreeScene;
-    selectedObject: Selectable;
+    selectedObject: Frame;
 }) {
-    if (selectedObject instanceof Visual || selectedObject instanceof Inertia)
-        return null;
-
-    const collisions =
-        selectedObject instanceof Frame
-            ? selectedObject.collisions
-            : selectedObject.frame.collisions;
+    const collisions = selectedObject.collisions;
 
     return (
         <Section title={"Collisions"}>
