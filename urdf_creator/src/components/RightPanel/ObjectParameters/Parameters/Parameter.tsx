@@ -53,7 +53,7 @@ interface SelectParameterProps extends InputProps {
 interface ColorParameterProps extends InputProps {
     kind: "color";
     value: string;
-    handleBlur: () => void;
+    handleBlur?: () => void;
     handleChange: ChangeEventHandler<HTMLInputElement>;
     parameter: string;
     title?: string;
@@ -150,7 +150,6 @@ function TextParameter(props: TextParameterProps) {
     const validate = validateInput ?? ((input: string) => input);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(validate);
         const validatedInput = validate(e.target.value);
         setTemp(validatedInput);
     };

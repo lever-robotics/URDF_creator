@@ -96,6 +96,7 @@ export default class VisualCollision extends THREE.Mesh {
             this.scale.set(1, 1, 1);
             this.geometry = this.defineGeometry(geometryType);
             this._scale.shape = geometryType;
+            this.stlfile = "";
             return;
         }
 
@@ -107,9 +108,12 @@ export default class VisualCollision extends THREE.Mesh {
         if (this.stlfile === fileName) {
             return;
         }
-
         // Set the stlfile name to the userData
         this.stlfile = fileName;
+
+        // Scale the mesh geometry to 0.001 on each axis
+        this.scale.set(0.001, 0.001, 0.001);
+
         this.loadSTL(fileName);
     };
 
@@ -137,9 +141,6 @@ export default class VisualCollision extends THREE.Mesh {
                         // Assign the loaded geometry to the current object
                         this.geometry = geometry;
                         this.shape = "mesh";
-
-                        // Scale the mesh geometry to 0.001 on each axis
-                        this.scale.set(0.001, 0.001, 0.001);
 
                         // Revoke the Blob URL after use
                         URL.revokeObjectURL(url);

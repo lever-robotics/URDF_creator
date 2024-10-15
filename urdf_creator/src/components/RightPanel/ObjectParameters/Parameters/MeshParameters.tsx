@@ -20,14 +20,6 @@ function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
             : selectedObject.shape,
     );
 
-    useEffect(() => {
-        setGeometryValue(
-            selectedObject.shape === "mesh"
-                ? selectedObject.stlfile
-                : selectedObject.shape,
-        );
-    }, [selectedObject.shape, selectedObject.stlfile]);
-
     const handleGeometryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         //check if value is cube sphree or cylinder then set geometry as that with blank file name
         if (
@@ -36,12 +28,12 @@ function MeshParameters({ selectedObject, threeScene }: MeshParametersProps) {
             e.target.value === "cylinder"
         ) {
             selectedObject.setGeometry(e.target.value, "");
-            threeScene.forceUpdateBoth();
-            return;
+            setGeometryValue(e.target.value);
+        } else {
+            selectedObject.setGeometry("mesh", e.target.value);
+            setGeometryValue("mesh");
         }
-        // Set the geometry type to mes
-        selectedObject.setGeometry("mesh", e.target.value);
-        threeScene.forceUpdateBoth();
+        threeScene.dispatchEvent("parameters");
     };
 
     const loadFiles = async () => {

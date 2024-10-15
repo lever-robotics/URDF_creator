@@ -10,7 +10,19 @@ const PositionParameters: React.FC<ParameterProps> = ({
     selectedObject,
     threeScene,
 }) => {
-    if (!selectedObject) return;
+    const [update, setUpdate] = useState(0);
+
+    useEffect(() => {
+        const updatePosition = () => {
+            setUpdate((prev) => prev + 1);
+        };
+
+        threeScene.addEventListener("parameters", updatePosition);
+
+        return () => {
+            threeScene.removeEventListener("parameters", updatePosition);
+        };
+    }, [threeScene]);
 
     const x = selectedObject.position.x;
     const y = selectedObject.position.y;
@@ -31,7 +43,6 @@ const PositionParameters: React.FC<ParameterProps> = ({
                 break;
             }
         }
-        threeScene.forceUpdateCode();
     };
 
     return (

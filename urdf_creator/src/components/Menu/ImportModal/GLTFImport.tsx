@@ -25,9 +25,7 @@ const GLTFImport = ({
         const file = e.target.files[0];
         const type = file.name.split(".").pop();
         if (!type) return;
-        console.log("here");
         const group = await handleUpload(file, type);
-        console.log(group);
         const base_link = group.children[0];
         loadScene(base_link);
         onClose();

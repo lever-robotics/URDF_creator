@@ -1,5 +1,5 @@
 import type React from "react";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Frame, { type Frameish } from "../../Models/Frame";
 import type ThreeScene from "../ThreeDisplay/ThreeScene";
 import type { ContextMenu } from "./LinkTree";
@@ -20,6 +20,34 @@ export default function TreeFrame(props: Props) {
     const { frame, ...restProps } = props;
     const { handleContextMenu, threeScene, hoveredFrame, setHoveredFrame } =
         restProps;
+
+    const [selected, setSelected] = useState(false);
+    const [name, setName] = useState(frame.name);
+
+    useEffect(() => {
+        const updateSelected = () => {
+            if (isSelected(threeScene, frame)) {
+                setSelected(true);
+            } else {
+                setSelected(false);
+            }
+        };
+
+        const updateName = () => {
+            if (selected) {
+                setName(frame.name);
+            }
+        };
+
+        updateSelected();
+        threeScene.addEventListener("selectedObject", updateSelected);
+        threeScene.addEventListener("name", updateName);
+
+        return () => {
+            threeScene.removeEventListener("selectedObject", updateSelected);
+            threeScene.removeEventListener("name", updateName);
+        };
+    }, [threeScene, frame, selected]);
 
     const onClick = () => {
         threeScene.selectObject(frame);
@@ -78,17 +106,6 @@ export default function TreeFrame(props: Props) {
         // ));
     };
 
-    const isSelected = () => {
-        const selectedObject = threeScene.selectedObject;
-        if (!selectedObject) return false;
-        if (selectedObject instanceof Frame) {
-            if (selectedObject.name === frame.name) return true;
-        } else {
-            if (selectedObject.frame.name === frame.name) return true;
-        }
-        return false;
-    };
-
     const isHovered = () => {
         if (hoveredFrame) {
             if (hoveredFrame.name === frame.name) return true;
@@ -96,7 +113,7 @@ export default function TreeFrame(props: Props) {
         return false;
     };
 
-    const selectedStyle = isSelected() ? { backgroundColor: "#646cff" } : {};
+    const selectedStyle = selected ? { backgroundColor: "#646cff" } : {};
 
     const draggable = !frame.isWorldFrame;
 
@@ -105,7 +122,7 @@ export default function TreeFrame(props: Props) {
         <ToggleSection
             renderChildren={renderChildren}
             renderProperties={renderProperties}
-            isSelected={isSelected}
+            isSelected={selected}
             isHovered={isHovered}
         >
             <button
@@ -120,7 +137,7 @@ export default function TreeFrame(props: Props) {
                 onDragEnter={onDragEnter}
                 type="button"
             >
-                {frame.name}
+                {name}
             </button>
         </ToggleSection>
     );
@@ -137,3 +154,14 @@ function isAncestor(ancestor: Frame, descendant: Frame) {
     if (ancestor.isRootFrame || descendant.isRootFrame) return false;
     return isAncestor(ancestor, descendant.parentFrame);
 }
+
+const isSelected = (threeScene: ThreeScene, frame: Frame) => {
+    const selectedObject = threeScene.selectedObject;
+    if (!selectedObject) return false;
+    if (selectedObject instanceof Frame) {
+        if (selectedObject.name === frame.name) return true;
+    } else {
+        if (selectedObject.frame.name === frame.name) return true;
+    }
+    return false;
+};

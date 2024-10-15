@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Frame, { type Frameish } from "../../Models/Frame";
 import VisualCollision, {
     type Collision,
@@ -25,6 +26,25 @@ export default function TreeProperty(props: Props) {
         hoveredFrame,
         setHoveredFrame,
     } = props;
+
+    const [selected, setSelected] = useState(false);
+
+    useEffect(() => {
+        const updateSelected = () => {
+            if (isSelected()) {
+                setSelected(true);
+            } else {
+                setSelected(false);
+            }
+        };
+
+        updateSelected();
+        threeScene.addEventListener("selectedObject", updateSelected);
+
+        return () => {
+            threeScene.removeEventListener("selectedObject", updateSelected);
+        };
+    }, [threeScene]);
 
     const isSelected = () => {
         const selectedProperty = threeScene.selectedObject;

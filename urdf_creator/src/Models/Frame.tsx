@@ -23,7 +23,6 @@ export default class Frame extends THREE.Mesh {
     axis!: Axis;
     parentFrame!: Frame;
 
-    linkDetached: boolean;
     isRootFrame: boolean;
     isWorldFrame: boolean;
 
@@ -53,7 +52,6 @@ export default class Frame extends THREE.Mesh {
         this.position.copy(position);
         this.rotation.copy(rotation);
 
-        this.linkDetached = false;
         this.isRootFrame = false;
         this.isWorldFrame = false;
 
@@ -93,18 +91,6 @@ export default class Frame extends THREE.Mesh {
 
     get objectCollisions() {
         return this.collisions;
-    }
-
-    get objectScale() {
-        return this.link.scale;
-    }
-
-    get objectPosition() {
-        return this.position;
-    }
-
-    get objectRotation() {
-        return this.rotation;
     }
 
     get jointType() {

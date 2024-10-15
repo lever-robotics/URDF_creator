@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 import type { Collision, Visual } from "../../../../Models/VisualCollision";
 import type ThreeScene from "../../../ThreeDisplay/ThreeScene";
 import Parameter from "./Parameter";
@@ -12,12 +13,14 @@ export default function MaterialParameters({
     threeScene: ThreeScene;
     selectedObject: Visual | Collision;
 }) {
+    const [update, setUpdate] = useState(0);
+
     const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         (selectedObject as Visual | Collision).setColorByHex(e.target.value);
     };
 
-    const handleColorBlur = () => {
-        threeScene.forceUpdateCode();
+    const handleBlur = () => {
+        setUpdate((prev) => prev + 1);
     };
 
     return (
@@ -28,7 +31,7 @@ export default function MaterialParameters({
                 parameter="color"
                 value={`#${(selectedObject as Visual | Collision).color.getHexString()}`}
                 handleChange={handleColorChange}
-                handleBlur={handleColorBlur}
+                handleBlur={handleBlur}
             />
         </Property>
     );

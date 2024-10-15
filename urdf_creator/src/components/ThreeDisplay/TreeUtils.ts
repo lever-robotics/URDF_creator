@@ -37,24 +37,6 @@ export function createFrame(params: UserData): Frame {
         visuals,
     } = params;
 
-    // Take in the shape if available and create a single collision and visual with that shape
-    if (shape) {
-        collisions?.push({
-            shape: shape,
-            scale: new THREE.Vector3(1, 1, 1),
-            color: 0x808080,
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Euler(0, 0, 0),
-        });
-        visuals?.push({
-            shape: shape,
-            scale: new THREE.Vector3(1, 1, 1),
-            color: Math.random() * 0xffffff,
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Euler(0, 0, 0),
-        });
-    }
-
     // Map all collisions to objects that will be attached to the link
     const collisionObjects =
         collisions?.map((collision, index) => {
@@ -208,8 +190,8 @@ export function compressScene(frame: Frame): THREE.Mesh {
     const userData: UserData = {
         name: frame.name,
         version: "beta2",
-        position: frame.objectPosition,
-        rotation: frame.objectRotation,
+        position: frame.position,
+        rotation: frame.rotation,
         jointType: frame.jointType,
         jointMin: frame.min,
         jointMax: frame.max,
@@ -236,11 +218,27 @@ export function compressScene(frame: Frame): THREE.Mesh {
 }
 
 export function readScene(gltfObject: THREE.Object3D, objectNames: string[]) {
-    const userData: UserData = gltfObject.userData as UserData;
+    console.log(gltfObject.userData);
+    if (gltfObject.userData?.version) {
+        const userData: UserData = gltfObject.userData as UserData;
+        const registeredName = registerName(userData.name, objectNames);
+        userData.name = registeredName;
+
+        const newFrame = createFrame(userData);
+
+        for (const child of gltfObject.children) {
+            const newChild = readScene(child, objectNames);
+            newFrame.addChild(newChild);
+        }
+
+        return newFrame;
+    }
+    const userData: PreBetaUserData = gltfObject.userData as PreBetaUserData;
     const registeredName = registerName(userData.name, objectNames);
     userData.name = registeredName;
 
-    const newFrame = createFrame(userData);
+    const newFrame = createPreBetaFrame(userData);
+    console.log(newFrame);
 
     for (const child of gltfObject.children) {
         const newChild = readScene(child, objectNames);
@@ -330,3 +328,105 @@ export type VisualData = {
     position: THREE.Vector3;
     rotation: THREE.Euler;
 };
+
+// TODO MAKE A SEPRATE FILE FOR OUTDATED VERSIONING
+export type PreBetaUserData = {
+    name: string;
+    shape?: string;
+    color: number;
+    version: string;
+    position: THREE.Vector3;
+    rotation: THREE.Euler;
+    jointType: string;
+    jointMin: number;
+    jointMax: number;
+    axisRotation: THREE.Euler;
+    offset: THREE.Vector3;
+    mass: number;
+    ixx: number;
+    ixy: number;
+    ixz: number;
+    iyy: number;
+    izz: number;
+    iyz: number;
+    sensor: Sensor | IMU | Camera | Lidar | undefined;
+    scale: THREE.Vector3;
+};
+export function createPreBetaFrame(params: PreBetaUserData): Frame {
+    const {
+        name,
+        version,
+        shape, // This is use for generating a generic box, cylinder, or sphere
+        color,
+        position,
+        rotation,
+        jointType,
+        jointMin,
+        jointMax,
+        axisRotation,
+        offset,
+        mass,
+        ixx,
+        ixy,
+        ixz,
+        iyy,
+        izz,
+        iyz,
+        sensor,
+        scale,
+    } = params;
+
+    const collisions = [];
+    const collision = new Collision(0, shape, scale, color);
+    collisions.push(collision);
+
+    const visuals = [];
+    const visual = new Visual(0, shape, scale, color);
+    visuals.push(visual);
+
+    // Instantiate new objects
+    const link = new Link(offset, shape);
+    const jointVisualizer = new JointVisualizer();
+    const axis = new Axis(axisRotation);
+    const frame = new Frame(
+        name,
+        position,
+        rotation,
+        jointType as JointType,
+        jointMin,
+        jointMax,
+    );
+    const inertia = new Inertia(frame, mass, ixx, iyy, izz, ixy, ixz, iyz);
+
+    // Add link children
+    link.add(collision);
+    link.add(visual);
+
+    link.add(inertia);
+
+    // Add jV children
+    jointVisualizer.add(link);
+    jointVisualizer.link = link;
+
+    // Add frame children
+    frame.add(jointVisualizer);
+    frame.add(axis);
+    frame.jointVisualizer = jointVisualizer;
+    frame.link = link;
+    frame.axis = axis;
+    frame.visuals = visuals;
+    frame.collisions = collisions;
+    frame.sensor = sensorCreator(sensor);
+    frame.inertia = inertia;
+    inertia.updateInertia(frame);
+
+    // Give all tree objects a reference to frame
+    jointVisualizer.frame = frame;
+    link.frame = frame;
+    axis.frame = frame;
+    visual.frame = frame;
+    collision.frame = frame;
+    inertia.frame = frame;
+
+    return frame;
+}

@@ -12,21 +12,23 @@ export default class TransformControl extends TransformControls {
     }
 
     pointerDown(pointer: PointerEvent | null) {
-        console.log(pointer);
         super.pointerDown(pointer);
+        this.scene.mountDiv.focus();
     }
 
     pointerMove(pointer: PointerEvent | null) {
         super.pointerMove(pointer);
         this.pointerMoved = true;
-        this.scene.forceUpdateScene();
+        if (this.scene.selectedObject) this.scene.dispatchEvent("parameters");
     }
 
     pointerUp(pointer: PointerEvent | null) {
         super.pointerUp(pointer);
 
+        if (this.scene.linkDetached) this.scene.reattachLink();
+
         if (this.pointerMoved) {
-            this.scene.forceUpdateCode();
+            this.scene.dispatchEvent("updateCode");
             this.pointerMoved = false;
         }
     }

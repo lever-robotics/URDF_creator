@@ -45,7 +45,6 @@ export class Mouse {
 
     onMouseDown(event: PointerEvent) {
         if ((event.target as HTMLElement).localName !== "canvas") return;
-        console.log(this);
 
         event.preventDefault();
         this.currentDownTime = Date.now();
@@ -54,7 +53,6 @@ export class Mouse {
 
     onMouseUp(event: PointerEvent) {
         if ((event.target as HTMLElement).localName !== "canvas") return;
-        console.log("onmouseup");
         event.preventDefault();
         const clickTime = 300;
         const dragThreshold = 20;

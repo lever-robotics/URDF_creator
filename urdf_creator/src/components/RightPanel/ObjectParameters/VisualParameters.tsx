@@ -1,4 +1,4 @@
-import Frame from "../../../Models/Frame";
+import type Frame from "../../../Models/Frame";
 import Inertia from "../../../Models/Inertia";
 import { Collision, Visual } from "../../../Models/VisualCollision";
 import type ThreeScene from "../../ThreeDisplay/ThreeScene";
@@ -17,18 +17,9 @@ function VisualParameters({
     selectedObject,
 }: {
     threeScene: ThreeScene;
-    selectedObject: Selectable;
+    selectedObject: Frame;
 }) {
-    if (
-        selectedObject instanceof Collision ||
-        selectedObject instanceof Inertia
-    )
-        return null;
-
-    const visuals =
-        selectedObject instanceof Frame
-            ? selectedObject.visuals
-            : selectedObject.frame.visuals;
+    const visuals = selectedObject.visuals;
 
     return (
         <Section title="Visuals">

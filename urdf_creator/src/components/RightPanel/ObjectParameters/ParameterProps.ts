@@ -6,7 +6,7 @@ import type ThreeScene from "../../ThreeDisplay/ThreeScene";
 
 // Parameter Props for parameters at the Frame level
 type ParameterProps = {
-    selectedObject?: Frame | Visual | Collision | Inertia;
+    selectedObject: Frame | Visual | Collision | Inertia;
     threeScene: ThreeScene;
 };
 

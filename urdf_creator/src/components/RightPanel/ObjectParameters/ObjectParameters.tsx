@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Frame from "../../../Models/Frame";
 import type ThreeScene from "../../ThreeDisplay/ThreeScene";
+import { Selectable } from "../../ThreeDisplay/ThreeScene";
 import CollisionParameters from "./CollisionParameters";
 import FrameParameters, { WorldFrameParameters } from "./FrameParameters";
 import InertiaParameters from "./InertiaParameters";
@@ -16,27 +17,30 @@ function ObjectParameters({
     threeScene: ThreeScene;
     selectedFormat: string;
 }) {
-    const selected =
-        threeScene.selectedObject instanceof Frame ||
-        threeScene.selectedObject === null
-            ? threeScene.selectedObject
-            : threeScene.selectedObject.frame;
-    const [selectedObject, setSelectedObject] = useState(selected);
+    const [selectedObject, setSelectedObject] = useState<Frame | null>();
 
     useEffect(() => {
-        const selected =
-            threeScene.selectedObject instanceof Frame ||
-            threeScene.selectedObject === null
-                ? threeScene.selectedObject
-                : threeScene.selectedObject.frame;
-        setSelectedObject(selected);
-    }, [threeScene.selectedObject]);
+        const updateSelected = () => {
+            const selected = threeScene.selectedObject;
+            if (selected instanceof Frame || !selected) {
+                setSelectedObject(selected);
+            } else {
+                setSelectedObject(selected.frame);
+            }
+        };
+        updateSelected();
+
+        threeScene.addEventListener("selectedObject", updateSelected);
+
+        return () => {
+            threeScene.removeEventListener("selectedObject", updateSelected);
+        };
+    }, [threeScene]);
 
     if (selectedFormat !== "Parameters") return null;
-    if (!threeScene) return null;
 
     // If there is no selected Object
-    if (selectedObject === null) {
+    if (!selectedObject) {
         return (
             <div className={styles.objectParameters}>No Object Selected</div>
         );

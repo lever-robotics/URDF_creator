@@ -61,7 +61,6 @@ const App = () => {
         window.addEventListener("keydown", keydown);
         window.addEventListener("keyup", keyup);
         window.addEventListener("wheel", handleWheel, { passive: false });
-        mountRef.current.addEventListener("updateScene", forceUpdateScene);
         mountRef.current.addEventListener("updateCode", forceUpdateCode);
 
         return () => {
@@ -70,10 +69,6 @@ const App = () => {
             window.removeEventListener("keydown", keydown);
             window.removeEventListener("keyup", keyup);
             window.removeEventListener("wheel", handleWheel);
-            mountRef.current?.removeEventListener(
-                "updateScene",
-                forceUpdateScene,
-            );
             mountRef.current?.removeEventListener(
                 "updateCode",
                 forceUpdateCode,
@@ -149,18 +144,6 @@ const App = () => {
         return sceneCallback;
     }
 
-    /*
-        Update Functions
-    */
-    /**
-     * Increments the state value updateScene by 1.
-     * This causes a gobal rerender ensuring the react components are up to date with the changes made to THREE
-     */
-    function forceUpdateScene() {
-        setUpdateScene((prev) => prev + 1);
-        console.log("forceUptate");
-    }
-
     /**
      * Increments the state value updateCode by 1.
      * This causes a gobal rerender to keep react components up to date, to update the codeBox, and to update the undo array
@@ -233,7 +216,6 @@ const App = () => {
             gltfScene.children[0],
             threeScene.objectNames,
         );
-        console.log(rootFrame);
 
         threeScene.scene.attach(rootFrame);
         threeScene.rootFrame = rootFrame;
@@ -347,6 +329,7 @@ const App = () => {
         if (!threeScene) return;
         threeScene.clearScene();
         const group = await handleProject(projectPath);
+        console.log(group);
         const rootFrame = group.scene.children[0];
         threeScene.loadScene(rootFrame);
         setProjectTitle(title);
@@ -377,6 +360,7 @@ const App = () => {
             className="display"
             ref={mountRef}
             style={{ width: "100%", height: "100%" }}
+            tabIndex={-1}
         >
             <Modal
                 isOpen={isModalOpen}
