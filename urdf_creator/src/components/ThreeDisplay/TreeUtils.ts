@@ -162,10 +162,10 @@ export function cloneFrame(frame: Frame, objectNames: string[]): Frame {
     link.frame = clone;
     axis.frame = clone;
     for (const visual of visuals) {
-        visual.frame = frame;
+        visual.frame = clone;
     }
     for (const collision of collisions) {
-        collision.frame = frame;
+        collision.frame = clone;
     }
     inertia.frame = clone;
 
