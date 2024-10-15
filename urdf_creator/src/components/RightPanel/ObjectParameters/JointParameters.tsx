@@ -19,8 +19,6 @@ export default function JointParameters({
     threeScene: ThreeScene;
 }) {
     if (!selectedObject) return;
-    const [min, setMin] = useState<ParameterValue>(selectedObject.min);
-    const [max, setMax] = useState<ParameterValue>(selectedObject.max);
     const [jointValue, setJointValue] = useState(0);
 
     const handleJointTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,10 +42,6 @@ export default function JointParameters({
 
     const handleChangeJointAngle = () => {
         threeScene.startRotateJoint(selectedObject);
-    };
-
-    const handleChangeJointOrigin = () => {
-        threeScene.startMoveJoint(selectedObject);
     };
 
     const reattachLink = () => {
@@ -86,16 +80,6 @@ export default function JointParameters({
                     />
                 </Property>
             )}
-            <Property>
-                <button
-                    className={styles.button}
-                    onClick={handleChangeJointOrigin}
-                    onBlur={reattachLink}
-                    type="button"
-                >
-                    Change Joint Origin
-                </button>
-            </Property>
             <OffsetParameters
                 selectedObject={selectedObject}
                 threeScene={threeScene}

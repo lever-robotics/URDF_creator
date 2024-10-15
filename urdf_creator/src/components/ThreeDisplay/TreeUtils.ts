@@ -208,8 +208,8 @@ export function compressScene(frame: Frame): THREE.Mesh {
     const userData: UserData = {
         name: frame.name,
         version: "beta2",
-        position: frame.objectPosition,
-        rotation: frame.objectRotation,
+        position: frame.position,
+        rotation: frame.rotation,
         jointType: frame.jointType,
         jointMin: frame.min,
         jointMax: frame.max,

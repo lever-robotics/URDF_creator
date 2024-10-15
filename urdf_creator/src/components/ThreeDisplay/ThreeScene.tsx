@@ -165,7 +165,7 @@ export default class ThreeScene {
 
         this.numberOfShapes[shape as keyof numShapes]++;
 
-        newFrame.objectPosition.set(2.5, 2.5, 0.5);
+        newFrame.position.set(2.5, 2.5, 0.5);
 
         if (
             this.selectedObject === null ||
@@ -175,7 +175,7 @@ export default class ThreeScene {
             if (this.rootFrame) {
                 this.rootFrame.attachChild(newFrame);
             } else {
-                newFrame.objectPosition.set(0, 0, 0.5);
+                newFrame.position.set(0, 0, 0.5);
                 newFrame.isRootFrame = true;
                 newFrame.name = "base_link";
                 this.objectNames.push("base_link");
@@ -364,10 +364,10 @@ export default class ThreeScene {
 
     startMoveJoint = (frame: Frame) => {
         this.transformControls.setMode("translate");
-        if (frame.parent !== null) frame.parent.attach(frame.link);
+        frame.tempOffset.copy(frame.position);
+        frame.parentFrame.attach(frame.link);
         frame.linkDetached = true;
         this.transformControls.attach(frame);
-        this.forceUpdateScene();
     };
 
     reattachLink = (frame: Frame) => {

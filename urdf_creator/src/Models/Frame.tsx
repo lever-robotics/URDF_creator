@@ -95,18 +95,6 @@ export default class Frame extends THREE.Mesh {
         return this.collisions;
     }
 
-    get objectScale() {
-        return this.link.scale;
-    }
-
-    get objectPosition() {
-        return this.position;
-    }
-
-    get objectRotation() {
-        return this.rotation;
-    }
-
     get jointType() {
         return this._jointType;
     }
@@ -135,6 +123,10 @@ export default class Frame extends THREE.Mesh {
 
     get offset() {
         return this.link.position;
+    }
+
+    get tempOffset() {
+        return this.link.tempOffset;
     }
 
     set mass(mass) {
