@@ -53,7 +53,8 @@ export default function RightPanel({
         }
         return {};
     };
-    if (!threeSceneRef.current) return;
+
+    if (!threeScene) return;
     return (
         <>
             <div className={styles.toolbar}>
