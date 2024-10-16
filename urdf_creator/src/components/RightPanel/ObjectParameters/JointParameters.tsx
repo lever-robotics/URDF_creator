@@ -25,6 +25,7 @@ export default function JointParameters({
         const value = e.currentTarget.value;
         selectedObject.jointType = value as JointType;
         threeScene.forceUpdateCode();
+        threeScene.dispatchEvent("parameters");
     };
 
     const handleJointValueChange = (valueString: string) => {

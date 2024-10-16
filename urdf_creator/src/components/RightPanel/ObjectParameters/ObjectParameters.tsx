@@ -18,6 +18,7 @@ function ObjectParameters({
     selectedFormat: string;
 }) {
     const [selectedObject, setSelectedObject] = useState<Frame | null>();
+    const [update, setUpdate] = useState(0);
 
     useEffect(() => {
         const updateSelected = () => {
@@ -28,12 +29,17 @@ function ObjectParameters({
                 setSelectedObject(selected.frame);
             }
         };
+        const update = () => {
+            setUpdate((prev) => prev + 1);
+        };
         updateSelected();
 
         threeScene.addEventListener("selectedObject", updateSelected);
+        threeScene.addEventListener("parameters", update);
 
         return () => {
             threeScene.removeEventListener("selectedObject", updateSelected);
+            threeScene.removeEventListener("parameters", update);
         };
     }, [threeScene]);
 
