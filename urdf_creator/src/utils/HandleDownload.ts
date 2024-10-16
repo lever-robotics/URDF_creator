@@ -14,6 +14,7 @@ import {
 import {
     GenerateRealLaunchFile,
     GenerateSimLaunchFile,
+    GenerateTestLaunchFile,
 } from "./CreatePackage/GenerateLaunchFile";
 import { LaunchPropertiesContained } from "./CreatePackage/LaunchPropertiesContained";
 import { ScenetoSDF } from "./ScenetoSDF";
@@ -168,10 +169,16 @@ export async function GenerateDescriptionFiles(
         });
     }
 
-    // Add launch file
+    // Add root launch file
     descriptionFiles.push({
         zipPath: `${title}_description/launch/${title}.launch.py`,
         content: GenerateRealLaunchFile(title),
+    });
+
+    // Add display launch file
+    descriptionFiles.push({
+        zipPath: `${title}_description/launch/display_${title}.launch.py`,
+        content: GenerateTestLaunchFile(title),
     });
 
     return descriptionFiles;
@@ -181,9 +188,9 @@ export async function GenerateGazeboFiles(sdfContent: string, title: string) {
     // Prepare file list for robot_gazebo folder
     const gazeboFiles = [
         {
-            zipPath: `${title}_gazebo/worlds/example.world`,
+            zipPath: `${title}_gazebo/worlds/obstacle.world`,
             content: await fetchFileContent(
-                "robot_gazebo/worlds/example.world",
+                "robot_gazebo/worlds/clearpath_playpen.world",
             ),
         },
         {
@@ -196,7 +203,7 @@ export async function GenerateGazeboFiles(sdfContent: string, title: string) {
         },
     ];
 
-    // Add SDF file if provided
+    // Add SDF file if pro  vided
     if (sdfContent) {
         gazeboFiles.push({
             zipPath: `${title}_gazebo/model/${title}.sdf`,
@@ -204,10 +211,16 @@ export async function GenerateGazeboFiles(sdfContent: string, title: string) {
         });
     }
 
-    // Add launch file
+    // Add empty world launch file
     gazeboFiles.push({
-        zipPath: `${title}_gazebo/launch/${title}.launch.py`,
-        content: GenerateSimLaunchFile(title),
+        zipPath: `${title}_gazebo/launch/${title}_empty_world.launch.py`,
+        content: GenerateSimLaunchFile(title, "empty.world"),
+    });
+
+    // Add basic obstacle world
+    gazeboFiles.push({
+        zipPath: `${title}_gazebo/launch/${title}_obstacle_world.launch.py`,
+        content: GenerateSimLaunchFile(title, "obstacle.world"),
     });
 
     return gazeboFiles;

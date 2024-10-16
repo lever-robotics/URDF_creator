@@ -12,7 +12,6 @@ export const ScenetoXML = (scene: ThreeScene, projectTitle: string) => {
         xml += "</robot>";
         return xml;
     }
-
     // World Frame Link
     const worldFrame = scene.worldFrame;
     xml += `  <link name="${worldFrame.name}"></link>\n`;

@@ -68,7 +68,7 @@ export default class ThreeScene {
     ) {
         this.worldFrame = new Frame();
         this.worldFrame.isWorldFrame = true;
-        this.worldFrame.name = "origin";
+        this.worldFrame.name = "base_footprint";
         this.scene.add(this.worldFrame);
         this.rootFrame = null;
         this.selectedObject = this.worldFrame;

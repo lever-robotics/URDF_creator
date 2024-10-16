@@ -15,20 +15,21 @@ export const ScenetoSDF = (scene: ThreeScene, projectTitle: string) => {
         "            <remapping>~/out:=/joint_states</remapping>\n";
     pub_joint_states += "        </ros>\n";
     pub_joint_states += "        <update_rate>5</update_rate>\n";
-    if (scene === undefined) {
-        xml += "</sdf>";
-        return xml;
-    }
-    if (!scene.rootFrame) {
-        xml += "</sdf>";
-        return xml;
-    }
 
-    xml += `<model name="${projectTitle.replace(" ", "_")}" canonical_link='base_link'>\n`;
+    // World Frame Link
+    const worldFrame = scene.worldFrame;
+
+    xml += `<model name="${projectTitle.replace(" ", "_")}" canonical_link='${worldFrame.name}'>\n`;
     //put on static for debugging
     xml += "  <static>false</static>\n";
     xml += `  <pose relative_to='world'>0 0 0 0 0 0</pose>\n`;
+    xml += `  <link name="${worldFrame.name}"></link>\n`;
 
+    if (!scene.rootFrame || scene === undefined) {
+        xml += "</model>\n";
+        xml += "</sdf>";
+        return xml;
+    }
     // Helper to format vector as a string and flip y and z coordinates
     const formatVector = (vec: THREE.Vector3) => `${vec.x} ${vec.y} ${vec.z}`;
 
@@ -47,27 +48,28 @@ export const ScenetoSDF = (scene: ThreeScene, projectTitle: string) => {
             linkIndex += 1;
 
             //offset from parent to joint origin
-            let offset = formatVector(node.link.position.clone().negate()); // offset from parent link to joint origin as sdf is link defined and not joint defined
-            // position of link in relation to parent
-            const position = formatVector(
-                node.position.clone().add(node.link.position),
-            );
-            const rotation = quaternionToRPY(node.quaternion);
-            let linkRotation = "0 0 0";
-
-            if (node.isRootFrame) {
-                offset = formatVector(node.position);
-                linkRotation = quaternionToRPY(node.quaternion);
+            const offset = formatVector(node.link.position.clone()); // offset from parent link to joint origin as sdf is link defined and not joint defined
+            // position of link in relation to parent link, if the parent has a link otherwise
+            const positionVector = node.position
+                .clone()
+                .add(node.link.position);
+            if (node.parentFrame.link) {
+                positionVector.sub(node.parentFrame.link.position);
             }
+            const position = formatVector(positionVector);
+            //calcualte red arrow or calculation from link to parents link, refer to tree diagram
+            const rotationQuat = node.quaternion.clone();
+            if (node.parentFrame.link) {
+                rotationQuat.multiply(
+                    node.parentFrame.link.quaternion.clone().invert(),
+                );
+            }
+            const rotation = quaternionToRPY(rotationQuat);
+            const linkRotation = "0 0 0";
 
             // Start link
             xml += `  <link name="${linkName}">\n`;
-            if (node.isRootFrame) {
-                xml += `    <pose relative_to='__model__'>${formatVector(node.position)} ${quaternionToRPY(node.quaternion)}</pose>\n`;
-            } else {
-                xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
-            }
-
+            xml += `    <pose relative_to='${parentName}'>${position} ${rotation}</pose>\n`;
             // add all the visual and collision tags needed
             const visuals = node.visuals;
             const collisions = node.collisions;
@@ -191,7 +193,7 @@ export const ScenetoSDF = (scene: ThreeScene, projectTitle: string) => {
 
     // Find the base node and start processing
     const rootFrame = scene.rootFrame;
-    if (rootFrame) processNode(rootFrame);
+    if (rootFrame) processNode(rootFrame, worldFrame.name);
 
     pub_joint_states += "    </plugin>\n";
     xml += pub_joint_states;
