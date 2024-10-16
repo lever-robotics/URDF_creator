@@ -98,7 +98,6 @@ export default class ThreeScene {
             this.camera,
         );
         const intersects = this.raycaster.intersectObjects(this.scene.children);
-        console.log(intersects);
         // Filter for objects that are instances of the common base class VisualCollision or Frame
         const shapes: UserSelectable[] = intersects
             .filter(
@@ -213,6 +212,7 @@ export default class ThreeScene {
         } else {
             this.selectedObject.frame.addProperty(property);
         }
+        this.dispatchEvent("addObject");
         this.forceUpdateCode();
     };
 
@@ -292,7 +292,7 @@ export default class ThreeScene {
             object.frame.addProperty(clone);
             this.selectObject(clone);
         }
-
+        this.dispatchEvent("addObject");
         this.forceUpdateCode();
     };
 

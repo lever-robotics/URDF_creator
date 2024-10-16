@@ -65,7 +65,6 @@ export function createFrame(params: UserData): Frame {
                 collision.color,
             );
         }) || [];
-    console.log(collisionObjects);
 
     // Map all visuals to objects that will be attached to the link
     const visualObjects =
@@ -237,7 +236,6 @@ export function compressScene(frame: Frame): THREE.Mesh {
 }
 
 export function readScene(gltfObject: THREE.Object3D, objectNames: string[]) {
-    console.log(gltfObject.userData);
     if (gltfObject.userData?.version) {
         const userData: UserData = gltfObject.userData as UserData;
         const registeredName = registerName(userData.name, objectNames);
@@ -257,7 +255,6 @@ export function readScene(gltfObject: THREE.Object3D, objectNames: string[]) {
     userData.name = registeredName;
 
     const newFrame = createPreBetaFrame(userData);
-    console.log(newFrame);
 
     for (const child of gltfObject.children) {
         const newChild = readScene(child, objectNames);

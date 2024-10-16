@@ -451,7 +451,6 @@ const App = () => {
         if (!threeScene) return;
         threeScene.clearScene();
         const group = await handleProject(projectPath);
-        console.log(group);
         const rootFrame = group.scene.children[0];
         threeScene.loadScene(rootFrame);
         setProjectTitle(title);

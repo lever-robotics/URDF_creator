@@ -211,6 +211,8 @@ export class Visual extends VisualCollision {
         if (clone.shape === "mesh") {
             clone.geometry = this.geometry;
         }
+        clone.position.copy(this.position);
+        clone.rotation.copy(this.rotation);
         return clone;
     }
 }
@@ -243,6 +245,8 @@ export class Collision extends VisualCollision {
         if (clone.shape === "mesh") {
             clone.geometry = this.geometry;
         }
+        clone.position.copy(this.position);
+        clone.rotation.copy(this.rotation);
         return clone;
     }
 }

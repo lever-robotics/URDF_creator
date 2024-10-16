@@ -1,5 +1,5 @@
 import type React from "react";
-import { type MutableRefObject, useState } from "react";
+import { type MutableRefObject, useEffect, useState } from "react";
 import type ThreeScene from "../ThreeDisplay/ThreeScene";
 import CodeBox from "./CodeBox/CodeBox";
 import ObjectParameters from "./ObjectParameters/ObjectParameters";
@@ -22,9 +22,22 @@ export default function RightPanel({
     threeSceneRef,
     updateCode,
 }: Props) {
-    if (!threeSceneRef.current) return;
     const threeScene = threeSceneRef.current;
     const [selectedFormat, setSelectedFormat] = useState("Parameters");
+    const [update, setUpdate] = useState(0);
+    useEffect(() => {
+        if (!threeScene) return;
+        const update = () => {
+            setUpdate((prev) => prev + 1);
+            console.log("here");
+        };
+
+        threeScene.addEventListener("addObject", update);
+
+        return () => {
+            threeScene.removeEventListener("addObject", update);
+        };
+    }, [threeScene]);
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const format = e.currentTarget.innerText;
@@ -40,7 +53,7 @@ export default function RightPanel({
         }
         return {};
     };
-
+    if (!threeSceneRef.current) return;
     return (
         <>
             <div className={styles.toolbar}>

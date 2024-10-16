@@ -22,9 +22,13 @@ export function LinkTree({ threeSceneRef }: LinkTreeProps) {
         };
 
         threeScene.addEventListener("addObject", update);
+        threeScene.addEventListener("selectedObject", update);
+        threeScene.addEventListener("name", update);
 
         return () => {
             threeScene.removeEventListener("addObject", update);
+            threeScene.removeEventListener("selectedObject", update);
+            threeScene.removeEventListener("name", update);
         };
     }, [threeScene]);
 

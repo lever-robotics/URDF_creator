@@ -27,25 +27,6 @@ export default function TreeProperty(props: Props) {
         setHoveredFrame,
     } = props;
 
-    const [selected, setSelected] = useState(false);
-
-    useEffect(() => {
-        const updateSelected = () => {
-            if (isSelected()) {
-                setSelected(true);
-            } else {
-                setSelected(false);
-            }
-        };
-
-        updateSelected();
-        threeScene.addEventListener("selectedObject", updateSelected);
-
-        return () => {
-            threeScene.removeEventListener("selectedObject", updateSelected);
-        };
-    }, [threeScene]);
-
     const isSelected = () => {
         const selectedProperty = threeScene.selectedObject;
         if (!selectedProperty) return false;

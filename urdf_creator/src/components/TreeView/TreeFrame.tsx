@@ -21,33 +21,16 @@ export default function TreeFrame(props: Props) {
     const { handleContextMenu, threeScene, hoveredFrame, setHoveredFrame } =
         restProps;
 
-    const [selected, setSelected] = useState(false);
-    const [name, setName] = useState(frame.name);
-
-    useEffect(() => {
-        const updateSelected = () => {
-            if (isSelected(threeScene, frame)) {
-                setSelected(true);
-            } else {
-                setSelected(false);
-            }
-        };
-
-        const updateName = () => {
-            if (selected) {
-                setName(frame.name);
-            }
-        };
-
-        updateSelected();
-        threeScene.addEventListener("selectedObject", updateSelected);
-        threeScene.addEventListener("name", updateName);
-
-        return () => {
-            threeScene.removeEventListener("selectedObject", updateSelected);
-            threeScene.removeEventListener("name", updateName);
-        };
-    }, [threeScene, frame, selected]);
+    const isSelected = () => {
+        const selectedObject = threeScene.selectedObject;
+        if (!selectedObject) return false;
+        if (selectedObject instanceof Frame) {
+            if (selectedObject.name === frame.name) return true;
+        } else {
+            if (selectedObject.frame.name === frame.name) return true;
+        }
+        return false;
+    };
 
     const onClick = () => {
         threeScene.selectObject(frame);
@@ -113,7 +96,7 @@ export default function TreeFrame(props: Props) {
         return false;
     };
 
-    const selectedStyle = selected ? { backgroundColor: "#646cff" } : {};
+    const selectedStyle = isSelected() ? { backgroundColor: "#646cff" } : {};
 
     const draggable = !frame.isWorldFrame;
 
@@ -122,7 +105,7 @@ export default function TreeFrame(props: Props) {
         <ToggleSection
             renderChildren={renderChildren}
             renderProperties={renderProperties}
-            isSelected={selected}
+            isSelected={isSelected()}
             isHovered={isHovered}
         >
             <button
@@ -137,7 +120,7 @@ export default function TreeFrame(props: Props) {
                 onDragEnter={onDragEnter}
                 type="button"
             >
-                {name}
+                {frame.name}
             </button>
         </ToggleSection>
     );
@@ -154,14 +137,3 @@ function isAncestor(ancestor: Frame, descendant: Frame) {
     if (ancestor.isRootFrame || descendant.isRootFrame) return false;
     return isAncestor(ancestor, descendant.parentFrame);
 }
-
-const isSelected = (threeScene: ThreeScene, frame: Frame) => {
-    const selectedObject = threeScene.selectedObject;
-    if (!selectedObject) return false;
-    if (selectedObject instanceof Frame) {
-        if (selectedObject.name === frame.name) return true;
-    } else {
-        if (selectedObject.frame.name === frame.name) return true;
-    }
-    return false;
-};

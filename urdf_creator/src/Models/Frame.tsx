@@ -44,8 +44,8 @@ export default class Frame extends THREE.Mesh {
             toneMapped: false,
             transparent: true,
         });
-        matWhite.opacity = 0.25;
-        super(new THREE.OctahedronGeometry(0.1, 0), matWhite);
+        matWhite.opacity = 0.15;
+        super(new THREE.OctahedronGeometry(0.075, 0), matWhite);
 
         this.name = name;
 
