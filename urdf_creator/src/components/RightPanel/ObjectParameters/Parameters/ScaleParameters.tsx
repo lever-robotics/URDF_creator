@@ -43,7 +43,13 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
 
     const isShape = (isShape: string) => shape === isShape;
 
-    // TODO modify scaleVector to not take negative values;
+    const validateInput = (value: number) => {
+        if (value < 0) {
+            return 0.001;
+        }
+        return value;
+    };
+
     const handleBlur = (parameter: string, value: number) => {
         switch (parameter) {
             case "x":
@@ -82,6 +88,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                         value={x}
                         kind="number"
                         handleBlur={handleBlur}
+                        validateInput={validateInput}
+                        toFixed={3}
                     />
                     <Parameter
                         title="Y:"
@@ -90,6 +98,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                         value={y}
                         kind="number"
                         handleBlur={handleBlur}
+                        validateInput={validateInput}
+                        toFixed={3}
                     />
                     <Parameter
                         title="Z:"
@@ -98,6 +108,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                         value={z}
                         kind="number"
                         handleBlur={handleBlur}
+                        validateInput={validateInput}
+                        toFixed={3}
                     />
                 </>
             )}
@@ -110,6 +122,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                         value={cylinderRadius}
                         kind="number"
                         handleBlur={handleBlur}
+                        validateInput={validateInput}
+                        toFixed={3}
                     />
                     <Parameter
                         title="Height:"
@@ -118,6 +132,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                         value={height}
                         kind="number"
                         handleBlur={handleBlur}
+                        validateInput={validateInput}
+                        toFixed={3}
                     />
                 </>
             )}
@@ -129,6 +145,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                     value={sphereRadius}
                     kind="number"
                     handleBlur={handleBlur}
+                    validateInput={validateInput}
+                    toFixed={3}
                 />
             )}
             {isShape("mesh") && (
@@ -138,7 +156,8 @@ const ScaleParameters: React.FC<ScaleParametersProps> = ({
                     value={mesh}
                     kind="number"
                     handleBlur={handleBlur}
-                    toFixed={5}
+                    validateInput={validateInput}
+                    toFixed={3}
                 />
             )}
         </Property>

@@ -71,21 +71,13 @@ export default class ScaleVector extends THREE.Vector3 {
         switch (this.shape) {
             case "cube":
                 super.multiply(vector);
-                return this;
+                break;
             case "mesh":
             case "sphere": {
                 const x = vector.x;
                 const y = vector.y;
                 const z = vector.z;
 
-                // check to see if x, y, or z have changed, if so update the shape accordingly
-                // if (x !== this.getComponent(0) && x !== 1) {
-                //     super.multiply(new THREE.Vector3(x, x, x));
-                // } else if (y !== this.getComponent(1) && y !== 1) {
-                //     super.multiply(new THREE.Vector3(y, y, y));
-                // } else if (z !== this.getComponent(2) && z !== 1) {
-                //     super.multiply(new THREE.Vector3(z, z, z));
-                // }
                 if (vector.x !== 1) {
                     super.multiply(new THREE.Vector3(x, x, x));
                 } else if (vector.y !== 1) {
@@ -93,21 +85,13 @@ export default class ScaleVector extends THREE.Vector3 {
                 } else if (vector.z !== 1) {
                     super.multiply(new THREE.Vector3(z, z, z));
                 }
-                return this;
+                break;
             }
             case "cylinder": {
                 const x = vector.x;
                 const y = vector.y;
                 const z = vector.z;
 
-                // check to see if x, y, or z have changed, if so update the shape accordingly
-                // if (a !== this.getComponent(0) && a !== 1) {
-                //     super.multiply(new THREE.Vector3(a, a, c));
-                // } else if (b !== this.getComponent(1) && b !== 1) {
-                //     super.multiply(new THREE.Vector3(b, b, c));
-                // } else if (c !== this.getComponent(2)) {
-                //     super.multiply(vector);
-                // }
                 if (vector.x !== 1) {
                     super.multiply(new THREE.Vector3(x, x, z));
                 } else if (vector.y !== 1) {
@@ -115,10 +99,21 @@ export default class ScaleVector extends THREE.Vector3 {
                 } else if (vector.z !== 1) {
                     super.multiply(vector);
                 }
-                return this;
+                break;
             }
             default:
                 throw Error("shape provided to scale vector is not supported");
         }
+
+        if (this.x < 0) {
+            this.x = 0.001;
+        }
+        if (this.y < 0) {
+            this.y = 0.001;
+        }
+        if (this.z < 0) {
+            this.z = 0.001;
+        }
+        return this;
     }
 }

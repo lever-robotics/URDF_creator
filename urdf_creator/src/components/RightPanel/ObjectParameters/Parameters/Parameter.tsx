@@ -25,6 +25,7 @@ interface NumberParameterProps extends InputProps {
     value: number;
     handleBlur: (parameter: string, value: number) => void;
     parameter: string;
+    validateInput?: (input: number) => number;
     title?: string;
     units?: string;
     toFixed?: number;
@@ -80,7 +81,7 @@ const Parameter: React.FC<ParameterProps> = (props) => {
 };
 
 export function NumberParameter(props: NumberParameterProps) {
-    const { value, handleBlur, toFixed, ...restProps } = props;
+    const { value, handleBlur, toFixed, validateInput, ...restProps } = props;
     const fixedValue = toFixed ?? 2;
     const stringValue = value.toFixed(fixedValue);
 
@@ -90,19 +91,22 @@ export function NumberParameter(props: NumberParameterProps) {
         setTemp(props.value.toFixed(fixedValue));
     }, [props.value, fixedValue]);
 
-    const validateInput = (value: string) => {
+    const validate = validateInput ?? ((input: number) => input);
+
+    const handleValidateInput = (value: string) => {
         // If you click enter or away with invalid input then reset
         if (value === "-0") {
             setTemp("0");
             return 0;
         }
 
-        const newValue = Number.parseFloat(value);
+        const newValue = validate(Number.parseFloat(value));
         if (Number.isNaN(newValue)) {
             setTemp(stringValue);
             return false;
         }
 
+        setTemp(newValue.toString());
         return newValue;
     };
 
@@ -110,7 +114,7 @@ export function NumberParameter(props: NumberParameterProps) {
         setTemp(e.target.value);
 
     const onBlurHandler = (e: InputEvent) => {
-        const validValue = validateInput(e.currentTarget.value);
+        const validValue = handleValidateInput(e.currentTarget.value);
         if (validValue === false) return;
         handleBlur(props.parameter, validValue);
     };
