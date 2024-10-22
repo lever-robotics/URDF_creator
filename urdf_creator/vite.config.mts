@@ -3,5 +3,5 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [react()],
-    base: '/URDF_creator/urdf_creator/'
+    base: '/URDF_creator/'
 });
