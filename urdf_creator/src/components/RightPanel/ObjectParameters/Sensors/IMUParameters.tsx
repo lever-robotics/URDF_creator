@@ -37,47 +37,48 @@ function IMUParameters({
         threeScene.forceUpdateCode();
     };
 
-    return (
-        <>
-            <Property>
-                <Parameter
-                    title="Update Rate:"
-                    type="text"
-                    name="updateRate"
-                    value={imu.updateRate}
-                    units="Hz"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Mean:"
-                    type="text"
-                    name="mean"
-                    value={imu.mean}
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Standard Deviation:"
-                    type="text"
-                    name="stddev"
-                    value={imu.stddev}
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Gaussian Noise:"
-                    type="text"
-                    name="gaussianNoise"
-                    value={imu.gaussianNoise}
-                    onChange={handleChange}
-                />
-            </Property>
-        </>
-    );
+    return null;
+    // return (
+    //     <>
+    //         <Property>
+    //             <Parameter
+    //                 title="Update Rate:"
+    //                 type="text"
+    //                 name="updateRate"
+    //                 value={imu.updateRate}
+    //                 units="Hz"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Mean:"
+    //                 type="text"
+    //                 name="mean"
+    //                 value={imu.mean}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Standard Deviation:"
+    //                 type="text"
+    //                 name="stddev"
+    //                 value={imu.stddev}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Gaussian Noise:"
+    //                 type="text"
+    //                 name="gaussianNoise"
+    //                 value={imu.gaussianNoise}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //     </>
+    // );
 }
 
 export default IMUParameters;

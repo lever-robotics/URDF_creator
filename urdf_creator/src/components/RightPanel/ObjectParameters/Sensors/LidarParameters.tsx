@@ -54,116 +54,116 @@ function LidarParameters({
         }
         threeScene.forceUpdateCode();
     };
-
-    return (
-        <>
-            <Property>
-                <Parameter
-                    title="Update Rate:"
-                    type="text"
-                    name="updateRate"
-                    value={lidar.updateRate}
-                    units="Hz"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Samples:"
-                    type="text"
-                    name="samples"
-                    value={lidar.samples}
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Resolution:"
-                    type="text"
-                    step="0.000001"
-                    name="resolution"
-                    value={lidar.resolution}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Min Angle:"
-                    type="text"
-                    step="0.000001"
-                    name="minAngle"
-                    value={lidar.minAngle}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Max Angle:"
-                    type="text"
-                    step="0.000001"
-                    name="maxAngle"
-                    value={lidar.maxAngle}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Min Range:"
-                    type="text"
-                    step="0.000001"
-                    name="minRange"
-                    value={lidar.minRange}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Max Range:"
-                    type="text"
-                    step="0.000001"
-                    name="maxRange"
-                    value={lidar.maxRange}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Range Resolution:"
-                    type="text"
-                    step="0.000001"
-                    name="rangeResolution"
-                    value={lidar.rangeResolution}
-                    units="&deg; degrees"
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Gaussian Noise Mean:"
-                    type="text"
-                    step="0.000001"
-                    name="mean"
-                    value={lidar.mean}
-                    onChange={handleChange}
-                />
-            </Property>
-            <Property>
-                <Parameter
-                    title="Gaussian Noise Stddev:"
-                    type="text"
-                    step="0.000001"
-                    name="stddev"
-                    value={lidar.stddev}
-                    onChange={handleChange}
-                />
-            </Property>
-        </>
-    );
+    return null;
+    // return (
+    //     <>
+    //         <Property>
+    //             <Parameter
+    //                 title="Update Rate:"
+    //                 type="text"
+    //                 name="updateRate"
+    //                 value={lidar.updateRate}
+    //                 units="Hz"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Samples:"
+    //                 type="text"
+    //                 name="samples"
+    //                 value={lidar.samples}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Resolution:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="resolution"
+    //                 value={lidar.resolution}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Min Angle:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="minAngle"
+    //                 value={lidar.minAngle}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Max Angle:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="maxAngle"
+    //                 value={lidar.maxAngle}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Min Range:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="minRange"
+    //                 value={lidar.minRange}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Max Range:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="maxRange"
+    //                 value={lidar.maxRange}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Range Resolution:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="rangeResolution"
+    //                 value={lidar.rangeResolution}
+    //                 units="&deg; degrees"
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Gaussian Noise Mean:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="mean"
+    //                 value={lidar.mean}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //         <Property>
+    //             <Parameter
+    //                 title="Gaussian Noise Stddev:"
+    //                 type="text"
+    //                 step="0.000001"
+    //                 name="stddev"
+    //                 value={lidar.stddev}
+    //                 onChange={handleChange}
+    //             />
+    //         </Property>
+    //     </>
+    // );
 }
 
 export default LidarParameters;
