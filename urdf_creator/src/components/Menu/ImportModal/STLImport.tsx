@@ -80,7 +80,7 @@ const STLImport = ({ onClose }: { onClose: () => void }) => {
             <div className="image-description-container">
                 <div className="image-container">
                     <img
-                        src={"/statics/STL_Description.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/STL_Description.png`}
                         alt="STL Mesh"
                         className="stlgraphic"
                     />

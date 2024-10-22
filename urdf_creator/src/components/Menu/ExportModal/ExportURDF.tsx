@@ -47,7 +47,7 @@ const ExportURDFPackage: React.FC<Props> = ({
             <div className="image-description-container">
                 <div className="image-container">
                     <img
-                        src={"/statics/urdf_folder.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/urdf_folder.png`}
                         alt="URDF file"
                         className="urdfgraphic"
                     />

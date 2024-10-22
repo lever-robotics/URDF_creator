@@ -22,7 +22,7 @@ const Page3 = () => {
                     </div>
                     <div className="graphic-container-page3">
                         <img
-                            src={"/statics/box.png"}
+                            src={`${import.meta.env.BASE_URL}/statics/box.png`}
                             alt="Add Cube"
                             className="graphic-page3"
                         />
@@ -40,7 +40,7 @@ const Page3 = () => {
                     </div>
                     <div className="graphic-container-page3">
                         <img
-                            src={"/statics/translate.png"}
+                            src={`${import.meta.env.BASE_URL}/statics/translate.png`}
                             alt="Translation"
                             className="graphic-page3"
                         />
@@ -58,7 +58,7 @@ const Page3 = () => {
                     </div>
                     <div className="graphic-container-page3">
                         <img
-                            src={"/statics/scale.png"}
+                            src={`${import.meta.env.BASE_URL}/statics/scale.png`}
                             alt="Scale"
                             className="graphic-page3"
                         />
@@ -79,7 +79,7 @@ const Page3 = () => {
                     </div>
                     <div className="graphic-container-page3">
                         <img
-                            src={"/statics/params.png"}
+                            src={`${import.meta.env.BASE_URL}/statics/params.png`}
                             alt="Object Parameters"
                             className="graphic-page3"
                         />
@@ -97,7 +97,7 @@ const Page3 = () => {
                     </div>
                     <div className="graphic-container-page3">
                         <img
-                            src={"/statics/duplicate.png"}
+                            src={`${import.meta.env.BASE_URL}/statics/duplicate.png`}
                             alt="Duplicate"
                             className="graphic-page3"
                         />

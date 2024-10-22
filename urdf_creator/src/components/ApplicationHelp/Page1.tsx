@@ -72,7 +72,7 @@ const Page1 = () => {
             </div>
             <div className="graphic-container">
                 <img
-                    src={"/statics/roboeverything3.png"}
+                    src={`${import.meta.env.BASE_URL}/statics/roboeverything3.png`}
                     alt="Robo Everything"
                     className="roboeverything-graphic"
                 />

@@ -28,7 +28,7 @@ const Page2 = () => {
                 </div>
                 <div className="graphic-container-page2">
                     <img
-                        src={"/statics/link.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/link.png`}
                         alt="Links"
                         className="graphic"
                     />
@@ -46,7 +46,7 @@ const Page2 = () => {
                 </div>
                 <div className="graphic-container-page2">
                     <img
-                        src={"/statics/joints.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/joints.png`}
                         alt="Joints"
                         className="graphic"
                     />

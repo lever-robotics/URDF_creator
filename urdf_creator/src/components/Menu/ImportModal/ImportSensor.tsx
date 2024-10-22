@@ -18,8 +18,8 @@ const GltfFile = ({
     displayName: string;
     handleSensorClick: (path: string) => void;
 }) => {
-    const gltfFilePath = `/statics/GLTFFiles/${fileName}.gltf`;
-    const imageFilePath = `/statics/GLTFFilesImages/${fileName}.png`;
+    const gltfFilePath = `${import.meta.env.BASE_URL}/statics/GLTFFiles/${fileName}.gltf`;
+    const imageFilePath = `${import.meta.env.BASE_URL}/statics/GLTFFilesImages/${fileName}.png`;
 
     const loadGltfFile = () => {
         handleSensorClick(gltfFilePath);

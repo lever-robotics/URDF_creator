@@ -82,7 +82,7 @@ const ExportIssacSim: React.FC<Props> = ({ onClose, scene, projectTitle }) => {
             <div className="image-description-container">
                 <div className="image-container">
                     <img
-                        src={"/statics/folders_white.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/folders_white.png`}
                         alt="Folder file structure"
                         className="urdfgraphic"
                     />

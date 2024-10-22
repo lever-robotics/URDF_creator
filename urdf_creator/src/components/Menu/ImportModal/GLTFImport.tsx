@@ -64,7 +64,7 @@ const GLTFImport = ({
             <div className="image-description-container">
                 <div className="image-container">
                     <img
-                        src={"/statics/gltf_share.png"}
+                        src={`${import.meta.env.BASE_URL}/statics/gltf_share.png`}
                         alt="gltf Share"
                         className="gltfgraphic"
                     />

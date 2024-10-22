@@ -58,7 +58,7 @@ const ExportSimPackage: React.FC<Props> = ({
             <div className="image-description-container">
                 <div className="image-container">
                     <img
-                        src={`${process.env.PUBLIC_URL}/statics/folders_white.png`}
+                        src={`${import.meta.env.BASE_URL}/statics/folders_white.png`}
                         alt="Folder file structure"
                         className="urdfgraphic"
                     />
