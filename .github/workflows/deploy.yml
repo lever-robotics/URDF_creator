@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: urdf_creator/build
+          path: urdf_creator/dist
 
   deploy:
     needs: build
